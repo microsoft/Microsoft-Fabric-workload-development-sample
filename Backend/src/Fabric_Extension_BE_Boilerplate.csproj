@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <BuildDependsOn>PreBuild</BuildDependsOn>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <NuspecFile>Packages\manifest\ManifestPackageRelease.nuspec</NuspecFile>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <NuspecFile>Packages\manifest\ManifestPackageDebug.nuspec</NuspecFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Azure.Core" Version="1.36.0" />
+    <PackageReference Include="Azure.Identity" Version="1.10.4" />
+    <PackageReference Include="Azure.Storage.Files.DataLake" Version="12.14.0" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.58.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols" Version="6.30.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.30.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.30.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\ServiceDependencies\" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -File ValidationScripts\RemoveErrorFile.ps1 -outputDirectory ValidationScripts\" />
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -File ValidationScripts\ManifestValidator.ps1 -inputDirectory .\Packages\manifest\ -inputXml WorkloadManifest.xml -inputXsd WorkloadDefinition.xsd -outputDirectory ValidationScripts\" />
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -File ValidationScripts\ItemManifestValidator.ps1 -inputDirectory .\Packages\manifest\ -inputXsd ItemDefinition.xsd -outputDirectory ValidationScripts\" />
+    <Exec Command="powershell.exe -ExecutionPolicy Bypass -File ValidationScripts\ValidateNoDefaults.ps1 -outputDirectory ValidationScripts\" />
+    <Error Condition="Exists('ValidationScripts\ValidationErrors.txt')" Text="Validation errors with either manifests or default values" File="ValidationScripts\ValidationErrors.txt" />
+  </Target>
+
+</Project>

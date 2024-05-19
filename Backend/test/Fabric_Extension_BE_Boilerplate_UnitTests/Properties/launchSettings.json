@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Fabric_Extension_BE_Boilerplate_UnitTests": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:54848;http://localhost:54849"
+    }
+  }
+}

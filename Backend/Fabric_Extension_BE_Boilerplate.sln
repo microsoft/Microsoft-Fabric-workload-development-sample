@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fabric_Extension_BE_Boilerplate", "src\Fabric_Extension_BE_Boilerplate.csproj", "{BBAC694B-1272-4780-876B-05073441C9FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fabric_Extension_BE_Boilerplate_UnitTests", "test\Fabric_Extension_BE_Boilerplate_UnitTests\Fabric_Extension_BE_Boilerplate_UnitTests.csproj", "{76AC96C8-37C9-4765-AE2D-2B31AA8286F8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BBAC694B-1272-4780-876B-05073441C9FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBAC694B-1272-4780-876B-05073441C9FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBAC694B-1272-4780-876B-05073441C9FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBAC694B-1272-4780-876B-05073441C9FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{76AC96C8-37C9-4765-AE2D-2B31AA8286F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{76AC96C8-37C9-4765-AE2D-2B31AA8286F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{76AC96C8-37C9-4765-AE2D-2B31AA8286F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{76AC96C8-37C9-4765-AE2D-2B31AA8286F8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FE00E2FE-C1BC-49F7-BC3B-3E8559CB771C}
+	EndGlobalSection
+EndGlobal

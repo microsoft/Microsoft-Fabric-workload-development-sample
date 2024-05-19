@@ -1,0 +1,69 @@
+{
+    "name": "SampleWorkloadItem",
+    "displayName": "Sample Workload Item",
+    "displayNamePlural": "Sample Workload Items",
+    "editor": {
+      "path": "/sample-workload-editor"
+    },
+    "icon": {
+      "name": "assets/execute.svg"
+    },
+    "activeIcon": {
+      "name": "assets/execute.svg"
+    },
+    "contextMenuItems": [
+      {
+        "name": "schedule"
+      },
+      {
+        "name": "recentruns"
+      },
+      {
+        "name": "SampleItemCustomAction",
+        "displayName": "Run calculate job",
+        "icon": {
+          "name": "assets/execute.svg"
+        },
+        "handler": {
+          "action": "run.calculate.job"
+        },
+        "tooltip": "Adding a custom button to the item context menu"
+      }
+    ],
+    "quickActionItems": [
+      {
+        "name": "SampleItemCustomAction",
+        "displayName": "Run short job",
+        "icon": {
+          "name": "assets/execute.svg"
+        },
+        "handler": {
+          "action": "run.calculate.job"
+        },
+        "tooltip": "Adding a quick action button to the item"
+      }
+    ],
+    "supportedInMonitoringHub": true,
+    "itemJobActionConfig": {
+      "registeredActions": {
+        "detail": {
+          "action": "item.job.detail"
+        },
+        "cancel": {
+          "action": "item.job.cancel"
+        },
+        "retry": {
+          "action": "item.job.retry"
+        }
+      }
+    },
+    "itemSettings": {
+      "schedule": {
+        "itemJobType": "Org.WorkloadSample.SampleWorkloadItem.ScheduledJob",
+        "refreshType": "Refresh"
+      },
+      "recentRun": {
+        "useRecentRunsComponent": true
+      }
+    }
+  }

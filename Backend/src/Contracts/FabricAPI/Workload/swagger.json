@@ -1,0 +1,764 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Workload REST APIs",
+    "description": "APIs to be implemented by workloads for integration with Microsoft Fabric",
+    "version": "v1"
+  },
+  "schemes": [ "https" ],
+  "host": "workload.contoso.com",
+  "basePath": "/workload-api-path-placeholder",
+  "definitions": {
+    "ErrorSource": {
+      "description": "The source of the error.",
+      "type": "string",
+      "enum": [ "System", "User", "External" ]
+    },
+    "JobInvokeType": {
+      "description": "The job invoke type.",
+      "type": "string",
+      "enum": [ "UnknownFutureValue", "Scheduled", "Manual" ]
+    },
+    "JobInstanceStatus": {
+      "description": "The status of an item job instance.",
+      "type": "string",
+      "enum": [ "NotStarted", "InProgress", "Completed", "Failed", "Cancelled" ]
+    },
+    "NameValuePair": {
+      "description": "A name-value pair.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "name", "value" ],
+      "properties": {
+        "name": {
+          "description": "The name.",
+          "type": "string",
+          "readOnly": true
+        },
+        "value": {
+          "description": "The value.",
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "ErrorBasicInformation": {
+      "description": "The basic error information",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "errorCode", "message" ],
+      "properties": {
+        "errorCode": {
+          "description": "The error code.",
+          "type": "string",
+          "readOnly": true
+        },
+        "message": {
+          "description": "The error message.",
+          "type": "string",
+          "readOnly": true
+        },
+        "messageParameters": {
+          "description": "A list of parameters for formatting a localized message.",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "readOnly": true
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "ErrorExtendedInformation": {
+      "description": "The extended error information.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "errorCode", "message" ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorBasicInformation"
+        }
+      ],
+      "properties": {
+        "additionalParameters": {
+          "description": "A list of additional parameters specific to the error.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/NameValuePair",
+            "readOnly": true
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "ErrorDetails": {
+      "description": "The error details.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "errorCode", "message", "source" ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorBasicInformation"
+        }
+      ],
+      "properties": {
+        "source": {
+          "description": "The error source.",
+          "$ref": "#/definitions/ErrorSource",
+          "readOnly": true
+        },
+        "isPermanent": {
+          "description": "Indicates whether the error is permanent or the operation can be retried.",
+          "type": "boolean",
+          "readOnly": true
+        },
+        "moreDetails": {
+          "description": "A list of additional error details.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ErrorExtendedInformation",
+            "readOnly": true
+          },
+          "readOnly": true
+        }
+      }
+    },
+    "ErrorResponse": {
+      "description": "The error response.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "errorCode", "message", "source" ],
+      "allOf": [
+        {
+          "$ref": "#/definitions/ErrorDetails"
+        }
+      ]
+    },
+    "CreateItemPayload": {
+      "description": "Creation payload specific to the workload and item type.",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "UpdateItemPayload": {
+      "description": "Update payload specific to the workload and item type.",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "ItemPayload": {
+      "description": "Item payload specific to the workload and item type.",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "CreateItemJobInstancePayload": {
+      "description": "Job instance creation payload specific to the workload, item and job type.",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "CreateItemRequest": {
+      "description": "Create item request content.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "displayName" ],
+      "properties": {
+        "displayName": {
+          "description": "The item display name.",
+          "type": "string",
+          "readOnly": false
+        },
+        "description": {
+          "description": "The item description.",
+          "type": "string",
+          "readOnly": false
+        },
+        "creationPayload": {
+          "description": "Creation payload specific to the workload and item type, passed by the item editor or as Fabric Automation API parameter.",
+          "$ref": "#/definitions/CreateItemPayload",
+          "readOnly": false
+        }
+      }
+    },
+    "UpdateItemRequest": {
+      "description": "Update item request content. This content has 'PATCH' semantics: for properties which are not provided (null) the item current values should be preserved.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "displayName": {
+          "description": "The item display name.",
+          "type": "string",
+          "readOnly": false
+        },
+        "description": {
+          "description": "The item description.",
+          "type": "string",
+          "readOnly": false
+        },
+        "updatePayload": {
+          "description": "Update payload specific to the workload and item type, passed by the item editor or as Fabric Automation API parameter.",
+          "$ref": "#/definitions/UpdateItemPayload",
+          "readOnly": false
+        }
+      }
+    },
+    "GetItemPayloadResponse": {
+      "description": "The item payload for the item editor.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "itemPayload": {
+          "description": "Payload specific to the workload and item type.",
+          "$ref": "#/definitions/ItemPayload",
+          "readOnly": false
+        }
+      }
+    },
+    "CreateItemJobInstanceRequest": {
+      "description": "The parameters controlling the job instance execution.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "invokeType" ],
+      "properties": {
+        "invokeType": {
+          "description": "The item job invoke type.",
+          "$ref": "#/definitions/JobInvokeType",
+          "readOnly": false
+        },
+        "creationPayload": {
+          "description": "Creation payload specific to the workload, item and job type.",
+          "$ref": "#/definitions/CreateItemJobInstancePayload",
+          "readOnly": false
+        }
+      }
+    },
+    "ItemJobInstanceState": {
+      "description": "The job instance state.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [ "status" ],
+      "properties": {
+        "status": {
+          "description": "The status of the job instance.",
+          "$ref": "#/definitions/JobInstanceStatus",
+          "readOnly": true
+        },
+        "startTimeUtc": {
+          "description": "The job instance start time.",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "endTimeUtc": {
+          "description": "The job instance end time.",
+          "type": "string",
+          "format": "date-time",
+          "readOnly": true
+        },
+        "errorDetails": {
+          "description": "The error details in case of the job instance failure.",
+          "$ref": "#/definitions/ErrorDetails",
+          "readOnly": true
+        }
+      }
+    },
+    "EndpointResolutionContextPropertyName": {
+      "type": "string",
+      "enum": [ "EndpointName", "TenantRegion", "WorkspaceRegion" ],
+      "description": "The name of the property for endpoint resolution context."
+    },
+    "EndpointResolutionContextProperty": {
+      "type": "object",
+      "required": [ "name", "value" ],
+      "properties": {
+        "name": {
+          "$ref": "#/definitions/EndpointResolutionContextPropertyName",
+          "description": "The name of the context property."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the context property."
+        }
+      },
+      "additionalProperties": false
+    },
+    "EndpointResolutionRequest": {
+      "type": "object",
+      "required": [ "context" ],
+      "properties": {
+        "context": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EndpointResolutionContextProperty"
+          },
+          "description": "Array of context properties for endpoint resolution."
+        }
+      },
+      "additionalProperties": false
+    },
+    "EndpointResolutionResponse": {
+      "type": "object",
+      "required": [ "url", "ttlInMinutes" ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "The resolved URL of the service."
+        },
+        "ttlInMinutes": {
+          "type": "integer",
+          "format": "int32",
+          "description": "Time to live in minutes for the resolved URL."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "responses": {
+    "StandardErrorResponse": {
+      "description": "For error conditions the workload should return an appropriate HTTP error status code (4xx, 5xx) with detailed error information in the response body.",
+      "schema": {
+        "$ref": "#/definitions/ErrorResponse"
+      }
+    }
+  },
+  "paths": {
+    "/workspaces/{workspaceId}/items/{itemType}/{itemId}": {
+      "post": {
+        "summary": "Called by Microsoft Fabric for creating a new item.",
+        "description": "Upon item creation Fabric performs some basic validations, creates the item with 'provisioning' state and calls this API to notify the workload. The workload is expected to perform required validations, store the item metadata, allocate required resources, and update the Fabric item metadata cache with item relations and ETag. To learn more see [Microsoft Fabric item update flow](https://updateflow).\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "operationId": "ItemLifecycle_CreateItem",
+        "tags": [ "ItemLifecycle" ],
+        "consumes": [ "application/json" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "description": "The workspace ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemType",
+            "description": "The item type.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemId",
+            "description": "The item ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "createItemRequest",
+            "description": "The item creation request.",
+            "schema": {
+              "$ref": "#/definitions/CreateItemRequest"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Successfully created."
+          },
+          "default": {
+            "$ref": "#/responses/StandardErrorResponse"
+          }
+        },
+        "x-ms-examples": {
+          "Create item example": {
+            "$ref": "./examples/CreateItem.json"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Called by Microsoft Fabric for updating an existing item.",
+        "description": "Upon item update Fabric performs some basic validations and calls this API to notify the workload. The workload is expected to perform required validations, store the item metadata, allocate and/or free resources, and update the Fabric item metadata cache with item relations and ETag. To learn more see [Microsoft Fabric item update flow](https://updateflow).\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "operationId": "ItemLifecycle_UpdateItem",
+        "tags": [ "ItemLifecycle" ],
+        "consumes": [ "application/json" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "description": "The workspace ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemType",
+            "description": "The item type.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemId",
+            "description": "The item ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "updateItemRequest",
+            "description": "The item update request.",
+            "schema": {
+              "$ref": "#/definitions/UpdateItemRequest"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated."
+          },
+          "default": {
+            "$ref": "#/responses/StandardErrorResponse"
+          }
+        },
+        "x-ms-examples": {
+          "Update item example": {
+            "$ref": "./examples/UpdateItem.json"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Called by Microsoft Fabric for deleting an existing item.",
+        "description": "Upon item deletion Fabric performs some basic validations and calls this API to notify the workload. The workload is expected to delete the item metadata and free resources. \n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication). However, the subject token may be unavailable in some cases.\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "operationId": "ItemLifecycle_DeleteItem",
+        "tags": [ "ItemLifecycle" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "description": "The workspace ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemType",
+            "description": "The item type.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemId",
+            "description": "The item ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted."
+          },
+          "default": {
+            "$ref": "#/responses/StandardErrorResponse"
+          }
+        },
+        "x-ms-examples": {
+          "Delete item example": {
+            "$ref": "./examples/DeleteItem.json"
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/items/{itemType}/{itemId}/payload": {
+      "get": {
+        "summary": "Called by Microsoft Fabric for retrieving the workload payload for an item.",
+        "description": "When the item editor <iframe> requests an item, Fabric performs some basic validations and calls this API to retrieve the payload from the workload.\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "operationId": "ItemLifecycle_GetItemPayload",
+        "tags": [ "ItemLifecycle" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "description": "The workspace ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemType",
+            "description": "The item type.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemId",
+            "description": "The item ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Completed successfully.",
+            "schema": {
+              "$ref": "#/definitions/GetItemPayloadResponse"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/StandardErrorResponse"
+          }
+        },
+        "x-ms-examples": {
+          "Get item content example": {
+            "$ref": "./examples/GetItemPayload.json"
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/items/{itemType}/{itemId}/jobTypes/{jobType}/instances/{jobInstanceId}": {
+      "post": {
+        "summary": "Called by Microsoft Fabric for starting a new job instance.",
+        "description": "Fabric performs some basic validations and calls this API to start a new instance of the job in the workload.\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "operationId": "Jobs_CreateItemJobInstance",
+        "tags": [ "Jobs" ],
+        "consumes": [ "application/json" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "description": "The workspace ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemType",
+            "description": "The item type.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemId",
+            "description": "The item ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "jobType",
+            "description": "The job type.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "jobInstanceId",
+            "description": "The job instance ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "body",
+            "name": "createItemJobInstanceRequest",
+            "description": "The job instance properties.",
+            "schema": {
+              "$ref": "#/definitions/CreateItemJobInstanceRequest"
+            },
+            "required": true
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successfully scheduled."
+          },
+          "default": {
+            "$ref": "#/responses/StandardErrorResponse"
+          }
+        },
+        "x-ms-examples": {
+          "Create item job instance example": {
+            "$ref": "./examples/CreateItemJobInstance.json"
+          }
+        }
+      },
+      "get": {
+        "summary": "Called by Microsoft Fabric for retrieving a job instance state.",
+        "description": "Fabric performs some basic validations and calls this API to retrieve the item job instance state in the workload.\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "operationId": "Jobs_GetItemJobInstanceState",
+        "tags": [ "Jobs" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "description": "The workspace ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemType",
+            "description": "The item type.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemId",
+            "description": "The item ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "jobType",
+            "description": "The job type.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "jobInstanceId",
+            "description": "The job instance ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Completed successfully.",
+            "schema": {
+              "$ref": "#/definitions/ItemJobInstanceState"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/StandardErrorResponse"
+          }
+        },
+        "x-ms-examples": {
+          "Get item job instance state example": {
+            "$ref": "./examples/GetItemJobInstanceState.json"
+          }
+        }
+      }
+    },
+    "/workspaces/{workspaceId}/items/{itemType}/{itemId}/jobTypes/{jobType}/instances/{jobInstanceId}/cancel": {
+      "post": {
+        "summary": "Called by Microsoft Fabric for cancelling a job instance.",
+        "description": "Fabric performs some basic validations and calls this API to cancel an item job instance in the workload.\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "operationId": "Jobs_CancelItemJobInstance",
+        "tags": [ "Jobs" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "workspaceId",
+            "description": "The workspace ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemType",
+            "description": "The item type.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "itemId",
+            "description": "The item ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "jobType",
+            "description": "The job type.",
+            "type": "string",
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "jobInstanceId",
+            "description": "The job instance ID.",
+            "type": "string",
+            "format": "uuid",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Completed successfully.",
+            "schema": {
+              "$ref": "#/definitions/ItemJobInstanceState"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/StandardErrorResponse"
+          }
+        },
+        "x-ms-examples": {
+          "Cancel item job instance example": {
+            "$ref": "./examples/CancelItemJobInstance.json"
+          }
+        }
+      }
+    },
+    "/resolve-api-path-placeholder": {
+      "post": {
+        "summary": "Resolve an endpoint for a given service called by Microsoft Fabric",
+        "description": "Resolves the endpoint for a given service called by Microsoft Fabric based on the tenant's region and workspace region. \n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication). However, the subject token should never be present.\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "operationId": "EndpointResolution_Resolve",
+        "tags": [ "EndpointResolution" ],
+        "consumes": [ "application/json" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Endpoint resolution request payload",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EndpointResolutionRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Endpoint resolution response",
+            "schema": {
+              "$ref": "#/definitions/EndpointResolutionResponse"
+            }
+          },
+          "default": {
+            "$ref": "#/responses/StandardErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "security": [],
+  "tags": []
+}
