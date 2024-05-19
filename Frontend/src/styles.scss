@@ -1,0 +1,191 @@
+.editor {
+    background: #f3f2f1;
+    padding: 8px;
+    height: 100%;
+}
+
+.editor .main {
+    border-radius: 8px;
+    background: white; 
+    box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.14);
+    margin: 5px 0;
+    padding: 5px;
+}
+.description {
+    white-space: pre-wrap;
+}
+
+.editor h2 {
+    padding: 0 0 0 20px
+}
+
+.editor .field {
+    flex-grow: 1;
+}
+
+.editor .section {
+    padding: 0 0 30px 20px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    width: 400px;
+}
+
+.ribbon .toolbarContainer {
+    height: 40px;
+    border-radius:8px;
+    background:white;
+    box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.14);
+    margin:5px 0;
+}
+
+.tablistContainer {
+    margin:10px 0;
+}
+
+.collabContainer {
+    float:right;
+    padding-top: 10px;
+}
+
+.collabContainer button {
+    height:25px;
+    margin: 0 5px;
+}
+
+.authButton {
+    margin-right: 40%;
+    margin-left: 40%;
+    margin-top: 5px;
+}
+
+.ribbon .comboboxLabel {
+    padding-right: 8px;
+}
+
+.create-dialog {
+    width: 340px;
+    padding: 16px 24px 24px 24px;
+    white-space: pre-wrap;
+
+    h2 {
+        padding: 0;
+        margin:0;
+        white-space: inherit;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .section {
+        display: flex;
+        flex-direction: column;
+        row-gap: 10px;
+        white-space: inherit;
+    }
+
+    .create-buttons {
+        justify-content: right;
+    }
+}
+.panel {
+    padding:8px;
+}
+.panel .section {
+    margin: 5px;
+}
+.panel .field {
+    flex-grow: 1;
+}
+
+.lakehouse_explorer {
+    min-width: 200px;
+    width:20%;
+    overflow:hidden;
+    height: 50vh;
+    vertical-align: middle;
+    border-radius: 8px;
+    background: white; 
+    box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.14);
+    margin: 5px 0;
+    padding: 5px;
+    display: inline-block;
+    h1 {
+        font-family: 'Segoe UI', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        margin: 6;
+    }
+
+    .lakehouse-selector-body {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        align-items: start;
+        
+    }
+
+    .lakehouse-selector-tree-item {
+        width: 100%;
+
+    }
+
+    .fui-TreeItemLayout__main  {
+        text-overflow: ellipsis;
+        overflow:hidden;
+        white-space: nowrap;
+    }
+
+    .main-body {
+        display: flex;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        .add-lakehouse-button {
+            margin: 0;
+            width: 51px;
+            min-width: auto;
+            height: 32px;
+            font-size: 14px;
+        }
+
+        .add-lakehouse {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0px;
+            padding: 24px 0;
+        }
+    }
+
+    .top {
+        padding: 0 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.hidden-explorer {
+    width: max-content;
+    min-width: auto;
+}
+.vertical-text {
+    writing-mode: vertical-lr;
+}
+
+.tree {
+    .lvl1 {
+        padding-left: 15px;
+    }
+    .lvl2 {
+        padding-left: 39px;
+    }
+    .selected {
+        background-color: var(--colorNeutralBackground1Selected);
+    }   
+}
+
+.spinner {
+    justify-content: center;
+}

@@ -1,0 +1,97 @@
+{
+    "name": "Product",
+    "displayName": "Sample Workload",
+    "fullDisplayName": "Sample Workload",
+    "description": "Sample Workload Description",
+    "favicon": "fabric.ico",
+    "icon": {
+      "name": "assets/briefcase.svg"
+    },
+    "homePage": {
+      "learningMaterials": [
+        {
+          "title": "Learning Material example1",
+          "description": "Learning Material example1 description",
+          "onClick": {
+            "action": "open.learningMaterial.dialog1"
+          },
+          "image": "assets/dial.svg"
+        },
+        {
+          "title": "Learning Material example2",
+          "description": "Learning Material example2 description",
+          "image": "assets/github.svg",
+          "onClick": {
+            "action": "open.learningMaterial.dialog2"
+          }
+        }
+      ],
+      "newSection": {
+        "customActions": [
+            {
+                "title": "Frontend only playground",
+                "icon": {
+                  "name": "assets/briefcase.svg"
+                },
+                "onClick": {
+                  "action": "open.createSampleWorkloadFrontendOnly"
+                }
+            }
+        ]},
+        "recommendedItemTypes": [
+          "SampleWorkloadItem"
+        ]
+    },
+    "createExperience": {
+      "description": "CreateHub Product Description",
+      "cards": [
+        {
+          "title": "Sample Item",
+          "description": "Create a Sample Workload Item for your Dev Experience",
+          "icon": {
+            "name": "assets/dial.svg"
+          },
+          "icon_small": {
+            "name": "assets/dial.svg"
+          },
+          "onClick": {
+            "action": "open.createSampleWorkload"
+          },
+          "availableIn": [
+            "home",
+            "create-hub",
+            "workspace-plus-new",
+            "workspace-plus-new-teams"
+          ]
+        }
+      ]
+    },
+    "productDetail": {
+      "publisher": "Contoso",
+      "slogan": "The quickest way from a billion points of data to a point of view.",
+      "description": "Contoso workload enables organizations to conduct real-time customer interactions and automate operational business decisions at scale. It supports a wide variety of customer-facing activities such as personalized marketing and next best action, and customer-impacting decisions including credit services and fraud prevention.",
+      "image": {
+        "mediaType": 0,
+        "source": "assets/BannerMedium.png"
+       },
+      "slideMedia": [
+        {
+          "mediaType": 0,
+          "source": "assets/SampleWorkload1.png"
+        },
+        {
+          "mediaType": 0,
+          "source": "assets/SampleWorkload2.png"
+        }
+      ],
+        "supportLink": {
+          "documentation": {"url": "https://example.com/documentation"},
+          "certification": {"url": "https://example.com/certification"},
+          "help": {"url": "https://example.com/help"},
+          "privacy": {"url": "https://example.com/privacy"},
+          "terms": {"url": "https://example.com/terms"},
+          "license": {"url": "https://example.com/license"}
+      }
+    },
+    "compatibleItemTypes" : ["Lakehouse"]
+  }
