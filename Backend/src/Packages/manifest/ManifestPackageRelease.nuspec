@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <!-- Package information -->
+    <id>ManifestPackageRelease</id>
+    <version>1.0.0</version>
+    <authors>author</authors>
+    <owners>owner</owners>
+    <description>A NuGet package ready for uploading to fabric.</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+  </metadata>
+  <files>
+    <!-- Include the XML and FE files -->
+    <file src="WorkloadManifest.xml" target="BE\WorkloadManifest.xml" />
+    <file src="Item1.xml" target="BE\Item1.xml" />
+    <file src="..\..\..\..\Frontend\Package\*" target="FE" />
+    <file src="..\..\..\..\Frontend\Package\assets\*" target="FE\assets" />
+  </files>
+</package>

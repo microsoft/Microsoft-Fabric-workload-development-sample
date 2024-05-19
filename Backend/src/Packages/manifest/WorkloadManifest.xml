@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<WorkloadManifestConfiguration xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance" SchemaVersion="1.0.0">
+  <Workload WorkloadName="Org.WorkloadSample" HostingType="Remote">
+    <Version>1.0.0</Version>
+    <RemoteServiceConfiguration>
+      <CloudServiceConfiguration>
+        <Cloud>Public</Cloud>
+        <AADApp>
+          <AppId>00000000-0000-0000-0000-000000000000</AppId> <!-- Your application ID -->
+          <RedirectUri>http://localhost</RedirectUri>
+          <ResourceId>api://localdevinstance/tenantID/Org.WorkloadSample</ResourceId>
+        </AADApp>
+        <Endpoints>
+          <ServiceEndpoint>
+            <Name>Workload</Name>
+            <Url>https://be.endpointurl.net/workload/resolve-api-path-placeholder</Url>
+            <IsEndpointResolutionService>true</IsEndpointResolutionService>
+            <EndpointResolutionContext>
+              <ResolutionContextProperty>WorkspaceRegion</ResolutionContextProperty>
+            </EndpointResolutionContext>
+          </ServiceEndpoint>
+          <ServiceEndpoint>
+            <Name>Frontend</Name>
+            <Url>https://fe.endpointurl.net</Url>
+            <IsEndpointResolutionService>false</IsEndpointResolutionService>
+          </ServiceEndpoint>
+        </Endpoints>
+      </CloudServiceConfiguration>
+    </RemoteServiceConfiguration>
+  </Workload>
+</WorkloadManifestConfiguration>
