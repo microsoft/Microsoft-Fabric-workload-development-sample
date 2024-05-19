@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ItemManifestConfiguration xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance" SchemaVersion="1.0.0">
+  <Item TypeName="Org.WorkloadSample.SampleWorkloadItem" Category="Data">
+    <Workload WorkloadName="Org.WorkloadSample" />
+    <JobScheduler>
+      <!-- Set the deduplicate option for on demand item job. 
+        - None to not deduplicate job.
+        - PerItem so there is only one job run for the same item and same job type.
+        - PerUser so there is only one job run for the same user and same item.-->
+      <OnDemandJobDeduplicateOptions>PerItem</OnDemandJobDeduplicateOptions>
+      <ScheduledJobDeduplicateOptions>PerItem</ScheduledJobDeduplicateOptions>
+      <ItemJobTypes>
+        <ItemJobType Name="Org.WorkloadSample.SampleWorkloadItem.ScheduledJob" />
+        <ItemJobType Name="Org.WorkloadSample.SampleWorkloadItem.CalculateAsText" />
+        <ItemJobType Name="Org.WorkloadSample.SampleWorkloadItem.CalculateAsParquet" />
+      </ItemJobTypes>
+    </JobScheduler>
+  </Item>
+</ItemManifestConfiguration>
