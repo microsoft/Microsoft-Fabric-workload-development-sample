@@ -1,5 +1,5 @@
-param (
-    [string]$outputDirectory
+﻿param (
+	[string]$outputDirectory
 )
 
 try

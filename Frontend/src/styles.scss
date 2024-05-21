@@ -64,7 +64,7 @@
 }
 
 .create-dialog {
-    width: 340px;
+    width: 360px;
     padding: 16px 24px 24px 24px;
     white-space: pre-wrap;
 
@@ -121,12 +121,10 @@
         height: 100%;
         width: 100%;
         align-items: start;
-        
     }
 
     .lakehouse-selector-tree-item {
         width: 100%;
-
     }
 
     .fui-TreeItemLayout__main  {
@@ -173,7 +171,6 @@
 .vertical-text {
     writing-mode: vertical-lr;
 }
-
 .tree {
     .lvl1 {
         padding-left: 15px;

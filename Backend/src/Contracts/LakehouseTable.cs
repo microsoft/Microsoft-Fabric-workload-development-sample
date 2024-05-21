@@ -6,10 +6,10 @@ namespace Boilerplate.Contracts
 {
     public class LakehouseTable
     {
-        public string Name { get; set; }
+        public string Name { get; init; }
 
-        public string Path { get; set; }
+        public string Path { get; init; }
 
-        public string Schema { get; set; }
+        public string Schema { get; init; }
     }
 }

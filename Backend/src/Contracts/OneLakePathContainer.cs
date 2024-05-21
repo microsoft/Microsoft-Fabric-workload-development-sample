@@ -8,11 +8,11 @@ namespace Boilerplate.Contracts
 {
     internal class OneLakePathData
     {
-        public string name;
+        public string name = string.Empty;
     }
 
     internal class OneLakePathContainer
     {
-        public IEnumerable<OneLakePathData> paths;
+        public IEnumerable<OneLakePathData> paths = new List<OneLakePathData>(); 
     }
 }

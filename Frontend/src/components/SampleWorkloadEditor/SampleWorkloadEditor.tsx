@@ -306,7 +306,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                 operand1: operand1,
                 operand2: operand2,
                 operator: operator,
-            },
+            }
         };
 
         await callItemUpdate(sampleItem.id, payload, workloadClient);
@@ -337,7 +337,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                 isLakeHouseSelected={selectedLakehouse != undefined}
                 //  disable save when in Frontend-only
                 isSaveButtonEnabled={
-                    sampleItem?.id !== undefined && selectedLakehouse != undefined && isDirty
+                    sampleItem?.id !== undefined && selectedLakehouse !== undefined && isDirty
                 }
                 saveItemCallback={SaveItem}
                 isDeleteEnabled={sampleItem?.id !== undefined}
@@ -374,9 +374,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                                         size="small"
                                         placeholder="Lakehouse Name"
                                         style={{ marginLeft: "10px" }}
-                                        value={
-                                            selectedLakehouse ? selectedLakehouse.displayName : ""
-                                        }
+                                        value={selectedLakehouse ? selectedLakehouse.displayName : ""}
                                     />
                                 </Field>
                                 <Button
@@ -387,11 +385,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                                 />
                             </Stack>
                             <Field label="Lakehouse ID" orientation="horizontal" className="field">
-                                <Input
-                                    size="small"
-                                    placeholder="Lakehouse ID"
-                                    value={selectedLakehouse ? selectedLakehouse.id : ""}
-                                />
+                                <Input size="small" placeholder="Lakehouse ID" value={selectedLakehouse ? selectedLakehouse.id : ""} />
                             </Field>
                         </div>
                         <Divider alignContent="start">Calculation definition</Divider>
@@ -402,9 +396,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                                     type="number"
                                     placeholder="Value of the 1st operand"
                                     value={operand1.toString()}
-                                    onChange={(e) =>
-                                        onOperand1InputChanged(parseInt(e.target.value))
-                                    }
+                                    onChange={(e) => onOperand1InputChanged(parseInt(e.target.value))}
                                 />
                             </Field>
                             <Field label="Operand 2" orientation="horizontal" className="field">
@@ -413,9 +405,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                                     type="number"
                                     placeholder="value of the 2nd operand"
                                     value={operand2.toString()}
-                                    onChange={(e) =>
-                                        onOperand2InputChanged(parseInt(e.target.value))
-                                    }
+                                    onChange={(e) => onOperand2InputChanged(parseInt(e.target.value))}
                                 />
                             </Field>
                             <Field label="Operator" orientation="horizontal" className="field">
@@ -440,10 +430,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                         </div>
                         <Divider alignContent="start">Authentication</Divider>
                         <div className="section">
-                            <Button
-                                appearance="primary"
-                                icon={<PanelRightExpand20Regular />}
-                                onClick={() => onCallNavigate("/Authentication")}>
+                            <Button appearance="primary" icon={<PanelRightExpand20Regular />} onClick={() => onCallNavigate("/Authentication")}>
                                 Navigate to Authentication Page
                             </Button>
                         </div>
@@ -464,26 +451,11 @@ export function SampleWorkloadEditor(props: PageProps) {
                             <span>
                                 {/* Notification API usage example */}
                                 <div className="section">
-                                    <Field
-                                        label="Title"
-                                        validationMessage={notificationValidationMessage}
-                                        orientation="horizontal"
-                                        className="field">
-                                        <Input
-                                            size="small"
-                                            placeholder="Notification Title"
-                                            onChange={(e) => setNotificationTitle(e.target.value)}
-                                        />
+                                    <Field label="Title" validationMessage={notificationValidationMessage} orientation="horizontal" className="field">
+                                        <Input size="small" placeholder="Notification Title" onChange={(e) => setNotificationTitle(e.target.value)} />
                                     </Field>
-                                    <Field
-                                        label="Message"
-                                        orientation="horizontal"
-                                        className="field">
-                                        <Input
-                                            size="small"
-                                            placeholder="Notification Message"
-                                            onChange={(e) => setNotificationMessage(e.target.value)}
-                                        />
+                                    <Field label="Message" orientation="horizontal" className="field">
+                                        <Input size="small" placeholder="Notification Message" onChange={(e) => setNotificationMessage(e.target.value)} />
                                     </Field>
                                     <Stack horizontal tokens={{ childrenGap: 10 }}>
                                         <Button
@@ -492,9 +464,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                                             onClick={() => onCallNotification()}>
                                             Send Notification
                                         </Button>
-                                        <Button onClick={() => onCallNotificationHide()}>
-                                            Hide Notification
-                                        </Button>
+                                        <Button onClick={() => onCallNotificationHide()}>Hide Notification</Button>
                                     </Stack>
                                 </div>
                             </span>
@@ -504,145 +474,65 @@ export function SampleWorkloadEditor(props: PageProps) {
                                 {/* Action API usage example */}
                                 <Divider alignContent="start">Action</Divider>
                                 <div className="section">
-                                    <Button
-                                        appearance="primary"
-                                        icon={<PanelRightExpand20Regular />}
-                                        onClick={() => onCallExecuteAction()}>
+                                    <Button appearance="primary" icon={<PanelRightExpand20Regular />} onClick={() => onCallExecuteAction()}>
                                         Execute an Action
                                     </Button>
                                 </div>
                                 {/* Dialog MessageBox API usage example */}
                                 <Divider alignContent="start">Dialog Message Box</Divider>
                                 <div className="section">
-                                    <Field
-                                        label="Box Title"
-                                        orientation="horizontal"
-                                        className="field">
-                                        <Input
-                                            size="small"
-                                            placeholder="Title"
-                                            onChange={(e) =>
-                                                setApiDialogMsgboxTitle(e.target.value)
-                                            }
-                                        />
+                                    <Field label="Box Title" orientation="horizontal" className="field">
+                                        <Input size="small" placeholder="Title" onChange={(e) => setApiDialogMsgboxTitle(e.target.value)} />
                                     </Field>
-                                    <Field
-                                        label="Box Content"
-                                        orientation="horizontal"
-                                        className="field">
-                                        <Input
-                                            size="small"
-                                            placeholder="Content..."
-                                            onChange={(e) =>
-                                                setApiDialogMsgboxContent(e.target.value)
-                                            }
-                                        />
+                                    <Field label="Box Content" orientation="horizontal" className="field">
+                                        <Input size="small" placeholder="Content..." onChange={(e) => setApiDialogMsgboxContent(e.target.value)} />
                                     </Field>
                                     <Combobox
                                         placeholder="Buttons count"
-                                        onOptionSelect={(_, opt) =>
-                                            setApiDialogMsgboxButtonCount(
-                                                Number.parseInt(opt.optionValue)
-                                            )
-                                        }>
+                                        onOptionSelect={(_, opt) => setApiDialogMsgboxButtonCount(Number.parseInt(opt.optionValue))}>
                                         {msgboxButtonCountOptions.map((option) => (
                                             <Option key={option}>{option}</Option>
                                         ))}
                                     </Combobox>
-                                    <Button
-                                        appearance="primary"
-                                        icon={<PanelRightExpand20Regular />}
-                                        onClick={() => onCallOpenMessageBox()}>
+                                    <Button appearance="primary" icon={<PanelRightExpand20Regular />} onClick={() => onCallOpenMessageBox()}>
                                         Open Dialog Message Box
                                     </Button>
                                 </div>
                                 {/* Error Handling API usage example */}
                                 <Divider alignContent="start">Error Handling</Divider>
                                 <div className="section">
-                                    <Field
-                                        label="Error Title"
-                                        orientation="horizontal"
-                                        className="field">
-                                        <Input
-                                            size="small"
-                                            placeholder="Error title"
-                                            onChange={(e) => setApiErrorTitle(e.target.value)}
-                                        />
+                                    <Field label="Error Title" orientation="horizontal" className="field">
+                                        <Input size="small" placeholder="Error title" onChange={(e) => setApiErrorTitle(e.target.value)} />
                                     </Field>
-                                    <Field
-                                        label="Error Message"
-                                        orientation="horizontal"
-                                        className="field">
-                                        <Input
-                                            size="small"
-                                            placeholder="Error message"
-                                            onChange={(e) => setApiErrorMessage(e.target.value)}
-                                        />
+                                    <Field label="Error Message" orientation="horizontal" className="field">
+                                        <Input size="small" placeholder="Error message" onChange={(e) => setApiErrorMessage(e.target.value)} />
                                     </Field>
-                                    <Field
-                                        label="Error Request ID"
-                                        orientation="horizontal"
-                                        className="field">
-                                        <Input
-                                            size="small"
-                                            placeholder="Request ID"
-                                            onChange={(e) => setApiErrorRequestId(e.target.value)}
-                                        />
+                                    <Field label="Error Request ID" orientation="horizontal" className="field">
+                                        <Input size="small" placeholder="Request ID" onChange={(e) => setApiErrorRequestId(e.target.value)} />
                                     </Field>
-                                    <Field
-                                        label="Error Status Code"
-                                        orientation="horizontal"
-                                        className="field">
-                                        <Input
-                                            size="small"
-                                            placeholder="Status Code"
-                                            onChange={(e) => setApiErrorStatusCode(e.target.value)}
-                                        />
+                                    <Field label="Error Status Code" orientation="horizontal" className="field">
+                                        <Input size="small" placeholder="Status Code" onChange={(e) => setApiErrorStatusCode(e.target.value)} />
                                     </Field>
-                                    <Field
-                                        label="Error Stack Trace"
-                                        orientation="horizontal"
-                                        className="field">
-                                        <Input
-                                            size="small"
-                                            placeholder="Stack Trace"
-                                            onChange={(e) => setApiErrorStackTrace(e.target.value)}
-                                        />
+                                    <Field label="Error Stack Trace" orientation="horizontal" className="field">
+                                        <Input size="small" placeholder="Stack Trace" onChange={(e) => setApiErrorStackTrace(e.target.value)} />
                                     </Field>
-                                    <Button
-                                        appearance="primary"
-                                        icon={<PanelRightExpand20Regular />}
-                                        onClick={() => onCallOpenError()}>
+                                    <Button appearance="primary" icon={<PanelRightExpand20Regular />} onClick={() => onCallOpenError()}>
                                         Open Error
                                     </Button>
                                 </div>
                                 <div className="section">
                                     <Field label="Error" orientation="horizontal" className="field">
-                                        <Input
-                                            size="small"
-                                            placeholder="Error message"
-                                            onChange={(e) =>
-                                                setApiErrorFailureMessage(e.target.value)
-                                            }
-                                        />
+                                        <Input size="small" placeholder="Error message" onChange={(e) => setApiErrorFailureMessage(e.target.value)} />
                                     </Field>
-                                    <Field
-                                        label="Error Status Code"
-                                        orientation="horizontal"
-                                        className="field">
+                                    <Field label="Error Status Code" orientation="horizontal" className="field">
                                         <Input
                                             size="small"
                                             type="number"
                                             placeholder="Error Status Code"
-                                            onChange={(e) =>
-                                                setApiErrorFailureCode(e.target.valueAsNumber)
-                                            }
+                                            onChange={(e) => setApiErrorFailureCode(e.target.valueAsNumber)}
                                         />
                                     </Field>
-                                    <Button
-                                        appearance="primary"
-                                        icon={<PanelRightExpand20Regular />}
-                                        onClick={() => onCallErrorFailureHandling()}>
+                                    <Button appearance="primary" icon={<PanelRightExpand20Regular />} onClick={() => onCallErrorFailureHandling()}>
                                         Call Request Failure Handling{" "}
                                     </Button>
                                 </div>
@@ -653,36 +543,22 @@ export function SampleWorkloadEditor(props: PageProps) {
                                 {/* Panel API usage example */}
                                 <Divider alignContent="start">Panel</Divider>
                                 <div className="section">
-                                    <Switch
-                                        label="Clicking outside of Panel closes it"
-                                        onChange={(e) =>
-                                            setApiPanelIsLightDismiss(e.target.checked)
-                                        }
-                                    />
-                                    <Button
-                                        appearance="primary"
-                                        icon={<PanelRightExpand20Regular />}
-                                        onClick={() => onCallOpenPanel()}>
+                                    <Switch label="Clicking outside of Panel closes it" onChange={(e) => setApiPanelIsLightDismiss(e.target.checked)} />
+                                    <Button appearance="primary" icon={<PanelRightExpand20Regular />} onClick={() => onCallOpenPanel()}>
                                         Open Panel
                                     </Button>
                                 </div>
                                 {/* Theme API usage example */}
                                 <Divider alignContent="start">Theme</Divider>
                                 <div className="section">
-                                    <Button
-                                        appearance="primary"
-                                        icon={<PanelRightExpand20Regular />}
-                                        onClick={() => onCallThemeGet()}>
+                                    <Button appearance="primary" icon={<PanelRightExpand20Regular />} onClick={() => onCallThemeGet()}>
                                         Get Theme Settings
                                     </Button>
                                 </div>
                                 {/* Settings API usage example */}
                                 <Divider alignContent="start">Settings</Divider>
                                 <div className="section">
-                                    <Button
-                                        appearance="primary"
-                                        icon={<PanelRightExpand20Regular />}
-                                        onClick={() => onCallSettingsGet()}>
+                                    <Button appearance="primary" icon={<PanelRightExpand20Regular />} onClick={() => onCallSettingsGet()}>
                                         Get Workload Settings
                                     </Button>
                                 </div>
@@ -693,34 +569,22 @@ export function SampleWorkloadEditor(props: PageProps) {
                                 {/* Navigation and Page API usage example */}
                                 <Divider alignContent="start">Navigation</Divider>
                                 <div className="section">
-                                    <Label>
-                                        After navigation to a sample page, an AfterNavigateAway
-                                        callback should show some notification
-                                    </Label>
-                                    <Button
-                                        appearance="primary"
-                                        icon={<PanelRightExpand20Regular />}
-                                        onClick={() => onCallOpenPage()}>
+                                    <Label>After navigation to a sample page, an AfterNavigateAway callback should show some notification</Label>
+                                    <Button appearance="primary" icon={<PanelRightExpand20Regular />} onClick={() => onCallOpenPage()}>
                                         Open Sample Page
                                     </Button>
-                                    <Button
-                                        appearance="primary"
-                                        icon={<PanelRightExpand20Regular />}
-                                        onClick={() => onCallNavigate("/sample-page")}>
+                                    <Button appearance="primary" icon={<PanelRightExpand20Regular />} onClick={() => onCallNavigate("/sample-page")}>
                                         Navigate to Sample Page
                                     </Button>
                                     <Label />
                                     <Label>
-                                        BeforeNavigateAway callback has been registerd to block
-                                        navigation to a 'forbidden-url'. Clicking the below should
-                                        NOT navigate away"
+                                        BeforeNavigateAway callback has been registerd to block navigation to a 'forbidden-url'. Clicking the below should NOT
+                                        navigate away"
                                     </Label>
                                     <Button
                                         appearance="primary"
                                         icon={<PanelRightExpand20Regular />}
-                                        onClick={() =>
-                                            onCallNavigate("/sample-forbidden-url-page")
-                                        }>
+                                        onClick={() => onCallNavigate("/sample-forbidden-url-page")}>
                                         Attempt to navigate to a Forbidden URL
                                     </Button>
                                 </div>
@@ -742,10 +606,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                                 <Input id={inputId} size="small" placeholder="hint" />
                             </Stack>
                             {/* Buttons */}
-                            <Stack
-                                horizontal
-                                tokens={{ childrenGap: 10 }}
-                                style={{ padding: "10px" }}>
+                            <Stack horizontal tokens={{ childrenGap: 10 }} style={{ padding: "10px" }}>
                                 <Button icon={<Save24Regular />} appearance="primary">
                                     Primary
                                 </Button>

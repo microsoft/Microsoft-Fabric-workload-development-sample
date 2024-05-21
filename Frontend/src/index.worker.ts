@@ -33,8 +33,8 @@ export async function initialize(params: InitParams) {
                         path: `/sample-workload-create-dialog/${workspaceObjectId}`,
                     },
                     options: {
-                        width: 340,
-                        height: 260,
+                        width: 360,
+                        height: 360,
                         hasCloseButton: false
                     },
                 });

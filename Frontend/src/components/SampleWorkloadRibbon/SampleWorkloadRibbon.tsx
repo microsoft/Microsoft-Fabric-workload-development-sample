@@ -23,11 +23,15 @@ import { PageProps } from 'src/App';
 import { callDatahubOpen, callDialogOpenMsgBox } from '../../controller/SampleWorkloadController';
 import './../../styles.scss';
 import { ItemTabToolbar } from "./ItemTabToolbar";
+import { callItemGet, callOpenSettings } from "../../controller/SampleWorkloadController";
 
 const HomeTabToolbar = (props: RibbonProps) => {
+const { itemObjectId, workloadClient } = props;
 
   async function onSettingsClicked() {
-    // suggestion - call open Item Settings API here, when supported
+    // todo: refactor get item to ribbon
+    const item = await callItemGet(itemObjectId, workloadClient);
+    await callOpenSettings(item, workloadClient, 'About');
   }
 
   async function onDatahubClicked() {
@@ -88,6 +92,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
         content="Settings"
         relationship="label">
         <ToolbarButton
+          disabled={!props.itemObjectId}
           aria-label="Settings"
           icon={<Settings24Regular />} onClick={() => onSettingsClicked()} />
       </Tooltip>
