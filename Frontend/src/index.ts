@@ -20,26 +20,6 @@ function printFormattedAADErrorMessage(hashMessage: string): void {
     }
 }
 
-function printFormattedAADErrorMessage(hashMessage: string): void {
-    const hashString = hashMessage.slice(1);
-
-    // Decode URL encoding and parse key-value pairs
-    const searchParams = new URLSearchParams(hashString);
-    const formattedMessage: Record<string, string> = {};
-
-    searchParams.forEach((value, key) => {
-        formattedMessage[key] = decodeURIComponent(value);
-    });
-
-    // Print formatted message
-    document.documentElement.innerHTML = "There was a problem with the consent, open browser debug console for more details";
-    for (const key in formattedMessage) {
-        if (Object.prototype.hasOwnProperty.call(formattedMessage, key)) {
-            console.log(`${key}: ${formattedMessage[key]}`);
-        }
-    }
-}
-
 /** This is used for authentication API as a redirect URI.
  * Delete this code if you do not plan on using authentication API.
  * You can change the redirectUriPath to whatever suits you.
