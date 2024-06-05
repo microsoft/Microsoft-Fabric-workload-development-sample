@@ -5,7 +5,8 @@
 ### Welcome
 Welcome to the Fabric workload development kit. This repository contains everything a Microsoft Fabric partner needs to develop and build custom workloads in Fabric, use this kit to create workloads according to your specific business needs and scenarios, and run them on Fabric with high performance, scalability, and security.
 The Fabric workload development kit is currently in public preview and is subject to change. As such, there may be issues or missing documentation. We kindly request you to keep this in mind while using the kit. We are working hard to ensure that the kit is as stable and reliable as possible, and we appreciate your patience and understanding during this time.
-If you need any further assistance, please don't hesitate to contact us at <ILDCWLSupport@microsoft.com>.
+If you need any further assistance, post your question at [Microsoft-Fabric-workload-development-sample/discussions](https://github.com/microsoft/Microsoft-Fabric-workload-development-sample/discussions) 
+or [Microsoft-Fabric-workload-development-sample/issues](https://github.com/microsoft/Microsoft-Fabric-workload-development-sample/issues) so that it can be addressed by the Fabric team.
 
 ### Trademarks
 
