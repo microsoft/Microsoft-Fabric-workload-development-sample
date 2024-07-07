@@ -22,7 +22,7 @@ namespace Boilerplate.Tests
             context.Request.Host = new HostString("localhost", 5001);
             context.Request.PathBase = new PathString("/myapp");
 
-            SetupAuthenticateControlPlaneCall(expectedRequireSubjectToken: false);
+            SetupAuthenticateControlPlaneCall(expectedRequireSubjectToken: false, expectedRequireTenantIdHeader: false);
             SetupHttpContextAccessorMock(context);
 
             var controllerImpl = new EndpointResolutionControllerImpl(
@@ -109,7 +109,7 @@ namespace Boilerplate.Tests
             var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
             var mockLogger = new Mock<ILogger<EndpointResolutionControllerImpl>>();
 
-            SetupAuthenticateControlPlaneCall(expectedRequireSubjectToken: false, err_exception: new UnauthorizedAccessException());
+            SetupAuthenticateControlPlaneCall(expectedRequireSubjectToken: false, expectedRequireTenantIdHeader: false, err_exception: new UnauthorizedAccessException());
 
             var controllerImpl = new EndpointResolutionControllerImpl(
                 HttpContextAccessorMock.Object,

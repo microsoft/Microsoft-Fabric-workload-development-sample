@@ -19,7 +19,7 @@ namespace Boilerplate.Services
         /// <param name="httpContext">The context of the HTTP request</param>
         /// <param name="requireSubjectToken">Specifies whether the subject token is mandatory</param>
         /// <returns>The authorization context</returns>
-        Task<AuthorizationContext> AuthenticateControlPlaneCall(HttpContext httpContext, bool requireSubjectToken = true);
+        Task<AuthorizationContext> AuthenticateControlPlaneCall(HttpContext httpContext, bool requireSubjectToken = true, bool requireTenantIdHeader = true);
 
         /// <summary>
         /// Authenticates a control plane call based on

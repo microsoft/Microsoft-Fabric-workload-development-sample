@@ -50,18 +50,25 @@ namespace Boilerplate.Services
             _audience = configuration["Audience"];
         }
 
-        public async Task<AuthorizationContext> AuthenticateControlPlaneCall(HttpContext httpContext, bool requireSubjectToken = true)
+        public async Task<AuthorizationContext> AuthenticateControlPlaneCall(HttpContext httpContext, bool requireSubjectToken = true, bool requireTenantIdHeader = true)
         {
             if (!httpContext.Request.Headers.TryGetValue(HttpHeaders.Authorization, out var authValues) || authValues.Count != 1)
             {
                 throw new AuthenticationException($"Missing or invalid {HttpHeaders.Authorization} header");
             }
 
-            if (!httpContext.Request.Headers.TryGetValue(HttpHeaders.XmsClientTenantId, out var tenantIdValues) ||
-                tenantIdValues.Count != 1 ||
-                !Guid.TryParse(tenantIdValues.Single(), out var tenantId))
+            Guid? tenantId = null;
+
+            if (requireTenantIdHeader)
             {
-                throw new AuthenticationException($"Missing or invalid {HttpHeaders.XmsClientTenantId} header");
+                if (!httpContext.Request.Headers.TryGetValue(HttpHeaders.XmsClientTenantId, out var tenantIdValues) ||
+                    tenantIdValues.Count != 1 ||
+                    !Guid.TryParse(tenantIdValues.Single(), out var parsedTenantId))
+                {
+                    throw new AuthenticationException($"Missing or invalid {HttpHeaders.XmsClientTenantId} header");
+                }
+
+                tenantId = parsedTenantId;
             }
 
             var subjectAndAppToken = SubjectAndAppToken.Parse(authValues.Single());
@@ -70,8 +77,9 @@ namespace Boilerplate.Services
                 tenantId,
                 subjectAndAppToken,
                 SubjectAndAppAuthAllowedScopes,
-                requireSubjectToken);
-            
+                requireSubjectToken,
+                requireTenantIdHeader);
+
             return authorizationContext;
         }
 
@@ -137,11 +145,18 @@ namespace Boilerplate.Services
         }
 
         private async Task<AuthorizationContext> Authenticate(
-            Guid subjectTenantId,
+            Guid? subjectTenantId,
             SubjectAndAppToken subjectAndAppToken,
             IList<string> allowedScopes,
-            bool requireSubjectToken = true)
+            bool requireSubjectToken = true,
+            bool requireTenantIdHeader = true)
         {
+            if (requireTenantIdHeader && !subjectTenantId.HasValue)
+            {
+                _logger.LogError("subjectTenantId header is missing");
+                throw new AuthenticationException("subjectTenantId header is missing");
+            }
+
             var openIdConnectConfiguration = await GetOpenIdConnectConfiguration();
 
             var appClaims = ValidateAadTokenCommon(subjectAndAppToken.AppToken, openIdConnectConfiguration, isAppOnly: true);
@@ -156,19 +171,26 @@ namespace Boilerplate.Services
                     throw new AuthenticationException("SubjectAndAppToken is missing subject token");
                 }
 
-                return new AuthorizationContext { TenantObjectId = subjectTenantId };
+                if (requireTenantIdHeader)
+                {
+                    return new AuthorizationContext { TenantObjectId = subjectTenantId.Value };
+                }
+                else
+                {
+                    return new AuthorizationContext { };
+                }
             }
 
             var subjectClaims = ValidateAadTokenCommon(subjectAndAppToken.SubjectToken, openIdConnectConfiguration, isAppOnly: false);
             ValidateClaimValue(subjectClaims, "appid", appTokenAppId, "subject and app tokens should belong to same application");
-            ValidateClaimValue(subjectClaims, "tid", subjectTenantId.ToString(), "subject tokens must belong to the subject's tenant");
+            ValidateClaimValue(subjectClaims, "tid", subjectTenantId.Value.ToString(), "subject tokens must belong to the subject's tenant");
 
             ValidateAnyScope(subjectClaims, allowedScopes);
 
             return new AuthorizationContext
             {
                 OriginalSubjectToken = subjectAndAppToken.SubjectToken,
-                TenantObjectId = subjectTenantId,
+                TenantObjectId = subjectTenantId.Value,
                 Claims = subjectClaims.ToList()
             };
         }

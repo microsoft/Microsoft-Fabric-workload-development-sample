@@ -156,14 +156,15 @@ namespace Boilerplate.Tests
             }
         }
 
-        protected void SetupAuthenticateControlPlaneCall(bool expectedRequireSubjectToken, Exception? err_exception = null)
+        protected void SetupAuthenticateControlPlaneCall(bool expectedRequireSubjectToken, bool expectedRequireTenantIdHeader, Exception? err_exception = null)
         {
             var setupWithCallback = AuthenticationServiceMock
-                .Setup(m => m.AuthenticateControlPlaneCall(It.IsAny<HttpContext>(), It.IsAny<bool>()))
-                .Callback((HttpContext _httpContext, bool _requireSubjectToken) =>
+                .Setup(m => m.AuthenticateControlPlaneCall(It.IsAny<HttpContext>(), It.IsAny<bool>(), It.IsAny<bool>()))
+                .Callback((HttpContext _httpContext, bool _requireSubjectToken, bool _requireTenantIdHeader) =>
                 {
                     Assert.That(_httpContext, Is.EqualTo(HttpContext));
                     Assert.That(_requireSubjectToken, Is.EqualTo(expectedRequireSubjectToken), "The requireSubjectToken argument does not match the expected value.");
+                    Assert.That(_requireTenantIdHeader, Is.EqualTo(expectedRequireTenantIdHeader), "The requireTenantIdHeader argument does not match the expected value.");
                 });
 
             if (err_exception == null)
