@@ -48,10 +48,10 @@ namespace Fabric_Extension_BE_Boilerplate.Controllers
                 throw new ArgumentException("ResolveAsync: The resolution context is missing or empty.", nameof(body.Context));
             }
 
-            var authorizationContext = await _authenticationService.AuthenticateControlPlaneCall(_httpContextAccessor.HttpContext, requireSubjectToken: false);
+            var authorizationContext = await _authenticationService.AuthenticateControlPlaneCall(_httpContextAccessor.HttpContext, requireSubjectToken: false, requireTenantIdHeader: false);
 
             // Implement the actual logic to resolve the endpoint based on the request's properties.
-            var resolvedUrl = ResolveEndpointUrl(body, authorizationContext.TenantObjectId);
+            var resolvedUrl = ResolveEndpointUrl(body);
 
             // The TTL is set to a default value; adjust as necessary based on caching requirements.
             int ttlInMinutes = 60;
@@ -67,13 +67,13 @@ namespace Fabric_Extension_BE_Boilerplate.Controllers
             return response;
         }
 
-        private string ResolveEndpointUrl(EndpointResolutionRequest request, Guid TenantObjectId)
+        private string ResolveEndpointUrl(EndpointResolutionRequest request)
         {
             // Placeholder for actual endpoint resolution logic.
             // This should be replaced with the real implementation.
 
             string contextJson = Newtonsoft.Json.JsonConvert.SerializeObject(request.Context);
-            _logger.LogInformation($"Resolving endpoint for TenantObjectId: {TenantObjectId} with Context Properties: {contextJson}");
+            _logger.LogInformation($"Resolving endpoint with Context Properties: {contextJson}");
 
             var httpContext = _httpContextAccessor.HttpContext;
 
