@@ -65,7 +65,7 @@ namespace Boilerplate.Services
                     tenantIdValues.Count != 1 ||
                     !Guid.TryParse(tenantIdValues.Single(), out var parsedTenantId))
                 {
-                    throw new AuthenticationException($"Missing or invalid {HttpHeaders.XmsClientTenantId} header");
+                        throw new AuthenticationException($"Missing or invalid {HttpHeaders.XmsClientTenantId} header");
                 }
 
                 tenantId = parsedTenantId;
@@ -160,7 +160,7 @@ namespace Boilerplate.Services
             var openIdConnectConfiguration = await GetOpenIdConnectConfiguration();
 
             var appClaims = ValidateAadTokenCommon(subjectAndAppToken.AppToken, openIdConnectConfiguration, isAppOnly: true);
-            var appTokenAppId = ValidateClaimValue(appClaims, "appid", EnvironmentConstants.FabricBackendAppId, "app-only token must belong to Fabric BE");
+            var appTokenAppId = ValidateClaimOneOfValues(appClaims, "appid", new List<string> { EnvironmentConstants.FabricBackendAppId, EnvironmentConstants.FabricClientForWorkloadsAppId }, "app-only token must belong to Fabric BE or Fabric client for workloads");
             ValidateClaimValue(appClaims, "tid", _publisherTenantId, "app token must be in the publisher's tenant");
 
             if (string.IsNullOrEmpty(subjectAndAppToken.SubjectToken))
@@ -312,6 +312,22 @@ namespace Boilerplate.Services
                     expectedValue,
                     reason,
                     actualValue);
+
+                throw new AuthenticationException("Unexpected token format");
+            }
+
+            return actualValue;
+        }
+
+        private string ValidateClaimOneOfValues(IEnumerable<Claim> claims, string claimType, IList<string> expectedValues, string reason)
+        {
+            var actualValue = claims.GetClaimValueOrDefault(claimType);
+            if (!expectedValues.Contains(actualValue))
+            {
+                _logger.LogError(
+                    "Missing or unexpected claim value: claimType='{0}', reason='{1}'",
+                    claimType,
+                    reason);
 
                 throw new AuthenticationException("Unexpected token format");
             }
