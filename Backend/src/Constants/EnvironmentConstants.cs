@@ -15,6 +15,8 @@ namespace Boilerplate.Constants
 
         public const string FabricBackendAppId = "00000009-0000-0000-c000-000000000000";
 
+        public const string FabricClientForWorkloadsAppId = "d2450708-699c-41e3-8077-b0c8341509aa";
+
         public const string OneLakeResourceId = "https://storage.azure.com";
 
         public const string AadInstanceUrl = "https://login.microsoftonline.com";

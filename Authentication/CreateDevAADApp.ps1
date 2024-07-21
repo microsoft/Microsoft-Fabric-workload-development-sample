@@ -35,6 +35,10 @@ if (-not $applicationName) {
 if (-not $workloadName) {
     $workloadName = Read-Host "Enter your workload name"
 }
+while (-not ($workloadName -match "^Org\.[^.]+$"))
+{
+    $workloadName = Read-Host "Workload name must start with Org. and contain only 2 segments!. please re-enter your workload name"
+}
 if (-not $tenantId) {
     $tenantId = Read-Host "Enter your tenant id (tenant id of the user you are using in Fabric to develop your workload)"
 }
@@ -127,9 +131,15 @@ $application = @{
                 delegatedPermissionIds = @(
                     $Item1ReadAllGuid, $Item1ReadWriteAllGuid, $FabricLakehouseReadAllGuid, $FabricLakehouseReadWriteAllGuid 
                 )
-            }
+            },
              @{
                 appId = "00000009-0000-0000-c000-000000000000"
+                delegatedPermissionIds = @(
+                    $FabricWorkloadControlGuid
+                )
+            },
+            @{
+                appId = "d2450708-699c-41e3-8077-b0c8341509aa"
                 delegatedPermissionIds = @(
                     $FabricWorkloadControlGuid
                 )
