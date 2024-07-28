@@ -13,6 +13,5 @@
     <!-- Include the XML and JSON files in the root of the package -->
     <file src="WorkloadManifest.xml" target="BE\WorkloadManifest.xml" />
     <file src="Item1.xml" target="BE\Item1.xml" />
-    <file src="FrontEndManifest.json" target="" />
   </files>
 </package>
