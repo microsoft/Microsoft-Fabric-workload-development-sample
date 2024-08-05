@@ -4,13 +4,16 @@
 
 using Boilerplate.Services;
 using Fabric_Extension_BE_Boilerplate.Contracts.FabricAPI.Workload;
+using Fabric_Extension_BE_Boilerplate.Utils;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
 namespace Fabric_Extension_BE_Boilerplate.Controllers
 {
+    [ServiceFilter(typeof(RequestLoggingFilter))]
     internal class ItemLifecycleControllerImpl : IItemLifecycleController
     {
         private readonly IHttpContextAccessor _httpContextAccessor;

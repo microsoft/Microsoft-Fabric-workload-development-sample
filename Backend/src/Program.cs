@@ -6,6 +6,7 @@ using Boilerplate.Constants;
 using Boilerplate.Services;
 using Fabric_Extension_BE_Boilerplate.Contracts.FabricAPI.Workload;
 using Fabric_Extension_BE_Boilerplate.Controllers;
+using Fabric_Extension_BE_Boilerplate.Utils;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -46,6 +47,9 @@ namespace Boilerplate
 
                         // Access to ASP.NET Core HttpContext
                         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+                        // HTTP requests logging
+                        services.AddScoped<RequestLoggingFilter>();
 
                         // Microsoft Entra (Azure Active Directory) tokens validation and generation, authentication, authorization
                         AddOpenIdConnectConfigurationManager(services);

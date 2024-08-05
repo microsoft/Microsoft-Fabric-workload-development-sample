@@ -3,6 +3,7 @@
 // </copyright>
 
 using Boilerplate.Exceptions;
+using Fabric_Extension_BE_Boilerplate.Utils;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -28,6 +29,7 @@ namespace Boilerplate
                 .AddControllers(options =>
                 {
                     options.Filters.Add<HttpResponseExceptionFilter>();
+                    options.Filters.Add<RequestLoggingFilter>();
                 })
                 .AddNewtonsoftJson(options =>
                 {
