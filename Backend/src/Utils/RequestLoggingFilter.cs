@@ -18,6 +18,13 @@ namespace Fabric_Extension_BE_Boilerplate.Utils
         private readonly ILogger<RequestLoggingFilter> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
+        private static readonly List<string> HeaderKeysToLog = new List<string>
+        {
+            HttpHeaders.RequestId,
+            HttpHeaders.ActivityId,
+            HttpHeaders.XmsClientTenantId,
+        };
+
         public RequestLoggingFilter(ILogger<RequestLoggingFilter> logger, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
@@ -26,8 +33,8 @@ namespace Fabric_Extension_BE_Boilerplate.Utils
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            var actionName = context.ActionDescriptor.DisplayName;
-            var arguments = context.ActionArguments;
+            var actionName = context.ActionDescriptor?.DisplayName ?? "UnknownAction";
+            var arguments = context.ActionArguments ?? new Dictionary<string, object>();
 
             var timestamp = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff");
             var serializedArguments = JsonConvert.SerializeObject(arguments, Formatting.None);
@@ -43,14 +50,8 @@ namespace Fabric_Extension_BE_Boilerplate.Utils
         private static IDictionary<string, string> GetHeaders(HttpContext httpContext)
         {
             var headersToLog = new Dictionary<string, string>();
-            var headerKeys = new List<string>
-            {
-                HttpHeaders.RequestId,
-                HttpHeaders.ActivityId,
-                HttpHeaders.XmsClientTenantId,
-            };
-
-            foreach (var key in headerKeys)
+           
+            foreach (var key in HeaderKeysToLog)
             {
                 if (httpContext.Request.Headers.TryGetValue(key, out var headerValue))
                 {
