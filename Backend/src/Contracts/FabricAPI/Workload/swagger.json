@@ -135,7 +135,7 @@
       ]
     },
     "CreateItemPayload": {
-      "description": "Creation payload specific to the workload and item type.",
+      "description": "Creation payload specific to the workload and item type. Fabric forwards this payload as-is to your backend system without storing or examining its contents.",
       "type": "object",
       "additionalProperties": true
     },
@@ -161,8 +161,9 @@
       "required": [ "displayName" ],
       "properties": {
         "displayName": {
-          "description": "The item display name.",
+          "description": "The item display name. Cannot exceed 256 characters.",
           "type": "string",
+          "maxLength": 256,
           "readOnly": false
         },
         "description": {
@@ -171,7 +172,7 @@
           "readOnly": false
         },
         "creationPayload": {
-          "description": "Creation payload specific to the workload and item type, passed by the item editor or as Fabric Automation API parameter.",
+          "description": "Creation payload specific to the workload and item type. Passed by the item editor or as Fabric automation API parameter.",
           "$ref": "#/definitions/CreateItemPayload",
           "readOnly": false
         }
@@ -183,8 +184,9 @@
       "additionalProperties": false,
       "properties": {
         "displayName": {
-          "description": "The item display name.",
+          "description": "The item display name. Cannot exceed 256 characters.",
           "type": "string",
+          "maxLength": 256,
           "readOnly": false
         },
         "description": {
@@ -193,7 +195,7 @@
           "readOnly": false
         },
         "updatePayload": {
-          "description": "Update payload specific to the workload and item type, passed by the item editor or as Fabric Automation API parameter.",
+          "description": "Update payload specific to the workload and item type. Passed by the item editor or as Fabric automation API parameter.",
           "$ref": "#/definitions/UpdateItemPayload",
           "readOnly": false
         }
@@ -261,12 +263,13 @@
     },
     "EndpointResolutionContextPropertyName": {
       "type": "string",
-      "enum": [ "EndpointName", "TenantRegion", "WorkspaceRegion" ],
+      "enum": ["EndpointName", "TenantRegion", "WorkspaceRegion", "TenantId"],
       "description": "The name of the property for endpoint resolution context."
     },
     "EndpointResolutionContextProperty": {
       "type": "object",
-      "required": [ "name", "value" ],
+      "description": "Defines a context property used in endpoint resolution. This property must be specified in the workload manifest to ensure correct endpoint determination by Fabric.",
+      "required": ["name", "value"],
       "properties": {
         "name": {
           "$ref": "#/definitions/EndpointResolutionContextPropertyName",
@@ -281,7 +284,7 @@
     },
     "EndpointResolutionRequest": {
       "type": "object",
-      "required": [ "context" ],
+      "required": ["context"],
       "properties": {
         "context": {
           "type": "array",
@@ -295,7 +298,7 @@
     },
     "EndpointResolutionResponse": {
       "type": "object",
-      "required": [ "url", "ttlInMinutes" ],
+      "required": ["url", "ttlInMinutes"],
       "properties": {
         "url": {
           "type": "string",
@@ -322,7 +325,7 @@
     "/workspaces/{workspaceId}/items/{itemType}/{itemId}": {
       "post": {
         "summary": "Called by Microsoft Fabric for creating a new item.",
-        "description": "Upon item creation Fabric performs some basic validations, creates the item with 'provisioning' state and calls this API to notify the workload. The workload is expected to perform required validations, store the item metadata, allocate required resources, and update the Fabric item metadata cache with item relations and ETag. To learn more see [Microsoft Fabric item update flow](https://updateflow).\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "description": "Upon item creation Fabric performs basic validations, creates the item in a provisioning state and calls this API to notify the workload. The workload is expected to perform required validations, store the item metadata, allocate required resources, and update the Fabric item metadata cache with item relations and ETag.\n\nThis API should accept SubjectAndApp authentication.\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
         "operationId": "ItemLifecycle_CreateItem",
         "tags": [ "ItemLifecycle" ],
         "consumes": [ "application/json" ],
@@ -359,10 +362,38 @@
               "$ref": "#/definitions/CreateItemRequest"
             },
             "required": true
+          },
+          {
+            "in": "header",
+            "name": "ActivityId",
+            "description": "A unique ID for correlating the request with your system when a user interacts with your workload.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "RequestId",
+            "description": "A globally unique ID that helps Fabric correlate your request with our logs. Provide this ID when reporting an issue.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "A dual token authorization header that allows the workload to validate the request origin, provide user context, and call other services. This header has the following format: `SubjectAndAppToken1.0 subjectToken=\"delegated token\", appToken=\"S2S token\"`.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "x-ms-client-tenant-id",
+            "description": "The tenant ID of the client making the request.",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
-          "201": {
+          "200": {
             "description": "Successfully created."
           },
           "default": {
@@ -377,7 +408,7 @@
       },
       "patch": {
         "summary": "Called by Microsoft Fabric for updating an existing item.",
-        "description": "Upon item update Fabric performs some basic validations and calls this API to notify the workload. The workload is expected to perform required validations, store the item metadata, allocate and/or free resources, and update the Fabric item metadata cache with item relations and ETag. To learn more see [Microsoft Fabric item update flow](https://updateflow).\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "description": "Upon item update Fabric performs basic validations and calls this API to notify the workload. The workload is expected to perform required validations, store the item metadata, allocate and/or free resources, and update the Fabric item metadata cache with item relations and ETag.\n\nThis API should accept SubjectAndApp authentication.\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
         "operationId": "ItemLifecycle_UpdateItem",
         "tags": [ "ItemLifecycle" ],
         "consumes": [ "application/json" ],
@@ -414,6 +445,34 @@
               "$ref": "#/definitions/UpdateItemRequest"
             },
             "required": true
+          },
+          {
+            "in": "header",
+            "name": "ActivityId",
+            "description": "A unique ID for correlating the request with your system when a user interacts with your workload.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "RequestId",
+            "description": "A globally unique ID that helps Fabric correlate your request with our logs. Provide this ID when reporting an issue.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "A dual token authorization header that allows the workload to validate the request origin, provide user context, and call other services. This header has the following format: `SubjectAndAppToken1.0 subjectToken=\"delegated token\", appToken=\"S2S token\"`.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "x-ms-client-tenant-id",
+            "description": "The tenant ID of the client making the request.",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -432,7 +491,7 @@
       },
       "delete": {
         "summary": "Called by Microsoft Fabric for deleting an existing item.",
-        "description": "Upon item deletion Fabric performs some basic validations and calls this API to notify the workload. The workload is expected to delete the item metadata and free resources. \n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication). However, the subject token may be unavailable in some cases.\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "description": "Upon item deletion Fabric performs basic validations and calls this API to notify the workload. The workload is expected to delete the item metadata and free resources. \n\nThis API should accept SubjectAndApp authentication. However, the subject token may be unavailable in some cases.\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
         "operationId": "ItemLifecycle_DeleteItem",
         "tags": [ "ItemLifecycle" ],
         "produces": [ "application/json" ],
@@ -459,6 +518,34 @@
             "type": "string",
             "format": "uuid",
             "required": true
+          },
+          {
+            "in": "header",
+            "name": "ActivityId",
+            "description": "A unique ID for correlating the request with your system when a user interacts with your workload.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "RequestId",
+            "description": "A globally unique ID that helps Fabric correlate your request with our logs. Provide this ID when reporting an issue.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "A dual token authorization header that allows the workload to validate the request origin, provide user context, and call other services. This header has the following format: `SubjectAndAppToken1.0 subjectToken=\"delegated token\", appToken=\"S2S token\"`.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "x-ms-client-tenant-id",
+            "description": "The tenant ID of the client making the request.",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -479,7 +566,7 @@
     "/workspaces/{workspaceId}/items/{itemType}/{itemId}/payload": {
       "get": {
         "summary": "Called by Microsoft Fabric for retrieving the workload payload for an item.",
-        "description": "When the item editor <iframe> requests an item, Fabric performs some basic validations and calls this API to retrieve the payload from the workload.\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "description": "When the item editor &lt;iframe&gt; requests an item, Fabric performs basic validations and calls this API to retrieve the payload from the workload.\n\nThis API accepts SubjectAndApp authentication.\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
         "operationId": "ItemLifecycle_GetItemPayload",
         "tags": [ "ItemLifecycle" ],
         "produces": [ "application/json" ],
@@ -506,6 +593,34 @@
             "type": "string",
             "format": "uuid",
             "required": true
+          },
+          {
+            "in": "header",
+            "name": "ActivityId",
+            "description": "A unique ID for correlating the request with your system when a user interacts with your workload.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "RequestId",
+            "description": "A globally unique ID that helps Fabric correlate your request with our logs. Provide this ID when reporting an issue.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "A dual token authorization header that allows the workload to validate the request origin, provide user context, and call other services. This header has the following format: `SubjectAndAppToken1.0 subjectToken=\"delegated token\", appToken=\"S2S token\"`.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "x-ms-client-tenant-id",
+            "description": "The tenant ID of the client making the request.",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -529,7 +644,7 @@
     "/workspaces/{workspaceId}/items/{itemType}/{itemId}/jobTypes/{jobType}/instances/{jobInstanceId}": {
       "post": {
         "summary": "Called by Microsoft Fabric for starting a new job instance.",
-        "description": "Fabric performs some basic validations and calls this API to start a new instance of the job in the workload.\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "description": "Fabric performs basic validations and calls this API to start a new instance of the job in the workload.\n\nThis API should accept SubjectAndApp authentication.\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
         "operationId": "Jobs_CreateItemJobInstance",
         "tags": [ "Jobs" ],
         "consumes": [ "application/json" ],
@@ -581,6 +696,34 @@
               "$ref": "#/definitions/CreateItemJobInstanceRequest"
             },
             "required": true
+          },
+          {
+            "in": "header",
+            "name": "ActivityId",
+            "description": "A unique ID for correlating the request with your system when a user interacts with your workload.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "RequestId",
+            "description": "A globally unique ID that helps Fabric correlate your request with our logs. Provide this ID when reporting an issue.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "A dual token authorization header that allows the workload to validate the request origin, provide user context, and call other services. This header has the following format: `SubjectAndAppToken1.0 subjectToken=\"delegated token\", appToken=\"S2S token\"`.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "x-ms-client-tenant-id",
+            "description": "The tenant ID of the client making the request.",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -599,7 +742,7 @@
       },
       "get": {
         "summary": "Called by Microsoft Fabric for retrieving a job instance state.",
-        "description": "Fabric performs some basic validations and calls this API to retrieve the item job instance state in the workload.\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "description": "Fabric performs basic validations and calls this API to retrieve the item job instance state in the workload.\n\nThis API should accept SubjectAndApp authentication.\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
         "operationId": "Jobs_GetItemJobInstanceState",
         "tags": [ "Jobs" ],
         "produces": [ "application/json" ],
@@ -641,6 +784,34 @@
             "type": "string",
             "format": "uuid",
             "required": true
+          },
+          {
+            "in": "header",
+            "name": "ActivityId",
+            "description": "A unique ID for correlating the request with your system when a user interacts with your workload.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "RequestId",
+            "description": "A globally unique ID that helps Fabric correlate your request with our logs. Provide this ID when reporting an issue.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "A dual token authorization header that allows the workload to validate the request origin, provide user context, and call other services. This header has the following format: `SubjectAndAppToken1.0 subjectToken=\"delegated token\", appToken=\"S2S token\"`.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "x-ms-client-tenant-id",
+            "description": "The tenant ID of the client making the request.",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -664,7 +835,7 @@
     "/workspaces/{workspaceId}/items/{itemType}/{itemId}/jobTypes/{jobType}/instances/{jobInstanceId}/cancel": {
       "post": {
         "summary": "Called by Microsoft Fabric for cancelling a job instance.",
-        "description": "Fabric performs some basic validations and calls this API to cancel an item job instance in the workload.\n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication).\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "description": "Fabric performs basic validations and calls this API to cancel an item job instance in the workload.\n\nThis API should accept SubjectAndApp authentication.\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
         "operationId": "Jobs_CancelItemJobInstance",
         "tags": [ "Jobs" ],
         "produces": [ "application/json" ],
@@ -706,6 +877,34 @@
             "type": "string",
             "format": "uuid",
             "required": true
+          },
+          {
+            "in": "header",
+            "name": "ActivityId",
+            "description": "A unique ID for correlating the request with your system when a user interacts with your workload.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "RequestId",
+            "description": "A globally unique ID that helps Fabric correlate your request with our logs. Provide this ID when reporting an issue.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "A dual token authorization header that allows the workload to validate the request origin, provide user context, and call other services. This header has the following format: `SubjectAndAppToken1.0 subjectToken=\"delegated token\", appToken=\"S2S token\"`.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "x-ms-client-tenant-id",
+            "description": "The tenant ID of the client making the request.",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -729,7 +928,7 @@
     "/resolve-api-path-placeholder": {
       "post": {
         "summary": "Resolve an endpoint for a given service called by Microsoft Fabric",
-        "description": "Resolves the endpoint for a given service called by Microsoft Fabric based on the tenant's region and workspace region. \n\nThis API should accept [SubjectAndApp authentication](https://subjectandappauthentication). However, the subject token should never be present.\n\n## Permissions\n\nPermissions are checked by Microsoft Fabric.",
+        "description": "Resolves the endpoint for a given service called by Microsoft Fabric based on the tenant's region and workspace region. Fabric provides a set of context properties and returns the appropriate service endpoint URL and its time-to-live (TTL).\n\nThe Endpoint Resolution API is crucial for services that require dynamic endpoint determination based on operational context. This allows for optimized routing and regional compliance.\n\nTo resolve an endpoint, Fabric will send a POST request with the required context properties in the request body. The response will contain the resolved URL and its TTL, which indicates how long the URL is considered valid.\n\nFor a sample implementation and usage examples, please refer to the [Endpoint Resolution Sample Code](https://github.com/microsoft/Microsoft-Fabric-workload-development-sample/blob/main/Backend/src/Controllers/EndpointResolutionControllerImpl.cs).",
         "operationId": "EndpointResolution_Resolve",
         "tags": [ "EndpointResolution" ],
         "consumes": [ "application/json" ],
@@ -743,6 +942,27 @@
             "schema": {
               "$ref": "#/definitions/EndpointResolutionRequest"
             }
+          },
+          {
+            "in": "header",
+            "name": "ActivityId",
+            "description": "A unique ID for correlating the request with your system when a user interacts with your workload.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "RequestId",
+            "description": "A globally unique ID that helps Fabric correlate your request with our logs. Provide this ID when reporting an issue.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "header",
+            "name": "Authorization",
+            "description": "A dual token authorization header that allows the workload to validate the request origin, provide user context, and call other services. This header has the following format: `SubjectAndAppToken1.0 subjectToken=\"delegated token\", appToken=\"S2S token\"`.",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {

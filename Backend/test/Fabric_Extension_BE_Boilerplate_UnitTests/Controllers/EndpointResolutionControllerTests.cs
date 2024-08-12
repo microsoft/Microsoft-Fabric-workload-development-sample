@@ -39,6 +39,11 @@ namespace Boilerplate.Tests
                     {
                         Name = EndpointResolutionContextPropertyName.WorkspaceRegion,
                         Value = "West Central US"
+                    },
+                    new EndpointResolutionContextProperty
+                    {
+                        Name = EndpointResolutionContextPropertyName.TenantId,
+                        Value = "4eaab2d1-9704-450f-8497-f3132be244ed"
                     }
                 }
             };
@@ -125,6 +130,11 @@ namespace Boilerplate.Tests
                     {
                         Name = EndpointResolutionContextPropertyName.WorkspaceRegion,
                         Value = "West Central US"
+                    },
+                    new EndpointResolutionContextProperty
+                    {
+                        Name = EndpointResolutionContextPropertyName.TenantId,
+                        Value = "4eaab2d1-9704-450f-8497-f3132be244ed"
                     }
                 }
             };

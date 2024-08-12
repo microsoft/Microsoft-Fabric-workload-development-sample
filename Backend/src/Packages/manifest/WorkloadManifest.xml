@@ -17,6 +17,7 @@
             <IsEndpointResolutionService>true</IsEndpointResolutionService>
             <EndpointResolutionContext>
               <ResolutionContextProperty>WorkspaceRegion</ResolutionContextProperty>
+              <ResolutionContextProperty>TenantId</ResolutionContextProperty>
             </EndpointResolutionContext>
           </ServiceEndpoint>
           <ServiceEndpoint>
