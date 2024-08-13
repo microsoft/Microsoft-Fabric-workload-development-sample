@@ -14,7 +14,7 @@
           <ServiceEndpoint>
             <Name>Workload</Name>
             <Url>https://be.endpointurl.net/workload/resolve-api-path-placeholder</Url>
-            <IsEndpointResolutionService>true</IsEndpointResolutionService>
+            <IsEndpointResolutionService>false</IsEndpointResolutionService>
             <EndpointResolutionContext>
               <ResolutionContextProperty>WorkspaceRegion</ResolutionContextProperty>
               <ResolutionContextProperty>TenantId</ResolutionContextProperty>
