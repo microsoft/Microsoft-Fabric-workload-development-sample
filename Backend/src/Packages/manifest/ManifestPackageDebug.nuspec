@@ -10,9 +10,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
   </metadata>
   <files>
-    <!-- Include the XML and JSON files in the root of the package -->
+    <!-- Include the XML and FE files -->
     <file src="WorkloadManifest.xml" target="BE\WorkloadManifest.xml" />
     <file src="Item1.xml" target="BE\Item1.xml" />
-    <file src="FrontEndManifest.json" target="" />
+    <file src="..\..\..\..\Frontend\Package\*" target="FE" />
+    <file src="..\..\..\..\Frontend\Package\assets\*" target="FE\assets" />
   </files>
 </package>

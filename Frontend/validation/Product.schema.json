@@ -1,200 +1,334 @@
 {
-  "type": "object",
-  "properties": {
-    "name": {
-      "type": "string",
-      "description": "A unique system name of the product"
-    },
-    "displayName": {
-      "type": "string",
-      "description": "A display name of the product"
-    },
-    "fullDisplayName": {
-      "type": "string",
-      "description": "A full display name of the product"
-    },
-    "favicon": {
-      "type": "string",
-      "description": "The favicon"
-    },
-    "icon": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "Name of the icon located under the assets folder",
-          "examples": ["assets/icon.png"]
-        }
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "A unique system name of the product"
       },
-      "required": ["name"],
-      "additionalProperties": false
-    },
-    "homePage": {
-      "type": "object",
-      "properties": {
-        "learningMaterials": {
-          "type": "array",
-          "minItems": 1,
-          "items": {
+      "displayName": {
+        "type": "string",
+        "description": "A display name of the product"
+      },
+      "fullDisplayName": {
+        "type": "string",
+        "description": "A full display name of the product"
+      },
+      "favicon": {
+        "type": "string",
+        "description": "The favicon"
+      },
+      "icon": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the icon located under the assets folder",
+            "examples": ["assets/icon.png"]
+          }
+        },
+        "required": ["name"],
+        "additionalProperties": false
+      },
+      "homePage": {
+        "type": "object",
+        "properties": {
+          "learningMaterials": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "description": "Title of the learning material, shows at the bottom of the recommendation card"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description of the learning material, shows in the tooltip"
+                },
+                "onClick": {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "description": "The name of the action"
+                    }
+                  },
+                  "required": ["action"],
+                  "additionalProperties": false
+                },
+                "image": {
+                  "type": "string",
+                  "description": "Name of the image located under the assets folder",
+                  "examples": ["assets/img.png"]
+                }
+              },
+              "required": ["title", "description", "onClick", "image"],
+              "additionalProperties": false
+            }
+          },
+          "recommendedItemTypes": {
+            "type": "array",
+            "description": "An array of recommendedItemTypes",
+            "items": { "type": "string" }
+          },
+          "newSection": {
             "type": "object",
             "properties": {
-              "title": {
-                "type": "string",
-                "description": "Title of the learning material, shows at the bottom of the recommendation card"
-              },
-              "description": {
-                "type": "string",
-                "description": "Description of the learning material, shows in the tooltip"
-              },
-              "onClick": {
-                "type": "object",
-                "properties": {
-                  "action": {
-                    "type": "string",
-                    "description": "The name of the action"
-                  }
-                },
-                "required": ["action"],
-                "additionalProperties": false
-              },
-              "image": {
-                "type": "string",
-                "description": "Name of the image located under the assets folder",
-                "examples": ["assets/img.png"]
+              "customActions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "icon": {
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "description": "Name of the icon located under the assets folder",
+                          "examples": ["assets/icon.png"]
+                        }
+                      },
+                      "required": ["name"],
+                      "additionalProperties": false
+                    },
+                    "onClick": {
+                      "type": "object",
+                      "properties": {
+                        "action": {
+                          "type": "string",
+                          "description": "The name of the action"
+                        }
+                      },
+                      "required": ["action"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["title", "icon", "onClick"]
+                }
               }
             },
-            "required": ["title", "description", "onClick", "image"],
             "additionalProperties": false
           }
         },
-        "recommendedItemTypes": {
-          "type": "array",
-          "description": "An array of recommendedItemTypes",
-          "items": { "type": "string" }
-        },
-        "newSection": {
-          "type": "object",
-          "properties": {
-            "customActions": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string"
-                  },
-                  "icon": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "description": "Name of the icon located under the assets folder",
-                        "examples": ["assets/icon.png"]
-                      }
-                    },
-                    "required": ["name"],
-                    "additionalProperties": false
-                  },
-                  "onClick": {
-                    "type": "object",
-                    "properties": {
-                      "action": {
-                        "type": "string",
-                        "description": "The name of the action"
-                      }
-                    },
-                    "required": ["action"],
-                    "additionalProperties": false
-                  }
-                },
-                "required": ["title", "icon", "onClick"]
-              }
-            }
-          },
-          "additionalProperties": false
-        }
+        "required": ["learningMaterials", "recommendedItemTypes"],
+        "additionalProperties": false
       },
-      "required": ["learningMaterials", "recommendedItemTypes"],
-      "additionalProperties": false
-    },
-    "createExperience": {
-      "type": "object",
-      "properties": {
-        "description": { "type": "string"},
-        "cards": {
-          "type": "array",
-          "description": "An array of cards",
-          "items": {
+      "createExperience": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string"},
+          "cards": {
+            "type": "array",
+            "description": "An array of cards",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string"},
+                "description": { "type": "string"},
+                "icon": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the icon located under the assets folder",
+                      "examples": ["assets/icon.png"]
+                    }
+                  },
+                  "required": ["name"],
+                  "additionalProperties": false
+                },
+                "icon_small": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Name of the icon located under the assets folder",
+                      "examples": ["assets/icon.png"]
+                    }
+                  },
+                  "required": ["name"],
+                  "additionalProperties": false
+                },
+                "onClick": {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "description": "The name of the action"
+                    }
+                  },
+                  "required": ["action"],
+                  "additionalProperties": false
+                },
+                "availableIn": {
+                  "type": "array",
+                  "items": { "type": "string" }
+                },
+                "itemType": {
+                  "type": "string",
+                  "description": "Item type linked to the create card"
+                }
+              },
+              "required": ["title", "description", "icon", "icon_small", "onClick", "availableIn"]
+            }
+          }
+        },
+        "required": ["description", "cards"],
+        "additionalProperties": false
+      },
+      "workspaceSettings": {
+        "type": "object",
+        "properties": {
+          "getWorkspaceSettings": {
             "type": "object",
             "properties": {
-              "title": { "type": "string"},
-              "description": { "type": "string"},
-              "icon": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Name of the icon located under the assets folder",
-                    "examples": ["assets/icon.png"]
-                  }
-                },
-                "required": ["name"],
-                "additionalProperties": false
-              },
-              "icon_small": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "Name of the icon located under the assets folder",
-                    "examples": ["assets/icon.png"]
-                  }
-                },
-                "required": ["name"],
-                "additionalProperties": false
-              },
-              "onClick": {
-                "type": "object",
-                "properties": {
-                  "action": {
-                    "type": "string",
-                    "description": "The name of the action"
-                  }
-                },
-                "required": ["action"],
-                "additionalProperties": false
-              },
-              "availableIn": {
-                "type": "array",
-                "items": { "type": "string" }
-              },
-              "itemType": {
+              "action": {
                 "type": "string",
-                "description": "Item type linked to the create card"
+                "description": "The name of the action"
               }
             },
-            "required": ["title", "description", "icon", "icon_small", "onClick", "availableIn"]
+            "required": ["action"],
+            "additionalProperties": false
           }
         }
       },
-      "required": ["description", "cards"],
-      "additionalProperties": false
-    },
-    "workspaceSettings": {
-      "type": "object",
-      "properties": {
-        "getWorkspaceSettings": {
-          "type": "object",
-          "properties": {
-            "action": {
-              "type": "string",
-              "description": "The name of the action"
+      "productDetail": {
+        "type": "object",
+        "properties": {
+          "publisher": {
+            "type": "string",
+            "description": "The publisher of the product"
+          },
+          "slogan": {
+            "type": "string",
+            "description": "The slogan of the product"
+          },
+          "description": {
+            "type": "string",
+            "description": "The description of the product"
+          },
+          "image": {
+            "type": "object",
+            "properties": {
+              "mediaType": {
+                "type": "integer",
+                "description": "The media type of the image"
+              },
+              "source": {
+                "type": "string",
+                "description": "The source of the image",
+                "examples": ["assets/BannerMedium.png"]
+              }
+            },
+            "required": ["mediaType", "source"],
+            "additionalProperties": false
+          },
+          "slideMedia": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "mediaType": {
+                  "type": "integer",
+                  "description": "The media type of the slide"
+                },
+                "source": {
+                  "type": "string",
+                  "description": "The source of the slide",
+                  "examples": ["assets/SampleWorkload1.png", "assets/SampleWorkload2.png"]
+                }
+              },
+              "required": ["mediaType", "source"],
+              "additionalProperties": false
             }
           },
-          "required": ["action"],
-          "additionalProperties": false
+          "supportLink": {
+            "type": "object",
+            "properties": {
+              "documentation": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "URL to the documentation"
+                  }
+                },
+                "required": ["url"],
+                "additionalProperties": false
+              },
+              "certification": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "URL to the certification"
+                  }
+                },
+                "required": ["url"],
+                "additionalProperties": false
+              },
+              "help": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "URL to the help page"
+                  }
+                },
+                "required": ["url"],
+                "additionalProperties": false
+              },
+              "privacy": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "URL to the privacy policy"
+                  }
+                },
+                "required": ["url"],
+                "additionalProperties": false
+              },
+              "terms": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "URL to the terms of service"
+                  }
+                },
+                "required": ["url"],
+                "additionalProperties": false
+              },
+              "license": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "description": "URL to the license"
+                  }
+                },
+                "required": ["url"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["documentation", "certification", "help", "privacy", "terms", "license"],
+            "additionalProperties": false
+          }
+        },
+        "required": ["publisher", "slogan", "description", "image", "slideMedia", "supportLink"],
+        "additionalProperties": false
+      },
+      "compatibleItemTypes": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "description": "A list of compatible item types"
         }
       }
     }
-  }
 }
