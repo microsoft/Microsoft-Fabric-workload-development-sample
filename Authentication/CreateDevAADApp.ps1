@@ -51,11 +51,11 @@ if (-not $tenantId) {
 
 $redirectUri = "http://localhost:60006/close"
 
-$FabricWorkloadControlGuid = New-Guid
-$Item1ReadAllGuid = New-Guid
-$Item1ReadWriteAllGuid = New-Guid
-$FabricLakehouseReadAllGuid = New-Guid
-$FabricLakehouseReadWriteAllGuid = New-Guid
+$FabricWorkloadControlGuid = (New-Guid).ToString()
+$Item1ReadAllGuid = (New-Guid).ToString()
+$Item1ReadWriteAllGuid = (New-Guid).ToString()
+$FabricLakehouseReadAllGuid = (New-Guid).ToString()
+$FabricLakehouseReadWriteAllGuid = (New-Guid).ToString()
 
 ## Generate URI
 
