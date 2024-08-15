@@ -13,7 +13,10 @@ try
     $ValidationErrorsFile = "ValidationErrors.txt"
     $outputFile = Join-Path -Path $outputDirectory -ChildPath $ValidationErrorsFile
 
-    Remove-Item $outputFile
+    if (Test-Path $outputFile)
+    {
+        Remove-Item $outputFile
+    }
 }
 catch
 {
