@@ -6,10 +6,10 @@
       "path": "/sample-workload-editor"
     },
     "icon": {
-      "name": "assets/execute.svg"
+      "name": "assets/execute.png"
     },
     "activeIcon": {
-      "name": "assets/execute.svg"
+      "name": "assets/execute.png"
     },
     "contextMenuItems": [
       {
@@ -22,7 +22,7 @@
         "name": "SampleItemCustomAction",
         "displayName": "Run calculate job",
         "icon": {
-          "name": "assets/execute.svg"
+          "name": "assets/execute.png"
         },
         "handler": {
           "action": "run.calculate.job"
@@ -35,7 +35,7 @@
         "name": "SampleItemCustomAction",
         "displayName": "Run short job",
         "icon": {
-          "name": "assets/execute.svg"
+          "name": "assets/execute.png"
         },
         "handler": {
           "action": "run.calculate.job"
@@ -44,6 +44,7 @@
       }
     ],
     "supportedInMonitoringHub": true,
+    "supportedInDatahubL1": true,
     "itemJobActionConfig": {
       "registeredActions": {
         "detail": {
@@ -59,11 +60,11 @@
     },
     "itemSettings": {
       "schedule": {
-        "itemJobType": "Org.WorkloadSample.SampleWorkloadItem.ScheduledJob",
+        "itemJobType": "ScheduledJob",
         "refreshType": "Refresh"
       },
       "recentRun": {
         "useRecentRunsComponent": true
       }
     }
-  }
+}

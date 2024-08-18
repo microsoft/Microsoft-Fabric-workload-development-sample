@@ -75,6 +75,10 @@
         "type": "boolean",
         "description": "Configuration to control if this item can be shown or filtered in monitoring hub page"
       },
+      "supportedInDatahubL1": {
+        "type": "boolean",
+        "description": "Configuration to control if this item can be shown or filtered in datahub L1 page"
+      },
       "itemJobActionConfig": {
         "type": "object",
         "properties": {

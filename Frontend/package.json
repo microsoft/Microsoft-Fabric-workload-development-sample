@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node validation/validateSchema.js && env-cmd -f .env.dev webpack serve --open --config ./tools/webpack.config.js",
-    "build:test": "env-cmd -f .env.test webpack --config ./tools/webpack.config.js",
+    "build:test": "node validation/validateSchema.js && env-cmd -f .env.test webpack --config ./tools/webpack.config.js",
     "build:prod": "env-cmd -f .env.prod webpack --config ./tools/webpack.config.js"
   },
   "author": "",

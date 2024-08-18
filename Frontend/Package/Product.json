@@ -3,9 +3,9 @@
     "displayName": "Sample Workload",
     "fullDisplayName": "Sample Workload",
     "description": "Sample Workload Description",
-    "favicon": "fabric.ico",
+    "favicon": "assets/wine.png",
     "icon": {
-      "name": "assets/briefcase.svg"
+      "name": "assets/wine.png"
     },
     "homePage": {
       "learningMaterials": [
@@ -15,12 +15,12 @@
           "onClick": {
             "action": "open.learningMaterial.dialog1"
           },
-          "image": "assets/dial.svg"
+          "image": "assets/dial.png"
         },
         {
           "title": "Learning Material example2",
           "description": "Learning Material example2 description",
-          "image": "assets/github.svg",
+          "image": "assets/github.png",
           "onClick": {
             "action": "open.learningMaterial.dialog2"
           }
@@ -31,7 +31,7 @@
             {
                 "title": "Frontend only playground",
                 "icon": {
-                  "name": "assets/briefcase.svg"
+                  "name": "assets/briefcase.png"
                 },
                 "onClick": {
                   "action": "open.createSampleWorkloadFrontendOnly"
@@ -49,10 +49,10 @@
           "title": "Sample Item",
           "description": "Create a Sample Workload Item for your Dev Experience",
           "icon": {
-            "name": "assets/dial.svg"
+            "name": "assets/dial.png"
           },
           "icon_small": {
-            "name": "assets/dial.svg"
+            "name": "assets/dial.png"
           },
           "onClick": {
             "action": "open.createSampleWorkload"
@@ -73,7 +73,7 @@
       "image": {
         "mediaType": 0,
         "source": "assets/BannerMedium.png"
-       },
+      },
       "slideMedia": [
         {
           "mediaType": 0,
@@ -94,4 +94,4 @@
       }
     },
     "compatibleItemTypes" : ["Lakehouse"]
-  }
+}
