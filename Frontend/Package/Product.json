@@ -3,9 +3,9 @@
     "displayName": "Sample Workload",
     "fullDisplayName": "Sample Workload",
     "description": "Sample Workload Description",
-    "favicon": "assets/wine.png",
+    "favicon": "assets/briefcase.png",
     "icon": {
-      "name": "assets/wine.png"
+      "name": "assets/briefcase.png"
     },
     "homePage": {
       "learningMaterials": [
