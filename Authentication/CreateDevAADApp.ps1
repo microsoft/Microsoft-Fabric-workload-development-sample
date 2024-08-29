@@ -197,6 +197,10 @@ $application = @{
                     @{
                         id = "13060bfd-9305-4ec6-8388-8916580f4fa9" # Lakehouse.Read.All
                         type = "Scope"
+                    },
+                    @{
+                        id = "7ba630b9-8110-4e27-8d17-81e5f2218787" # Fabric.Extend
+                        type = "Scope"
                     }
                 )
             }
