@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Stack } from "@fluentui/react";
 import {
@@ -112,19 +112,20 @@ export function SampleWorkloadEditor(props: PageProps) {
 
     useMemo(() => loadSupportedOperators(), [pageContext]);
 
-    // Controller callbacks registrations:
+    useEffect(() => {
+        // Controller callbacks registrations:
+        // register Blocking in Navigate.BeforeNavigateAway (for a forbidden url)
+        callNavigationBeforeNavigateAway(workloadClient);
 
-    // register Blocking in Navigate.BeforeNavigateAway (for a forbidden url)
-    callNavigationBeforeNavigateAway(workloadClient);
+        // register a callback in Navigate.AfterNavigateAway
+        callNavigationAfterNavigateAway(workloadClient);
 
-    // register a callback in Navigate.AfterNavigateAway
-    callNavigationAfterNavigateAway(workloadClient);
+        // register Theme.onChange
+        callThemeOnChange(workloadClient);
 
-    // register Theme.onChange
-    callThemeOnChange(workloadClient);
-
-    // register Settings.onChange
-    callSettingsOnChange(workloadClient);
+        // register Settings.onChange
+        callSettingsOnChange(workloadClient);
+    }, []);
 
     // callback functions called by UI controls below
 
