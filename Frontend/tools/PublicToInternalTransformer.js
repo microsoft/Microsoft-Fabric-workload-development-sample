@@ -36,8 +36,9 @@ class PublicToInternalTransformer {
 
 
     static ItemToInternal(publicSchema, workloadName, productName) {
+        const itemName = `${workloadName}.${publicSchema.name}`;
         const internalItemSchema = new InternalItem(
-            `${workloadName}.${publicSchema.name}`,
+            itemName,
             [`${workloadName}.${productName}`],
             publicSchema.displayName,
             publicSchema.displayNamePlural,
@@ -48,7 +49,7 @@ class PublicToInternalTransformer {
             publicSchema.quickActionItems?.map(mi => this.MenuItemToInternal(mi, workloadName)),
             publicSchema.supportedInMonitoringHub,
             this.JobActionConfigToInternal(publicSchema.itemJobActionConfig, workloadName),
-            this.ItemSettingsToInternal(publicSchema.itemSettings)
+            this.ItemSettingsToInternal(publicSchema.itemSettings, itemName)
         );
 
         return internalItemSchema;
@@ -192,7 +193,7 @@ class PublicToInternalTransformer {
         };
     }
 
-    static ItemSettingsToInternal(publicItemSettings) {
+    static ItemSettingsToInternal(publicItemSettings, itemName) {
         if (!publicItemSettings) {
             return null;
         }
@@ -200,7 +201,7 @@ class PublicToInternalTransformer {
         return {
             recentRun: publicItemSettings.recentRun,
             schedule: {
-                artifactJobType: publicItemSettings.schedule.itemJobType,
+                artifactJobType: `${itemName}.${publicItemSettings.schedule.itemJobType}`,
                 refreshType: publicItemSettings.schedule.refreshType
             }
         };
