@@ -62,7 +62,8 @@
             "create-hub",
             "workspace-plus-new",
             "workspace-plus-new-teams"
-          ]
+          ],
+          "itemType": "SampleWorkloadItem"
         }
       ]
     },

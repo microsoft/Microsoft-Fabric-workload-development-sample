@@ -173,7 +173,7 @@
                   "description": "Item type linked to the create card"
                 }
               },
-              "required": ["title", "description", "icon", "icon_small", "onClick", "availableIn"]
+              "required": ["title", "description", "icon", "icon_small", "onClick", "availableIn", "itemType"]
             }
           }
         },
