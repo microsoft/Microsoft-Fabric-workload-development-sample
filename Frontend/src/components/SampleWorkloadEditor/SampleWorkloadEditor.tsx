@@ -112,8 +112,14 @@ export function SampleWorkloadEditor(props: PageProps) {
 
     useMemo(() => loadSupportedOperators(), [pageContext]);
 
+    /**
+     * Callback registrations:
+     * The following useEffect hook contains functions that trigger the registration of callback functions using the workload Client API.
+     * Each function defines a callback that will be called when the corresponding event occurs (Before navigation, after navigation, etc.)
+     * If one of the following functions is called multiple times, it has no effect on the registration of the callback function.
+     * Thus, each callback should be registered once per session to avoid unnecessary calls to the API, and so the following calls are placed in the useEffect hook.
+     */ 
     useEffect(() => {
-        // Controller callbacks registrations:
         // register Blocking in Navigate.BeforeNavigateAway (for a forbidden url)
         callNavigationBeforeNavigateAway(workloadClient);
 
