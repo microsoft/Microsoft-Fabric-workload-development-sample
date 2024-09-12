@@ -28,12 +28,13 @@ import {
     RunItemJobParams,
     ThemeConfiguration,
     Tokens,
+    WorkloadErrorDetails,
 } from "@ms-fabric/workload-client";
 
 import { Dispatch, SetStateAction } from "react";
 import { GenericItem } from '../models/SampleWorkloadModel';
 import { jobTypeDisplayNames } from "../utils";
-
+import { AuthenticationUIRequiredException, AuthUIRequired, FabricExternalWorkloadError } from "../models/WorkloadExceptionsModel";
 // --- Notification API
 
 
@@ -470,6 +471,10 @@ export async function callItemCreate<T>(
         if (exception.error?.message?.code === "PowerBIMetadataArtifactDisplayNameInUseException") {
             console.log(`Name ${displayName} is taken...`);
         }
+         // Indicates that the error was returned from the workload
+         if (exception.error?.message?.code === FabricExternalWorkloadError) {
+            await handleWorkloadError(exception, workloadClient);
+        }
         throw exception;
     }
 }
@@ -480,16 +485,23 @@ export async function callItemCreate<T>(
  * 
  * @param {string} objectId - The ObjectId of the item to fetch
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {boolean} isRetry - Indicates that the call is a retry
  * @returns {GetItemResult} - A wrapper for the item's data
  */
-export async function callItemGet(objectId: string, workloadClient: WorkloadClientAPI): Promise<GetItemResult> {
+export async function callItemGet(objectId: string, workloadClient: WorkloadClientAPI, isRetry?: boolean): Promise<GetItemResult> {
     try {
         const item: GetItemResult = await workloadClient.itemCrud.getItem({ objectId });
         console.log(`Successfully fetched item ${objectId}: ${item}`)
 
         return item;
-    } catch (error) {
-        console.error(`Failed locating item with ObjectID ${objectId}`, error);
+    } catch (exception) {
+        // Indicates that the error was returned from the workload
+        if (exception.error?.message?.code === FabricExternalWorkloadError) {
+            if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
+                return callItemGet(objectId, workloadClient, true);
+            }
+        }
+        console.error(`Failed locating item with ObjectID ${objectId}`, exception);
         return null;
     }
 }
@@ -500,12 +512,14 @@ export async function callItemGet(objectId: string, workloadClient: WorkloadClie
  * @param {string} objectId - The ObjectId of the item to update
  * @param {T|undefined} - Additional metadata payload for the item (e.g., selected Lakehouse details).
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {boolean} isRetry - Indicates that the call is a retry
  * @returns {GetItemResult} - A wrapper for the item's data
  */
 export async function callItemUpdate<T>(
     objectId: string,
-    payloadData: T | undefined,  
-    workloadClient: WorkloadClientAPI) {
+    payloadData: T | undefined,
+    workloadClient: WorkloadClientAPI,
+    isRetry?: boolean) {
 
     let payloadString: string;
     if (payloadData) {
@@ -521,8 +535,14 @@ export async function callItemUpdate<T>(
             etag: undefined,
             payload: { workloadPayload: payloadString, payloadContentType: "InlineJson" }
         });
-    } catch (updateError) {
-        console.error(`Failed updating Item ${objectId}`, updateError);
+    } catch (exception) {
+        // Indicates that the error was returned from the workload
+        if (exception.error?.message?.code === FabricExternalWorkloadError) {
+            if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
+                callItemUpdate(objectId, payloadData, workloadClient, true /*isRetry*/);
+            }
+        }
+        console.error(`Failed updating Item ${objectId}`, exception);
     }
 }
 
@@ -530,17 +550,25 @@ export async function callItemUpdate<T>(
  * Calls the 'itemCrud.deleteItem function from the WorkloadClientAPI
  * 
  * @param {string} objectId - The ObjectId of the item to delete
+ * @param {boolean} isRetry - Indicates that the call is a retry
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
 export async function callItemDelete(
     objectId: string,
-    workloadClient: WorkloadClientAPI): Promise<boolean> {
+    workloadClient: WorkloadClientAPI,
+    isRetry?: boolean): Promise<boolean> {
     try {
         const result = await workloadClient.itemCrud.deleteItem({ objectId });
         console.log(`Delete result for item ${objectId}: ${result.success}`);
         return result.success;
-    } catch (deleteError) {
-        console.error(`Failed deleting Item ${objectId}`, deleteError);
+    } catch (exception) {
+        // Indicates that the error was returned from the workload
+        if (exception.error?.message?.code === FabricExternalWorkloadError) {
+            if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
+                return callItemDelete(objectId, workloadClient, true /*isRetry*/);
+            }        
+        }
+        console.error(`Failed deleting Item ${objectId}`, exception);
         return false;
     }
 }
@@ -555,6 +583,7 @@ export async function callItemDelete(
  * @param {string} jobPayload - Payload to be sent as part of the job
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @param {boolean} showNotification - show pop-up notification.
+ * @param {boolean} isRetry - Indicates that the call is a retry
  * @returns {ItemJobInstance} - The executed job instance metadata.
  */
 export async function callRunItemJob(
@@ -562,7 +591,8 @@ export async function callRunItemJob(
     jobType: string,
     jobPayload: string,
     workloadClient: WorkloadClientAPI,
-    showNotification: boolean = false): Promise<ItemJobInstance> {
+    showNotification: boolean = false,
+    isRetry?: boolean): Promise<ItemJobInstance> {
 
     const params: RunItemJobParams = {
         itemObjectId: objectId,
@@ -587,6 +617,12 @@ export async function callRunItemJob(
         return result;
     }
     catch (exception) {
+        // Indicates that the error was returned from the workload
+        if (exception.error?.message?.code === FabricExternalWorkloadError) {
+            if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
+                return callRunItemJob(objectId, jobType, jobPayload, workloadClient, showNotification, true /*isRetry*/);
+            }         
+        }
         console.error(`Failed running item job ${jobType} for item ${objectId}`);
         console.log(exception);
     }
@@ -601,13 +637,15 @@ export async function callRunItemJob(
  * @param {string} jobInstanceObjectId - The Id of the job instance
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @param {boolean} showNotification - show pop-up notification.
+ * @param {boolean} isRetry - Indicates that the call is a retry
  * @returns {CancelItemJobParams} - The executed job instance metadata.
  */
 export async function callCancelItemJob(
     objectId: string,
     jobInstanceObjectId: string,
     workloadClient: WorkloadClientAPI,
-    showNotification: boolean = false): Promise<CancelItemJobResult> {
+    showNotification: boolean = false,
+    isRetry?: boolean): Promise<CancelItemJobResult> {
 
     const params: CancelItemJobParams = {
         itemObjectId: objectId,
@@ -636,6 +674,12 @@ export async function callCancelItemJob(
         return result;
     }
     catch (exception) {
+        // Indicates that the error was returned from the workload
+        if (exception.error?.message?.code === FabricExternalWorkloadError) {
+            if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
+                return callCancelItemJob(objectId, jobInstanceObjectId, workloadClient, showNotification, true /*isRetry*/);
+            }         
+        }
         console.error(`Failed to cancel job instance ID: ${jobInstanceObjectId} for item: ${objectId}`);
         console.log(exception);
     }
@@ -831,4 +875,37 @@ export async function callOpenSettings(
     }
 
     return null;
+}
+
+/**
+ * Handles errors propagated from workload backend.
+ *
+ * @param {any} exception - The exception that we need to handle
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @returns {Promise<boolean>} - Whether the exception was handled or not.
+ */
+export async function handleWorkloadError(exception: any, workloadClient: WorkloadClientAPI): Promise<boolean> {
+    var errorResponse = exception?.error?.message?.["pbi.error"]?.parameters?.ErrorResponse;
+    if (!errorResponse) {
+        return false;
+    }
+    var parsedException: WorkloadErrorDetails = JSON.parse(errorResponse);
+    // handle codes from your choice, the codes are returned from the workload backend.
+    switch (parsedException.ErrorCode) {
+        case AuthUIRequired: {
+            let authenticationUIRequiredException: AuthenticationUIRequiredException = {
+                ClaimsForConditionalAccessPolicy: parsedException.MoreDetails?.[0].AdditionalParameters?.find(ap => ap.Name == "claimsForCondtionalAccessPolicy")?.Value,
+                ErrorMessage: parsedException.Message,
+                ScopesToConsent:  parsedException?.MoreDetails?.[0].AdditionalParameters?.find(ap => ap.Name == "additionalScopesToConsent")?.Value?.split(", ")
+            };
+            if (authenticationUIRequiredException?.ErrorMessage?.includes("AADSTS65001")) { // consent
+                await workloadClient.auth.acquireAccessToken({additionalScopesToConsent: authenticationUIRequiredException.ScopesToConsent});
+                return true;
+            } else { // conditional access policy
+                await workloadClient.auth.acquireAccessToken({claimsForConditionalAccessPolicy: authenticationUIRequiredException.ClaimsForConditionalAccessPolicy});
+                return true;
+            }
+        }
+    }
+    return false;
 }

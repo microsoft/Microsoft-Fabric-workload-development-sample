@@ -6,6 +6,7 @@ using Boilerplate.Constants;
 using Boilerplate.Contracts;
 using Boilerplate.Utils;
 using Fabric_Extension_BE_Boilerplate.Constants;
+using Fabric_Extension_BE_Boilerplate.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client;
@@ -58,14 +59,13 @@ namespace Boilerplate.Services
             }
 
             Guid? tenantId = null;
-
             if (requireTenantIdHeader)
             {
                 if (!httpContext.Request.Headers.TryGetValue(HttpHeaders.XmsClientTenantId, out var tenantIdValues) ||
                     tenantIdValues.Count != 1 ||
                     !Guid.TryParse(tenantIdValues.Single(), out var parsedTenantId))
                 {
-                    throw new AuthenticationException($"Missing or invalid {HttpHeaders.XmsClientTenantId} header");
+                        throw new AuthenticationException($"Missing or invalid {HttpHeaders.XmsClientTenantId} header");
                 }
 
                 tenantId = parsedTenantId;
@@ -106,10 +106,29 @@ namespace Boilerplate.Services
             _logger.LogInformation("Exchanging tokens for scopes:" + string.Join(", ", scopes));
 
             var userAssertion = new UserAssertion(authorizationContext.OriginalSubjectToken);
-
-            var result = await _confidentialClientApplication
-                .AcquireTokenOnBehalfOf(scopes, userAssertion)
-                .ExecuteAsync();
+            AuthenticationResult result = null;
+            try
+            {
+                 result = await _confidentialClientApplication
+                    .AcquireTokenOnBehalfOf(scopes, userAssertion)
+                    .ExecuteAsync();
+            } 
+            catch (MsalUiRequiredException ex)
+            {
+                var authUIRequiredException = new AuthenticationUIRequiredException(ex.Message)
+                .WithDetail(
+                    ex.ErrorCode,
+                    "Interaction required",
+                    new (string, string)[]
+                    {
+                        (AuthenticationUIRequiredException.AdditionalScopesToConsentName, string.Join(", ", scopes)),
+                        (AuthenticationUIRequiredException.ClaimsForCondtionalAccessPolicyName, ex.Claims) 
+                    }
+                );
+                
+                throw authUIRequiredException;
+            }
+            
 
             _logger.LogInformation("Succeeded Exchanging tokens for scopes:" + string.Join(", ", scopes));
 
@@ -135,9 +154,9 @@ namespace Boilerplate.Services
         /// <param name="ex">The MsalUiRequiredException exception recieved from AAD</param>
         /// <param name="response">The response for the request</param>
         /// <returns>403 status code</returns>
-        public static void AddBearerClaimToResponse(MsalUiRequiredException ex, HttpResponse response)
+        public static void AddBearerClaimToResponse(AuthenticationUIRequiredException ex, HttpResponse response)
         {
-            var message = $"Bearer claims={ex.Claims}, error={ex.Message}";
+            var message = $"Bearer claims={ex.ClaimsForConditionalAccessPolicy}, error={ex.ErrorMessage}";
 
             // Remove new lines so we can add the string to WWWAuthenticate header
             message = message.Replace(System.Environment.NewLine, " ");

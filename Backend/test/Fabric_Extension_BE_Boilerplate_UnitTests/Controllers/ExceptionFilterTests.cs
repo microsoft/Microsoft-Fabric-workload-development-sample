@@ -1,4 +1,4 @@
-﻿// <copyright company="Microsoft">
+﻿﻿// <copyright company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
@@ -6,6 +6,7 @@ using Boilerplate.Controllers;
 using Boilerplate.Exceptions;
 using Fabric_Extension_BE_Boilerplate.Constants;
 using Fabric_Extension_BE_Boilerplate.Contracts.FabricAPI.Workload;
+using Fabric_Extension_BE_Boilerplate.Exceptions;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
@@ -20,12 +21,21 @@ namespace Boilerplate.Tests
         private static readonly Func<string, bool> NonEmptyStringValidator = (string v) => !v.IsNullOrEmpty();
 
         [Test]
-        public async Task MsalUiRequiredExceptionThrown()
+        public async Task AuthenticationUIRequiredExceptionThrown()
         {
+            var message = "message";
             await TestExceptionFilter(
-                new MsalUiRequiredException("code", "message"),
+                new AuthenticationUIRequiredException(message),
                 expectedStatusCode: HttpStatusCode.Unauthorized,
-                expectedHeaders: new[] { ("WWW-Authenticate", NonEmptyStringValidator) });
+                expectedHeaders: new[] { ("WWW-Authenticate", NonEmptyStringValidator) },
+                expectedBody: new ErrorResponse
+                {
+                    ErrorCode = ErrorCodes.Authentication.AuthUIRequired,
+                    Message = message,
+                    Source = ErrorSource.System,
+                    IsPermanent = false,
+                    MessageParameters = null
+                });
         }
 
         [Test]

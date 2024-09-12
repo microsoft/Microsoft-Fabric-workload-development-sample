@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
-using Microsoft.Identity.Client;
 using System;
 using System.Security.Authentication;
 
@@ -31,10 +30,10 @@ namespace Boilerplate.Exceptions
         {
             switch (context.Exception)
             {
-                case MsalUiRequiredException msalUiRequiredException:
+                case AuthenticationUIRequiredException authenticationUIRequiredException:
                     _logger.LogError("Failed to acquire a token, user interaction is required, returning '401 Unauthorized' with WWW-Authenticate header");
-                    AuthenticationService.AddBearerClaimToResponse(msalUiRequiredException, context.HttpContext.Response);
-                    context.Result = new StatusCodeResult(StatusCodes.Status401Unauthorized);
+                    AuthenticationService.AddBearerClaimToResponse(authenticationUIRequiredException, context.HttpContext.Response);
+                    context.Result = authenticationUIRequiredException.ToHttpActionResult();
                     context.ExceptionHandled = true;
                     break;
 
