@@ -8,6 +8,11 @@ namespace Fabric_Extension_BE_Boilerplate.Constants
     {
         public const string InternalError = "InternalError";
 
+        public static class Authentication
+        {
+            public const string AuthUIRequired = "AuthUIRequired";
+        }
+
         public static class Security
         {
             public const string AccessDenied = "AccessDenied";
