@@ -12,6 +12,7 @@
         {
           "title": "Learning Material example1",
           "description": "Learning Material example1 description",
+          "introduction": "learning material subtitle",
           "onClick": {
             "action": "open.learningMaterial.dialog1"
           },
@@ -20,6 +21,7 @@
         {
           "title": "Learning Material example2",
           "description": "Learning Material example2 description",
+          "introduction": "learning material subtitle",
           "image": "assets/github.png",
           "onClick": {
             "action": "open.learningMaterial.dialog2"
