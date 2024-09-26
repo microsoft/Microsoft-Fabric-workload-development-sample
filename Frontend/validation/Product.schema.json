@@ -44,7 +44,7 @@
                 },
                 "introduction": {
                   "type": "string",
-                  "description": "Introduction of the learning material, shows in the subtitle"
+                  "description": "Introduction of the learning material, shows under the title"
                 },
                 "description": {
                   "type": "string",
