@@ -11,7 +11,8 @@
       "learningMaterials": [
         {
           "title": "Learning Material example1",
-          "description": "Learning Material example1 description",
+          "description": "This is a sample introduction text for learning material example1",
+          "introduction": "Learning material subtitle",
           "onClick": {
             "action": "open.learningMaterial.dialog1"
           },
@@ -19,7 +20,8 @@
         },
         {
           "title": "Learning Material example2",
-          "description": "Learning Material example2 description",
+          "description": "This is a sample introduction text for learning material example2",
+          "introduction": "Learning material subtitle",
           "image": "assets/github.png",
           "onClick": {
             "action": "open.learningMaterial.dialog2"

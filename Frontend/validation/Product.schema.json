@@ -40,7 +40,11 @@
               "properties": {
                 "title": {
                   "type": "string",
-                  "description": "Title of the learning material, shows at the bottom of the recommendation card"
+                  "description": "Title of the learning material, shows at the top of the recommendation card"
+                },
+                "introduction": {
+                  "type": "string",
+                  "description": "Introduction of the learning material, shows under the title"
                 },
                 "description": {
                   "type": "string",
