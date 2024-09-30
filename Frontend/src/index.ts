@@ -35,14 +35,10 @@ if (url.pathname?.startsWith(redirectUriPath)) {
         // handle user declined the consent error
         } else  if (url.hash.includes("AADSTS65004")) {
             printFormattedAADErrorMessage(url?.hash);
-        } else {
-            window.close();
         }
-       
-    } else {
-        // close the window in case there are no errors
-        window.close();
     }
+    // Always close the window 
+    window.close();
 }
 
 console.log('****Runtime: Environment Variables****');
