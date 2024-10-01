@@ -1,12 +1,14 @@
 const BaseItem = require('./../BaseItem');
 
 class InternalItem extends BaseItem {
-    constructor(name, products, displayName, displayNamePlural, editor, icon, activeIcon, contextMenuItems, quickActionItems, supportedInMonitoringHub, artifactJobActionConfig, artifactSettings) {
+    constructor(name, products, displayName, displayNamePlural, editor, icon, activeIcon, contextMenuItems,
+         quickActionItems, supportedInMonitoringHub, artifactJobActionConfig, artifactSettings, artifactJobTypes) {
         super(name, displayName, displayNamePlural, editor, icon, activeIcon, contextMenuItems, quickActionItems, supportedInMonitoringHub);
         this.routeName = name;
         this.products = products;
         this.artifactJobActionConfig = artifactJobActionConfig;
         this.artifactSettings = artifactSettings;
+        this.artifactJobTypes = artifactJobTypes;
     }
 }
 

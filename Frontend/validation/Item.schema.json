@@ -140,6 +140,15 @@
           }
         },
         "description": "Item properties/settings"
+      },
+      "itemJobTypes": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "enum": ["getData", "storeData", "prepareData", "analyzeAndTrainData", "trackData", "visualizeData", "develop", "generalTask", "others"]
+        },
+        "maxItems": 2,
+        "description": "Defines the categories in which the item's create card will appear in Fabric Create Panel. If no category is specified, the default category 'others' will be applied."
       }
     }
 }

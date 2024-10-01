@@ -66,5 +66,6 @@
       "recentRun": {
         "useRecentRunsComponent": true
       }
-    }
+    },
+    "itemJobTypes": ["getData", "storeData"]
 }
