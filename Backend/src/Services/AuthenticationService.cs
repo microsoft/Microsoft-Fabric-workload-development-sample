@@ -111,6 +111,7 @@ namespace Boilerplate.Services
             {
                  result = await _confidentialClientApplication
                     .AcquireTokenOnBehalfOf(scopes, userAssertion)
+                    .WithTenantId(authorizationContext.TenantObjectId.ToString())
                     .ExecuteAsync();
             } 
             catch (MsalUiRequiredException ex)
