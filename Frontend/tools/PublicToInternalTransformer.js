@@ -49,7 +49,8 @@ class PublicToInternalTransformer {
             publicSchema.quickActionItems?.map(mi => this.MenuItemToInternal(mi, workloadName)),
             publicSchema.supportedInMonitoringHub,
             this.JobActionConfigToInternal(publicSchema.itemJobActionConfig, workloadName),
-            this.ItemSettingsToInternal(publicSchema.itemSettings, itemName)
+            this.ItemSettingsToInternal(publicSchema.itemSettings, itemName),
+            publicSchema.itemJobTypes
         );
 
         return internalItemSchema;
