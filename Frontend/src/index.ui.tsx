@@ -18,12 +18,20 @@ export async function initialize(params: InitParams) {
         switch (action) {
             case 'sample.tab.onInit':
                 const { id } = data as DataWithId;
-                const getItemResult = await callItemGet(
-                    id,
-                    workloadClient
-                );
-                const item = convertGetItemResultToWorkloadItem<ItemPayload>(getItemResult);
-                return {title: item.displayName};
+                try{
+                    const getItemResult = await callItemGet(
+                        id,
+                        workloadClient
+                    );
+                    const item = convertGetItemResultToWorkloadItem<ItemPayload>(getItemResult);
+                    return {title: item.displayName};
+                } catch (error) {
+                    console.error(
+                        `Error loading the Item (object ID:${id})`,
+                        error
+                    );
+                    return {};
+                }
             default:
                 throw new Error('Unknown action received');
         }
