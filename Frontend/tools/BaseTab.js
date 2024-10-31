@@ -1,7 +1,7 @@
 class BaseTab {
     constructor() {
       // Default value for AllowMultipleTabs
-      this.allowMultipleTabs = "notAllow";
+      this.allowMultipleTabs = "Allow";
     }
 }
 

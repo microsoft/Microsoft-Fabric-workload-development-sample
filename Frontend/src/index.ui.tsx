@@ -32,6 +32,16 @@ export async function initialize(params: InitParams) {
                     );
                     return {};
                 }
+            case 'sample.tab.canDeactivate':
+                return { canDeactivate: true };
+            case 'sample.tab.onDeactivate':
+                return {};
+            case 'sample.tab.canDestroy':
+                return { canDestroy: true };
+            case 'sample.tab.onDestroy':
+                return {};
+            case 'sample.tab.onDelete':
+                return {};
             default:
                 throw new Error('Unknown action received');
         }
