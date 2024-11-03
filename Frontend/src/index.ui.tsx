@@ -10,7 +10,7 @@ import { App } from "./App";
 import { convertGetItemResultToWorkloadItem } from "./utils";
 import { callItemGet } from "./controller/SampleWorkloadController";
 import { ItemPayload } from "./models/SampleWorkloadModel";
-import { DataWithId } from './models/SampleWorkloadModel';
+import { ItemTabActionContext } from './models/SampleWorkloadModel';
 
 export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();
