@@ -1,11 +1,11 @@
 const BaseItem = require('./../BaseItem');
 
 class PublicItem extends BaseItem {
-    constructor(name, displayName, displayNamePlural, editor, icon, activeIcon, contextMenuItems,
-         quickActionItems, supportedInMonitoringHub, itemJobActionConfig, itemSettings, itemJobTypes) {
-        super(name, displayName, displayNamePlural, editor, icon, activeIcon, contextMenuItems, quickActionItems, supportedInMonitoringHub);
+    constructor(name, displayName, displayNamePlural, editor, icon, activeIcon, contextMenuItems, quickActionItems, supportedInMonitoringHub, supportedInDatahubL1, itemJobActionConfig, itemSettings, editorTab, itemJobTypes) {
+        super(name, displayName, displayNamePlural, editor, icon, activeIcon, contextMenuItems, quickActionItems, supportedInMonitoringHub, supportedInDatahubL1);
         this.itemJobActionConfig = itemJobActionConfig;
         this.itemSettings = itemSettings;
+        this.editorTab = editorTab;
         this.itemJobTypes = itemJobTypes;
     }
 }

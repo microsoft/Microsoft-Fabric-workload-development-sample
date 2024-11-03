@@ -4,6 +4,7 @@ class InternalFinalJson {
         this.product = null;
         this.assets = [];
         this.extension = devParameters;
+        this.tabs = [];
     }
 }
 module.exports = InternalFinalJson;

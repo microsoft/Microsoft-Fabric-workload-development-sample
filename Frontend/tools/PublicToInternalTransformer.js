@@ -2,6 +2,8 @@ const PublicProduct = require('./Public/PublicProduct');
 const PublicItem = require('./Public/PublicItem');
 const InternalProduct = require('./Internal/InternalProduct');
 const InternalItem = require('./Internal/InternalItem');
+const PublicTab = require('./Public/PublicTab');
+const InternalTab = require('./Internal/InternalTab');
 
 class PublicToInternalTransformer {
     static toInternal(publicSchema, workloadName, productName = "") {
@@ -35,7 +37,7 @@ class PublicToInternalTransformer {
     }
 
 
-    static ItemToInternal(publicSchema, workloadName, productName) {
+    static ItemToInternal(publicSchema, workloadName, productName, prefix) {
         const itemName = `${workloadName}.${publicSchema.name}`;
         const internalItemSchema = new InternalItem(
             itemName,
@@ -45,15 +47,44 @@ class PublicToInternalTransformer {
             { ...publicSchema.editor, extension: workloadName },
             { ...publicSchema.icon, name: `${workloadName}/${publicSchema.icon.name}` },
             { ...publicSchema.activeIcon, name: `${workloadName}/${publicSchema.activeIcon.name}` },
-            publicSchema.contextMenuItems?.map(mi => this.MenuItemToInternal(mi, workloadName)),
-            publicSchema.quickActionItems?.map(mi => this.MenuItemToInternal(mi, workloadName)),
+            publicSchema.contextMenuItems?.map(mi => this.MenuItemToInternal(mi, workloadName, prefix)),
+            publicSchema.quickActionItems?.map(mi => this.MenuItemToInternal(mi, workloadName,prefix)),
             publicSchema.supportedInMonitoringHub,
-            this.JobActionConfigToInternal(publicSchema.itemJobActionConfig, workloadName),
-            this.ItemSettingsToInternal(publicSchema.itemSettings, itemName),
+            publicSchema.supportedInDatahubL1,
+            this.JobActionConfigToInternal(publicSchema.itemJobActionConfig, workloadName, prefix),
+            this.ItemSettingsToInternal(publicSchema.itemSettings, itemName, prefix),
             publicSchema.itemJobTypes
         );
 
-        return internalItemSchema;
+        publicSchema.editorTab = new PublicTab(publicSchema.editorTab) ?? new PublicTab();
+        const tab = this.ToInternal(publicSchema, workloadName);
+
+        return {internalItemSchema,tab};
+    }
+
+    static ToInternal(publicItem, workloadName) {
+        return new InternalTab({
+            name: publicItem.Name,
+            displayName: `${publicItem.displayName}`,
+            displayNamePlural: `${publicItem.displayNamePlural}`,
+            artifactType: `${workloadName}.${publicItem.name}`,
+            icon: { name: `${workloadName}/${publicItem.icon.name}` },
+            onInit: this.CreateTabActionObj(publicItem.editorTab, workloadName, 'onInit'),
+            onDeactivate: this.CreateTabActionObj(publicItem.editorTab, workloadName, 'onDeactivate'),
+            canDeactivate: this.CreateTabActionObj(publicItem.editorTab, workloadName, 'canDeactivate'),
+            canDestroy: this.CreateTabActionObj(publicItem.editorTab, workloadName, 'canDestroy'),
+            onDestroy: this.CreateTabActionObj(publicItem.editorTab, workloadName, 'onDestroy'),
+            onDelete: this.CreateTabActionObj(publicItem.editorTab, workloadName, 'onDelete'),
+            maxInstanceCount: publicItem.editorTab.maxInstanceCount
+        });
+    }
+
+    static CreateTabActionObj(editorTab, workloadName, actionName) {
+        const action = editorTab[actionName];
+        return {
+            action,
+            ...(action !== PublicTab.getDefaultAction(actionName) && { extensionName: workloadName, iframeType: "page" })
+        };
     }
 
     static MenuItemToInternal(publicSchema, workloadName) {

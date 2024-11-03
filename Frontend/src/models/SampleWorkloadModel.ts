@@ -65,6 +65,10 @@ export interface ItemActionContext {
     item: ItemLikeV2;
 }
 
+export interface ItemTabActionContext {
+    id: string;
+}
+
 // Represents the job action context recieved from fabric host
 export interface ItemJobActionContext {
     itemJobInstanceId: string;

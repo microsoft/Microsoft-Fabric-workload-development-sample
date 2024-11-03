@@ -69,8 +69,9 @@ class JsonProcessorHelper {
 
     processItemJson(jsonContent) {
         const publicItemSchema = Object.assign(new PublicItem, JSON.parse(jsonContent));
-        const internalItemSchema = PublicToInternalTransformer.toInternal(publicItemSchema, this.workloadName, this.productName);
+        const {internalItemSchema, tab} = PublicToInternalTransformer.toInternal(publicItemSchema, this.workloadName, this.productName);
         this.internalFinalJson.artifacts.push(internalItemSchema);
+        this.internalFinalJson.tabs.push(tab);
     }
 
     async processAssetEntriesAsync(folderPath) {
