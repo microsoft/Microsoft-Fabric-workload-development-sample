@@ -42,8 +42,8 @@ class PublicToInternalTransformer {
         const internalItemSchema = new InternalItem(
             itemName,
             [`${workloadName}.${productName}`],
-            prefix + publicSchema.displayName,
-            prefix + publicSchema.displayNamePlural,
+            publicSchema.displayName,
+            publicSchema.displayNamePlural,
             { ...publicSchema.editor, extension: workloadName },
             { ...publicSchema.icon, name: `${workloadName}/${publicSchema.icon.name}` },
             { ...publicSchema.activeIcon, name: `${workloadName}/${publicSchema.activeIcon.name}` },

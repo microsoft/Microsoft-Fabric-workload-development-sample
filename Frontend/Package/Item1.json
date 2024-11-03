@@ -70,11 +70,11 @@
     "itemJobTypes": ["getData", "storeData"],
     "editorTab": {
       "maxInstanceCount": "10",
-      "onInit": "sample.tab.onInit",
-      "onDeactivate": "sample.tab.onDeactivate",
-      "canDeactivate": "sample.tab.canDeactivate",
-      "canDestroy": "sample.tab.canDestroy",
-      "onDestroy": "sample.tab.onDestroy",
-      "onDelete": "sample.tab.onDelete"
+      "onInit": "item.tab.onInit",
+      "onDeactivate": "item.tab.onDeactivate",
+      "canDeactivate": "item.tab.canDeactivate",
+      "canDestroy": "item.tab.canDestroy",
+      "onDestroy": "item.tab.onDestroy",
+      "onDelete": "item.tab.onDelete"
     }
 }

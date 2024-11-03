@@ -16,7 +16,7 @@ export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();
     workloadClient.action.onAction(async function ({ action, data }) {
         switch (action) {
-            case 'sample.tab.onInit':
+            case 'item.tab.onInit':
                 const { id } = data as ItemTabActionContext;
                 try{
                     const getItemResult = await callItemGet(
@@ -32,15 +32,15 @@ export async function initialize(params: InitParams) {
                     );
                     return {};
                 }
-            case 'sample.tab.canDeactivate':
+            case 'item.tab.canDeactivate':
                 return { canDeactivate: true };
-            case 'sample.tab.onDeactivate':
+            case 'item.tab.onDeactivate':
                 return {};
-            case 'sample.tab.canDestroy':
+            case 'item.tab.canDestroy':
                 return { canDestroy: true };
-            case 'sample.tab.onDestroy':
+            case 'item.tab.onDestroy':
                 return {};
-            case 'sample.tab.onDelete':
+            case 'item.tab.onDelete':
                 return {};
             default:
                 throw new Error('Unknown action received');
