@@ -17,7 +17,7 @@ export async function initialize(params: InitParams) {
     workloadClient.action.onAction(async function ({ action, data }) {
         switch (action) {
             case 'sample.tab.onInit':
-                const { id } = data as DataWithId;
+                const { id } = data as ItemTabActionContext;
                 try{
                     const getItemResult = await callItemGet(
                         id,
