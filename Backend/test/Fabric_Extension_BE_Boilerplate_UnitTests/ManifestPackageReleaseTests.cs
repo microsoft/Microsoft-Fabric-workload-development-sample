@@ -20,7 +20,7 @@ namespace Boilerplate.Tests
 
             var result = ParseNuspecFile(nuspecFilePath);
 
-            CollectionAssert.AreEquivalent(expectedFilesAndTargets, result);
+            Assert.That(result, Is.EquivalentTo(expectedFilesAndTargets));
         }
 
         private Dictionary<string, string> ParseNuspecFile(string filePath)
