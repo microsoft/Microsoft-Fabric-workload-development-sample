@@ -64,7 +64,7 @@ class PublicToInternalTransformer {
 
     static ToInternal(publicItem, workloadName) {
         return new InternalTab({
-            name: publicItem.Name,
+            name: publicItem.name,
             displayName: `${publicItem.displayName}`,
             displayNamePlural: `${publicItem.displayNamePlural}`,
             artifactType: `${workloadName}.${publicItem.name}`,

@@ -13,7 +13,7 @@
         <Endpoints>
           <ServiceEndpoint>
             <Name>Workload</Name>
-            <Url>https://be.endpointurl.net/workload/resolve-api-path-placeholder</Url>
+            <Url>https://be.endpointurl.net/workload</Url>
             <IsEndpointResolutionService>false</IsEndpointResolutionService>
           </ServiceEndpoint>
           <ServiceEndpoint>
