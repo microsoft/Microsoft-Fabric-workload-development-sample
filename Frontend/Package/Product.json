@@ -1,39 +1,28 @@
 {
     "name": "Product",
-    "displayName": "Sample Workload",
-    "fullDisplayName": "Sample Workload",
-    "description": "Sample Workload Description",
-    "favicon": "assets/briefcase.png",
+    "displayName": "Workload_Display_Name",
+    "fullDisplayName": "Workload_Full_Display_Name",
+    "description": "Workload_Description",
+    "favicon": "assets/images/briefcase.png",
     "icon": {
-      "name": "assets/briefcase.png"
+    "name": "assets/images/briefcase.png"
     },
     "homePage": {
       "learningMaterials": [
         {
-          "title": "Learning Material example1",
-          "description": "This is a sample introduction text for learning material example1",
-          "introduction": "Learning material subtitle",
-          "onClick": {
-            "action": "open.learningMaterial.dialog1"
-          },
-          "image": "assets/dial.png"
-        },
-        {
-          "title": "Learning Material example2",
-          "description": "This is a sample introduction text for learning material example2",
-          "introduction": "Learning material subtitle",
-          "image": "assets/github.png",
-          "onClick": {
-            "action": "open.learningMaterial.dialog2"
-          }
+          "title": "Learning_Material_1_Title",
+          "introduction": "Learning_Material_1_Introduction",
+          "description": "Learning_Material_1_Description",
+          "image": "assets/images/learningMaterial.png",
+          "link": "https://aka.ms/Fabricdeveloperdocumentation"
         }
       ],
       "newSection": {
         "customActions": [
             {
-                "title": "Frontend only playground",
+                "title": "NewSection_Custom_Action_Title",
                 "icon": {
-                  "name": "assets/briefcase.png"
+                  "name": "assets/images/briefcase.png"
                 },
                 "onClick": {
                   "action": "open.createSampleWorkloadFrontendOnly"
@@ -45,16 +34,16 @@
         ]
     },
     "createExperience": {
-      "description": "CreateHub Product Description",
+      "description": "CreateHub_Workload_Description",
       "cards": [
         {
-          "title": "Sample Item",
-          "description": "Create a Sample Workload Item for your Dev Experience",
+          "title": "CreateHub_Card_1_Title",
+          "description": "CreateHub_Card_1_Description",
           "icon": {
-            "name": "assets/dial.png"
+            "name": "assets/images/dial.png"
           },
           "icon_small": {
-            "name": "assets/dial.png"
+            "name": "assets/images/dial.png"
           },
           "onClick": {
             "action": "open.createSampleWorkload"
@@ -71,20 +60,20 @@
     },
     "productDetail": {
       "publisher": "Contoso",
-      "slogan": "The quickest way from a billion points of data to a point of view.",
-      "description": "Contoso workload enables organizations to conduct real-time customer interactions and automate operational business decisions at scale. It supports a wide variety of customer-facing activities such as personalized marketing and next best action, and customer-impacting decisions including credit services and fraud prevention.",
+      "slogan": "Workload_Hub_Workload_Slogan",
+      "description": "Workload_Hub_Workload_Description",
       "image": {
         "mediaType": 0,
-        "source": "assets/BannerMedium.png"
+        "source": "assets/images/BannerMedium.png"
       },
       "slideMedia": [
         {
           "mediaType": 0,
-          "source": "assets/SampleWorkload1.png"
+          "source": "assets/images/SampleWorkload1.png"
         },
         {
           "mediaType": 0,
-          "source": "assets/SampleWorkload2.png"
+          "source": "assets/images/SampleWorkload2.png"
         }
       ],
         "supportLink": {

@@ -9,6 +9,7 @@ using Boilerplate.Utils;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -71,8 +72,15 @@ namespace Boilerplate.Services
             var url = $"{ApiConstants.WorkloadControlApiBaseUrl}/workspaces/{workspaceId}/items/{itemId}/resolvepermissions";
 
             var response = await _httpClientService.GetAsync(url, token);
-            response.EnsureSuccessStatusCode();
-
+            try
+            {
+                response.EnsureSuccessStatusCode();
+            }
+            // Throttling in resolvepermissions api can cause error of too many requests
+            catch (HttpRequestException ex) when (ex.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+            {
+                throw new TooManyRequestsException("Blocked due to resolved-permissions API throttling.");
+            }
             // Deserialize the response content directly into a C# object
             return await response.Content.ReadAsAsync<ResolvePermissionsResponse>();
         }

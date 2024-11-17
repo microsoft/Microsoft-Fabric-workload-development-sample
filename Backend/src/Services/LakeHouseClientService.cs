@@ -251,8 +251,8 @@ namespace Boilerplate.Services
             // A Onelake table is a delta table that consists of Parquet files and a _delta_log/ directory.
             var deltaLogDirectory = "/_delta_log";
 
-            var tables = oneLakeContainer.paths
-                .Select(path => path.name)
+            var tables = oneLakeContainer.Paths
+                .Select(path => path.Name)
                 .Where(pathName => pathName.EndsWith(deltaLogDirectory))
                 .Select(pathName =>
                 {

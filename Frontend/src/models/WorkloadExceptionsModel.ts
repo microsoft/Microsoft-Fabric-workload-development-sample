@@ -15,3 +15,4 @@ export interface AuthenticationUIRequiredException {
 }
 
 export const AuthUIRequired = "AuthUIRequired";
+export const ItemMetadataNotFound = "ItemMetadataNotFound";

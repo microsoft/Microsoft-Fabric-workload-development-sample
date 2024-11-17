@@ -59,14 +59,29 @@ class WorkspaceSettingsItem {
 }
 
 class HomePageLearningMaterial {
-    constructor(title, description, image, onClick) {
+    constructor(title, description, introduction, image, onClick, link) {
         this.title = title;
         this.description = description;
+        this.introduction = introduction;
         this.image = image;
         this.onClick = onClick;
+        this.link = link;
     }
 }
 
+class NewSectionSettings {
+    constructor(customActions) {
+        this.customActions = customActions;
+    }
+}
+
+class HomePageNewSectionCustomActions {
+    constructor(title, icon, onClick) {
+        this.title = title;
+        this.icon = icon;
+        this.onClick = onClick;
+    }
+}
 class ProductDetailItem {
     constructor(publisher, slogan, description, image, slideMedia, supportLinks) {
         this.publisher = publisher;

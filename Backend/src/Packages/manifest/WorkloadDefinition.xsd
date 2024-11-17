@@ -65,7 +65,7 @@
       <xs:enumeration value="EndpointName" />
       <xs:enumeration value="TenantRegion" />
       <xs:enumeration value="WorkspaceRegion" />
-      <xs:enumeration value="TenantId" />  
+      <xs:enumeration value="TenantId" />
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="EndpointName">

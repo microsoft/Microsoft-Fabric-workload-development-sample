@@ -34,7 +34,7 @@ export async function initialize(params: InitParams) {
                     },
                     options: {
                         width: 360,
-                        height: 360,
+                        height: 340,
                         hasCloseButton: false
                     },
                 });
@@ -62,10 +62,10 @@ export async function initialize(params: InitParams) {
             case 'run.calculate.job':
                 const { item } = data as ItemActionContext;
                 return await Controller.callRunItemJob(
-                    item.objectId, 
-                    calculateAsText, 
-                    JSON.stringify({metadata: 'JobMetadata'}), 
-                    workloadClient, 
+                    item.objectId,
+                    calculateAsText,
+                    JSON.stringify({ metadata: 'JobMetadata' }),
+                    workloadClient,
                     true /* showNotification */);
 
             case 'item.job.retry':

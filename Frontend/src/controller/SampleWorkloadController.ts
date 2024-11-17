@@ -28,13 +28,20 @@ import {
     RunItemJobParams,
     ThemeConfiguration,
     Tokens,
+    ExtendedItemTypeV2,
     WorkloadErrorDetails,
 } from "@ms-fabric/workload-client";
 
 import { Dispatch, SetStateAction } from "react";
 import { GenericItem } from '../models/SampleWorkloadModel';
 import { jobTypeDisplayNames } from "../utils";
-import { AuthenticationUIRequiredException, AuthUIRequired, FabricExternalWorkloadError } from "../models/WorkloadExceptionsModel";
+
+import {
+    AuthenticationUIRequiredException,
+    AuthUIRequired,
+    FabricExternalWorkloadError,
+    ItemMetadataNotFound
+} from "../models/WorkloadExceptionsModel";
 // --- Notification API
 
 
@@ -162,10 +169,11 @@ export async function callNavigationNavigate<T extends 'host' | 'workload'>(
  * @param {string} claimsForConditionalAccessPolicy - Claims returned from the server indicating that token conversion failed because of some conditional access policy - see https://learn.microsoft.com/en-us/entra/msal/dotnet/acquiring-tokens/web-apps-apis/on-behalf-of-flow#handling-multi-factor-auth-mfa-conditional-access-and-incremental-consent
  * @returns {AccessToken}
  */
-export async function callAuthAcquireAccessToken(workloadClient: WorkloadClientAPI, additionalScopesToConsent?: string, claimsForConditionalAccessPolicy?: string): Promise<AccessToken> {
+export async function callAuthAcquireAccessToken(workloadClient: WorkloadClientAPI, additionalScopesToConsent?: string, claimsForConditionalAccessPolicy?: string, promptFullConsent?: boolean): Promise<AccessToken> {
     return workloadClient.auth.acquireAccessToken({
         additionalScopesToConsent: additionalScopesToConsent?.length > 0 ? additionalScopesToConsent.split(' ') : null,
-        claimsForConditionalAccessPolicy: claimsForConditionalAccessPolicy?.length > 0 ? claimsForConditionalAccessPolicy : null
+        claimsForConditionalAccessPolicy: claimsForConditionalAccessPolicy?.length > 0 ? claimsForConditionalAccessPolicy : null,
+        promptFullConsent
     });
 }
 
@@ -188,26 +196,15 @@ export async function callNavigationBeforeNavigateAway(workloadClient: WorkloadC
 }
 
 /**
- * Registers a callback to show a notification after navigating to a URL containing 'page'
+ * Registers a callback to trigger after navigating away from page
  * using the 'navigation.onAfterNavigateAway' function.
  *
+ * @param {(event: AfterNavigateAwayData) => Promise<void>} callback - A call back function that executes after navigation away.
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
-export async function callNavigationAfterNavigateAway(workloadClient: WorkloadClientAPI) {
-    // Define a callback function to show a notification after navigating to URLs containing 'page'
-    const callback: (event: AfterNavigateAwayData) => Promise<unknown> =
-        async (event: AfterNavigateAwayData): Promise<unknown> => {
-            if (event.nextUrl?.includes("page")) {
-                callNotificationOpen(
-                    "After Navigate Away",
-                    "Callback invocation - onAfterNavigateAway",
-                    NotificationType.Success,
-                    NotificationToastDuration.Medium,
-                    workloadClient);
-            }
-            return;
-        }
-
+export async function callNavigationAfterNavigateAway(
+    callback: (event: AfterNavigateAwayData) => Promise<void>,
+    workloadClient: WorkloadClientAPI) {
     // Register the callback using the 'navigation.onAfterNavigateAway' function
     await workloadClient.navigation.onAfterNavigateAway(callback);
 }
@@ -289,33 +286,36 @@ export async function callDialogOpen(
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
 export async function callDatahubOpen(
+    supportedTypes: ExtendedItemTypeV2[],
     dialogDescription: string,
     multiSelectionEnabled: boolean,
-    workloadClient: WorkloadClientAPI): Promise<GenericItem> {
+    workloadClient: WorkloadClientAPI,
+    workspaceNavigationEnabled: boolean = true): Promise<GenericItem> {
 
     const datahubConfig: DatahubSelectorDialogConfig = {
-        supportedTypes: ['Lakehouse'],
+        supportedTypes: supportedTypes,
         multiSelectionEnabled: multiSelectionEnabled,
         dialogDescription: dialogDescription,
+        workspaceNavigationEnabled: workspaceNavigationEnabled,
         // not in use in the regular selector, but required to be non-empty for validation
         hostDetails: {
-            experience: 'experience',
-            scenario: 'scenario',
+            experience: 'sample experience 3rd party', // Change this to reflect your team's process, e.g., "Build notebook" 
+            scenario: 'sample scenario 3rd party', // Adjust this to the specific action, e.g., "Select Lakehouse" 
         }
     };
 
     const result: DatahubSelectorDialogResult = await workloadClient.datahub.openDialog(datahubConfig);
-    if (!result.selectedDatahubItem){
+    if (!result.selectedDatahubItem) {
         return null;
     }
-    
+
     const selectedItem = result.selectedDatahubItem[0];
     const { itemObjectId, workspaceObjectId } = selectedItem;
     const { displayName, description } = selectedItem.datahubItemUI;
     return {
         id: itemObjectId,
         workspaceId: workspaceObjectId,
-        type: 'Lakehouse',
+        type: selectedItem.datahubItemUI.itemType,
         displayName,
         description
     };
@@ -471,8 +471,8 @@ export async function callItemCreate<T>(
         if (exception.error?.message?.code === "PowerBIMetadataArtifactDisplayNameInUseException") {
             console.log(`Name ${displayName} is taken...`);
         }
-         // Indicates that the error was returned from the workload
-         if (exception.error?.message?.code === FabricExternalWorkloadError) {
+        // Indicates that the error was returned from the workload
+        if (exception.error?.message?.code === FabricExternalWorkloadError) {
             await handleWorkloadError(exception, workloadClient);
         }
         throw exception;
@@ -495,10 +495,14 @@ export async function callItemGet(objectId: string, workloadClient: WorkloadClie
 
         return item;
     } catch (exception) {
-        // Indicates that the error was returned from the workload
         if (exception.error?.message?.code === FabricExternalWorkloadError) {
             if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
                 return callItemGet(objectId, workloadClient, true);
+            }
+
+            const parsedException = parseExceptionErrorResponse(exception);
+            if (parsedException?.ErrorCode === ItemMetadataNotFound) {
+                throw parsedException;
             }
         }
         console.error(`Failed locating item with ObjectID ${objectId}`, exception);
@@ -550,8 +554,8 @@ export async function callItemUpdate<T>(
  * Calls the 'itemCrud.deleteItem function from the WorkloadClientAPI
  * 
  * @param {string} objectId - The ObjectId of the item to delete
- * @param {boolean} isRetry - Indicates that the call is a retry
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {boolean} isRetry - Indicates that the call is a retry
  */
 export async function callItemDelete(
     objectId: string,
@@ -615,8 +619,7 @@ export async function callRunItemJob(
         }
 
         return result;
-    }
-    catch (exception) {
+    } catch (exception) {
         // Indicates that the error was returned from the workload
         if (exception.error?.message?.code === FabricExternalWorkloadError) {
             if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
@@ -626,7 +629,6 @@ export async function callRunItemJob(
         console.error(`Failed running item job ${jobType} for item ${objectId}`);
         console.log(exception);
     }
-
     return null;
 }
 
@@ -674,8 +676,8 @@ export async function callCancelItemJob(
         return result;
     }
     catch (exception) {
-        // Indicates that the error was returned from the workload
-        if (exception.error?.message?.code === FabricExternalWorkloadError) {
+         // Indicates that the error was returned from the workload
+         if (exception.error?.message?.code === FabricExternalWorkloadError) {
             if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
                 return callCancelItemJob(objectId, jobInstanceObjectId, workloadClient, showNotification, true /*isRetry*/);
             }         
@@ -724,10 +726,18 @@ export async function callOpenRecentRuns(
  * 
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
-export async function callGetItem1SupportedOperators(workloadBEUrl: string, workloadClient: WorkloadClientAPI): Promise<string[]> {
+export async function callGetItem1SupportedOperators(workloadBEUrl: string, workloadClient: WorkloadClientAPI, isRetry?: boolean): Promise<string[]> {
     const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
     const response: Response = await fetch(`${workloadBEUrl}/item1SupportedOperators`, { method: `GET`, headers: { 'Authorization': 'Bearer ' + accessToken.token } });
     const responseBody: string = await response.text();
+    if (!response.ok) {
+        // Handle non-successful responses here
+        if (!isRetry && await handleWorkloadError(responseBody, workloadClient, /* isDirectWorkloadCall */ true)) {
+            return await callGetItem1SupportedOperators(workloadBEUrl, workloadClient, /* isRetry */true);
+        }
+        console.error(`Error get item1 supported operators API: ${responseBody}`);
+        throw new Error(`Error get item1 supported operators API: ${responseBody}`);
+    }
     const operators: string[] = JSON.parse(responseBody);
     console.log(`*** Successfully fetched operators supported for Item1: ${operators}`);
     return operators;
@@ -739,9 +749,10 @@ export async function callGetItem1SupportedOperators(workloadBEUrl: string, work
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @param {string} workspaceObjectId - The workspace object ID.
  * @param {string} itemObjectId - The item object ID.
+ * @param {boolean} isRetry - Indicates that the call is a retry
  * @returns {Promise<{ Operand1: number, Operand2: number }>} A Promise that resolves to an object containing the updated operands.
  */
-export async function callItem1DoubleResult(workloadBEUrl: string, workloadClient: WorkloadClientAPI, workspaceObjectId: string, itemObjectId: string): Promise<{ Operand1: number, Operand2: number }> {
+export async function callItem1DoubleResult(workloadBEUrl: string, workloadClient: WorkloadClientAPI, workspaceObjectId: string, itemObjectId: string, isRetry?: boolean): Promise<{ Operand1: number, Operand2: number }> {
     try {
         const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
         const response: Response = await fetch(`${workloadBEUrl}/${workspaceObjectId}/${itemObjectId}/item1DoubleResult`, {
@@ -755,6 +766,9 @@ export async function callItem1DoubleResult(workloadBEUrl: string, workloadClien
         if (!response.ok) {
             // Handle non-successful responses here
             const errorMessage: string = await response.text();
+            if (!isRetry && await handleWorkloadError(errorMessage, workloadClient, /* isDirectWorkloadCall */ true)) {
+                return await callItem1DoubleResult(workloadBEUrl, workloadClient, workspaceObjectId, itemObjectId, /* isRetry */true);
+            }
             console.error(`Error calling Double API: ${errorMessage}`);
             throw new Error(`Error calling Double API: ${errorMessage}`);
         }
@@ -822,9 +836,13 @@ export async function callSettingsGet(workloadClient: WorkloadClientAPI): Promis
     return await workloadClient.settings.get();
 }
 
+export async function callLanguageGet(workloadClient: WorkloadClientAPI): Promise<string> {
+    const settings = await callSettingsGet(workloadClient);
+    return settings.currentLanguageLocale;
+}
 
 export function settingsToView(settings: WorkloadSettings): string {
-    return [`Instance ID: ${settings.instanceId}`, `Host Origin: ${settings.workloadHostOrigin}`, `Product Name: ${settings.productName}`, `API URI: ${settings.apiUri}`].join('\r\n');
+    return [`Instance ID: ${settings.instanceId}`, `Host Origin: ${settings.workloadHostOrigin}`, `Selected Workload: ${settings.productName}`, `API URI: ${settings.apiUri}`].join('\r\n');
 }
 
 /**
@@ -832,13 +850,15 @@ export function settingsToView(settings: WorkloadSettings): string {
  *
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
-export async function callSettingsOnChange(workloadClient: WorkloadClientAPI) {
+export async function callSettingsOnChange(workloadClient: WorkloadClientAPI, changeLang: (language: string) => void) {
     // Define a callback function to be invoked when workload settings change
     const callback: (settings: WorkloadSettings) => void =
-        (_: WorkloadSettings): void => {
+        (ws: WorkloadSettings): void => {
             {
                 // Since this callback is invoked multiple times, log a message to the console
                 console.log("Settings On Change invoked");
+                console.log("CurrentLanguage", ws.currentLanguageLocale);
+                changeLang(ws.currentLanguageLocale);
             };
         };
     await workloadClient.settings.onChange(callback);
@@ -882,30 +902,49 @@ export async function callOpenSettings(
  *
  * @param {any} exception - The exception that we need to handle
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {boolean} isDirectWorkloadCall - indicates that the error handling is for a data plane call (from the workload frontend directly to the workload backend)
  * @returns {Promise<boolean>} - Whether the exception was handled or not.
  */
-export async function handleWorkloadError(exception: any, workloadClient: WorkloadClientAPI): Promise<boolean> {
-    var errorResponse = exception?.error?.message?.["pbi.error"]?.parameters?.ErrorResponse;
-    if (!errorResponse) {
-        return false;
-    }
-    var parsedException: WorkloadErrorDetails = JSON.parse(errorResponse);
-    // handle codes from your choice, the codes are returned from the workload backend.
-    switch (parsedException.ErrorCode) {
-        case AuthUIRequired: {
-            let authenticationUIRequiredException: AuthenticationUIRequiredException = {
-                ClaimsForConditionalAccessPolicy: parsedException.MoreDetails?.[0].AdditionalParameters?.find(ap => ap.Name == "claimsForCondtionalAccessPolicy")?.Value,
-                ErrorMessage: parsedException.Message,
-                ScopesToConsent:  parsedException?.MoreDetails?.[0].AdditionalParameters?.find(ap => ap.Name == "additionalScopesToConsent")?.Value?.split(", ")
-            };
-            if (authenticationUIRequiredException?.ErrorMessage?.includes("AADSTS65001")) { // consent
-                await workloadClient.auth.acquireAccessToken({additionalScopesToConsent: authenticationUIRequiredException.ScopesToConsent});
-                return true;
-            } else { // conditional access policy
-                await workloadClient.auth.acquireAccessToken({claimsForConditionalAccessPolicy: authenticationUIRequiredException.ClaimsForConditionalAccessPolicy});
-                return true;
+export async function handleWorkloadError(exception: any, workloadClient: WorkloadClientAPI, isDirectWorkloadCall?: boolean): Promise<boolean> {
+    var parsedException: WorkloadErrorDetails
+    try {
+        if (isDirectWorkloadCall) {
+            // exception is the json returned fom the workload
+            parsedException = JSON.parse(exception);
+        } else {
+            // exception is a JS object that contains the json returned from the workload
+            parsedException = parseExceptionErrorResponse(exception);
+            if (!parsedException) {
+                return false;
             }
         }
-    }
+    
+        // handle codes from your choice, the codes are returned from the workload backend.
+        switch (parsedException.ErrorCode) {
+            case AuthUIRequired: {
+                let authenticationUIRequiredException: AuthenticationUIRequiredException = {
+                    ClaimsForConditionalAccessPolicy: parsedException.MoreDetails?.[0].AdditionalParameters?.find(ap => ap.Name == "claimsForCondtionalAccessPolicy")?.Value,
+                    ErrorMessage: parsedException.Message,
+                    ScopesToConsent:  parsedException?.MoreDetails?.[0].AdditionalParameters?.find(ap => ap.Name == "additionalScopesToConsent")?.Value?.split(", ")
+                };
+                if (authenticationUIRequiredException?.ErrorMessage?.includes("AADSTS65001")) { // consent
+                    await workloadClient.auth.acquireAccessToken({additionalScopesToConsent: authenticationUIRequiredException.ScopesToConsent});
+                    return true;
+                } else { // conditional access policy
+                    await workloadClient.auth.acquireAccessToken({claimsForConditionalAccessPolicy: authenticationUIRequiredException.ClaimsForConditionalAccessPolicy});
+                    return true;
+                }
+            }
+        }
+    } catch {}
+
     return false;
+}
+
+function parseExceptionErrorResponse(exception: any): WorkloadErrorDetails {
+    const errorResponse = exception?.error?.message?.["pbi.error"]?.parameters?.ErrorResponse;
+    if (!errorResponse) {
+        return null;
+    }
+    return JSON.parse(errorResponse);
 }

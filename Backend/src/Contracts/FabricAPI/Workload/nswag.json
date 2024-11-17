@@ -50,7 +50,6 @@
       "jsonLibrary": "NewtonsoftJson",
       "generateDefaultValues": true,
       "generateDataAnnotations": true,
-      "excludedTypeNames": [],
       "excludedParameterNames": [
         "ActivityId",
         "RequestId",

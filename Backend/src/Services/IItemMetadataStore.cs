@@ -15,5 +15,6 @@ namespace Boilerplate.Services
         Task<ItemMetadata<TItemMetadata>> Load<TItemMetadata>(Guid tenantObjectId, Guid itemObjectId);
 
         Task Delete(Guid tenantObjectId, Guid itemObjectId);
+        bool Exists(Guid tenantObjectId, Guid itemObjectId);
     }
 }

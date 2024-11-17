@@ -27,10 +27,6 @@ export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult): Work
     };
 }
 
-export function getItemEditorUrl(hostUrl: string, workspaceId: string, itemId: string): string {
-    return `${hostUrl}/groups/${workspaceId}/samples/${itemId}`;
-}
-
 const sampleWorkloadName = process.env.WORKLOAD_NAME;
 const sampleItemType = sampleWorkloadName + ".SampleWorkloadItem";
 const calculateAsText = sampleItemType + ".CalculateAsText";
@@ -49,27 +45,27 @@ export function getJobDetailsPane(jobContext: ItemJobActionContext, hostUrl: str
         title: 'Job Details',
         data: [
             {
-                label: 'job type',
+                label: 'Job type',
                 value: jobTypeDisplayNames[jobContext.itemJobType],
                 type: 'text',
             },
             {
-                label: 'job status',
+                label: 'Job status',
                 value: ItemJobStatus[jobContext.status],
                 type: 'text',
             },
             {
-                label: 'job start time UTC',
+                label: 'Job start time UTC',
                 value: jobContext.jobStartTimeUtc,
                 type: 'text',
             },
             {
-                label: 'job end time UTC',
+                label: 'Job end time UTC',
                 value: jobContext.jobEndTimeUtc,
                 type: 'text',
             },
             {
-                label: 'job intstance id',
+                label: 'Job instance id',
                 value: jobContext.itemJobInstanceId,
                 type: 'text',
             }                    
@@ -105,11 +101,11 @@ export function getJobDetailsPane(jobContext: ItemJobActionContext, hostUrl: str
                 value: jobContext.workspaceObjectId,
                 type: 'text',
             },
+            // IMPORTANT: Use the following item(as is, keeping the label and type) to show the item editor link
             {
                 label: 'Item Editor',
                 value: 'Open',
                 type: 'link',
-                url: getItemEditorUrl(hostUrl, jobContext.workspaceObjectId, jobContext.itemObjectId)
             },                
         ]
     }

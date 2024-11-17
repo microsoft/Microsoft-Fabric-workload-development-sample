@@ -1,15 +1,15 @@
 {
     "name": "SampleWorkloadItem",
-    "displayName": "Sample Workload Item",
-    "displayNamePlural": "Sample Workload Items",
+    "displayName": "Item_1_DisplayName",
+    "displayNamePlural": "Item_1_DisplayName_Plural",
     "editor": {
       "path": "/sample-workload-editor"
     },
     "icon": {
-      "name": "assets/execute.png"
+      "name": "assets/images/execute.png"
     },
     "activeIcon": {
-      "name": "assets/execute.png"
+      "name": "assets/images/execute.png"
     },
     "contextMenuItems": [
       {
@@ -20,27 +20,27 @@
       },
       {
         "name": "SampleItemCustomAction",
-        "displayName": "Run calculate job",
+        "displayName": "Context_Menu_1_Display_Name",
         "icon": {
-          "name": "assets/execute.png"
+          "name": "assets/images/execute.png"
         },
         "handler": {
           "action": "run.calculate.job"
         },
-        "tooltip": "Adding a custom button to the item context menu"
+        "tooltip": "Context_Menu_1_Tooltip"
       }
     ],
     "quickActionItems": [
       {
         "name": "SampleItemCustomAction",
-        "displayName": "Run short job",
+        "displayName": "Quick_Action_1_Display_Name",
         "icon": {
-          "name": "assets/execute.png"
+          "name": "assets/images/execute.png"
         },
         "handler": {
           "action": "run.calculate.job"
         },
-        "tooltip": "Adding a quick action button to the item"
+        "tooltip": "Quick_Action_1_Tooltip"
       }
     ],
     "supportedInMonitoringHub": true,
@@ -70,11 +70,11 @@
     "itemJobTypes": ["getData", "storeData"],
     "editorTab": {
       "maxInstanceCount": "10",
-      "onInit": "item.tab.onInit",
-      "onDeactivate": "item.tab.onDeactivate",
-      "canDeactivate": "item.tab.canDeactivate",
-      "canDestroy": "item.tab.canDestroy",
-      "onDestroy": "item.tab.onDestroy",
-      "onDelete": "item.tab.onDelete"
+      "onInit": "sample.tab.onInit",
+      "onDeactivate": "sample.tab.onDeactivate",
+      "canDeactivate": "sample.tab.canDeactivate",
+      "canDestroy": "sample.tab.canDestroy",
+      "onDestroy": "sample.tab.onDestroy",
+      "onDelete": "sample.tab.onDelete"
     }
-}
+  }

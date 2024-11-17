@@ -1,6 +1,6 @@
 import { createBrowserHistory } from "history";
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from 'react-dom/client';
 
 import { FluentProvider } from "@fluentui/react-components";
 import { createWorkloadClient, InitParams } from '@ms-fabric/workload-client';
@@ -9,14 +9,16 @@ import { fabricLightTheme } from "./theme";
 import { App } from "./App";
 import { convertGetItemResultToWorkloadItem } from "./utils";
 import { callItemGet } from "./controller/SampleWorkloadController";
-import { ItemPayload } from "./models/SampleWorkloadModel";
-import { ItemTabActionContext } from './models/SampleWorkloadModel';
+import { ItemPayload, ItemTabActionContext } from "./models/SampleWorkloadModel";
 
 export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();
+
+    const history = createBrowserHistory();
+    workloadClient.navigation.onNavigate((route) => history.replace(route.targetUrl));
     workloadClient.action.onAction(async function ({ action, data }) {
         switch (action) {
-            case 'item.tab.onInit':
+            case 'sample.tab.onInit':
                 const { id } = data as ItemTabActionContext;
                 try{
                     const getItemResult = await callItemGet(
@@ -32,27 +34,24 @@ export async function initialize(params: InitParams) {
                     );
                     return {};
                 }
-            case 'item.tab.canDeactivate':
+            case 'sample.tab.canDeactivate':
                 return { canDeactivate: true };
-            case 'item.tab.onDeactivate':
+            case 'sample.tab.onDeactivate':
                 return {};
-            case 'item.tab.canDestroy':
+            case 'sample.tab.canDestroy':
                 return { canDestroy: true };
-            case 'item.tab.onDestroy':
+            case 'sample.tab.onDestroy':
                 return {};
-            case 'item.tab.onDelete':
+            case 'sample.tab.onDelete':
                 return {};
             default:
                 throw new Error('Unknown action received');
         }
     });
-    const history = createBrowserHistory();
-    workloadClient.navigation.onNavigate((route) => history.replace(route.targetUrl));
-
-    ReactDOM.render(
+    const root = createRoot(document.getElementById('root'));
+    root.render(
         <FluentProvider theme={fabricLightTheme}>
             <App history={history} workloadClient={workloadClient} />
-        </FluentProvider>,
-        document.querySelector("#root")
+        </FluentProvider>
     );
 }

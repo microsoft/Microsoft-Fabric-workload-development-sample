@@ -1,4 +1,5 @@
 import { bootstrap } from '@ms-fabric/workload-client';
+import './i18n';
 
 function printFormattedAADErrorMessage(hashMessage: string): void {
     const hashString = hashMessage.slice(1);
@@ -32,13 +33,17 @@ if (url.pathname?.startsWith(redirectUriPath)) {
         // Handle missing service principal error
         if (url.hash.includes("AADSTS650052")) {
             printFormattedAADErrorMessage(url?.hash);
-        // handle user declined the consent error
-        } else  if (url.hash.includes("AADSTS65004")) {
+            // handle user declined the consent error
+        } else if (url.hash.includes("AADSTS65004")) {
             printFormattedAADErrorMessage(url?.hash);
+        } else {
+            window.close();
         }
+
+    } else {
+        // close the window in case there are no errors
+        window.close();
     }
-    // Always close the window 
-    window.close();
 }
 
 console.log('****Runtime: Environment Variables****');

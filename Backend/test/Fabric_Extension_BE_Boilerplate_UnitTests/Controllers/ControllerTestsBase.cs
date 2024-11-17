@@ -3,7 +3,6 @@
 // </copyright>
 
 using Boilerplate.Contracts;
-using Boilerplate.Controllers;
 using Boilerplate.Exceptions;
 using Boilerplate.Items;
 using Boilerplate.Services;
@@ -197,7 +196,7 @@ namespace Boilerplate.Tests
                     Assert.That(itemId, Is.EqualTo(expectedItemId));
                     Assert.That(requiredPermissions, Is.EqualTo(expectedPermissions));
 
-                    Assert.NotNull(context);
+                    Assert.That(context, Is.Not.Null);
                 })
                 .Returns((AuthorizationContext context, Guid workspaceId, Guid itemId, IList<string> requiredPermissions) =>
                 {

@@ -8,9 +8,10 @@ class InternalProduct extends BaseProduct {
 }
 
 class HomePageItem {
-    constructor(learningMaterials, recommendedArtifactTypes) {
+    constructor(learningMaterials, recommendedArtifactTypes, newSection) {
         this.learningMaterials = learningMaterials;
         this.recommendedArtifactTypes = recommendedArtifactTypes;
+        this.newSection = newSection;
     }
 }
 module.exports = InternalProduct;

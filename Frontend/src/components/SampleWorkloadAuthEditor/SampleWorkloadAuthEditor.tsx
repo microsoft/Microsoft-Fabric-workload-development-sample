@@ -1,14 +1,15 @@
 import jwt_decode from "jwt-decode";
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 
 import { Stack } from "@fluentui/react";
 import { Button, Combobox, Divider, Field, Input, Option, Checkbox } from '@fluentui/react-components';
 import { WorkloadAuthError } from "@ms-fabric/workload-client";
 
-import { PageProps } from 'src/App';
-import { callNavigationNavigate, callAuthAcquireAccessToken } from "../../controller/SampleWorkloadController";
+import { ContextProps, PageProps } from 'src/App';
+import { callAuthAcquireAccessToken, callNavigationNavigate } from "../../controller/SampleWorkloadController";
 
-export function Authentication({ workloadClient }: PageProps) {
+export function Authentication({ workloadClient, history }: PageProps) {
     const [claimsForConditionalAccessPolicy, setClaimsForConditionalAccessPolicy] = useState<string>('');
     const [additionalScopesToConsent, setAdditionalScopesToConsent] = useState<string>('');
     const [token, setToken] = useState<string>('');
@@ -19,12 +20,13 @@ export function Authentication({ workloadClient }: PageProps) {
     const [requestBody, setRequestBody] = useState<string>('');
     const [requestDefaultConsent, setRequestDefaultConsent] = useState<boolean>(false);
     const httpMethods = ['GET', 'PUT', 'POST'];
+    const pageContext = useParams<ContextProps>();
+    const itemObjectId = pageContext.itemObjectId;
     return (
         <Stack className="editor">
             <h2>Authentication</h2>
             <Stack className="main">
-                {/* TODO - fix Navigate Back - sample page needs to get workspaceObjectId, and then use it when navigating back */}
-                <Button onClick={() => callNavigationNavigate('workload', '/sample-workload-create', workloadClient)}>Navigate Back</Button>
+                <Button onClick={() => callNavigationNavigate("workload", `/sample-workload-editor/${itemObjectId}`, workloadClient)}>Navigate Back</Button>
             </Stack>
             <Stack className="main">
                 <div className="description">

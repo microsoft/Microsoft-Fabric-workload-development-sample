@@ -34,7 +34,8 @@ namespace Boilerplate.Tests
             Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
 
             var operators = await response.Content.ReadAsAsync<IList<string>>();
-            Assert.That(operators, Is.EquivalentTo(Enum.GetNames<Item1Operator>()));
+            Assert.That(operators, Is.EquivalentTo(Enum.GetNames(typeof(Item1Operator))
+            .Where(name => name != nameof(Item1Operator.Undefined)).ToList()));
 
             VerifyMocks();
         }

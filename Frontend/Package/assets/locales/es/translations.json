@@ -1,0 +1,21 @@
+{
+  "Workload_Display_Name": "Carga de trabajo de muestra",
+  "Workload_Full_Display_Name": "Carga de trabajo de muestra",
+  "Workload_Description": "Descripción de la carga de trabajo de muestra",
+  "Learning_Material_1_Title": "Ejemplo de material de aprendizaje 1",
+  "Learning_Material_1_Description": "Descripción del ejemplo de material de aprendizaje 1",
+  "Learning_Material_1_Introduction": "Comience a utilizar la documentación de Workload Development Kit",
+  "NewSection_Custom_Action_Title": "Prácticas solo para la interfaz de usuario",
+  "CreateHub_Workload_Description": "Descripción del producto CreateHub",
+  "CreateHub_Card_1_Title": "Elemento de muestra",
+  "CreateHub_Card_1_Description": "Cree un elemento de carga de trabajo de muestra para su experiencia de desarrollo",
+  "Workload_Hub_Workload_Slogan": "La forma más rápida de pasar de mil millones de puntos de datos a un punto de vista.",
+  "Workload_Hub_Workload_Description": "La carga de trabajo de Contoso permite a las organizaciones interactuar con los clientes en tiempo real y automatizar las decisiones comerciales operativas a gran escala. Admite una amplia variedad de actividades orientadas al cliente, como marketing personalizado y la siguiente mejor acción, y decisiones que afectan al cliente, incluidos los servicios de crédito y la prevención del fraude.",
+  "Item_1_DisplayName": "Elemento de carga de trabajo de muestra",
+  "Item_1_DisplayName_Plural": "Elementos de carga de trabajo de muestra",
+  "Context_Menu_1_Display_Name": "Ejecutar trabajo de cálculo",
+  "Context_Menu_1_Tooltip": "Agregar un botón personalizado al menú contextual del elemento",
+  "Quick_Action_1_Display_Name": "Ejecutar trabajo breve",
+  "Quick_Action_1_Tooltip": "Agregar un botón de acción rápida al elemento"
+  }
+  

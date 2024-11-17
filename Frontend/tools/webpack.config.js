@@ -35,9 +35,9 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {
-                    context: './src/assets/',
+                    context: './src/internalAssets/',
                     from: '**/*',
-                    to: './assets',
+                    to: './internalAssets',
                 },
                 {
                     from: './tools/web.config',

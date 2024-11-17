@@ -20,6 +20,7 @@ interface AppProps {
 
 export interface PageProps {
     workloadClient: WorkloadClientAPI;
+    history?: History
 
 }
 
@@ -61,13 +62,13 @@ export function App({ history, workloadClient }: AppProps) {
             </Route>
 
             {/* Routing to a sample Page  */}
-            <Route path="/sample-page">
-                <SamplePage workloadClient={workloadClient} />
+            <Route path="/sample-page/:itemObjectId">
+                <SamplePage workloadClient={workloadClient} history={history} />
             </Route>
 
             {/* Routing to an Authentication Editor */}
-            <Route path="/Authentication">
-                <Authentication workloadClient={workloadClient} />
+            <Route path="/Authentication/:itemObjectId">
+                <Authentication workloadClient={workloadClient} history={history} />
             </Route>
         </Switch>
     </Router>;
