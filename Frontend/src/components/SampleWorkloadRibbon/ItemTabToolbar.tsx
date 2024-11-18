@@ -1,6 +1,17 @@
 import React from "react";
 
-import { Menu, MenuButton, MenuItem, MenuList, MenuPopover, MenuTrigger, Toolbar, ToolbarButton, ToolbarDivider } from "@fluentui/react-components";
+import {
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  MenuPopover,
+  MenuTrigger,
+  Toolbar,
+  ToolbarButton,
+  ToolbarDivider,
+  Tooltip
+} from "@fluentui/react-components";
 import {
   TriangleRight20Regular,
   History24Regular,
@@ -12,9 +23,13 @@ import { callItemGet, callOpenRecentRuns, callOpenSettings, callRunItemJob } fro
 import { jobTypeDisplayNames } from "../../utils";
 
 export function ItemTabToolbar(props: RibbonProps) {
-  const { itemObjectId, workloadClient } = props;
+  const { itemObjectId, workloadClient, isLakeHouseSelected, saveItemCallback, isDirty } = props;
 
   async function onRunJob( jobType: string) {
+    if (isDirty) {
+      await saveItemCallback();
+    }
+
     await callRunItemJob(
       itemObjectId,
       jobType,
@@ -23,14 +38,26 @@ export function ItemTabToolbar(props: RibbonProps) {
       true /* showNotification */);
   }
 
-  async function onRecenetRun() {
-    const item = await callItemGet(itemObjectId, workloadClient);
-    await callOpenRecentRuns(item, workloadClient);
+  async function onRecentRun() {
+    try {
+      const item = await callItemGet(itemObjectId, workloadClient);
+      await callOpenRecentRuns(item, workloadClient);
+    } catch (e) {
+        console.error(`Failed to open recent runs: ${e}`);
+    }
   }
 
-  async function onScheduelePane() {
-    const item = await callItemGet(itemObjectId, workloadClient);
-    await callOpenSettings(item, workloadClient, 'Schedule');
+  async function onSchedulePane() {
+    try {
+      if (isDirty) {
+          await saveItemCallback();
+      }
+
+      const item = await callItemGet(itemObjectId, workloadClient);
+      await callOpenSettings(item, workloadClient, 'Schedule');
+    } catch (e) {
+        console.error(`Failed to open schedule pane: ${e}`);
+    }
   }
 
   const menuItems = Object.keys(jobTypeDisplayNames).map((key) => (
@@ -39,28 +66,48 @@ export function ItemTabToolbar(props: RibbonProps) {
     </MenuItem>
   ));
 
+  function getJobActionTooltipText(regularTooltipMessage: string): string {
+    return !props.isLakeHouseSelected
+            ? 'Select a Lakehouse'
+            : regularTooltipMessage;
+  }
+
   console.log(itemObjectId)
     return (
       <Toolbar>
-        <Menu aria-label="run jobs">
-          <MenuTrigger>
-            <MenuButton style={{ fontWeight: 400, fontSize:14 }} size="small" icon={<TriangleRight20Regular />}>Run Jobs</MenuButton>
-          </MenuTrigger>
-          <MenuPopover>
-            <MenuList>{menuItems}</MenuList>
-          </MenuPopover>
-        </Menu>
+          <Menu aria-label="run jobs">
+            <MenuTrigger>
+              <Tooltip
+                  content={getJobActionTooltipText("Run Jobs")}
+                  relationship="label">
+              <MenuButton
+                  style={{fontWeight: 400, fontSize: 14}}
+                  size="small"
+                  icon={<TriangleRight20Regular/>}
+                  disabled={!isLakeHouseSelected}>Run Jobs</MenuButton>
+              </Tooltip>
+            </MenuTrigger>
+            <MenuPopover>
+              <MenuList>{menuItems}</MenuList>
+            </MenuPopover>
+          </Menu>
         <ToolbarDivider />
         <ToolbarButton
-          style={{ fontWeight: 400, fontSize:14 }} 
-          aria-label="Recent runs"
-          icon={<History24Regular />}
-          onClick={() => onRecenetRun()}>Recent runs</ToolbarButton>
-        <ToolbarButton
-          style={{ fontWeight: 400, fontSize:14 }} 
-          aria-label="Schedule"
-          icon={<Clock24Regular/>}
-          onClick={() => onScheduelePane()}>Schedule</ToolbarButton>
+            style={{fontWeight: 400, fontSize: 14}}
+            aria-label="Recent runs"
+            icon={<History24Regular/>}
+            onClick={() => onRecentRun()}>
+          Recent runs</ToolbarButton>
+        <Tooltip
+            content={getJobActionTooltipText("Schedule")}
+            relationship="label">
+          <ToolbarButton
+            style={{fontWeight: 400, fontSize: 14}}
+            aria-label="Schedule"
+            icon={<Clock24Regular/>}
+            onClick={() => onSchedulePane()}
+            disabled={!isLakeHouseSelected}>Schedule</ToolbarButton>
+        </Tooltip>
       </Toolbar>
     );
   }

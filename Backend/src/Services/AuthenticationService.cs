@@ -72,7 +72,7 @@ namespace Boilerplate.Services
             }
 
             var subjectAndAppToken = SubjectAndAppToken.Parse(authValues.Single());
-            
+
             var authorizationContext = await Authenticate(
                 tenantId,
                 subjectAndAppToken,
@@ -109,11 +109,11 @@ namespace Boilerplate.Services
             AuthenticationResult result = null;
             try
             {
-                 result = await _confidentialClientApplication
-                    .AcquireTokenOnBehalfOf(scopes, userAssertion)
-                    .WithTenantId(authorizationContext.TenantObjectId.ToString()) // This is needed to support B2B scenarios
-                    .ExecuteAsync();
-            } 
+                result = await _confidentialClientApplication
+                   .AcquireTokenOnBehalfOf(scopes, userAssertion)
+                   .WithTenantId(authorizationContext.TenantObjectId.ToString())
+                   .ExecuteAsync();
+            }
             catch (MsalUiRequiredException ex)
             {
                 var authUIRequiredException = new AuthenticationUIRequiredException(ex.Message)
@@ -123,13 +123,12 @@ namespace Boilerplate.Services
                     new (string, string)[]
                     {
                         (AuthenticationUIRequiredException.AdditionalScopesToConsentName, string.Join(", ", scopes)),
-                        (AuthenticationUIRequiredException.ClaimsForCondtionalAccessPolicyName, ex.Claims) 
+                        (AuthenticationUIRequiredException.ClaimsForCondtionalAccessPolicyName, ex.Claims)
                     }
                 );
-                
+
                 throw authUIRequiredException;
             }
-            
 
             _logger.LogInformation("Succeeded Exchanging tokens for scopes:" + string.Join(", ", scopes));
 
@@ -157,7 +156,7 @@ namespace Boilerplate.Services
         /// <returns>403 status code</returns>
         public static void AddBearerClaimToResponse(AuthenticationUIRequiredException ex, HttpResponse response)
         {
-            var message = $"Bearer claims={ex.ClaimsForConditionalAccessPolicy}, error={ex.ErrorMessage}";
+            var message = $"Bearer claims={ex.ClaimsForConditionalAccessPolicy}, error={ex.Message}";
 
             // Remove new lines so we can add the string to WWWAuthenticate header
             message = message.Replace(System.Environment.NewLine, " ");

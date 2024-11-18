@@ -19,6 +19,8 @@ namespace Boilerplate.Constants
 
         public const string OneLakeResourceId = "https://storage.azure.com";
 
+        public const string SqlBackendResourceId = "https://database.windows.net/";
+
         public const string AadInstanceUrl = "https://login.microsoftonline.com";
 
         public const string FabricApiBaseUrl = "https://api.fabric.microsoft.com";

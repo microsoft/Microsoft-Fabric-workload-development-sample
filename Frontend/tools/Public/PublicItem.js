@@ -29,4 +29,5 @@ class ItemSettingsItem {
         this.recentRun = recentRun;
     }
 }
+
 module.exports = PublicItem;

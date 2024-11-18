@@ -12,6 +12,7 @@ using Fabric_Extension_BE_Boilerplate.Contracts.FabricAPI.Workload;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -19,7 +20,8 @@ namespace Boilerplate.Items
 {
     public class Item1 : ItemBase<Item1, Item1Metadata, Item1ClientMetadata>, IItem1
     {
-        public static readonly IList<string> SupportedOperators = Enum.GetNames<Item1Operator>();
+        public static readonly IList<string> SupportedOperators = Enum.GetNames(typeof(Item1Operator))
+            .Where(name => name != nameof(Item1Operator.Undefined)).ToList();
 
         private static readonly IList<string> OneLakeScopes = new[] { $"{EnvironmentConstants.OneLakeResourceId}/.default" };
 

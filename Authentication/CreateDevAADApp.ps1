@@ -175,6 +175,10 @@ $application = @{
                 resourceAppId = "00000009-0000-0000-c000-000000000000" # PBI Service
                 resourceAccess = @(
                     @{
+                        id = "7ba630b9-8110-4e27-8d17-81e5f2218787" # Fabric.Extend
+                        type = "Scope"
+                    },
+                    @{
                         id = "b2f1b2fa-f35c-407c-979c-a858a808ba85" # Workspace.Read.All
                         type = "Scope"
                     },
@@ -196,10 +200,6 @@ $application = @{
                     },
                     @{
                         id = "13060bfd-9305-4ec6-8388-8916580f4fa9" # Lakehouse.Read.All
-                        type = "Scope"
-                    },
-                    @{
-                        id = "7ba630b9-8110-4e27-8d17-81e5f2218787" # Fabric.Extend
                         type = "Scope"
                     }
                 )

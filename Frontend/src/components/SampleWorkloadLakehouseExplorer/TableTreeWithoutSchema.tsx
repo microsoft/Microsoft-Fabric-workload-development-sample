@@ -1,14 +1,20 @@
 import React from "react";
-import { TableMetadata } from "src/models/LakehouseExplorerModel";
+import { LakehouseExplorerTablesTreeProps } from "src/models/LakehouseExplorerModel";
 import { Table20Regular } from "@fluentui/react-icons";
 import { TreeItem, TreeItemLayout, Tooltip } from "@fluentui/react-components";
 
-export function TableTreeWithoutSchema(tablesInLakehouse: TableMetadata[]) {
+export function TableTreeWithoutSchema(props: LakehouseExplorerTablesTreeProps) {
+    const {allTablesInLakehouse, onSelectTableCallback} = props;
     return (
         <>
-            {tablesInLakehouse &&
-                tablesInLakehouse.map((table) => (
-                    <TreeItem key={table.name} accessKey={table.path} itemType="leaf">
+            {allTablesInLakehouse &&
+                allTablesInLakehouse.map((table) => (
+                    <TreeItem 
+                    key={table.name} 
+                    accessKey={table.path} 
+                    itemType="leaf" 
+                    onClick={() => onSelectTableCallback(table)}
+                    >
                         <Tooltip
                         relationship="label"
                         content={table.name}>

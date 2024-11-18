@@ -23,5 +23,15 @@ namespace Fabric_Extension_BE_Boilerplate.Constants
             public const string InvalidItemPayload = "InvalidItemPayload";
             public const string MissingLakehouseReference = "MissingLakehouseReference";
         }
+
+        public static class RateLimiting
+        {
+            public const string TooManyRequests = "TooManyRequests";
+        }
+
+        public static class Item
+        {
+            public const string ItemMetadataNotFound = "ItemMetadataNotFound";
+        }
     }
 }

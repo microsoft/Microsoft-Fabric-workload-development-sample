@@ -1,4 +1,4 @@
-﻿// <copyright company="Microsoft">
+// <copyright company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 

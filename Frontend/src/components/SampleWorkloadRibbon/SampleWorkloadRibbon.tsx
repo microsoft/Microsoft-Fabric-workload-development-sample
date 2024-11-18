@@ -12,7 +12,6 @@ import {
   Chat24Regular,
   Edit24Regular,
   Share24Regular,
-  Settings24Regular,
   ZoomFit20Filled,
   Database24Regular,
   Delete24Regular,
@@ -23,25 +22,18 @@ import { PageProps } from 'src/App';
 import { callDatahubOpen, callDialogOpenMsgBox } from '../../controller/SampleWorkloadController';
 import './../../styles.scss';
 import { ItemTabToolbar } from "./ItemTabToolbar";
-import { callItemGet, callOpenSettings } from "../../controller/SampleWorkloadController";
 
 const HomeTabToolbar = (props: RibbonProps) => {
-const { itemObjectId, workloadClient } = props;
-
-  async function onSettingsClicked() {
-    // todo: refactor get item to ribbon
-    const item = await callItemGet(itemObjectId, workloadClient);
-    await callOpenSettings(item, workloadClient, 'About');
-  }
 
   async function onDatahubClicked() {
     // todo: use the selected datahub item object id
-    await callDatahubOpen("Select a Lakehouse to use for Sample Workload", true, props.workloadClient);
+
+    await callDatahubOpen(['Lakehouse'], "Select a Lakehouse to use for Sample Workload", true, props.workloadClient);
   }
 
   async function onSaveAsClicked() {
     // your code to save as here
-    props.saveItemCallback();
+    await props.saveItemCallback();
     return;
   }
 
@@ -86,15 +78,6 @@ const { itemObjectId, workloadClient } = props;
         <ToolbarButton
           aria-label="Save"
           icon={<Database24Regular />} onClick={() => onDatahubClicked()} />
-      </Tooltip>
-
-      <Tooltip
-        content="Settings"
-        relationship="label">
-        <ToolbarButton
-          disabled={!props.itemObjectId}
-          aria-label="Settings"
-          icon={<Settings24Regular />} onClick={() => onSettingsClicked()} />
       </Tooltip>
 
       <Tooltip
@@ -163,13 +146,14 @@ const CollabButtons = (props: RibbonProps) => {
 }
 
 export interface RibbonProps extends PageProps {
-  saveItemCallback: () => void;
+  saveItemCallback: () => Promise<void>;
   isLakeHouseSelected?: boolean;
   isSaveButtonEnabled?: boolean;
   isDeleteEnabled?: boolean;
   deleteItemCallback: () => void;
   itemObjectId?: string;
   onTabChange: (tabValue: TabValue) => void;
+  isDirty: boolean;
 }
 
 export function Ribbon(props: RibbonProps) {

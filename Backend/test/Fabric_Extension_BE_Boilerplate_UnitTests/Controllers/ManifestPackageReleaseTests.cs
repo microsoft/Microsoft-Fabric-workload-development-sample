@@ -15,12 +15,12 @@ namespace Boilerplate.Tests
                 { @"WorkloadManifest.xml", @"BE\WorkloadManifest.xml" },
                 { @"Item1.xml", @"BE\Item1.xml" },
                 { @"..\..\..\..\Frontend\Package\*", @"FE" },
-                { @"..\..\..\..\Frontend\Package\assets\*", @"FE\assets" }
+                { @"..\..\..\..\Frontend\Package\assets\**", @"FE\assets" }
             };
 
             var result = ParseNuspecFile(nuspecFilePath);
 
-            CollectionAssert.AreEquivalent(expectedFilesAndTargets, result);
+            Assert.That(result, Is.EquivalentTo(expectedFilesAndTargets));
         }
 
         private Dictionary<string, string> ParseNuspecFile(string filePath)

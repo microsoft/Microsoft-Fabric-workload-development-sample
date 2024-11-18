@@ -65,7 +65,7 @@ export interface ItemActionContext {
     item: ItemLikeV2;
 }
 
-export interface ItemTabActionContext {
+export interface ItemTabActionContext{
     id: string;
 }
 

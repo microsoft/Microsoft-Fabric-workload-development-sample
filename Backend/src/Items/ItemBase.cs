@@ -7,6 +7,7 @@ using Boilerplate.Exceptions;
 using Boilerplate.Services;
 using Boilerplate.Utils;
 using Fabric_Extension_BE_Boilerplate.Contracts.FabricAPI.Workload;
+using Fabric_Extension_BE_Boilerplate.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Text.Json;
@@ -56,7 +57,13 @@ namespace Boilerplate.Items
 
         public async Task Load(Guid itemId)
         {
-            var itemMetadata = await _itemMetadataStore.Load<TItemMetadata>(AuthorizationContext.TenantObjectId, itemId);
+            var tenantObjectId = AuthorizationContext.TenantObjectId;
+            if (!_itemMetadataStore.Exists(tenantObjectId, itemId))
+            {
+                throw new ItemMetadataNotFoundException(itemId);
+            }
+
+            var itemMetadata = await _itemMetadataStore.Load<TItemMetadata>(tenantObjectId, itemId);
 
             Ensure.NotNull(itemMetadata, nameof(itemMetadata));
             Ensure.NotNull(itemMetadata.CommonMetadata, nameof(itemMetadata.CommonMetadata));
@@ -67,7 +74,7 @@ namespace Boilerplate.Items
                 throw new UnexpectedItemTypeException($"Unexpected item type '{itemMetadata.CommonMetadata.Type}'. Expected type is '{ItemType}'.");
             }
 
-            Ensure.Condition(itemMetadata.CommonMetadata.TenantObjectId == AuthorizationContext.TenantObjectId, "TenantObjectId must match");
+            Ensure.Condition(itemMetadata.CommonMetadata.TenantObjectId == tenantObjectId, "TenantObjectId must match");
             Ensure.Condition(itemMetadata.CommonMetadata.ItemObjectId == itemId, "ItemObjectId must match");
 
             TenantObjectId = itemMetadata.CommonMetadata.TenantObjectId;

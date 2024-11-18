@@ -1,5 +1,5 @@
 class BaseItem {
-    constructor(name, displayName, displayNamePlural, editor, icon, activeIcon, contextMenuItems, quickActionItems, supportedInMonitoringHub) {
+    constructor(name, displayName, displayNamePlural, editor, icon, activeIcon, contextMenuItems, quickActionItems, supportedInMonitoringHub, supportedInDatahubL1) {
         this.name = name;
         this.displayName = displayName;
         this.displayNamePlural = displayNamePlural;
@@ -9,6 +9,7 @@ class BaseItem {
         this.contextMenuItems = contextMenuItems;
         this.quickActionItems = quickActionItems;
         this.supportedInMonitoringHub = supportedInMonitoringHub;
+        this.supportedInDatahubL1 = supportedInDatahubL1;
     }
 }
 

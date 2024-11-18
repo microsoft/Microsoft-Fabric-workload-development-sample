@@ -5,7 +5,6 @@ import { Field, Input, Button, Checkbox } from "@fluentui/react-components";
 import { PageProps, ContextProps } from "../../App";
 import { callAuthAcquireAccessToken, callDialogClose, callItemCreate, callPageOpen } from "../../controller/SampleWorkloadController";
 import { GenericItem, CreateItemPayload } from "../../models/SampleWorkloadModel";
-import { WorkloadAuthError } from "@ms-fabric/workload-client";
 
 interface SaveAsDialogProps extends PageProps {
     isImmediateSave?: boolean;
@@ -19,12 +18,12 @@ export function SaveAsDialog({ workloadClient, isImmediateSave }: SaveAsDialogPr
     const sampleItemEditorPath = "/sample-workload-editor";
     const EMPTY_GUID = '00000000-0000-0000-0000-000000000000';
 
-    const [displayName, setDisplayName] = useState<string>("Copy of item");
-    const [description, setDescription] = useState<string>("description of item");
-    const [isSaveDisabled, setIsSaveDisabled] = useState<boolean>(false);
+    const [displayName, setDisplayName] = useState<string>("");
+    const [description, setDescription] = useState<string>("");
+    const [isSaveDisabled, setIsSaveDisabled] = useState<boolean>(true);
     const [isSaveInProgress, setIsSaveInProgress] = useState<boolean>(false);
     const [validationMessage, setValidationMessage] = useState<string>(null);
-    const [requestDefaultConsent, setRequestDefaultConsent] = useState<boolean>(false);
+    const [promptFullConsent, setPromptFullConsent] = useState<boolean>(false);
 
     const pageContext = useParams<ContextProps>();
 
@@ -34,20 +33,11 @@ export function SaveAsDialog({ workloadClient, isImmediateSave }: SaveAsDialogPr
             try {
                 setIsSaveInProgress(true);
                 setIsSaveDisabled(true);
-                 // raise consent dialog for the user
-                 await callAuthAcquireAccessToken(workloadClient,  requestDefaultConsent ? '.default' : null);
-                 createResult = await handleCreateSampleItem(pageContext.workspaceObjectId, displayName, description);
-            } catch(error) {
-                switch(error?.error) {
-                    case WorkloadAuthError.WorkloadConfigError:
-                        setValidationMessage("Workload config error - make sure that you have added the right configurations for your AAD app to the manifest!");
-                        break;
-                    case WorkloadAuthError.UnsupportedError:
-                        setValidationMessage("Authentication is not supported in this environment!");
-                        break;
-                    default:
-                        setValidationMessage("Failed to fetch token for your AAD app, please make sure you have configured your application correctly");
-                }
+                
+                // raise consent dialog for the user
+                await callAuthAcquireAccessToken(workloadClient, null /*additionalScopesToConsent*/, null /*claimsForConditionalAccessPolicy*/, promptFullConsent);
+
+                createResult = await handleCreateSampleItem(pageContext.workspaceObjectId, displayName, description);
             } finally {
                 setIsSaveInProgress(false);
                 setIsSaveDisabled(false);
@@ -122,7 +112,7 @@ export function SaveAsDialog({ workloadClient, isImmediateSave }: SaveAsDialogPr
                 <Field label="Sample description:">
                     <Input onChange={e => onDescriptionChanged(e.target.value)} defaultValue={description} disabled={isSaveInProgress} />
                 </Field>
-                <Checkbox label ="Request Initial Consent (Mark this if this is the first time you're working with this workload)" onChange={(v) => setRequestDefaultConsent(v.target.checked)}/>
+                <Checkbox label ="Request Initial Consent (Mark this if this is the first time you're working with this workload)" onChange={(v) => setPromptFullConsent(v.target.checked)}/>
                 <Stack className="create-buttons" horizontal tokens={{ childrenGap: 10 }}>
                     <Button appearance="primary" onClick={() => onSaveClicked()} disabled={isSaveDisabled}>Create</Button>
                     <Button appearance="secondary" onClick={() => onCancelClicked()}>Cancel</Button>

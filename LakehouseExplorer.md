@@ -75,7 +75,7 @@ This function:
 2. Fetches the tables in the Lakehouse using getTablesInLakehouse.
 3. Sets the schema indicator and the tables to be displayed in the component. The schema indicator determines which tree component to render.
 
-Please reference the [Lakehouse Explorer Controller](Frontend/src/controller/LakehouseExplorerController.ts).
+Please reference the [Lakehouse Explorer Controller](Frontend/src/controller/LakehouseExplorerController.ts)
 
 ## Backend ##
 

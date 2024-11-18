@@ -10,3 +10,8 @@ export interface TableMetadata {
     isSelected: boolean;
     schema?: string;
 }
+
+export interface LakehouseExplorerTablesTreeProps {
+    allTablesInLakehouse: TableMetadata[];
+    onSelectTableCallback: (selectedTable: TableMetadata) => void;
+}

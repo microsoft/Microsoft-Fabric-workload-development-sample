@@ -1,0 +1,20 @@
+{
+    "Workload_Display_Name": "Sample Workload",
+    "Workload_Full_Display_Name": "Sample Workload",
+    "Workload_Description": "Sample Workload Description",
+    "Learning_Material_1_Title": "Learning Material example1",
+    "Learning_Material_1_Description": "Learning Material example1 description",
+    "Learning_Material_1_Introduction": "Get started with Workload Development Kit documentation",
+    "NewSection_Custom_Action_Title": "Frontend Only Playground",
+    "CreateHub_Workload_Description":"CreateHub Product Description",
+    "CreateHub_Card_1_Title": "Sample Item",
+    "CreateHub_Card_1_Description": "Create a Sample Workload Item for your Dev Experience",
+    "Workload_Hub_Workload_Slogan": "The quickest way from a billion points of data to a point of view.",
+    "Workload_Hub_Workload_Description": "Contoso workload enables organizations to conduct real-time customer interactions and automate operational business decisions at scale. It supports a wide variety of customer-facing activities such as personalized marketing and next best action, and customer-impacting decisions including credit services and fraud prevention.",
+    "Item_1_DisplayName": "Sample Workload Item",
+    "Item_1_DisplayName_Plural": "Sample Workload Items",
+    "Context_Menu_1_Display_Name": "Run calculate job",
+    "Context_Menu_1_Tooltip":"Adding a custom button to the item context menu",
+    "Quick_Action_1_Display_Name": "Run short job",
+    "Quick_Action_1_Tooltip": "Adding a quick action button to the item"
+}

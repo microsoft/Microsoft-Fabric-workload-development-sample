@@ -23,6 +23,10 @@
     flex-grow: 1;
 }
 
+.margin-top {
+    margin-top: 16px;
+}
+
 .editor .section {
     padding: 0 0 30px 20px;
     display: flex;
@@ -97,36 +101,47 @@
     flex-grow: 1;
 }
 
-.lakehouse_explorer {
+
+.explorer {
     min-width: 200px;
-    width:20%;
-    overflow:hidden;
-    height: 50vh;
+    width:25vw;
+    height: 70vh;
     vertical-align: middle;
     border-radius: 8px;
     background: white; 
     box-shadow: 0 0 2px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.14);
     margin: 5px 0;
     padding: 5px;
-    display: inline-block;
-    h1 {
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 16px;
-        font-weight: 600;
-        margin: 6;
-    }
+    display: flex;
 
-    .lakehouse-selector-body {
+    .top {
+        padding: 5px 10px;
         display: flex;
-        height: 100%;
-        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        h1 {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            margin:10px;
+        }
+    }
+
+    .selector-body {
+        display: flex;
         align-items: start;
+        overflow:hidden;
+        .tree-container {
+            width:100%;
+            overflow-y: auto;
+        }
     }
-
-    .lakehouse-selector-tree-item {
+    
+    .selector-tree-item {
+        display:flex;
         width: 100%;
     }
-
+    
     .fui-TreeItemLayout__main  {
         text-overflow: ellipsis;
         overflow:hidden;
@@ -139,30 +154,25 @@
         align-items: center;
         justify-content: center;
         text-align: center;
-
-        .add-lakehouse-button {
+        flex-direction: column;
+ 
+        .add-button {
             margin: 0;
             width: 51px;
             min-width: auto;
             height: 32px;
             font-size: 14px;
         }
-
-        .add-lakehouse {
+        
+        .add {
             font-size: 20px;
             font-weight: 600;
             margin: 0px;
             padding: 24px 0;
         }
     }
-
-    .top {
-        padding: 0 10px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-    }
 }
+    
 
 .hidden-explorer {
     width: max-content;
@@ -180,9 +190,21 @@
     }
     .selected {
         background-color: var(--colorNeutralBackground1Selected);
-    }   
+    }    
 }
 
 .spinner {
     justify-content: center;
+}
+
+
+.rtl > * {
+    direction: rtl;
+    text-align: start;
+}
+
+.message-bar-body {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem
 }

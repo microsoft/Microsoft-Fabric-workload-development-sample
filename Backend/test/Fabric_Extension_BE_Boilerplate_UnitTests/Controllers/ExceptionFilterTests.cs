@@ -1,14 +1,13 @@
-﻿﻿// <copyright company="Microsoft">
+﻿// <copyright company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
 using Boilerplate.Controllers;
 using Boilerplate.Exceptions;
+using Boilerplate.Utils;
 using Fabric_Extension_BE_Boilerplate.Constants;
 using Fabric_Extension_BE_Boilerplate.Contracts.FabricAPI.Workload;
 using Fabric_Extension_BE_Boilerplate.Exceptions;
-using Microsoft.Identity.Client;
-using Microsoft.IdentityModel.Tokens;
 using NUnit.Framework;
 using System.Net;
 using System.Security.Authentication;

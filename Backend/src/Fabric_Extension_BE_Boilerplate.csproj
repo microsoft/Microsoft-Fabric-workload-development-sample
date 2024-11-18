@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <BuildDependsOn>PreBuild</BuildDependsOn>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -17,17 +17,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Core" Version="1.38.0" />
-    <PackageReference Include="Azure.Identity" Version="1.11.0" />
-    <PackageReference Include="Azure.Storage.Files.DataLake" Version="12.14.0" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.60.3" />
-    <PackageReference Include="Microsoft.IdentityModel.Protocols" Version="6.30.1" />
-    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="6.30.1" />
-    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.30.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="Azure.Core" Version="1.44.1" />
+    <PackageReference Include="Azure.Identity" Version="1.13.1" />
+    <PackageReference Include="Azure.Storage.Files.DataLake" Version="12.20.1" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="6.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.66.1" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols" Version="8.1.2" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.1.2" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.1.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,11 +35,19 @@
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="powershell.exe -ExecutionPolicy Bypass -File ValidationScripts\RemoveErrorFile.ps1 -outputDirectory ValidationScripts\" />
-    <Exec Command="powershell.exe -ExecutionPolicy Bypass -File ValidationScripts\ManifestValidator.ps1 -inputDirectory .\Packages\manifest\ -inputXml WorkloadManifest.xml -inputXsd WorkloadDefinition.xsd -outputDirectory ValidationScripts\" />
-    <Exec Command="powershell.exe -ExecutionPolicy Bypass -File ValidationScripts\ItemManifestValidator.ps1 -inputDirectory .\Packages\manifest\ -inputXsd ItemDefinition.xsd -outputDirectory ValidationScripts\" />
-    <Exec Command="powershell.exe -ExecutionPolicy Bypass -File ValidationScripts\ValidateNoDefaults.ps1 -outputDirectory ValidationScripts\" />
-    <Error Condition="Exists('ValidationScripts\ValidationErrors.txt')" Text="Validation errors with either manifests or default values" File="ValidationScripts\ValidationErrors.txt" />
+    <PropertyGroup>
+      <PowerShellScript Condition="'$(OS)' == 'Windows_NT'">powershell.exe</PowerShellScript>
+      <PowerShellScript Condition="'$(OS)' != 'Windows_NT'">pwsh</PowerShellScript>
+      <ScriptsDir>$(ProjectDir)ValidationScripts</ScriptsDir>
+      <ManifestDir>$(ProjectDir)Packages\manifest</ManifestDir>
+    </PropertyGroup>
+
+    <Exec Command="$(PowerShellScript) -ExecutionPolicy Bypass -File &quot;$(ScriptsDir)\RemoveErrorFile.ps1&quot; -outputDirectory &quot;$(ScriptsDir)&quot;" />
+    <Exec Command="$(PowerShellScript) -ExecutionPolicy Bypass -File &quot;$(ScriptsDir)\ManifestValidator.ps1&quot; -inputDirectory &quot;$(ManifestDir)&quot; -inputXml WorkloadManifest.xml -inputXsd WorkloadDefinition.xsd -outputDirectory &quot;$(ScriptsDir)&quot;" />
+    <Exec Command="$(PowerShellScript) -ExecutionPolicy Bypass -File &quot;$(ScriptsDir)\ItemManifestValidator.ps1&quot; -inputDirectory &quot;$(ManifestDir)&quot; -inputXsd ItemDefinition.xsd -outputDirectory &quot;$(ScriptsDir)&quot;" />
+    <Exec Command="$(PowerShellScript) -ExecutionPolicy Bypass -File &quot;$(ScriptsDir)\ValidateNoDefaults.ps1&quot; -outputDirectory &quot;$(ScriptsDir)&quot;" />
+    
+    <Error Condition="Exists('$(ScriptsDir)\ValidationErrors.txt')" Text="Validation errors with either manifests or default values" File="$(ScriptsDir)\ValidationErrors.txt" />
   </Target>
 
 </Project>

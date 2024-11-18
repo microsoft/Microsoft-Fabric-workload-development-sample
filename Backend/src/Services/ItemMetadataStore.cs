@@ -5,11 +5,14 @@
 using Boilerplate.Contracts;
 using Boilerplate.Exceptions;
 using Fabric_Extension_BE_Boilerplate.Constants;
+using Fabric_Extension_BE_Boilerplate.Utils;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Boilerplate.Services
@@ -22,12 +25,14 @@ namespace Boilerplate.Services
     {
         private const string CommonItemMetadataFilename = "common.metadata.json";
         private const string TypeSpecificMetadataFilename = "item.metadata.json";
+        private static readonly ConcurrentDictionary<string, SemaphoreSlim> semaphores = new ConcurrentDictionary<string, SemaphoreSlim>();
 
+        private static readonly JsonConverter<Item1Operator> Item1OperatorConverter = new UnknownAsDefaultEnumConverter<Item1Operator>();
         private static readonly JsonSerializerOptions ContentSerializationOptions = new JsonSerializerOptions
         { 
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true,
-            Converters = { new JsonStringEnumConverter() },
+            Converters = { Item1OperatorConverter },
         };
 
         private readonly ILogger<ItemMetadataStore> _logger;
@@ -56,6 +61,14 @@ namespace Boilerplate.Services
             return new ItemMetadata<TItemMetadata> {  CommonMetadata = commonMetadata, TypeSpecificMetadata = typeSpecificMetadata };
         }
 
+        public bool Exists(Guid tenantObjectId, Guid itemObjectId)
+        {
+            var itemDirectoryPath = GetSubDirectoryFullPath(_baseDirectory, $"{tenantObjectId}\\{itemObjectId}");
+            var commonItemMetadataFilePath = Path.Combine(itemDirectoryPath, CommonItemMetadataFilename);
+            var itemMetadataFilePath = Path.Combine(itemDirectoryPath, TypeSpecificMetadataFilename);
+            return File.Exists(commonItemMetadataFilePath) && File.Exists(itemMetadataFilePath);
+        }
+
         public Task Delete(Guid tenantObjectId, Guid itemObjectId)
         {
             var itemDirectoryPath = GetSubDirectoryFullPath(_baseDirectory, $"{tenantObjectId}\\{itemObjectId}");
@@ -66,15 +79,33 @@ namespace Boilerplate.Services
         private async Task StoreFile<TContent>(string directoryPath, string filename, TContent content)
         {
             var filePath = GetSubDirectoryFullPath(directoryPath, filename);
-            var serializedContent = JsonSerializer.Serialize(content, ContentSerializationOptions);
-            await File.WriteAllTextAsync(filePath, serializedContent);
+            var semaphore = semaphores.GetOrAdd(filePath, _ => new SemaphoreSlim(1, 1));
+            await semaphore.WaitAsync();
+            try
+            {
+                var serializedContent = JsonSerializer.Serialize(content, ContentSerializationOptions);
+                await File.WriteAllTextAsync(filePath, serializedContent);
+            }
+            finally
+            {
+                semaphore.Release();
+            }
         }
 
         private async Task<TContent> LoadFile<TContent>(string directoryPath, string filename)
         {
             var filePath = GetSubDirectoryFullPath(directoryPath, filename);
-            var content = await File.ReadAllTextAsync(filePath);
-            return JsonSerializer.Deserialize<TContent>(content, ContentSerializationOptions);
+            var semaphore = semaphores.GetOrAdd(filePath, _ => new SemaphoreSlim(1, 1));
+            await semaphore.WaitAsync();
+            try
+            {
+                var content = await File.ReadAllTextAsync(filePath);
+                return JsonSerializer.Deserialize<TContent>(content, ContentSerializationOptions);
+            }
+            finally
+            {
+                semaphore.Release();
+            }
         }
 
         private static string GetBaseDirectoryPath(string workloadName)
