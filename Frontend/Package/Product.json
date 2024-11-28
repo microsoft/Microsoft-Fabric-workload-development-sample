@@ -1,8 +1,8 @@
 {
     "name": "Product",
-    "displayName": "Sample Workload",
-    "fullDisplayName": "Sample Workload",
-    "description": "Sample Workload Description",
+    "displayName": "Idan Workload",
+    "fullDisplayName": "Idan Workload",
+    "description": "Idan Workload Description",
     "favicon": "assets/briefcase.png",
     "icon": {
       "name": "assets/briefcase.png"

@@ -5,9 +5,10 @@ import { History } from "history";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 
 import { SampleWorkloadEditor, SamplePage } from "./components/SampleWorkloadEditor/SampleWorkloadEditor";
-import { Authentication } from './components/SampleWorkloadAuthEditor/SampleWorkloadAuthEditor';
+import { AdlsApiTester } from './components/SampleWorkloadAuthEditor/SampleWorkloadAuthEditor';
 import { Panel } from "./components/SampleWorkloadPanel/SampleWorkloadPanel";
 import { SaveAsDialog } from "./components/SampleWorkloadCreateDialog/SampleWorkloadCreateDialog";
+import { FabricApiTester } from "./components/SampleWorkloadAuthEditor/FabricApiTester";
 
 /*
     Add your Item Editor in the Route section of the App function below
@@ -67,7 +68,11 @@ export function App({ history, workloadClient }: AppProps) {
 
             {/* Routing to an Authentication Editor */}
             <Route path="/Authentication">
-                <Authentication workloadClient={workloadClient} />
+                <AdlsApiTester />
+            </Route>
+                        {/* Routing to an Authentication Editor */}
+                        <Route path="/FabricApiTester">
+                <FabricApiTester />
             </Route>
         </Switch>
     </Router>;

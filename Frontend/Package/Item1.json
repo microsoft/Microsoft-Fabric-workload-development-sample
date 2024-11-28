@@ -1,7 +1,7 @@
 {
     "name": "SampleWorkloadItem",
-    "displayName": "Sample Workload Item",
-    "displayNamePlural": "Sample Workload Items",
+    "displayName": "Idan Item",
+    "displayNamePlural": "Idan Item",
     "editor": {
       "path": "/sample-workload-editor"
     },

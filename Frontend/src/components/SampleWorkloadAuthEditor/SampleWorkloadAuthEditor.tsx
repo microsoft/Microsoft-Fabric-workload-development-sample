@@ -1,110 +1,108 @@
-import jwt_decode from "jwt-decode";
 import React, { useState } from "react";
-
 import { Stack } from "@fluentui/react";
-import { Button, Combobox, Divider, Field, Input, Option, Checkbox } from '@fluentui/react-components';
-import { WorkloadAuthError } from "@ms-fabric/workload-client";
+import { Button, Combobox, Divider, Field, Input, Option, Textarea } from '@fluentui/react-components';
 
-import { PageProps } from 'src/App';
-import { callNavigationNavigate, callAuthAcquireAccessToken } from "../../controller/SampleWorkloadController";
 
-export function Authentication({ workloadClient }: PageProps) {
-    const [claimsForConditionalAccessPolicy, setClaimsForConditionalAccessPolicy] = useState<string>('');
-    const [additionalScopesToConsent, setAdditionalScopesToConsent] = useState<string>('');
-    const [token, setToken] = useState<string>('');
-    const [acquireTokenError, setAcquireTokenError] = useState<string>('');
-    const [serverUrl, setServerUrl] = useState<string>('');
-    const [serverResponse, setServerResponse] = useState<string>('');
-    const [httpMethod, setHttpMethod] = useState<string>('');
-    const [requestBody, setRequestBody] = useState<string>('');
-    const [requestDefaultConsent, setRequestDefaultConsent] = useState<boolean>(false);
-    const httpMethods = ['GET', 'PUT', 'POST'];
+export function AdlsApiTester() {
+    const [adlsUrl, setAdlsUrl] = useState<string>('');
+    const [httpMethod, setHttpMethod] = useState<string>('GET');
+    const [jsonContent, setJsonContent] = useState<string>('');
+    const [apiResponse, setApiResponse] = useState<string>('');
+    const httpMethods = ['GET', 'PUT', 'POST', 'DELETE'];
+
+    // Send API Request as a Post Message to Host
+    const sendApiRequestToHost = () => {
+        if (!adlsUrl) {
+            setApiResponse('Please provide a valid URL.');
+            return;
+        }
+
+        const payload = {
+            method: httpMethod,
+            endpoint: adlsUrl,
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: jsonContent || null,
+        };
+
+        window.parent.postMessage(
+            {
+                type: "generic-api-request",
+                payload,
+            },
+            "*"
+        );
+
+        // Listener for Host Response
+        const listener = (event: MessageEvent) => {
+            debugger;
+            const { type, payload } = event.data;
+            if (type === "generic-api-response") {
+                setApiResponse(payload.success ? JSON.stringify(payload.data, null, 2) : payload.error);
+                window.removeEventListener("message", listener);
+            }
+        };
+
+        window.addEventListener("message", listener);
+    };
+
     return (
-        <Stack className="editor">
-            <h2>Authentication</h2>
-            <Stack className="main">
-                {/* TODO - fix Navigate Back - sample page needs to get workspaceObjectId, and then use it when navigating back */}
-                <Button onClick={() => callNavigationNavigate('workload', '/sample-workload-create', workloadClient)}>Navigate Back</Button>
-            </Stack>
-            <Stack className="main">
-                <div className="description">
-                Welcome to the authentication section!&#10;For this to work please make sure to add your AAD application configuration to your workload manifest or localWorkloadManifest.json under "workload" for dev:&#10;
-                <b>devAADAppConfig:&#10;
-                &emsp;&emsp;appId: your app id&#10;
-                &emsp;&emsp;redirectUri: a redirect URI that returns an html containing close() javascript function&#10;
-                &emsp;&emsp;audience: your audience</b>&#10;
-                </div>
-            </Stack>
+        <Stack tokens={{ childrenGap: 20 }}>
+            <h2>ADLS API Tester</h2>
 
-            <Stack className="main">
-                <Divider alignContent="start">Call your server with the token generated below</Divider>
-                <Field label="Server endpoint:" orientation="horizontal" className="field">
-                    <Input size="medium" placeholder="Your server's endpoint (e.g. https://localhost:5001/getLakehouseFile?source=...)" onChange={e => setServerUrl(e.target.value)} />
-                </Field>
-                <Field label="Http method" orientation="horizontal" className="field">
-                    <Combobox placeholder="method" onOptionSelect={(_, opt) => setHttpMethod(opt.optionValue)}>
-                                {httpMethods.map((option) => (
-                                    <Option key={option}>
-                                        {option}
-                                    </Option>
-                                ))}
-                    </Combobox>
-                </Field>
-                <Field label="Request body" orientation="horizontal" className="field">
-                    <Input size="medium" placeholder="Content" onChange={e => setRequestBody(e.target.value)} />
-                </Field>
-                <div className="authButton">
-                    <Button appearance="primary" onClick={
-                        () => sendWorkloadServerRequest(serverUrl, token, httpMethod, requestBody).then(result => setServerResponse(result))
-                        }>Call server's API</Button>
-                </div>
-                <Field label="Response:" orientation="horizontal" className="field"> { serverResponse } </Field>
-            </Stack>
+            <Divider alignContent="start">API Configuration</Divider>
 
-            <Stack className="main">
-                <Divider alignContent="start">Generate a token</Divider>                
-                <Field label="Additional scopes to consent (seperated by a space):" orientation="horizontal" className="field">
-                    <Input size="medium" placeholder="Scopes" onChange={e => setAdditionalScopesToConsent(e.target.value)} />
-                </Field>
-                <Field label="Claims for conditional access:" orientation="horizontal" className="field">
-                    <Input size="medium" placeholder="Claims" onChange={e => setClaimsForConditionalAccessPolicy(e.target.value)} />
-                </Field>
-                <Checkbox label ="Request Initial Consent" onChange={(v) => setRequestDefaultConsent(v.target.checked)}/>
-                <div className="authButton">
-                    <Button className="authButton" appearance="primary" onClick={
-                        () => callAuthAcquireAccessToken(workloadClient, requestDefaultConsent? '.default' : additionalScopesToConsent, claimsForConditionalAccessPolicy)
-                        .then(result => setToken(result.token))
-                        .catch((errorResult) => {
-                            setToken(null);
-                            switch(errorResult.error) {
-                                case WorkloadAuthError.WorkloadConfigError:
-                                    setAcquireTokenError("Workload config error - make sure that you have added the right configuration for your AAD app!");
-                                    break;
-                                case WorkloadAuthError.UserInteractionFailedError:
-                                    setAcquireTokenError("User interaction failed!");
-                                    break;
-                                case WorkloadAuthError.UnsupportedError:
-                                    setAcquireTokenError("Authentication is not supported in this environment!");
-                                    break;
-                                default:
-                                    setAcquireTokenError("Failed to fetch token");
-                            }
-                        })
-                        }>Get access token</Button>
-                </div>
-                <Field orientation="horizontal" className="description"> { token ? JSON.stringify(jwt_decode(token), null, "\t") : acquireTokenError } </Field>
-            </Stack>
+            {/* URL Input Section */}
+            <Field label="ADLS URL:" orientation="vertical">
+                <Input
+                    placeholder="Enter ADLS API endpoint (e.g., https://<storage-account>.dfs.core.windows.net/<filesystem>)"
+                    value={adlsUrl}
+                    onChange={(e) => setAdlsUrl(e.target.value)}
+                />
+            </Field>
+
+            {/* HTTP Method Selection */}
+            <Field label="HTTP Method:" orientation="vertical">
+                <Combobox
+                    placeholder="Select HTTP method"
+                    value={httpMethod}
+                    onOptionSelect={(_, option) => setHttpMethod(option.optionValue)}
+                >
+                    {httpMethods.map((method) => (
+                        <Option key={method} value={method}>
+                            {method}
+                        </Option>
+                    ))}
+                </Combobox>
+            </Field>
+
+            {/* JSON Content Input */}
+            <Field label="JSON Content:" orientation="vertical">
+                <Textarea
+                    placeholder="Enter JSON content for the request body (optional)"
+                    value={jsonContent}
+                    onChange={(e) => setJsonContent(e.target.value)}
+                    rows={5}
+                />
+            </Field>
+
+            {/* Send API Request Button */}
+            <Button appearance="primary" onClick={sendApiRequestToHost}>
+                Send Request
+            </Button>
+
+            <Divider alignContent="start">Response</Divider>
+
+            {/* Response Display */}
+            <Field label="API Response:" orientation="vertical">
+                <Textarea
+                    readOnly
+                    value={apiResponse}
+                    placeholder="Response will be displayed here"
+                    rows={10}
+                />
+            </Field>
         </Stack>
     );
-}
-
-function sendWorkloadServerRequest(url: string, token: string, httpMethod: string, requestBody?: string): Promise<string> {
-    if (url.length == 0) {
-        return Promise.resolve('Please provide a valid url');
-    }
-    if (httpMethod == 'PUT') {
-        return fetch(url, {method: httpMethod, body: requestBody, headers: { 'Content-Type': 'application/json', 'Authorization' : 'Bearer ' + token}}).then(response =>  response.text());
-    }
-
-    return fetch(url, {method: httpMethod, headers: { 'Authorization' : 'Bearer ' + token}}).then(response =>  response.text());
 }
