@@ -7,6 +7,7 @@ export function AdlsApiTester() {
     const [adlsUrl, setAdlsUrl] = useState<string>('');
     const [httpMethod, setHttpMethod] = useState<string>('GET');
     const [jsonContent, setJsonContent] = useState<string>('');
+    const [headersContent, setHeadersContent] = useState<string>('');
     const [apiResponse, setApiResponse] = useState<string>('');
     const httpMethods = ['GET', 'PUT', 'POST', 'DELETE'];
 
@@ -20,9 +21,7 @@ export function AdlsApiTester() {
         const payload = {
             method: httpMethod,
             endpoint: adlsUrl,
-            headers: {
-                "Content-Type": "application/json",
-            },
+            headers: headersContent,
             body: jsonContent || null,
         };
 
@@ -78,12 +77,22 @@ export function AdlsApiTester() {
             </Field>
 
             {/* JSON Content Input */}
+            <Field label="Headers Content:" orientation="vertical">
+                <Textarea
+                    placeholder="Enter headers content for the request body (optional)"
+                    value={headersContent}
+                    onChange={(e) => setHeadersContent(e.target.value)}
+                    rows={10}
+                />
+            </Field>
+
+            {/* JSON Content Input */}
             <Field label="JSON Content:" orientation="vertical">
                 <Textarea
                     placeholder="Enter JSON content for the request body (optional)"
                     value={jsonContent}
                     onChange={(e) => setJsonContent(e.target.value)}
-                    rows={5}
+                    rows={10}
                 />
             </Field>
 

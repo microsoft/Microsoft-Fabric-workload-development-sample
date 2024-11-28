@@ -1,9 +1,11 @@
 export interface ApiParam {
     key: string;
     label: string;
-    type: 'text' | 'checkbox';
+    type: 'text' | 'checkbox' | 'dropdown';
     in: 'path' | 'body' | 'query' | 'header'; // Specify where the parameter should be included
     description?: string;
+    required?: boolean;
+    options?: string[];
   }
 
 export interface ApiDefinition {
