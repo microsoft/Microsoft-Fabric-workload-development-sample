@@ -10,6 +10,7 @@ import { Panel } from "./components/SampleWorkloadPanel/SampleWorkloadPanel";
 import { SaveAsDialog } from "./components/SampleWorkloadCreateDialog/SampleWorkloadCreateDialog";
 import { FabricApiTester } from "./components/SampleWorkloadAuthEditor/FabricApiTester";
 import { AdlsApiPlayground } from "./components/SampleWorkloadAuthEditor/newADLSTester";
+import { FabricApiPlayground } from "./components/SampleWorkloadAuthEditor/newFabricApisTester";
 
 /*
     Add your Item Editor in the Route section of the App function below
@@ -75,9 +76,13 @@ export function App({ history, workloadClient }: AppProps) {
                         <Route path="/FabricApiTester">
                 <FabricApiTester />
             </Route>
-                                    {/* Routing to an Authentication Editor */}
-                                    <Route path="/ADLSTest">
+             {/* Routing to an Authentication Editor */}
+            <Route path="/ADLSTest">
                 <AdlsApiPlayground />
+            </Route>
+            {/* Routing to an Authentication Editor */}
+            <Route path="/FabricApiPlayground">
+                <FabricApiPlayground />
             </Route>
         </Switch>
     </Router>;

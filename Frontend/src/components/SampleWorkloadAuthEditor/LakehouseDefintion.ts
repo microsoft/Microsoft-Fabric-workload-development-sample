@@ -1,11 +1,12 @@
 export interface ApiParam {
     key: string;
     label: string;
-    type: 'text' | 'checkbox' | 'dropdown';
+    type: 'text' | 'checkbox' | 'dropdown' | 'object';
     in: 'path' | 'body' | 'query' | 'header'; // Specify where the parameter should be included
     description?: string;
     required?: boolean;
     options?: string[];
+    default?: string;
   }
 
 export interface ApiDefinition {
@@ -28,12 +29,10 @@ export const LakehouseApi: ApiDefinition[] = [
       method: 'POST',
       endpoint: '/v1/workspaces/{workspaceId}/lakehouses',
       params: [
-        { key: 'workspaceId', label: 'Workspace ID', type: 'text', in: 'path' },
+        { key: 'workspaceId', label: 'Workspace ID', type: 'text', in: 'path', description: 'The ID of the workspace' },
+        { key: 'displayName', label: 'Display Name', type: 'text', in: 'body', description: 'The lakehouse display name. The display name must follow naming rules according to item type.' },
+        { key: 'description', label: 'description', type: 'text', in: 'body', description: 'The lakehouse description. Maximum length is 256 characters.' }
       ],
-      bodySchema: {
-            "displayName": "Lakehouse_1",
-            "description": "A lakehouse description"
-      },
     },
     {
       name: 'Delete Lakehouse',
@@ -41,8 +40,8 @@ export const LakehouseApi: ApiDefinition[] = [
       method: 'DELETE',
       endpoint: '/v1/workspaces/{workspaceId}/lakehouses/{lakehouseId}',
       params: [
-        { key: 'workspaceId', label: 'Workspace ID', type: 'text', in: 'path' },
-        { key: 'lakehouseId', label: 'Lakehouse ID', type: 'text', in: 'path' },
+        { key: 'workspaceId', label: 'Workspace ID', type: 'text', in: 'path', description: 'The ID of the workspace' },
+        { key: 'lakehouseId', label: 'Lakehouse ID', type: 'text', in: 'path', description: 'The ID of the Lakehouse'  },
       ],
     },
     {
@@ -51,8 +50,8 @@ export const LakehouseApi: ApiDefinition[] = [
         method: 'GET',
         endpoint: '/v1/workspaces/{workspaceId}/lakehouses/{lakehouseId}',
         params: [
-          { key: 'workspaceId', label: 'Workspace ID', type: 'text', in: 'path' },
-          { key: 'lakehouseId', label: 'Lakehouse ID', type: 'text', in: 'path' },
+          { key: 'workspaceId', label: 'Workspace ID', type: 'text', in: 'path', description: 'The ID of the workspace' },
+          { key: 'lakehouseId', label: 'Lakehouse ID', type: 'text', in: 'path', description: 'The ID of the Lakehouse'  },
         ],
       },
       {
@@ -61,22 +60,20 @@ export const LakehouseApi: ApiDefinition[] = [
         method: 'GET',
         endpoint: '/v1/workspaces/{workspaceId}/lakehouses',
         params: [
-          { key: 'workspaceId', label: 'Workspace ID', type: 'text', in: 'path' }
+          { key: 'workspaceId', label: 'Workspace ID', type: 'text', in: 'path', description: 'The ID of the workspace' }
         ],
       },
       {
         name: 'Update Lakehouses',
         description: 'Update a lakehouse in the workspace',
         method: 'PATCH',
-        endpoint: '/v1/workspaces/{workspaceId}/lakehouses',
+        endpoint: '/v1/workspaces/{workspaceId}/lakehouses/{lakehouseId}',
         params: [
-          { key: 'workspaceId', label: 'Workspace ID', type: 'text', in: 'path' },
-          { key: 'lakehouseId', label: 'Lakehouse ID', type: 'text', in: 'path' },
+          { key: 'workspaceId', label: 'Workspace ID', type: 'text', in: 'path', description: 'The ID of the workspace' },
+          { key: 'lakehouseId', label: 'Lakehouse ID', type: 'text', in: 'path', description: 'The ID of the Lakehouse'  },
+          { key: 'displayName', label: 'Display Name', type: 'text', in: 'body', description: 'The lakehouse display name. The display name must follow naming rules according to item type.' },
+          { key: 'description', label: 'Description', type: 'text', in: 'body', description: 'The lakehouse description. Maximum length is 256 characters.' },
         ],
-        bodySchema: {
-            "displayName": "Lakehouse_1",
-            "description": "A lakehouse description"
-        }
       },
       {
         name: 'List Lakehouse Tables',
@@ -84,56 +81,11 @@ export const LakehouseApi: ApiDefinition[] = [
         method: 'GET',
         endpoint: '/v1/workspaces/{workspaceId}/lakehouses/{lakehouseId}/tables',
         params: [
-          {
-            key: 'workspaceId',
-            label: 'Workspace ID',
-            type: 'text',
-            in: 'path',
-          },
-          {
-            key: 'lakehouseId',
-            label: 'Lakehouse ID',
-            type: 'text',
-            in: 'path',
-          }
+          { key: 'workspaceId', label: 'Workspace ID', type: 'text', in: 'path', description: 'The ID of the workspace' },
+          { key: 'lakehouseId', label: 'Lakehouse ID', type: 'text', in: 'path', description: 'The ID of the Lakehouse'  },
+          { key: 'continuationToken', label: 'continuation Token', type: 'text', in: 'query', description: 'Token to retrieve the next page of results, if available.' },
+          { key: 'maxResults', label: 'Max Results', type: 'text', in: 'query', description: 'The maximum number of results per page to return.'  },
         ],
-      },
-      {
-        name: 'Load Table',
-        description: 'Starts a load table operation and returns the operation status URL in the response location header.',
-        method: 'POST',
-        endpoint: '/v1/workspaces/{workspaceId}/lakehouses/{lakehouseId}/tables/{tableName}/load',
-        params: [
-          {
-            key: 'workspaceId',
-            label: 'Workspace ID',
-            type: 'text',
-            in: 'path',
-          },
-          {
-            key: 'lakehouseId',
-            label: 'Lakehouse ID',
-            type: 'text',
-            in: 'path',
-          },
-          {
-            key: 'tableName',
-            label: 'Table Name',
-            type: 'text',
-            in: 'path',
-          },
-        ],
-        bodySchema: {
-            "relativePath": "Files/abc/abc123.csv",
-            "pathType": "File",
-            "mode": "Overwrite",
-            "recursive": false,
-            "formatOptions": {
-              "format": "Csv",
-              "header": true,
-              "delimiter": ","
-            }
-          }
       }
 ];
 

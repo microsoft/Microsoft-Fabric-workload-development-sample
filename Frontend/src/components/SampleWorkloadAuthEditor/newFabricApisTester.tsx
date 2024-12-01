@@ -1,26 +1,28 @@
 import React, { useState } from 'react';
 import { Stack, TextField, Dropdown, PrimaryButton, Toggle } from '@fluentui/react';
-import { ApiCategories, ApiDefinition, ApiParam } from './LakehouseDefintion';
+import { ApiCategories, ApiDefinition, ApiParam, LakehouseApi } from './LakehouseDefintion';
 import { Accordion, AccordionItem, AccordionHeader, AccordionPanel } from '@fluentui/react-components';
-import {Path_List, Path_Create, Path_Update, Path_Lease, Path_Read, Path_GetProperties, Path_Delete, styles } from '../APIDefitnions/ADLSapis';
+
+import {styles } from '../APIDefitnions/ADLSapis';
 
 const apiCategories: ApiCategories = {
-  ADLS: [Path_List, Path_Create, Path_Update, Path_Read, Path_GetProperties, Path_Delete, Path_Lease],
+  Lakehouse: LakehouseApi,
 // ... other categories
 };
 
-export function AdlsApiPlayground(){
+export function FabricApiPlayground(){
   const [formState, setFormState] = useState<Record<string, any>>({});
   const [apiResponse, setApiResponse] = useState<string>('');
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
-  const [selectedCategory, setSelectedCategory] = useState<string>('ADLS');
-  const [selectedApi, setSelectedApi] = useState<ApiDefinition | null>(apiCategories.ADLS[0]);
+  const [selectedCategory, setSelectedCategory] = useState<string>('Lakehouse');
+  const [selectedApi, setSelectedApi] = useState<ApiDefinition | null>(apiCategories.Lakehouse[0]);
 
   const handleInputChange = (key: string, value: any) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
   };
 
   const sendApiRequestToHost = () => {
+    debugger;
     let endpoint = selectedApi.endpoint;
     const headers: Record<string, string> = {};
     let body: any = null;
@@ -43,7 +45,10 @@ export function AdlsApiPlayground(){
           }
           break;
         case 'body':
-          body = value;
+          if (body === null) {
+            body = {};
+          }
+          body[param.key] = value;
           break;
         default:
           break;
@@ -59,18 +64,18 @@ export function AdlsApiPlayground(){
 
     window.parent.postMessage(
       {
-          type: "generic-api-request",
+          type: "generic-fabric-request",
           payload,
       },
       "*"
     );
 
-    setApiResponse('Calling API...');
+    setApiResponse('Calling API 2...');
 
     const listener = (event: MessageEvent) => {
       debugger;
       const { type, payload } = event.data;
-      if (type === "generic-api-response") {
+      if (type === "generic-fabric-response") {
           setApiResponse(payload.success ? JSON.stringify(payload.data, null, 2) : payload.error);
           window.removeEventListener("message", listener);
       }
