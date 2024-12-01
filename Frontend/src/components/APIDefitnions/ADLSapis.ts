@@ -681,7 +681,7 @@ export const Path_Delete: ApiDefinition = {
       {
         key: 'getShortcutMetadata',
         label: 'GetShortcutMetadata',
-        type: 'text',
+        type: 'checkbox',
         in: 'query',
         description: 'Get the metadata of the specified path',
       },
