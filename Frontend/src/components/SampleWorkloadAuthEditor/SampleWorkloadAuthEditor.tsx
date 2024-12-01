@@ -9,7 +9,7 @@ export function AdlsApiTester() {
     const [jsonContent, setJsonContent] = useState<string>('');
     const [headersContent, setHeadersContent] = useState<string>('');
     const [apiResponse, setApiResponse] = useState<string>('');
-    const httpMethods = ['GET', 'PUT', 'POST', 'DELETE'];
+    const httpMethods = ['GET', 'PUT', 'POST', 'DELETE', 'PATCH', 'HEAD'];
 
     // Send API Request as a Post Message to Host
     const sendApiRequestToHost = () => {
@@ -55,7 +55,7 @@ export function AdlsApiTester() {
             {/* URL Input Section */}
             <Field label="ADLS URL:" orientation="vertical">
                 <Input
-                    placeholder="Enter ADLS API endpoint (e.g., https://<storage-account>.dfs.core.windows.net/<filesystem>)"
+                    placeholder="Enter ADLS API suffix endpoint (e.g., /{workspaceId}/{artifactId}/{path})"
                     value={adlsUrl}
                     onChange={(e) => setAdlsUrl(e.target.value)}
                 />

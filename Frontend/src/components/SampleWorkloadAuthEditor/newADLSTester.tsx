@@ -1,218 +1,30 @@
 import React, { useState } from 'react';
 import { Stack, TextField, Dropdown, PrimaryButton, Toggle } from '@fluentui/react';
-import { ApiDefinition, ApiParam } from './LakehouseDefintion';
+import { ApiCategories, ApiDefinition, ApiParam } from './LakehouseDefintion';
 import { Accordion, AccordionItem, AccordionHeader, AccordionPanel } from '@fluentui/react-components';
+import {Path_List, Path_Create, Path_Update, Path_Lease, Path_Read, Path_GetProperties, Path_Delete, styles } from '../APIDefitnions/ADLSapis';
 
-
-const adlsApiDefinition: ApiDefinition = {
-  name: 'ADLS API',
-  description: 'ADLS API for various operations',
-  method: 'PATCH',
-  endpoint: '/{workspaceId}/{artifactId}/{path}',
-  params: [
-      {
-        key: 'workspaceId',
-        label: 'Workspace ID',
-        type: 'text',
-        in: 'path',
-        description: 'The workspace identifier',
-      },
-      {
-        key: 'artifactId',
-        label: 'Artifact ID',
-        type: 'text',
-        in: 'path',
-        description: 'The artifact identifier',
-      },
-      {
-        key: 'path',
-        label: 'Path',
-        type: 'text',
-        in: 'path',
-        description: 'The file or directory path',
-      },
-      {
-        key: 'action',
-        label: 'Action',
-        type: 'dropdown',
-        in: 'query',
-        options: ['append', 'flush', 'setProperties', 'setAccessControl'],
-        description: 'The action to perform on the resource',
-      },
-      {
-        key: 'position',
-        label: 'Position',
-        type: 'text',
-        in: 'query',
-        description: 'The position where the data is to be appended',
-      },
-      {
-        key: 'retainUncommittedData',
-        label: 'Retain Uncommitted Data',
-        type: 'checkbox',
-        in: 'query',
-        description: 'Whether to retain uncommitted data after the flush operation',
-      },
-      {
-        key: 'close',
-        label: 'Close',
-        type: 'checkbox',
-        in: 'query',
-        description: 'Whether to close the file stream after the flush operation',
-      },
-      {
-        key: 'contentLength',
-        label: 'Content-Length',
-        type: 'text',
-        in: 'header',
-        description: 'The length of the request content in bytes',
-      },
-      {
-        key: 'contentMD5',
-        label: 'Content-MD5',
-        type: 'text',
-        in: 'header',
-        description: 'An MD5 hash of the request content',
-      },
-      {
-        key: 'leaseId',
-        label: 'Lease ID',
-        type: 'text',
-        in: 'header',
-        description: 'The lease ID if there is an active lease',
-      },
-      {
-        key: 'cacheControl',
-        label: 'Cache-Control',
-        type: 'text',
-        in: 'header',
-        description: 'The cache control directives for the resource',
-      },
-      {
-        key: 'contentType',
-        label: 'Content-Type',
-        type: 'text',
-        in: 'header',
-        description: 'The content type of the resource',
-      },
-      {
-        key: 'contentDisposition',
-        label: 'Content-Disposition',
-        type: 'text',
-        in: 'header',
-        description: 'The content disposition of the resource',
-      },
-      {
-        key: 'contentEncoding',
-        label: 'Content-Encoding',
-        type: 'text',
-        in: 'header',
-        description: 'The content encoding of the resource',
-      },
-      {
-        key: 'contentLanguage',
-        label: 'Content-Language',
-        type: 'text',
-        in: 'header',
-        description: 'The content language of the resource',
-      },
-      {
-        key: 'contentMd5Header',
-        label: 'Content-MD5 Header',
-        type: 'text',
-        in: 'header',
-        description: 'The MD5 hash of the resource content',
-      },
-      {
-        key: 'properties',
-        label: 'Properties',
-        type: 'text',
-        in: 'header',
-        description: 'User-defined properties in the format of a comma-separated list',
-      },
-      {
-        key: 'owner',
-        label: 'Owner',
-        type: 'text',
-        in: 'header',
-        description: 'The owner of the file or directory',
-      },
-      {
-        key: 'group',
-        label: 'Group',
-        type: 'text',
-        in: 'header',
-        description: 'The owning group of the file or directory',
-      },
-      {
-        key: 'permissions',
-        label: 'Permissions',
-        type: 'text',
-        in: 'header',
-        description: 'POSIX access permissions for the resource',
-      },
-      {
-        key: 'acl',
-        label: 'ACL',
-        type: 'text',
-        in: 'header',
-        description: 'POSIX access control list for the resource',
-      },
-      {
-        key: 'ifMatch',
-        label: 'If-Match',
-        type: 'text',
-        in: 'header',
-        description: 'Perform the operation only if the resource\'s ETag matches',
-      },
-      {
-        key: 'ifNoneMatch',
-        label: 'If-None-Match',
-        type: 'text',
-        in: 'header',
-        description: 'Perform the operation only if the resource\'s ETag does not match',
-      },
-      {
-        key: 'ifModifiedSince',
-        label: 'If-Modified-Since',
-        type: 'text',
-        in: 'header',
-        description: 'Perform the operation only if the resource has been modified since the specified date',
-      },
-      {
-        key: 'ifUnmodifiedSince',
-        label: 'If-Unmodified-Since',
-        type: 'text',
-        in: 'header',
-        description: 'Perform the operation only if the resource has not been modified since the specified date',
-      },
-      {
-        key: 'requestBody',
-        label: 'Request Body',
-        type: 'text',
-        in: 'body',
-        description: 'The data to be uploaded and appended to the file',
-      },
-    // Add other parameters as needed
-  ],
-  bodySchema: {}, // Define the schema if needed
+const apiCategories: ApiCategories = {
+  ADLS: [Path_List, Path_Create, Path_Update, Path_Read, Path_GetProperties, Path_Delete, Path_Lease],
+// ... other categories
 };
 
 export function AdlsApiPlayground(){
   const [formState, setFormState] = useState<Record<string, any>>({});
   const [apiResponse, setApiResponse] = useState<string>('');
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
+  const [selectedApi, setSelectedApi] = useState<ApiDefinition | null>(apiCategories.ADLS[0]);
 
   const handleInputChange = (key: string, value: any) => {
     setFormState((prev) => ({ ...prev, [key]: value }));
   };
 
   const sendApiRequestToHost = () => {
-    let endpoint = adlsApiDefinition.endpoint;
+    let endpoint = selectedApi.endpoint;
     const headers: Record<string, string> = {};
     let body: any = null;
 
-    adlsApiDefinition.params.forEach((param) => {
+    selectedApi.params.forEach((param) => {
       const value = formState[param.key];
       switch (param.in) {
         case 'path':
@@ -238,7 +50,7 @@ export function AdlsApiPlayground(){
     });
 
     const payload = {
-      method: adlsApiDefinition.method,
+      method: selectedApi.method,
       endpoint: endpoint,
       headers: headers,
       body: body,
@@ -301,6 +113,7 @@ export function AdlsApiPlayground(){
     }
   };
 
+
   const toggleSection = (sectionKey: string) => {
     setExpandedSections((prev) => ({
       ...prev,
@@ -324,21 +137,51 @@ export function AdlsApiPlayground(){
     );
   };
 
+  const handleApiSelection = (event: React.FormEvent<HTMLDivElement>, option?: any) => {
+    const newApi = apiCategories.ADLS.find((api) => api.name === option.key);
+    if (newApi) {
+      setSelectedApi(newApi);
+      setFormState({}); // Reset the form state for the new API
+    }
+  };
+
   return (
-    <Stack tokens={{ childrenGap: 20 }}>
-      <h2>{adlsApiDefinition.name}</h2>
-      <p>{adlsApiDefinition.description}</p>
-      {renderSection('Path Parameters', adlsApiDefinition.params.filter((p) => p.in === 'path'))}
-      {renderSection('Query Parameters', adlsApiDefinition.params.filter((p) => p.in === 'query'))}
-      {renderSection('Header Parameters', adlsApiDefinition.params.filter((p) => p.in === 'header'))}
-      {renderSection('Body Parameters', adlsApiDefinition.params.filter((p) => p.in === 'body'))}
-      <PrimaryButton text="Send Request" onClick={sendApiRequestToHost} />
+    <Stack tokens={{ childrenGap: 20, padding: 16 }}>
+      {/* API Selection Dropdown */}
+      <Dropdown
+        label="Select API"
+        selectedKey={selectedApi.name}
+        onChange={handleApiSelection}
+        options={apiCategories.ADLS.map((api) => ({ key: api.name, text: api.name }))}
+        placeholder="Choose an API"
+      />
+
+      {/* API Definition Card */}
+      <div style={styles.card}>
+        <div style={styles.header}>
+          <span style={styles.method}>{selectedApi.method}</span>
+          <h2 style={styles.name}>{selectedApi.name}</h2>
+        </div>
+        <p style={styles.description}>{selectedApi.description}</p>
+      </div>
+
+      {/* Dynamic Parameter Sections */}
+      {renderSection('Path Parameters', selectedApi.params.filter((p) => p.in === 'path'))}
+      {renderSection('Query Parameters', selectedApi.params.filter((p) => p.in === 'query'))}
+      {renderSection('Header Parameters', selectedApi.params.filter((p) => p.in === 'header'))}
+      {renderSection('Body Parameters', selectedApi.params.filter((p) => p.in === 'body'))}
+
+      {/* Send Request Button */}
+      <PrimaryButton text="Send Request" onClick={sendApiRequestToHost} style={styles.button} />
+
+      {/* API Response */}
       <TextField
         label="API Response"
         multiline
         readOnly
         value={apiResponse}
         rows={10}
+        style={styles.responseField}
       />
     </Stack>
   );
