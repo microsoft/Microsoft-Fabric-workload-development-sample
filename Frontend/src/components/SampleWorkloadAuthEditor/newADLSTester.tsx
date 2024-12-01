@@ -13,6 +13,7 @@ export function AdlsApiPlayground(){
   const [formState, setFormState] = useState<Record<string, any>>({});
   const [apiResponse, setApiResponse] = useState<string>('');
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
+  const [selectedCategory, setSelectedCategory] = useState<string>('ADLS');
   const [selectedApi, setSelectedApi] = useState<ApiDefinition | null>(apiCategories.ADLS[0]);
 
   const handleInputChange = (key: string, value: any) => {
@@ -138,21 +139,35 @@ export function AdlsApiPlayground(){
   };
 
   const handleApiSelection = (event: React.FormEvent<HTMLDivElement>, option?: any) => {
-    const newApi = apiCategories.ADLS.find((api) => api.name === option.key);
+    const newApi = apiCategories[selectedCategory].find((api) => api.name === option.key);
     if (newApi) {
       setSelectedApi(newApi);
       setFormState({}); // Reset the form state for the new API
     }
   };
 
+  const updateSelectedCategory = (opt: any) => {
+    setSelectedCategory(opt.optionValue);
+    setSelectedApi(apiCategories[opt.optionValue][0]);
+  };
+
   return (
     <Stack tokens={{ childrenGap: 20, padding: 16 }}>
+      {/* API Selection Dropdown */}
+       <Dropdown
+        label="Select Category"
+        selectedKey={selectedCategory}
+        onChange={updateSelectedCategory}
+        options={Object.keys(apiCategories).map((category) => ({ key: category, text: category }))}
+        placeholder="Choose a Category"
+      />
+
       {/* API Selection Dropdown */}
       <Dropdown
         label="Select API"
         selectedKey={selectedApi.name}
         onChange={handleApiSelection}
-        options={apiCategories.ADLS.map((api) => ({ key: api.name, text: api.name }))}
+        options={apiCategories[selectedCategory].map((api) => ({ key: api.name, text: api.name }))}
         placeholder="Choose an API"
       />
 
