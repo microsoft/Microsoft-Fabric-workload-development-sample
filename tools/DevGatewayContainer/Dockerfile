@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y curl sudo unzip && \
     curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash && \
     curl ${DEV_GATEWAY_DOWNLOAD_URL} -O && \
     unzip -o DevGateway.zip -d DevGateway && \
-    mv DevGateway/net6.0/* DevGateway/ && \
     rm -rf DevGateway.zip && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/*
