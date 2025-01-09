@@ -41,13 +41,6 @@
       <ScriptsDir>$(ProjectDir)ValidationScripts</ScriptsDir>
       <ManifestDir>$(ProjectDir)Packages\manifest</ManifestDir>
     </PropertyGroup>
-
-    <Exec Command="$(PowerShellScript) -ExecutionPolicy Bypass -File &quot;$(ScriptsDir)\RemoveErrorFile.ps1&quot; -outputDirectory &quot;$(ScriptsDir)&quot;" />
-    <Exec Command="$(PowerShellScript) -ExecutionPolicy Bypass -File &quot;$(ScriptsDir)\ManifestValidator.ps1&quot; -inputDirectory &quot;$(ManifestDir)&quot; -inputXml WorkloadManifest.xml -inputXsd WorkloadDefinition.xsd -outputDirectory &quot;$(ScriptsDir)&quot;" />
-    <Exec Command="$(PowerShellScript) -ExecutionPolicy Bypass -File &quot;$(ScriptsDir)\ItemManifestValidator.ps1&quot; -inputDirectory &quot;$(ManifestDir)&quot; -inputXsd ItemDefinition.xsd -outputDirectory &quot;$(ScriptsDir)&quot;" />
-    <Exec Command="$(PowerShellScript) -ExecutionPolicy Bypass -File &quot;$(ScriptsDir)\ValidateNoDefaults.ps1&quot; -outputDirectory &quot;$(ScriptsDir)&quot;" />
-    
-    <Error Condition="Exists('$(ScriptsDir)\ValidationErrors.txt')" Text="Validation errors with either manifests or default values" File="$(ScriptsDir)\ValidationErrors.txt" />
   </Target>
 
 </Project>

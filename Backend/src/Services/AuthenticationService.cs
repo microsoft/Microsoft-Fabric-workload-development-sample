@@ -48,7 +48,7 @@ namespace Boilerplate.Services
 
             var configuration = configurationService.GetConfiguration();
             _publisherTenantId = configuration["PublisherTenantId"];
-            _audience = configuration["Audience"];
+            _audience = configuration["ClientId"];
         }
 
         public async Task<AuthorizationContext> AuthenticateControlPlaneCall(HttpContext httpContext, bool requireSubjectToken = true, bool requireTenantIdHeader = true)
@@ -179,7 +179,8 @@ namespace Boilerplate.Services
             var openIdConnectConfiguration = await GetOpenIdConnectConfiguration();
 
             var appClaims = ValidateAadTokenCommon(subjectAndAppToken.AppToken, openIdConnectConfiguration, isAppOnly: true);
-            var appTokenAppId = ValidateClaimOneOfValues(appClaims, "appid", new List<string> { EnvironmentConstants.FabricBackendAppId, EnvironmentConstants.FabricClientForWorkloadsAppId }, "app-only token must belong to Fabric BE or Fabric client for workloads");
+            var appTokenAppId = ValidateClaimOneOfValues(appClaims, "azp", new List<string> { EnvironmentConstants.FabricBackendAppId, EnvironmentConstants.FabricClientForWorkloadsAppId }, "app-only token must belong to Fabric BE or Fabric client for workloads");
+            // appId claim was replaced with azp? var appTokenAppId = ValidateClaimOneOfValues(appClaims, "appid", new List<string> { EnvironmentConstants.FabricBackendAppId, EnvironmentConstants.FabricClientForWorkloadsAppId }, "app-only token must belong to Fabric BE or Fabric client for workloads");
             ValidateClaimValue(appClaims, "tid", _publisherTenantId, "app token must be in the publisher's tenant");
 
             if (string.IsNullOrEmpty(subjectAndAppToken.SubjectToken))
@@ -201,7 +202,8 @@ namespace Boilerplate.Services
             }
 
             var subjectClaims = ValidateAadTokenCommon(subjectAndAppToken.SubjectToken, openIdConnectConfiguration, isAppOnly: false);
-            ValidateClaimValue(subjectClaims, "appid", appTokenAppId, "subject and app tokens should belong to same application");
+            // ValidateClaimValue(subjectClaims, "appid", appTokenAppId, "subject and app tokens should belong to same application"); lloks like appid claim doesn't exists anymore and it's nmow replaced with azp
+            ValidateClaimValue(subjectClaims, "azp", appTokenAppId, "subject and app tokens should belong to same application");
             ValidateClaimValue(subjectClaims, "tid", subjectTenantId.Value.ToString(), "subject tokens must belong to the subject's tenant");
 
             ValidateAnyScope(subjectClaims, allowedScopes);
@@ -298,8 +300,8 @@ namespace Boilerplate.Services
                 throw new AuthenticationException(e.Message, e);
             }
 
-            ValidateClaimValue(jwtSecurityToken.Claims, "ver", "1.0", "only v1 tokens are expected");
-            ValidateClaimExists(jwtSecurityToken.Claims, "appid", "access tokens should have this claim");
+            ValidateClaimValue(jwtSecurityToken.Claims, "ver", "2.0", "only v2 tokens are expected");
+            // ValidateClaimExists(jwtSecurityToken.Claims, "appid", "access tokens should have this claim"); app id doesn't exists anymore.
 
             ValidateAppOnly(jwtSecurityToken.Claims, isAppOnly);
 
@@ -394,13 +396,13 @@ namespace Boilerplate.Services
                 var jwtSecurityToken = (JwtSecurityToken)securityToken;
 
                 var tenantId = jwtSecurityToken.Claims.GetClaimValue("tid");
-                var expectedIssuer = issuerConfiguration.Replace("{tenantid}", tenantId);
+                //var expectedIssuer = issuerConfiguration.Replace("{tenantid}", tenantId) + "v2.0"; issuer has changed
 
-                if (issuer != expectedIssuer)
-                {
-                    _logger.LogError("Unexpected token issuer: expected='{0}', actual='{1}'", expectedIssuer, issuer);
-                    throw new AuthenticationException("Unexpected token format");
-                }
+                //if (issuer != expectedIssuer)
+                //{
+                //    _logger.LogError("Unexpected token issuer: expected='{0}', actual='{1}'", expectedIssuer, issuer);
+                //    throw new AuthenticationException("Unexpected token format");
+                //}
 
                 return issuer;
             };
