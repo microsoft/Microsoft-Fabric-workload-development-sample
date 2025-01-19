@@ -35,6 +35,13 @@ namespace Boilerplate.Services
 
         private readonly string _publisherTenantId;
         private readonly string _audience;
+        private readonly string _clientId;
+
+        private enum TokenVersion
+        {
+            V1 = 1,
+            V2 = 2
+        }
 
         public AuthenticationService(
             IConfigurationService configurationService,
@@ -49,6 +56,7 @@ namespace Boilerplate.Services
             var configuration = configurationService.GetConfiguration();
             _publisherTenantId = configuration["PublisherTenantId"];
             _audience = configuration["Audience"];
+            _clientId = configuration["ClientId"];
         }
 
         public async Task<AuthorizationContext> AuthenticateControlPlaneCall(HttpContext httpContext, bool requireSubjectToken = true, bool requireTenantIdHeader = true)
@@ -65,7 +73,7 @@ namespace Boilerplate.Services
                     tenantIdValues.Count != 1 ||
                     !Guid.TryParse(tenantIdValues.Single(), out var parsedTenantId))
                 {
-                        throw new AuthenticationException($"Missing or invalid {HttpHeaders.XmsClientTenantId} header");
+                    throw new AuthenticationException($"Missing or invalid {HttpHeaders.XmsClientTenantId} header");
                 }
 
                 tenantId = parsedTenantId;
@@ -179,7 +187,10 @@ namespace Boilerplate.Services
             var openIdConnectConfiguration = await GetOpenIdConnectConfiguration();
 
             var appClaims = ValidateAadTokenCommon(subjectAndAppToken.AppToken, openIdConnectConfiguration, isAppOnly: true);
-            var appTokenAppId = ValidateClaimOneOfValues(appClaims, "appid", new List<string> { EnvironmentConstants.FabricBackendAppId, EnvironmentConstants.FabricClientForWorkloadsAppId }, "app-only token must belong to Fabric BE or Fabric client for workloads");
+            var appTokenVersion = GetTokenVersion(appClaims);
+
+            var appIdClaim = (appTokenVersion == TokenVersion.V1) ? "appid" : "azp";
+            var appTokenAppId = ValidateClaimOneOfValues(appClaims, appIdClaim, new List<string> { EnvironmentConstants.FabricBackendAppId, EnvironmentConstants.FabricClientForWorkloadsAppId }, "app-only token must belong to Fabric BE or Fabric client for workloads");
             ValidateClaimValue(appClaims, "tid", _publisherTenantId, "app token must be in the publisher's tenant");
 
             if (string.IsNullOrEmpty(subjectAndAppToken.SubjectToken))
@@ -201,7 +212,10 @@ namespace Boilerplate.Services
             }
 
             var subjectClaims = ValidateAadTokenCommon(subjectAndAppToken.SubjectToken, openIdConnectConfiguration, isAppOnly: false);
-            ValidateClaimValue(subjectClaims, "appid", appTokenAppId, "subject and app tokens should belong to same application");
+            var subjectTokenVersion = GetTokenVersion(subjectClaims);
+
+            var subjectAppIdClaim = (subjectTokenVersion == TokenVersion.V1) ? "appid" : "azp";
+            ValidateClaimValue(subjectClaims, subjectAppIdClaim, appTokenAppId, "subject and app tokens should belong to same application");
             ValidateClaimValue(subjectClaims, "tid", subjectTenantId.Value.ToString(), "subject tokens must belong to the subject's tenant");
 
             ValidateAnyScope(subjectClaims, allowedScopes);
@@ -280,7 +294,7 @@ namespace Boilerplate.Services
                 IssuerSigningKeys = openIdConnectConfiguration.SigningKeys,
 
                 ValidateAudience = true,
-                ValidAudience = _audience,
+                AudienceValidator = CreateAudienceValidator(),
 
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.FromMinutes(1),                                            // Set this to the appropriate value for your application.
@@ -295,11 +309,12 @@ namespace Boilerplate.Services
             catch (Exception e)
             {
                 _logger.LogError("Token validation failed: {0}", e);
-                throw new AuthenticationException(e.Message, e);
+                throw new AuthenticationException(e.Message);
             }
 
-            ValidateClaimValue(jwtSecurityToken.Claims, "ver", "1.0", "only v1 tokens are expected");
-            ValidateClaimExists(jwtSecurityToken.Claims, "appid", "access tokens should have this claim");
+            var tokenVersion = GetTokenVersion(jwtSecurityToken.Claims);
+            var appIdClaim = (tokenVersion == TokenVersion.V1) ? "appid" : "azp";
+            ValidateClaimExists(jwtSecurityToken.Claims, appIdClaim, $"access tokens should have {appIdClaim} claim");
 
             ValidateAppOnly(jwtSecurityToken.Claims, isAppOnly);
 
@@ -311,6 +326,7 @@ namespace Boilerplate.Services
             if (isAppOnly)
             {
                 ValidateClaimValue(claims, "idtyp", "app", "expecting an app-only token");
+                ValidateClaimExists(claims, "oid", "app-only tokens should have oid claim in them");
                 ValidateNoClaim(claims, "scp", "app-only tokens should not have this claim");
             }
             else
@@ -394,7 +410,11 @@ namespace Boilerplate.Services
                 var jwtSecurityToken = (JwtSecurityToken)securityToken;
 
                 var tenantId = jwtSecurityToken.Claims.GetClaimValue("tid");
-                var expectedIssuer = issuerConfiguration.Replace("{tenantid}", tenantId);
+
+                var tokenVersion = GetTokenVersion(jwtSecurityToken.Claims);
+                var expectedIssuer = (tokenVersion == TokenVersion.V1)
+                    ? issuerConfiguration.Replace("{tenantid}", tenantId)
+                    : $"{EnvironmentConstants.AadInstanceUrl}/{tenantId}/v2.0";
 
                 if (issuer != expectedIssuer)
                 {
@@ -403,6 +423,36 @@ namespace Boilerplate.Services
                 }
 
                 return issuer;
+            };
+        }
+
+        private AudienceValidator CreateAudienceValidator()
+        {
+            return (IEnumerable<string> audiences, SecurityToken securityToken, TokenValidationParameters validationParameters) =>
+            {
+                var jwtToken = (JwtSecurityToken)securityToken;
+                var tokenVersion = GetTokenVersion(jwtToken.Claims);
+
+                var expectedAudience = (tokenVersion == TokenVersion.V1) ? _audience : _clientId;
+
+                if (!audiences.Contains(expectedAudience))
+                {
+                    _logger.LogError("Invalid audience: expected='{0}', actual='{1}'", expectedAudience, string.Join(", ", audiences));
+                    throw new AuthenticationException("Invalid token audience");
+                }
+
+                return true;
+            };
+        }
+
+        private TokenVersion GetTokenVersion(IEnumerable<Claim> claims)
+        {
+            var version = ValidateClaimExists(claims, "ver", "access tokens should have version claim");
+            return version switch
+            {
+                "1.0" => TokenVersion.V1,
+                "2.0" => TokenVersion.V2,
+                _ => throw new AuthenticationException($"Unsupported token version: {version}")
             };
         }
     }
