@@ -114,7 +114,7 @@ export function SaveAsDialog({ workloadClient, isImmediateSave }: SaveAsDialogPr
                 </Field>
                 <Checkbox label ="Request Initial Consent (Mark this if this is the first time you're working with this workload)" onChange={(v) => setPromptFullConsent(v.target.checked)}/>
                 <Stack className="create-buttons" horizontal tokens={{ childrenGap: 10 }}>
-                    <Button appearance="primary" onClick={() => onSaveClicked()} disabled={isSaveDisabled}>Create</Button>
+                    <Button appearance="primary" onClick={() => onSaveClicked()} data-testid="create-3p-item-button" disabled={isSaveDisabled}>Create</Button>
                     <Button appearance="secondary" onClick={() => onCancelClicked()}>Cancel</Button>
                 </Stack>
             </Stack>

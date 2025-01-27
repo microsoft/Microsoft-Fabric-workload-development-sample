@@ -18,7 +18,6 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -73,7 +72,7 @@ namespace Boilerplate.Services
                     tenantIdValues.Count != 1 ||
                     !Guid.TryParse(tenantIdValues.Single(), out var parsedTenantId))
                 {
-                    throw new AuthenticationException($"Missing or invalid {HttpHeaders.XmsClientTenantId} header");
+                        throw new AuthenticationException($"Missing or invalid {HttpHeaders.XmsClientTenantId} header");
                 }
 
                 tenantId = parsedTenantId;

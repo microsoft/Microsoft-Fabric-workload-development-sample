@@ -280,6 +280,7 @@ FakesAssemblies/
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
 Frontend/node_modules/*
+!Frontend/node_modules/@trident/
 
 # Visual Studio 6 build log
 *.plg

@@ -8,6 +8,8 @@ import { SampleWorkloadEditor, SamplePage } from "./components/SampleWorkloadEdi
 import { Authentication } from './components/SampleWorkloadAuthEditor/SampleWorkloadAuthEditor';
 import { Panel } from "./components/SampleWorkloadPanel/SampleWorkloadPanel";
 import { SaveAsDialog } from "./components/SampleWorkloadCreateDialog/SampleWorkloadCreateDialog";
+import CustomItemSettings from "./components/CustomItemSettings/CustomItemSettings";
+import CustomAbout from "./components/CustomItemSettings/CustomAbout";
 
 /*
     Add your Item Editor in the Route section of the App function below
@@ -69,6 +71,14 @@ export function App({ history, workloadClient }: AppProps) {
             {/* Routing to an Authentication Editor */}
             <Route path="/Authentication/:itemObjectId">
                 <Authentication workloadClient={workloadClient} history={history} />
+            </Route>
+
+            {/* Routing to Custom Item Settings */}
+            <Route path="/custom-item-settings">
+                <CustomItemSettings />
+            </Route>
+            <Route path="/custom-about">
+                <CustomAbout />
             </Route>
         </Switch>
     </Router>;

@@ -10,13 +10,7 @@ function PostAADRequest {
         [string]$body
     )
 
-    # Use Azure CLI's @<file> to avoid issues with different shells / OSs.
-    # see https://learn.microsoft.com/en-us/cli/azure/use-azure-cli-successfully-troubleshooting#error-failed-to-parse-string-as-json
-    $tempFile = [System.IO.Path]::GetTempFileName()
-    $body | Out-File -FilePath $tempFile
-    $azrestResult = az rest --method POST --url $url --headers "Content-Type=application/json" --body "@$tempFile"
-    Remove-Item $tempFile
-    return $azrestResult
+    return az rest --method POST --url $url --body $body --headers "Content-Type=application/json"
 }
 
 function PrintInfo {
@@ -51,11 +45,11 @@ if (-not $tenantId) {
 
 $redirectUri = "http://localhost:60006/close"
 
-$FabricWorkloadControlGuid = (New-Guid).ToString()
-$Item1ReadAllGuid = (New-Guid).ToString()
-$Item1ReadWriteAllGuid = (New-Guid).ToString()
-$FabricLakehouseReadAllGuid = (New-Guid).ToString()
-$FabricLakehouseReadWriteAllGuid = (New-Guid).ToString()
+$FabricWorkloadControlGuid = New-Guid
+$Item1ReadAllGuid = New-Guid
+$Item1ReadWriteAllGuid = New-Guid
+$FabricLakehouseReadAllGuid = New-Guid
+$FabricLakehouseReadWriteAllGuid = New-Guid
 
 ## Generate URI
 
@@ -208,7 +202,7 @@ $application = @{
 }
 
 # Convert to valid json format (escape the '"')
-$applicationJson = ( $application | ConvertTo-Json -Compress -Depth 10)
+$applicationJson = ( $application | ConvertTo-Json -Compress -Depth 10) -replace '"','\"'
 
 # Create application
 $result = PostAADRequest -url https://graph.microsoft.com/v1.0/applications -body $applicationJson
@@ -241,7 +235,7 @@ $passwordCreds = @{
 }
 
 # Convert to valid json format (escape the '"')
-$passwordCredsJson = ( $passwordCreds | ConvertTo-Json -Compress -Depth 10)
+$passwordCredsJson = ( $passwordCreds | ConvertTo-Json -Compress -Depth 10) -replace '"','\"'
 
 $addPasswordResult = PostAADRequest -url ("https://graph.microsoft.com/v1.0/applications/" + $applicationObjectId + "/addPassword") -body $passwordCredsJson
 $addPasswordObject = ($addPasswordResult | ConvertFrom-Json)

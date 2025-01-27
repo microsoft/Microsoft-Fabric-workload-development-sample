@@ -23,10 +23,17 @@ class Schedule {
     }
 }
 
+class GetItemSettings {
+    constructor(action) {
+        this.action = action;
+    } 
+}
+
 class ItemSettingsItem {
-    constructor(schedule, recentRun) {
+    constructor(schedule, recentRun, getItemSettings) {
         this.schedule = schedule;
         this.recentRun = recentRun;
+        this.getItemSettings = getItemSettings;
     }
 }
 

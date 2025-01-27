@@ -134,6 +134,18 @@ namespace Boilerplate.Items
 
         public abstract Task<ItemJobInstanceState> GetJobState(string jobType, Guid jobInstanceId);
 
+        public async Task CancelJob(string jobType, Guid jobInstanceId) {
+            var jobMetadata = new ItemJobMetadata
+            {
+                JobType = jobType,
+                JobInstanceId = jobInstanceId,
+                Status = JobInstanceStatus.Cancelled,
+                ErrorDetails = null,
+                CanceledTime = DateTime.UtcNow,
+            };
+            await _itemMetadataStore.UpsertJobCancel(TenantObjectId, ItemObjectId, jobType, jobInstanceId, jobMetadata);
+        }
+
         protected async Task SaveChanges()
         {
             await Store();

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Security.Authentication;
 
 namespace Boilerplate.Exceptions
 {
@@ -34,12 +33,6 @@ namespace Boilerplate.Exceptions
                     _logger.LogError("Failed to acquire a token, user interaction is required, returning '401 Unauthorized' with WWW-Authenticate header");
                     AuthenticationService.AddBearerClaimToResponse(authenticationUIRequiredException, context.HttpContext.Response);
                     context.Result = authenticationUIRequiredException.ToHttpActionResult();
-                    context.ExceptionHandled = true;
-                    break;
-
-                case AuthenticationException authenticationException:
-                    _logger.LogError("Failed to authenticate the request");
-                    context.Result = new StatusCodeResult(StatusCodes.Status401Unauthorized);
                     context.ExceptionHandled = true;
                     break;
 

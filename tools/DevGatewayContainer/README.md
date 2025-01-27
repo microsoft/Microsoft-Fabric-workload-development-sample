@@ -25,7 +25,7 @@ cp sample.env .env
 | Variable Name              | Description                                                                 |
 |----------------------------|-----------------------------------------------------------------------------|
 | `ENTRA_TENANT_ID`          | Fabric instance's Tenant ID                                                 | 
-| `CAPACITY_GUID`            | User's Capacity ID                                                          | 
+| `WORKSPACE_GUID`            | User's Workspace ID                                                        | 
 | `MANIFEST_PACKAGE_FILE_PATH` | Path to the Fabric workload backend `ManifestPackage.1.0.0.nupkg` build file.   | 
 | `LOCAL_BACKEND_PORT` | Fabric workload backend port. Default: `5000`   |
 | `LOG_LEVEL`                | DevGateway application log level. Default: `Information`                   |

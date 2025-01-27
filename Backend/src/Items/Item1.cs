@@ -9,6 +9,7 @@ using Boilerplate.Services;
 using Boilerplate.Utils;
 using Fabric_Extension_BE_Boilerplate.Constants;
 using Fabric_Extension_BE_Boilerplate.Contracts.FabricAPI.Workload;
+using Fabric_Extension_BE_Boilerplate.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,8 @@ namespace Boilerplate.Items
 
         private readonly IAuthenticationService _authenticationService;
 
+        private readonly IItemMetadataStore _itemMetadataStore;
+
         private Item1Metadata _metadata;
 
         public Item1(
@@ -43,6 +46,7 @@ namespace Boilerplate.Items
         {
             _lakeHouseClientService = lakeHouseClientService;
             _authenticationService = authenticationService;
+            _itemMetadataStore = itemMetadataStore;
         }
 
         public override string ItemType => WorkloadConstants.ItemTypes.Item1;
@@ -87,9 +91,17 @@ namespace Boilerplate.Items
 
             var result = CalculateResult(op1, op2, calculationOperator);
 
-            // Write result to Lakehouse
-            var filePath = GetLakehouseFilePath(jobType, jobInstanceId);
-            await _lakeHouseClientService.WriteToLakehouseFile(token, filePath, result);
+            // Simulate long running job
+            if (string.Equals(jobType, Item1JobType.LongRunningCalculateAsText, StringComparison.OrdinalIgnoreCase))
+            {
+                await Task.Delay(TimeSpan.FromSeconds(60 * 8));
+            }
+
+            // Write result to Lakehouse if job is not cancelled
+            if (!_itemMetadataStore.JobCancelRequestExists(TenantObjectId, ItemObjectId, jobInstanceId)) {
+                var filePath = GetLakehouseFilePath(jobType, jobInstanceId);
+                await _lakeHouseClientService.WriteToLakehouseFile(token, filePath, result);
+            }
         }
 
         public override async Task<ItemJobInstanceState> GetJobState(string jobType, Guid jobInstanceId)
@@ -98,6 +110,11 @@ namespace Boilerplate.Items
 
             var filePath = GetLakehouseFilePath(jobType, jobInstanceId);
             var fileExists = await _lakeHouseClientService.CheckIfFileExists(token, filePath);
+
+            if (_itemMetadataStore.JobCancelRequestExists(TenantObjectId, ItemObjectId, jobInstanceId))
+            {
+                return new ItemJobInstanceState { Status = JobInstanceStatus.Cancelled };
+            }
 
             return new ItemJobInstanceState
             {
@@ -111,6 +128,7 @@ namespace Boilerplate.Items
             {
                 { Item1JobType.ScheduledJob, $"CalculationResult_{jobInstanceId}.txt" },
                 { Item1JobType.CalculateAsText, $"CalculationResult_{jobInstanceId}.txt" },
+                { Item1JobType.LongRunningCalculateAsText, $"CalculationResult_{jobInstanceId}.txt" },
                 { Item1JobType.CalculateAsParquet, $"CalculationResult_{jobInstanceId}.parquet" }
             };
             typeToFileName.TryGetValue(jobType, out var fileName);
@@ -158,27 +176,31 @@ namespace Boilerplate.Items
 
         private Item1Metadata Metadata => Ensure.NotNull(_metadata, "The item object must be initialized before use");
 
-        public async Task<(double Operand1, double Operand2)> Double()
+        private void ValidateOperandsBeforeDouble(int operand1, int operand2)
+        {
+            var invalidOperands = new List<string>();
+            if (operand1 > int.MaxValue / 2 || operand1 < int.MinValue / 2)
+            {
+                invalidOperands.Add("Operand1");
+            }
+            if (operand2 > int.MaxValue / 2 || operand2 < int.MinValue / 2)
+            {
+                invalidOperands.Add("Operand2");
+            }
+            if (!invalidOperands.IsNullOrEmpty())
+            {
+                string joinedInvalidOperands = string.Join(", ", invalidOperands);
+                throw new DoubledOperandsOverflowException(new List<string> { joinedInvalidOperands });
+            }
+        }
+
+        public async Task<(int Operand1, int Operand2)> Double()
         {
             var metadata = Metadata.Clone();
 
-            switch (metadata.Operator)
-            {
-                case Item1Operator.Add:
-                case Item1Operator.Subtract:
-                case Item1Operator.Random:
-                    metadata.Operand1 *= 2;
-                    metadata.Operand2 *= 2;
-                    break;
-
-                case Item1Operator.Multiply:
-                case Item1Operator.Divide:
-                    metadata.Operand1 *= 2;
-                    break;
-
-                default:
-                    throw Ensure.UnexpectedSwitchValue(metadata.Operator, "Unexpected operator");
-            }
+            ValidateOperandsBeforeDouble(metadata.Operand1, metadata.Operand2);
+            metadata.Operand1 *= 2;
+            metadata.Operand2 *= 2;
 
             _metadata = metadata;
 

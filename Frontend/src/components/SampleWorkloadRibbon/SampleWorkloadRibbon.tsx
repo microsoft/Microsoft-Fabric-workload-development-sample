@@ -69,6 +69,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
         <ToolbarButton
           disabled={!props.isSaveButtonEnabled}
           aria-label="Save"
+          data-testid="item-editor-save-btn"
           icon={<Save24Regular />} onClick={onSaveAsClicked} />
       </Tooltip>
 
@@ -77,6 +78,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
         relationship="label">
         <ToolbarButton
           aria-label="Save"
+          data-testid="item-editor-datahub-btn"  
           icon={<Database24Regular />} onClick={() => onDatahubClicked()} />
       </Tooltip>
 
@@ -85,6 +87,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
         relationship="label">
         <ToolbarButton
           aria-label="Delete"
+          data-testid="item-editor-delete-btn"
           disabled={!props.isDeleteEnabled}
 
           icon={<Delete24Regular />}
@@ -169,10 +172,10 @@ export function Ribbon(props: RibbonProps) {
     <div className="ribbon">
       <CollabButtons {...props} />
       <TabList defaultSelectedValue="home" onTabSelect={onTabSelect}>
-        <Tab value="home">Home</Tab>
-        <Tab value="jobs">Jobs</Tab>
-        <Tab value="api">API Playground</Tab>
-        <Tab value="fluentui">FluentUI Playground</Tab>
+        <Tab value="home" data-testid="home-tab-btn">Home</Tab>
+        <Tab value="jobs" data-testid="jobs-tab-btn">Jobs</Tab>
+        <Tab value="api" data-testid="api-tab-btn">API Playground</Tab>
+        <Tab value="fluentui" data-testid="fluentui-tab-btn">FluentUI Playground</Tab>
       </TabList>
 
       <div className="toolbarContainer">

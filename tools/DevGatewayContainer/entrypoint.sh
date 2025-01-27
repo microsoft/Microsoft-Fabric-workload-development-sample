@@ -9,7 +9,7 @@ if [ -z "${LOG_LEVEL}" ]; then
 fi
 
 # List of required environment variables and mounted files
-required_env_vars=("ENTRA_TENANT_ID" "LOCAL_BACKEND_PORT" "CAPACITY_GUID")
+required_env_vars=("ENTRA_TENANT_ID" "LOCAL_BACKEND_PORT" "WORKSPACE_GUID")
 required_files=($package_file_path)
 unset_vars=()
 missing_files=()
@@ -66,5 +66,5 @@ dotnet "DevGateway/Microsoft.Fabric.Workload.DevGateway.dll" \
     -LogLevel $LOG_LEVEL \
     -DevMode:UserAuthorizationToken $token \
     -DevMode:ManifestPackageFilePath $package_file_path \
-    -DevMode:CapacityGuid $CAPACITY_GUID \
+    -DevMode:WorkspaceGuid $WORKSPACE_GUID \
     -DevMode:WorkloadEndpointUrl http://host.docker.internal:${LOCAL_BACKEND_PORT}/workload

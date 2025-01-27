@@ -65,8 +65,8 @@ export async function initialize(params: InitParams) {
                     item.objectId,
                     calculateAsText,
                     JSON.stringify({ metadata: 'JobMetadata' }),
-                    workloadClient,
-                    true /* showNotification */);
+                    true /* showNotification */,
+                    workloadClient);
 
             case 'item.job.retry':
                 const retryJobContext = data as ItemJobActionContext;
@@ -74,18 +74,43 @@ export async function initialize(params: InitParams) {
                     retryJobContext.itemObjectId,
                     retryJobContext.itemJobType,
                     JSON.stringify({ metadata: 'JobMetadata' }),
-                    workloadClient,
-                    true /* showNotification */);
+                    true /* showNotification */,
+                    workloadClient);
 
             case 'item.job.cancel':
                 const cancelJobDetails = data as ItemJobActionContext;
-                return await Controller.callCancelItemJob(cancelJobDetails.itemObjectId, cancelJobDetails.itemJobInstanceId, workloadClient, true);
+                return await Controller.callCancelItemJob(cancelJobDetails.itemObjectId, cancelJobDetails.itemJobInstanceId, true, workloadClient);
 
             case 'item.job.detail':
                 const jobDetailsContext = data as ItemJobActionContext;
                 const hostUrl = (await Controller.callSettingsGet(workloadClient)).workloadHostOrigin;
                 return getJobDetailsPane(jobDetailsContext, hostUrl);
 
+            case 'getItemSettings': {
+                return [
+                    {
+                        name: 'about',
+                        displayName: 'About',
+                        workloadSettingLocation: {
+                            workloadName: sampleWorkloadName,
+                            route: 'custom-about',
+                        },
+                        workloadIframeHeight: '1000px'
+                    },
+                    {
+                        name: 'itemCustomSettings',
+                        displayName: 'Item custom settings',
+                        icon: {
+                            name: 'apps_20_regular',
+                        },
+                        workloadSettingLocation: {
+                            workloadName: sampleWorkloadName,
+                            route: 'custom-item-settings',
+                        },
+                        workloadIframeHeight: '1000px'
+                    }
+                ];
+            }
             default:
                 throw new Error('Unknown action received');
         }

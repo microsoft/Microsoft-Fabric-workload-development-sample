@@ -248,38 +248,43 @@ namespace Boilerplate.Services
         {
             var directory = $"{lakehouseId}/Tables/";
             var oneLakeContainer = await GetPathList(token, workspaceId, directory, recursive: true);
-            // A Onelake table is a delta table that consists of Parquet files and a _delta_log/ directory.
             var deltaLogDirectory = "/_delta_log";
-
+            // A Onelake table is a delta table that consists of Parquet files and a _delta_log/ directory or either a shortcut to a Onelake table.
             var tables = oneLakeContainer.Paths
-                .Select(path => path.Name)
-                .Where(pathName => pathName.EndsWith(deltaLogDirectory))
-                .Select(pathName =>
+                .Where(path =>
+                    path.Name.EndsWith(deltaLogDirectory) ||
+                    (path.IsShortcut == true && path.AccountType == "ADLS"))
+                .Select(path =>
                 {
+                    var pathName = path.Name;
                     var parts = pathName.Split('/');
-                    // extract the table name
-                    var tableName = parts[parts.Length - 2];
+                    string tableName;
+                    string schemaName = null;
 
-                    String schemaName = null;
-                    // path structure without schema: <lakehouseId>/Tables/<tableName>/_delta_log (4 parts long)
-                    // path structure with schema: <lakehouseId>/Tables/<schemaName>/<tableName>/_delta_log (5 parts long)
-                    if (parts.Length == 5) // has a schema
+                    // Check if the path ends with '_delta_log' and remove it if needed
+                    if (pathName.EndsWith(deltaLogDirectory))
+                    {
+                        pathName = string.Join("/", parts.Take(parts.Length - 1));
+                        parts = pathName.Split('/');
+                    }
+
+                    // path structure without schema: <lakehouseId>/Tables/<tableName> (3 parts long)
+                    // path structure with schema: <lakehouseId>/Tables/<schemaName>/<tableName> (4 parts long)
+                    tableName = parts[parts.Length - 1];
+                    if (parts.Length == 4)
                     {
                         schemaName = parts[2];
                     }
-                    // reconstruct path
-                    var directory = string.Join("/", parts, 0, parts.Length - 2) + "/";
 
                     return new LakehouseTable
                     {
                         Name = tableName,
-                        Path = directory + tableName + "/",
+                        Path = pathName + '/',
                         Schema = schemaName,
                     };
                 });
 
             return tables;
-
         }
 
         /// <summary>

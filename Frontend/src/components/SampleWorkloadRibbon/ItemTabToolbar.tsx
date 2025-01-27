@@ -34,8 +34,8 @@ export function ItemTabToolbar(props: RibbonProps) {
       itemObjectId,
       jobType,
       JSON.stringify({metadata: 'JobMetadata'}),
-      workloadClient,
-      true /* showNotification */);
+      true /* showNotification */,
+      workloadClient);
   }
 
   async function onRecentRun() {
@@ -61,7 +61,7 @@ export function ItemTabToolbar(props: RibbonProps) {
   }
 
   const menuItems = Object.keys(jobTypeDisplayNames).map((key) => (
-    <MenuItem key={key} onClick={() => onRunJob(key)}>
+    <MenuItem key={key} onClick={() => onRunJob(key)} data-testid={`menuitem-${key}`}>
       {jobTypeDisplayNames[key]}
     </MenuItem>
   ));
@@ -79,11 +79,13 @@ export function ItemTabToolbar(props: RibbonProps) {
             <MenuTrigger>
               <Tooltip
                   content={getJobActionTooltipText("Run Jobs")}
+                  data-testid="run-jobs-tooltip"
                   relationship="label">
               <MenuButton
                   style={{fontWeight: 400, fontSize: 14}}
                   size="small"
                   icon={<TriangleRight20Regular/>}
+                  data-testid="run-jobs-menu-button"
                   disabled={!isLakeHouseSelected}>Run Jobs</MenuButton>
               </Tooltip>
             </MenuTrigger>
@@ -95,6 +97,7 @@ export function ItemTabToolbar(props: RibbonProps) {
         <ToolbarButton
             style={{fontWeight: 400, fontSize: 14}}
             aria-label="Recent runs"
+            data-testid="recent-runs-toolbar-button"
             icon={<History24Regular/>}
             onClick={() => onRecentRun()}>
           Recent runs</ToolbarButton>

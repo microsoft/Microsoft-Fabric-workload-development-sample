@@ -30,12 +30,14 @@ export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult): Work
 const sampleWorkloadName = process.env.WORKLOAD_NAME;
 const sampleItemType = sampleWorkloadName + ".SampleWorkloadItem";
 const calculateAsText = sampleItemType + ".CalculateAsText";
+const longRunningCalculateAsText = sampleItemType + ".LongRunningCalculateAsText";
 const scheduledJob = sampleItemType + ".ScheduledJob";
 const calculateAsParquet = sampleItemType + ".CalculateAsParquet";
 
 export const jobTypeDisplayNames: Record<string, string> = {
     [scheduledJob]: 'Scheduled Job',
     [calculateAsText]: 'Calculate as Text',
+    [longRunningCalculateAsText]: 'Long Running Calculate as Text',
     [calculateAsParquet]: 'Calculate as Parquet'
 };
 
