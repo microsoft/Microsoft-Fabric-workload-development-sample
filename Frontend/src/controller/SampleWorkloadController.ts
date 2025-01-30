@@ -30,6 +30,8 @@ import {
     Tokens,
     ExtendedItemTypeV2,
     WorkloadErrorDetails,
+    ErrorKind,
+    UpdateItemResult,
 } from "@ms-fabric/workload-client";
 
 import { Dispatch, SetStateAction } from "react";
@@ -40,7 +42,6 @@ import {
     AuthenticationUIRequiredException,
     AuthUIRequired,
     FabricExternalWorkloadError,
-    ItemMetadataNotFound
 } from "../models/WorkloadExceptionsModel";
 // --- Notification API
 
@@ -334,20 +335,24 @@ export async function callDialogOpenMsgBox(
     title: string,
     content: string,
     actionButtonsNames: string[],
-    workloadClient: WorkloadClientAPI): Promise<string> {
+    workloadClient: WorkloadClientAPI,
+    link?: string): Promise<string> {
 
     // Create an array of ActionButton objects based on the provided action button names
     const actionButtons: ActionButton[] = actionButtonsNames.map(name => ({ name, label: name }));
-
     const result = await workloadClient.dialog.open({
         dialogType: DialogType.MessageBox,
         messageBoxOptions: {
             title,
             content,
+            link: link ? {
+                    url: link,
+                    label: link
+                }
+            : undefined,
             actionButtons
         }
     });
-
     return result.value?.clickedButton;
 }
 
@@ -393,7 +398,8 @@ export async function callErrorHandlingOpenDialog(
             stackTrace,
             requestId,
             errorTime: Date().toString() // Set the timestamp of the error
-        }
+        },
+        kind: ErrorKind.Error
     });
 }
 
@@ -466,15 +472,7 @@ export async function callItemCreate<T>(
         };
     }
     catch (exception) {
-        console.error(exception);
-
-        if (exception.error?.message?.code === "PowerBIMetadataArtifactDisplayNameInUseException") {
-            console.log(`Name ${displayName} is taken...`);
-        }
-        // Indicates that the error was returned from the workload
-        if (exception.error?.message?.code === FabricExternalWorkloadError) {
-            await handleWorkloadError(exception, workloadClient);
-        }
+        console.error(`Failed to create item: ${exception}`);
         throw exception;
     }
 }
@@ -495,18 +493,8 @@ export async function callItemGet(objectId: string, workloadClient: WorkloadClie
 
         return item;
     } catch (exception) {
-        if (exception.error?.message?.code === FabricExternalWorkloadError) {
-            if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
-                return callItemGet(objectId, workloadClient, true);
-            }
-
-            const parsedException = parseExceptionErrorResponse(exception);
-            if (parsedException?.ErrorCode === ItemMetadataNotFound) {
-                throw parsedException;
-            }
-        }
         console.error(`Failed locating item with ObjectID ${objectId}`, exception);
-        return null;
+        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callItemGet, objectId);
     }
 }
 
@@ -523,7 +511,7 @@ export async function callItemUpdate<T>(
     objectId: string,
     payloadData: T | undefined,
     workloadClient: WorkloadClientAPI,
-    isRetry?: boolean) {
+    isRetry?: boolean): Promise<UpdateItemResult> {
 
     let payloadString: string;
     if (payloadData) {
@@ -532,21 +520,16 @@ export async function callItemUpdate<T>(
     } else {
         console.log(`Sending an update for item ${objectId} without updating the payload`);
     }
-
+ 
     try {
-        await workloadClient.itemCrud.updateItem({
+        return await workloadClient.itemCrud.updateItem({
             objectId,
             etag: undefined,
             payload: { workloadPayload: payloadString, payloadContentType: "InlineJson" }
         });
     } catch (exception) {
-        // Indicates that the error was returned from the workload
-        if (exception.error?.message?.code === FabricExternalWorkloadError) {
-            if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
-                callItemUpdate(objectId, payloadData, workloadClient, true /*isRetry*/);
-            }
-        }
         console.error(`Failed updating Item ${objectId}`, exception);
+        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callItemUpdate, objectId, payloadData);
     }
 }
 
@@ -566,14 +549,8 @@ export async function callItemDelete(
         console.log(`Delete result for item ${objectId}: ${result.success}`);
         return result.success;
     } catch (exception) {
-        // Indicates that the error was returned from the workload
-        if (exception.error?.message?.code === FabricExternalWorkloadError) {
-            if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
-                return callItemDelete(objectId, workloadClient, true /*isRetry*/);
-            }        
-        }
         console.error(`Failed deleting Item ${objectId}`, exception);
-        return false;
+        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callItemDelete, objectId);
     }
 }
 
@@ -594,8 +571,8 @@ export async function callRunItemJob(
     objectId: string,
     jobType: string,
     jobPayload: string,
-    workloadClient: WorkloadClientAPI,
     showNotification: boolean = false,
+    workloadClient: WorkloadClientAPI,
     isRetry?: boolean): Promise<ItemJobInstance> {
 
     const params: RunItemJobParams = {
@@ -620,16 +597,10 @@ export async function callRunItemJob(
 
         return result;
     } catch (exception) {
-        // Indicates that the error was returned from the workload
-        if (exception.error?.message?.code === FabricExternalWorkloadError) {
-            if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
-                return callRunItemJob(objectId, jobType, jobPayload, workloadClient, showNotification, true /*isRetry*/);
-            }         
-        }
         console.error(`Failed running item job ${jobType} for item ${objectId}`);
         console.log(exception);
+        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callRunItemJob, objectId, jobType, jobPayload, showNotification);
     }
-    return null;
 }
 
 /**
@@ -645,8 +616,8 @@ export async function callRunItemJob(
 export async function callCancelItemJob(
     objectId: string,
     jobInstanceObjectId: string,
-    workloadClient: WorkloadClientAPI,
     showNotification: boolean = false,
+    workloadClient: WorkloadClientAPI,
     isRetry?: boolean): Promise<CancelItemJobResult> {
 
     const params: CancelItemJobParams = {
@@ -676,17 +647,10 @@ export async function callCancelItemJob(
         return result;
     }
     catch (exception) {
-         // Indicates that the error was returned from the workload
-         if (exception.error?.message?.code === FabricExternalWorkloadError) {
-            if (!isRetry && await handleWorkloadError(exception, workloadClient)) {
-                return callCancelItemJob(objectId, jobInstanceObjectId, workloadClient, showNotification, true /*isRetry*/);
-            }         
-        }
         console.error(`Failed to cancel job instance ID: ${jobInstanceObjectId} for item: ${objectId}`);
         console.log(exception);
+        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callCancelItemJob, objectId, jobInstanceObjectId, showNotification);
     }
-
-    return null;
 }
 
 /**
@@ -732,11 +696,14 @@ export async function callGetItem1SupportedOperators(workloadBEUrl: string, work
     const responseBody: string = await response.text();
     if (!response.ok) {
         // Handle non-successful responses here
-        if (!isRetry && await handleWorkloadError(responseBody, workloadClient, /* isDirectWorkloadCall */ true)) {
-            return await callGetItem1SupportedOperators(workloadBEUrl, workloadClient, /* isRetry */true);
-        }
         console.error(`Error get item1 supported operators API: ${responseBody}`);
-        throw new Error(`Error get item1 supported operators API: ${responseBody}`);
+        return await handleException(
+            responseBody,
+            workloadClient,
+            isRetry,
+            /* isDirectWorkloadCall */ true,
+            callGetItem1SupportedOperators,
+            workloadBEUrl);
     }
     const operators: string[] = JSON.parse(responseBody);
     console.log(`*** Successfully fetched operators supported for Item1: ${operators}`);
@@ -753,7 +720,7 @@ export async function callGetItem1SupportedOperators(workloadBEUrl: string, work
  * @returns {Promise<{ Operand1: number, Operand2: number }>} A Promise that resolves to an object containing the updated operands.
  */
 export async function callItem1DoubleResult(workloadBEUrl: string, workloadClient: WorkloadClientAPI, workspaceObjectId: string, itemObjectId: string, isRetry?: boolean): Promise<{ Operand1: number, Operand2: number }> {
-    try {
+    try{
         const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
         const response: Response = await fetch(`${workloadBEUrl}/${workspaceObjectId}/${itemObjectId}/item1DoubleResult`, {
             method: `POST`,
@@ -766,11 +733,17 @@ export async function callItem1DoubleResult(workloadBEUrl: string, workloadClien
         if (!response.ok) {
             // Handle non-successful responses here
             const errorMessage: string = await response.text();
-            if (!isRetry && await handleWorkloadError(errorMessage, workloadClient, /* isDirectWorkloadCall */ true)) {
-                return await callItem1DoubleResult(workloadBEUrl, workloadClient, workspaceObjectId, itemObjectId, /* isRetry */true);
-            }
             console.error(`Error calling Double API: ${errorMessage}`);
-            throw new Error(`Error calling Double API: ${errorMessage}`);
+            return await handleException(
+                errorMessage,
+                workloadClient,
+                isRetry,
+                /* isDirectWorkloadCall */ true,
+                callItem1DoubleResult,
+                workloadBEUrl,
+                workloadClient,
+                workspaceObjectId,
+                itemObjectId);
         }
 
         const result: { Operand1: number, Operand2: number } = await response.json();
@@ -779,7 +752,7 @@ export async function callItem1DoubleResult(workloadBEUrl: string, workloadClien
         return result;
     } catch (error) {
         console.error('Error in callItem1DoubleResult:', error);
-        throw error; // Propagate the error to the caller
+        return null;
     }
 }
 
@@ -842,7 +815,7 @@ export async function callLanguageGet(workloadClient: WorkloadClientAPI): Promis
 }
 
 export function settingsToView(settings: WorkloadSettings): string {
-    return [`Instance ID: ${settings.instanceId}`, `Host Origin: ${settings.workloadHostOrigin}`, `Selected Workload: ${settings.productName}`, `API URI: ${settings.apiUri}`].join('\r\n');
+    return [`Instance ID: ${settings.instanceId}`, `Host Origin: ${settings.workloadHostOrigin}`, `Current Language Locale: ${settings.currentLanguageLocale}`, `API URI: ${settings.apiUri}`].join('\r\n');
 }
 
 /**
@@ -902,23 +875,54 @@ export async function callOpenSettings(
  *
  * @param {any} exception - The exception that we need to handle
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {boolean} isRetry - Indicates that the call is a retry
  * @param {boolean} isDirectWorkloadCall - indicates that the error handling is for a data plane call (from the workload frontend directly to the workload backend)
- * @returns {Promise<boolean>} - Whether the exception was handled or not.
+ * @param {Function} action - The action to retry if the error was handled.
+ * @param {...any[]} actionArgs - The arguments to pass to the action.
+ * @returns {Promise<any>} - Whether the exception was handled or not.
  */
-export async function handleWorkloadError(exception: any, workloadClient: WorkloadClientAPI, isDirectWorkloadCall?: boolean): Promise<boolean> {
-    var parsedException: WorkloadErrorDetails
-    try {
-        if (isDirectWorkloadCall) {
-            // exception is the json returned fom the workload
-            parsedException = JSON.parse(exception);
-        } else {
-            // exception is a JS object that contains the json returned from the workload
-            parsedException = parseExceptionErrorResponse(exception);
-            if (!parsedException) {
-                return false;
-            }
+async function handleException(
+    exception: any,
+    workloadClient: any,
+    isRetry: boolean = false,
+    isDirectWorkloadCall: boolean = false,
+    action: (...args: any[]) => Promise<any>,
+    ...actionArgs: any[]
+): Promise<any> {
+    var parsedException: WorkloadErrorDetails = null;
+    if (isDirectWorkloadCall) {
+        // exception is the json returned fom the call
+        parsedException = JSON.parse(exception);
+    } else {
+        // exception is a JS object that contains the json returned from the workload BE
+        parsedException = parseExceptionErrorResponse(exception);
+    }
+
+    // If the error is a FabricExternalWorkloadError and we could parse it, check if we can handle it.
+    if (exception.error?.message?.code === FabricExternalWorkloadError && parsedException) {
+        const errorHandled = await handleWorkloadError(parsedException, workloadClient);
+        if (!isRetry && errorHandled ) {
+            // error handled, retry the action
+            return await action(...actionArgs, workloadClient, true /*isRetry*/);
         }
+    } 
     
+    // error could not be handled, show the error dialog
+    const message = parsedException?.Message || "Unknown error occurred";
+    const errorCode = parsedException?.ErrorCode ?? exception.error?.message?.code;
+    await callErrorHandlingOpenDialog(
+        message,
+        `Could not handle exception: ${errorCode}`,
+        exception.error?.statusCode,
+        exception.response?.stackTrace,
+        exception.response?.headers?.requestId,
+        workloadClient
+    );
+    return null;
+}
+
+async function handleWorkloadError(parsedException: WorkloadErrorDetails, workloadClient: WorkloadClientAPI): Promise<boolean> {
+    try {
         // handle codes from your choice, the codes are returned from the workload backend.
         switch (parsedException.ErrorCode) {
             case AuthUIRequired: {
@@ -936,7 +940,9 @@ export async function handleWorkloadError(exception: any, workloadClient: Worklo
                 }
             }
         }
-    } catch {}
+    } catch {
+        console.error("Failed to handle workload error", parsedException);
+    }
 
     return false;
 }

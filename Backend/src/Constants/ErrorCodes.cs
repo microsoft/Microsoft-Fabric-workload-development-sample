@@ -11,6 +11,7 @@ namespace Fabric_Extension_BE_Boilerplate.Constants
         public static class Authentication
         {
             public const string AuthUIRequired = "AuthUIRequired";
+            public const string AuthError = "AuthError";
         }
 
         public static class Security
@@ -32,6 +33,7 @@ namespace Fabric_Extension_BE_Boilerplate.Constants
         public static class Item
         {
             public const string ItemMetadataNotFound = "ItemMetadataNotFound";
+            public const string DoubledOperandsOverflow = "DoubledOperandsOverflow";
         }
     }
 }

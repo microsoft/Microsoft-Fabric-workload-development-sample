@@ -17,6 +17,7 @@ import {
   Tab,
   TabList,
   TabValue,
+  Tooltip,
   useId,
   MessageBar,
   MessageBarBody,
@@ -33,6 +34,7 @@ import {
   Database16Regular,
   TriangleRight20Regular,
 } from "@fluentui/react-icons";
+import { AfterNavigateAwayData } from "@ms-fabric/workload-client";
 import { ContextProps, PageProps } from "src/App";
 import {
   callNotificationOpen,
@@ -71,8 +73,7 @@ import {
 } from "../../models/SampleWorkloadModel";
 import "./../../styles.scss";
 import { LakehouseExplorerComponent } from "../SampleWorkloadLakehouseExplorer/SampleWorkloadLakehouseExplorer";
-import { ItemMetadataNotFound } from "../../models/WorkloadExceptionsModel";
-import { AfterNavigateAwayData } from "@ms-fabric/workload-client";
+import { ItemMetadataNotFound} from "../../models/WorkloadExceptionsModel";
 
 export function SampleWorkloadEditor(props: PageProps) {
   const sampleWorkloadName = process.env.WORKLOAD_NAME;
@@ -92,10 +93,16 @@ export function SampleWorkloadEditor(props: PageProps) {
   const [notificationId, setNotificationId] = useState<string>("");
   const [notificationValidationMessage, setNotificationValidationMessage] =
     useState<string>("");
+  const [operand1ValidationMessage, setOperand1ValidationMessage] =
+    useState<string>("");
+  const [operand2ValidationMessage, setOperand2ValidationMessage] =
+    useState<string>("");
   const [apiPanelIsLightDismiss, setApiPanelIsLightDismiss] =
     useState<boolean>(false);
   const [apiDialogMsgboxTitle, setApiDialogMsgboxTitle] = useState<string>("");
   const [apiDialogMsgboxContent, setApiDialogMsgboxContent] =
+    useState<string>("");
+  const [apiDialogMsgboxLink, setApiDialogMsgboxLink] =
     useState<string>("");
   const [apiDialogMsgboxButtonCount, setApiDialogMsgboxButtonCount] =
     useState<number>(0);
@@ -129,6 +136,8 @@ export function SampleWorkloadEditor(props: PageProps) {
   document.body.dir = i18n.dir();
 
   const msgboxButtonCountOptions = ["0", "1", "2", "3"];
+  const INT32_MIN = -2147483648;
+  const INT32_MAX = 2147483647;
   const radioName = useId("radio");
   const labelId = useId("label");
   const inputId = useId("input");
@@ -230,7 +239,8 @@ export function SampleWorkloadEditor(props: PageProps) {
       apiDialogMsgboxTitle,
       apiDialogMsgboxContent,
       buttonNames,
-      workloadClient
+      workloadClient,
+      apiDialogMsgboxLink
     );
   }
 
@@ -314,11 +324,13 @@ export function SampleWorkloadEditor(props: PageProps) {
   }
 
   async function onOperand1InputChanged(value: number) {
+    setOperand1ValidationMessage("");
     setOperand1(value);
     setDirty(true);
   }
 
   async function onOperand2InputChanged(value: number) {
+    setOperand2ValidationMessage("");
     setOperand2(value);
     setDirty(true);
   }
@@ -328,18 +340,32 @@ export function SampleWorkloadEditor(props: PageProps) {
     setDirty(true);
   }
 
+  function validateOperandsBeforeDouble() {
+    var valid = true;
+    if (operand1 < INT32_MIN/2 || operand1 > INT32_MAX/2) {
+      setOperand1ValidationMessage("Operand 1 may lead to overflow if doubled");
+      valid = false;
+    }
+    if (operand2 < INT32_MIN/2 || operand2 > INT32_MAX/2) {
+      setOperand2ValidationMessage("Operand 2 may lead to overflow if doubled");
+      valid = false;
+    }
+    return valid;
+  }
+
   async function onDoubleButtonClick() {
-    if (sampleItem) {
+    if (sampleItem && validateOperandsBeforeDouble()) {
       const result = await callItem1DoubleResult(
         sampleWorkloadBEUrl,
         workloadClient,
         sampleItem.workspaceId,
         sampleItem.id
       );
-
-      // Update both operands
-      setOperand1(result.Operand1);
-      setOperand2(result.Operand2);
+      if (result) {
+        // Update both operands
+        setOperand1(result.Operand1);
+        setOperand2(result.Operand2);
+      }
     }
   }
 
@@ -434,7 +460,7 @@ export function SampleWorkloadEditor(props: PageProps) {
 
   // HTML page contents
   return (
-    <Stack className="editor">
+    <Stack className="editor" data-testid="sample-workload-editor-inner">
       <Ribbon
         {...props}
         isLakeHouseSelected={selectedLakehouse != undefined}
@@ -442,7 +468,8 @@ export function SampleWorkloadEditor(props: PageProps) {
         isSaveButtonEnabled={
           sampleItem?.id !== undefined &&
           selectedLakehouse != undefined &&
-          isDirty
+          isDirty &&
+          !!operator
         }
         saveItemCallback={SaveItem}
         isDeleteEnabled={sampleItem?.id !== undefined}
@@ -477,7 +504,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                 <Divider alignContent="start">
                   {sampleItem ? "" : "New "}Item Details
                 </Divider>
-                <div className="section">
+                <div className="section" data-testid='item-editor-metadata' >
                   {sampleItem && (
                     <Label>WorkspaceId Id: {sampleItem?.workspaceId}</Label>
                   )}
@@ -511,6 +538,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                       icon={<Database16Regular />}
                       appearance="primary"
                       onClick={() => onCallDatahubLakehouse()}
+                      data-testid="item-editor-lakehouse-btn"
                     />
                   </Stack>
                   <Field
@@ -522,6 +550,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                       size="small"
                       placeholder="Lakehouse ID"
                       value={selectedLakehouse ? selectedLakehouse.id : ""}
+                      data-testid="lakehouse-id-input"
                     />
                   </Field>
                 </div>
@@ -529,6 +558,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                 <div className="section">
                   <Field
                     label="Operand 1"
+                    validationMessage={operand1ValidationMessage}
                     orientation="horizontal"
                     className="field"
                   >
@@ -540,10 +570,12 @@ export function SampleWorkloadEditor(props: PageProps) {
                       onChange={(e) =>
                         onOperand1InputChanged(parseInt(e.target.value))
                       }
+                      data-testid="operand1-input"
                     />
                   </Field>
                   <Field
                     label="Operand 2"
+                    validationMessage={operand2ValidationMessage}
                     orientation="horizontal"
                     className="field"
                   >
@@ -555,6 +587,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                       onChange={(e) =>
                         onOperand2InputChanged(parseInt(e.target.value))
                       }
+                      data-testid="operand2-input"
                     />
                   </Field>
                   <Field
@@ -564,6 +597,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                   >
                     <Combobox
                       key={pageContext.itemObjectId}
+                      data-testid="operator-combobox"
                       placeholder="Operator"
                       value={operator ?? ''}
                       onOptionSelect={(_, opt) =>
@@ -571,7 +605,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                       }
                     >
                       {supportedOperators.map((option) => (
-                        <Option key={option} value={option}>{option}</Option>
+                        <Option key={option} data-testid={option} value={option}>{option}</Option>
                       ))}
                     </Combobox>
                   </Field>
@@ -581,7 +615,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                     disabled={isDisabledDoubleResultButton()}
                     onClick={() => onDoubleButtonClick()}
                   >
-                    Double the result
+                    Double the operands
                   </Button>
                 </div>
                 <Divider alignContent="start">Authentication</Divider>
@@ -603,6 +637,7 @@ export function SampleWorkloadEditor(props: PageProps) {
             <TabList
               className="tabListContainer"
               defaultSelectedValue={selectedApiTab}
+              data-testid="item-editor-selected-tab-btn"
               onTabSelect={(_, data: SelectTabData) =>
                 setSelectedApiTab(data.value)
               }
@@ -611,7 +646,7 @@ export function SampleWorkloadEditor(props: PageProps) {
               <Tab value="apiActionDialog">Action & Dialog</Tab>
               <Tab value="apiPanelSettings">Panel & Settings</Tab>
               <Tab value="apiNavigation">Navigation</Tab>
-              <Tab value="apiDataHub">Data Hub</Tab>
+              <Tab value="apiDataHub" data-testid="api-data-hub-tab-btn">Data Hub</Tab>
             </TabList>
             {selectedApiTab == "apiNotification" && (
               <span>
@@ -672,7 +707,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                 <Divider alignContent="start">Dialog Message Box</Divider>
                 <div className="section">
                   <Field
-                    label="Box Title"
+                    label="Message Box Title"
                     orientation="horizontal"
                     className="field"
                   >
@@ -683,7 +718,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                     />
                   </Field>
                   <Field
-                    label="Box Content"
+                    label="Message Box Content"
                     orientation="horizontal"
                     className="field"
                   >
@@ -695,6 +730,23 @@ export function SampleWorkloadEditor(props: PageProps) {
                       }
                     />
                   </Field>
+                  <Tooltip
+                    content="Link must start with 'https://', and can't be window's origin or belong to one of Fabric's known domains (such as 'powerbi.com', 'fabric.microsoft.com' or 'windows.net')"
+                    relationship="label">
+                    <Field
+                      label="Message Box Link"
+                      orientation="horizontal"
+                      className="field"
+                    >
+                      <Input
+                        size="small"
+                        placeholder="Link"
+                        onChange={(e) =>
+                          setApiDialogMsgboxLink(e.target.value)
+                        }
+                      />
+                    </Field>
+                  </Tooltip>
                   <Combobox
                     placeholder="Buttons count"
                     onOptionSelect={(_, opt) =>
@@ -857,7 +909,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                     icon={<PanelRightExpand20Regular />}
                     onClick={() => onCallSettingsGet()}
                   >
-                    Get Workload Settings
+                    Get Host Settings
                   </Button>
                 </div>
               </span>
@@ -867,10 +919,6 @@ export function SampleWorkloadEditor(props: PageProps) {
                 {/* Navigation and Page API usage example */}
                 <Divider alignContent="start">Navigation</Divider>
                 <div className="section">
-                  <Label>
-                    After navigation to a sample page, an AfterNavigateAway
-                    callback should show some notification
-                  </Label>
                   <Button
                     appearance="primary"
                     icon={<PanelRightExpand20Regular />}
@@ -881,7 +929,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                   <Button
                     appearance="primary"
                     icon={<PanelRightExpand20Regular />}
-                    onClick={() => onCallNavigate("/sample-page")}
+                    onClick={() => onCallNavigate(`/sample-page/${sampleItem.id}`)}
                   >
                     Navigate to Sample Page
                   </Button>
@@ -914,11 +962,13 @@ export function SampleWorkloadEditor(props: PageProps) {
                       style={{ marginLeft: "10px" }}
                       value={datahubDialogDescription ?? ""}
                       onChange={(e) => setDatahubDialogDescription(e.target.value)}
+                      data-testid="api-playground-data-hub-description"
                     />
                   </Field>
                   <Field label="Supported types" orientation="horizontal" className="field">
                     <Combobox
                       placeholder="Item types"
+                      data-testid="api-playground-data-hub-supported-types"
                       onOptionSelect={(_, opt) =>
                         setDataHubMsgBoxType(
                           opt.optionValue
@@ -932,6 +982,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                   </Field>
                   <Switch
                     label="Present workspace explorer"
+		                data-testid="api-playground-data-hub-workspace-explorer-switch"
                     onChange={(e) =>
                       setWorkspaceExplorerPresented(e.target.checked)
                     }
@@ -941,11 +992,13 @@ export function SampleWorkloadEditor(props: PageProps) {
                     onChange={(e) =>
                       setMultiSelectionEnabled(e.target.checked)
                     }
+		                data-testid="api-playground-data-hub-multiselection-switch"
                   />
                   <Button
                     icon={<Database16Regular />}
                     appearance="primary"
                     onClick={onCallDatahubFromPlayground}
+                    data-testid="api-playground-open-data-hub-btn"
                   >
                     Open Data Hub
                   </Button>
@@ -957,10 +1010,11 @@ export function SampleWorkloadEditor(props: PageProps) {
                       size="small"
                       placeholder="Item name"
                       value={selectedLinkedItem ? selectedLinkedItem.displayName : ""}
+                      data-testid={`api-playground-data-hub-selected-name-${selectedLinkedItem?.displayName}`}
                     />
                   </Field>
                   <Field label="Item ID" orientation="horizontal" className="field">
-                    <Input size="small" placeholder="Item ID" value={selectedLinkedItem ? selectedLinkedItem.id : ""} />
+                    <Input size="small" placeholder="Item ID" value={selectedLinkedItem ? selectedLinkedItem.id : ""} data-testid={`api-playground-data-hub-selected-id-${selectedLinkedItem?.id}`}/>
                   </Field>
                 </div>
               </span>

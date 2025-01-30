@@ -129,6 +129,13 @@
             },
             "required": ["itemJobType", "refreshType"]
           },
+          "getItemSettings": {
+            "type": "object",
+              "properties": {
+                "action": {"type": "string"}
+              },
+            "required": ["action"]
+          },
           "recentRun": {
             "type": "object",
             "properties": {

@@ -13,6 +13,7 @@
         <ItemJobType Name="Org.WorkloadSample.SampleWorkloadItem.ScheduledJob" />
         <ItemJobType Name="Org.WorkloadSample.SampleWorkloadItem.CalculateAsText" />
         <ItemJobType Name="Org.WorkloadSample.SampleWorkloadItem.CalculateAsParquet" />
+        <ItemJobType Name="Org.WorkloadSample.SampleWorkloadItem.LongRunningCalculateAsText" />
       </ItemJobTypes>
     </JobScheduler>
   </Item>

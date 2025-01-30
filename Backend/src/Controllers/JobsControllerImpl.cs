@@ -53,10 +53,10 @@ namespace Fabric_Extension_BE_Boilerplate.Controllers
 
             var item = _itemFactory.CreateItem(itemType, authorizationContext);
             await item.Load(itemId);
+            
+            _logger.LogInformation($"{nameof(CreateItemJobInstanceAsync)}: Running {jobType}.");
 
-            _logger.LogInformation($"OnRunFabricItemJobAsync: Running {jobType}.");
-
-            await item.ExecuteJob(jobType, jobInstanceId, createItemJobInstanceRequest.InvokeType, createItemJobInstanceRequest.CreationPayload);
+            _ = item.ExecuteJob(jobType, jobInstanceId, createItemJobInstanceRequest.InvokeType, createItemJobInstanceRequest.CreationPayload);
 
             _httpContextAccessor.HttpContext.Response.StatusCode = (int)HttpStatusCode.Accepted;
         }
@@ -69,7 +69,7 @@ namespace Fabric_Extension_BE_Boilerplate.Controllers
             var item = _itemFactory.CreateItem(itemType, authorizationContext);
             await item.Load(itemId);
 
-            _logger.LogInformation($"OnRunFabricItemJobAsync: Running {jobType}.");
+            _logger.LogInformation($"{nameof(GetItemJobInstanceStateAsync)}: Running {jobType}.");
 
             var jobState = await item.GetJobState(jobType, jobInstanceId);
 
@@ -77,9 +77,34 @@ namespace Fabric_Extension_BE_Boilerplate.Controllers
         }
 
         /// <inheritdoc/>
-        public Task<ItemJobInstanceState> CancelItemJobInstanceAsync(Guid workspaceId, string itemType, Guid itemId, string jobType, Guid jobInstanceId)
+        public async Task<ItemJobInstanceState> CancelItemJobInstanceAsync(Guid workspaceId, string itemType, Guid itemId, string jobType, Guid jobInstanceId)
         {
-            throw new NotImplementedException();
+            var authorizationContext = await _authenticationService.AuthenticateControlPlaneCall(_httpContextAccessor.HttpContext);
+
+            var item = _itemFactory.CreateItem(itemType, authorizationContext);
+            await item.Load(itemId);
+
+            if (item.ItemObjectId == Guid.Empty)
+            {
+                _logger.LogInformation($"{nameof(CancelItemJobInstanceAsync)}: Item not found.");
+                return new ItemJobInstanceState
+                {
+                    Status = JobInstanceStatus.Failed,
+                    ErrorDetails = new ErrorDetails
+                    {
+                        ErrorCode = "ItemNotFound",
+                        Message = "Item not found.",
+                    },
+                };
+            }
+            _logger.LogInformation($"{nameof(CancelItemJobInstanceAsync)}: Canceling {jobType} with jobInstanceId {jobInstanceId}.");
+
+            await item.CancelJob(jobType, jobInstanceId);
+            return new ItemJobInstanceState
+            {
+                Status = JobInstanceStatus.Cancelled,
+                ErrorDetails = null,
+            };
         }
     }
 }
