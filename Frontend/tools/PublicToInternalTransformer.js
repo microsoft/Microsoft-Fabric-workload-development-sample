@@ -16,7 +16,7 @@ class PublicToInternalTransformer {
         if (publicSchema instanceof PublicProduct) {
             return this.ProductToInternal(publicSchema, workloadName, prefix);
         } else if (publicSchema instanceof PublicItem) {
-            return this.ItemToInternal(publicSchema, workloadName, productName , prefix);
+            return this.ItemToInternal(publicSchema, workloadName, productName, prefix);
         }
     }
 
@@ -50,25 +50,25 @@ class PublicToInternalTransformer {
             { ...publicSchema.icon, name: `${workloadName}/${publicSchema.icon.name}` },
             { ...publicSchema.activeIcon, name: `${workloadName}/${publicSchema.activeIcon.name}` },
             publicSchema.contextMenuItems?.map(mi => this.MenuItemToInternal(mi, workloadName, prefix)),
-            publicSchema.quickActionItems?.map(mi => this.MenuItemToInternal(mi, workloadName,prefix)),
+            publicSchema.quickActionItems?.map(mi => this.MenuItemToInternal(mi, workloadName, prefix)),
             publicSchema.supportedInMonitoringHub,
             publicSchema.supportedInDatahubL1,
             this.JobActionConfigToInternal(publicSchema.itemJobActionConfig, workloadName, prefix),
-            this.ItemSettingsToInternal(publicSchema.itemSettings, itemName, prefix),
+            this.ItemSettingsToInternal(publicSchema.itemSettings, itemName, workloadName, prefix),
             publicSchema.itemJobTypes
         );
 
         publicSchema.editorTab = new PublicTab(publicSchema.editorTab) ?? new PublicTab();
-        const tab = this.ToInternal(publicSchema, workloadName);
+        const tab = this.ToInternal(publicSchema, workloadName, prefix);
 
-        return {internalItemSchema,tab};
+        return { internalItemSchema, tab };
     }
 
-    static ToInternal(publicItem, workloadName) {
+    static ToInternal(publicItem, workloadName, prefix) {
         return new InternalTab({
             name: `${workloadName}.${publicItem.name}`,
-            displayName: `${publicItem.displayName}`,
-            displayNamePlural: `${publicItem.displayNamePlural}`,
+            displayName: prefix + `${publicItem.displayName}`,
+            displayNamePlural: prefix + `${publicItem.displayNamePlural}`,
             artifactType: `${workloadName}.${publicItem.name}`,
             icon: { name: `${workloadName}/${publicItem.icon.name}` },
             onInit: this.CreateTabActionObj(publicItem.editorTab, workloadName, 'onInit'),
@@ -154,7 +154,7 @@ class PublicToInternalTransformer {
             ...material,
             title: prefix + material.title,
             description: prefix + material.description,
-            introduction: material.introduction ? prefix + material.introduction: null,
+            introduction: material.introduction ? prefix + material.introduction : null,
             onClick: this.LearningMaterialHandlerForWorkload(material.onClick, workloadName),
             image: `${workloadName}/${material.image}`
         };
@@ -198,7 +198,7 @@ class PublicToInternalTransformer {
         }
 
         return {
-            title: publicCreateExperience.title ? prefix + publicCreateExperience.title  : null,
+            title: publicCreateExperience.title ? prefix + publicCreateExperience.title : null,
             description: prefix + publicCreateExperience.description,
             cards: publicCreateExperience.cards?.map(card => this.CreateCardForWorkload(card, workloadName, prefix))
         };
@@ -249,18 +249,27 @@ class PublicToInternalTransformer {
         };
     }
 
-    static ItemSettingsToInternal(publicItemSettings, itemName) {
+    static ItemSettingsToInternal(publicItemSettings, itemName, workloadName) {
         if (!publicItemSettings) {
             return null;
         }
 
-        return {
+        const internalSettings = {
             recentRun: publicItemSettings.recentRun,
-            schedule: {
+            schedule: publicItemSettings.schedule ? {
                 artifactJobType: `${itemName}.${publicItemSettings.schedule.itemJobType}`,
                 refreshType: publicItemSettings.schedule.refreshType
-            }
+            } : null
         };
+
+        if (publicItemSettings.getItemSettings && publicItemSettings.getItemSettings.action !== undefined) {
+            internalSettings.getArtifactSettings = {
+                extensionName: workloadName,
+                action: publicItemSettings.getItemSettings.action
+            };
+        }
+
+        return internalSettings;
     }
 }
 

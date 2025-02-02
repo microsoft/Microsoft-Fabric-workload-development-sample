@@ -103,18 +103,18 @@ export function SaveAsDialog({ workloadClient, isImmediateSave }: SaveAsDialogPr
     };
 
     return (
-        <Stack className="create-dialog">
+        <Stack className="create-dialog" data-testid="create-item-dialog">
             <Stack className="section">
                 <h2>Create {sampleItemDisplayName}</h2>
                 <Field label="Name:" validationMessage={validationMessage}>
-                    <Input onChange={e => onDisplayNameChanged(e.target.value)} defaultValue={displayName} disabled={isSaveInProgress} />
+                    <Input data-testid="create-dialog-name-input" onChange={e => onDisplayNameChanged(e.target.value)} defaultValue={displayName} disabled={isSaveInProgress} />
                 </Field>
                 <Field label="Sample description:">
                     <Input onChange={e => onDescriptionChanged(e.target.value)} defaultValue={description} disabled={isSaveInProgress} />
                 </Field>
                 <Checkbox label ="Request Initial Consent (Mark this if this is the first time you're working with this workload)" onChange={(v) => setPromptFullConsent(v.target.checked)}/>
                 <Stack className="create-buttons" horizontal tokens={{ childrenGap: 10 }}>
-                    <Button appearance="primary" onClick={() => onSaveClicked()} disabled={isSaveDisabled}>Create</Button>
+                    <Button appearance="primary" onClick={() => onSaveClicked()} data-testid="create-3p-item-button" disabled={isSaveDisabled}>Create</Button>
                     <Button appearance="secondary" onClick={() => onCancelClicked()}>Cancel</Button>
                 </Stack>
             </Stack>

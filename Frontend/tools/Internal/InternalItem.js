@@ -24,10 +24,18 @@ class Schedule {
     }
 }
 
+class GetArtifactSettings {
+    constructor(extensionName, action) {
+        this.extensionName = extensionName;
+        this.action = action;
+    } 
+}
+
 class ItemSettings {
-    constructor(schedule, recentRun) {
+    constructor(schedule, recentRun, getArtifactSettings) {
         this.schedule = schedule;
         this.recentRun = recentRun;
+        this.getArtifactSettings = getArtifactSettings;
     }
 }
 module.exports = InternalItem;

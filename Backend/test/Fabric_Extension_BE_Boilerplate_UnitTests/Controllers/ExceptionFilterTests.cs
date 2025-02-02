@@ -10,7 +10,6 @@ using Fabric_Extension_BE_Boilerplate.Contracts.FabricAPI.Workload;
 using Fabric_Extension_BE_Boilerplate.Exceptions;
 using NUnit.Framework;
 using System.Net;
-using System.Security.Authentication;
 using System.Text.Json;
 
 namespace Boilerplate.Tests
@@ -41,7 +40,7 @@ namespace Boilerplate.Tests
         public async Task AuthenticationExceptionThrown()
         {
             await TestExceptionFilter(
-                new AuthenticationException(),
+                new AuthenticationException(""),
                 expectedStatusCode: HttpStatusCode.Unauthorized);
         }
 

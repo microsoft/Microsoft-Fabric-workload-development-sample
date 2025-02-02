@@ -258,7 +258,7 @@ namespace Boilerplate.Tests
 
             Item1Mock
                 .Setup(item => item.Double())
-                .ReturnsAsync((0.0, 0.0))
+                .ReturnsAsync((0, 0))
                 .Verifiable();
 
             ItemFactoryMock

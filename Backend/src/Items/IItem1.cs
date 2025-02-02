@@ -21,6 +21,6 @@ namespace Boilerplate.Items
         /// Doubles the operands produced by the item calculation.
         /// </summary>
         /// <returns>A task representing the asynchronous operation. The result is a tuple containing the doubled Operand1 and Operand2.</returns>
-        Task<(double Operand1, double Operand2)> Double();
+        Task<(int Operand1, int Operand2)> Double();
     }
 }
