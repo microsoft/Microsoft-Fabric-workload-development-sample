@@ -63,6 +63,9 @@
         "itemJobType": "ScheduledJob",
         "refreshType": "Refresh"
       },
+      "getItemSettings": {
+            "action": "getItemSettings"
+        },
       "recentRun": {
         "useRecentRunsComponent": true
       }
