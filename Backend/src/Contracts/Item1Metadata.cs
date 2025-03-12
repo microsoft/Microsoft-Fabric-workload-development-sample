@@ -39,7 +39,6 @@ namespace Boilerplate.Contracts
                 Operand1 = Operand1,
                 Operand2 = Operand2,
                 Operator = Operator,
-                Lakehouse = Lakehouse,
                 UseOneLake = UseOneLake,
                 LastCalculationResultLocation = LastCalculationResultLocation
             };
