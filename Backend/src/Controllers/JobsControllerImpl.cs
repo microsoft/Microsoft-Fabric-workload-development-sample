@@ -21,20 +21,17 @@ namespace Fabric_Extension_BE_Boilerplate.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<JobsControllerImpl> _logger;
         private readonly IAuthenticationService _authenticationService;
-        private readonly ILakehouseClientService _lakeHouseClientService;
         private readonly IItemFactory _itemFactory;
 
         public JobsControllerImpl(
             IHttpContextAccessor httpContextAccessor,
             ILogger<JobsControllerImpl> logger,
             IAuthenticationService authenticationService,
-            ILakehouseClientService lakeHouseClientService,
             IItemFactory itemFactory)
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             _authenticationService = authenticationService;
-            _lakeHouseClientService = lakeHouseClientService;
             _itemFactory = itemFactory;
 
             _logger.LogTrace("FabricItemsJobsHandler: Instance created");

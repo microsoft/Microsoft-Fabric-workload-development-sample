@@ -14,7 +14,6 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Boilerplate.Items
@@ -24,15 +23,9 @@ namespace Boilerplate.Items
         public static readonly IList<string> SupportedOperators = Enum.GetNames(typeof(Item1Operator))
             .Where(name => name != nameof(Item1Operator.Undefined)).ToList();
 
-        private static readonly IList<string> OneLakeScopes = new[] { $"{EnvironmentConstants.OneLakeResourceId}/.default" };
-
         private static readonly IList<string> FabricScopes = new[] { $"{EnvironmentConstants.FabricBackendResourceId}/Lakehouse.Read.All" };
 
         private readonly ILakehouseClientService _lakeHouseClientService;
-
-        private readonly IAuthenticationService _authenticationService;
-
-        private readonly IItemMetadataStore _itemMetadataStore;
 
         private Item1Metadata _metadata;
 
@@ -46,8 +39,6 @@ namespace Boilerplate.Items
             : base(logger, itemMetadataStore, authenticationService, oneLakeClientService, authorizationContext)
         {
             _lakeHouseClientService = lakeHouseClientService;
-            _authenticationService = authenticationService;
-            _itemMetadataStore = itemMetadataStore;
         }
 
         public override string ItemType => WorkloadConstants.ItemTypes.Item1;

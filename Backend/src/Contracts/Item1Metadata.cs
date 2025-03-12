@@ -35,10 +35,10 @@ namespace Boilerplate.Contracts
         {
             return new Item1Metadata
             {
-                Lakehouse = Lakehouse,
                 Operand1 = Operand1,
                 Operand2 = Operand2,
                 Operator = Operator,
+                Lakehouse = Lakehouse,
                 UseOneLake = UseOneLake,
                 LastCalculationResultLocation = LastCalculationResultLocation
             };

@@ -1,7 +1,6 @@
 import React from "react";
 import { Tab, TabList } from '@fluentui/react-tabs';
 import { Toolbar } from '@fluentui/react-toolbar';
-
 import {
   SelectTabEvent, SelectTabData, TabValue,
   Menu, MenuItem, MenuList, MenuPopover, MenuTrigger,
@@ -15,9 +14,7 @@ import {
   Settings24Regular,
 } from "@fluentui/react-icons";
 import { Stack } from '@fluentui/react';
-
 import { PageProps } from 'src/App';
-import { callDatahubOpen, callDialogOpenMsgBox } from '../../controller/SampleWorkloadController';
 import './../../styles.scss';
 import { ItemTabToolbar } from "./ItemTabToolbar";
 
@@ -33,21 +30,6 @@ const HomeTabToolbar = (props: RibbonProps) => {
     return;
   }
 
-  async function onDeleteClicked() {
-    // don't call delete in Create mode
-    if (!props.isDeleteEnabled) {
-      return;
-    }
-
-    const msgBoxResult: string = await callDialogOpenMsgBox("Delete Item", "Are you sure about deleting this item?", ["Yes", "No"], props.workloadClient);
-    if (msgBoxResult != "Yes") {
-      return;
-    }
-
-    props.deleteItemCallback();
-
-  }
-
   function getSaveButtonTooltipText(): string {
     return !props.isFEOnly
       ? 'Save is not supported in Frontend-only'
@@ -61,7 +43,6 @@ const HomeTabToolbar = (props: RibbonProps) => {
 
   return (
     <Toolbar>
-
       <Tooltip
         content={getSaveButtonTooltipText()}
         relationship="label">
@@ -82,35 +63,6 @@ const HomeTabToolbar = (props: RibbonProps) => {
           icon={<Settings24Regular />}
           onClick={onSettingsClicked} />
       </Tooltip>
-    </Toolbar>
-  );
-};
-
-const ViewTabToolbar = (props: RibbonProps) => {
-  const zoomOptions = [
-    "75%",
-    "90%",
-    "100%",
-    "120%",
-    "150%",
-  ];
-
-  return (
-    <Toolbar>
-      <ToolbarButton
-        aria-label="Zoom to fit"
-        icon={<ZoomFit20Filled />}>Zoom to fit</ToolbarButton>
-      <ToolbarDivider />
-
-      <Label className="comboboxLabel">Zoom:</Label>
-      <Combobox readOnly={true}
-        style={{ minWidth: "unset" }} input={{ style: { width: "50px" } }}
-        defaultValue="100%"
-        defaultSelectedOptions={["100%"]}>
-        {zoomOptions.map((option) => (
-          <Option key={option}>{option}</Option>
-        ))}
-      </Combobox>
     </Toolbar>
   );
 };
@@ -153,7 +105,6 @@ export interface RibbonProps extends PageProps {
 export function Ribbon(props: RibbonProps) {
   const { onTabChange, selectedTab } = props;
   const onTabSelect = (_: SelectTabEvent, data: SelectTabData) => {
-    setSelectedValue(data.value);
     onTabChange(data.value);
   };
 
@@ -165,8 +116,6 @@ export function Ribbon(props: RibbonProps) {
         onTabSelect={onTabSelect}>
         <Tab value="home" data-testid="home-tab-btn">Home</Tab>
         <Tab value="jobs" data-testid="jobs-tab-btn">Jobs</Tab>
-        <Tab value="api" data-testid="api-tab-btn">API Playground</Tab>
-        <Tab value="fluentui" data-testid="fluentui-tab-btn">FluentUI Playground</Tab>
       </TabList>
 
       <div className="toolbarContainer">

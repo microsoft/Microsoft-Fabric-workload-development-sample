@@ -13,7 +13,6 @@ import { getJobDetailsPane } from './utils';
 import i18next from 'i18next';
 
 export async function initialize(params: InitParams) {
-
     const workloadClient = createWorkloadClient();
     const sampleWorkloadName = process.env.WORKLOAD_NAME;
     const sampleItemType = sampleWorkloadName + ".SampleWorkloadItem";

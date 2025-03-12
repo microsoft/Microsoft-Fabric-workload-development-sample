@@ -2,7 +2,6 @@ import { WorkloadItem, ItemJobActionContext, ItemJobActionResult } from "./model
 import { ItemJobStatus, GetItemResult } from "@ms-fabric/workload-client";
 import i18n from 'i18next';
 
-
 export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult): WorkloadItem<T> {
     let payload: T;
     if (item.workloadPayload) {

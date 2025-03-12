@@ -30,8 +30,6 @@ namespace Boilerplate.Items
             Converters = { new JsonStringEnumConverter() },
         };
 
-        private readonly IItemMetadataStore _itemMetadataStore;
-
         public Guid TenantObjectId { get; private set; }
 
         public Guid WorkspaceObjectId { get; private set; }

@@ -32,7 +32,6 @@ namespace Boilerplate.Tests
         protected static readonly AuthorizationContext IncomingAuthorizationContext = new AuthorizationContext() { OriginalSubjectToken = IncomingToken, Claims = IncomingClaims };
 
         protected static readonly IList<string> FabricScopes = new[] { "https://analysis.windows.net/powerbi/api/.default" };
-        protected static readonly IList<string> OneLakeScopes = new[] { "https://storage.azure.com/.default" };
 
         protected Mock<ILogger<TLoggerMockCategory>> LoggerMock { get; private set; }
 

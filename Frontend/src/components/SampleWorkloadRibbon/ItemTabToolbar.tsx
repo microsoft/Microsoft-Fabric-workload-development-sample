@@ -17,7 +17,6 @@ import {
   History24Regular,
   Clock24Regular
 } from "@fluentui/react-icons";
-
 import { RibbonProps } from "./SampleWorkloadRibbon";
 import { callItemGet, callOpenRecentRuns, callOpenSettings, callRunItemJob } from "../../controller/SampleWorkloadController";
 import { jobTypeDisplayNames } from "../../utils";

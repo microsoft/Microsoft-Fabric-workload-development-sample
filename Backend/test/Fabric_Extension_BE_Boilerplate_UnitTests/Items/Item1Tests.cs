@@ -47,11 +47,9 @@ namespace Boilerplate.Tests
             itemMetadataStoreMock.Setup(m => m.Upsert(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CommonItemMetadata>(), It.IsAny<Item1Metadata>()))
                 .Callback<Guid, Guid, CommonItemMetadata, Item1Metadata>((tenantObjectIdParam, itemObjectIdGuidParam, commonItemMetadataParam, item1MetadataParam) =>
                 {
-
                     Assert.That(itemObjectIdGuidParam, Is.EqualTo(itemIdGuid));
                     Assert.That(item1MetadataParam.Operand1, Is.EqualTo(item1Instance.Operand1));
                     Assert.That(item1MetadataParam.Operand2, Is.EqualTo(item1Instance.Operand2));
-
                 })
                 .Returns(Task.CompletedTask)
                 .Verifiable();

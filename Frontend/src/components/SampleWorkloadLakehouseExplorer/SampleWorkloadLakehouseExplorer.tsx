@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
 import { Stack } from "@fluentui/react";
 import {
   Button,
@@ -12,11 +11,9 @@ import {
   Tooltip,
 } from "@fluentui/react-components";
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular, ArrowSwap20Regular } from "@fluentui/react-icons";
-
 import { callDatahubOpen, callAuthAcquireAccessToken } from "../../controller/SampleWorkloadController";
 import { TableMetadata } from "../../models/LakehouseExplorerModel";
 import "./../../styles.scss";
-
 import { getTablesInLakehouse, getTablesInLakehousePath } from "../../controller/LakehouseExplorerController";
 import {  PageProps } from "../../App";
 import { GenericItem as LakehouseMetadata } from "src/models/SampleWorkloadModel";
@@ -31,8 +28,6 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
   const [loadingStatus, setLoadingStatus] = useState<string>("idle");
   const [isExplorerVisible, setIsExplorerVisible] = useState<boolean>(true);
   const [hasSchema, setHasSchema] = useState<boolean>(false);
-  const [isFrontendOnly, setIsFrontendOnly] = useState<boolean>(true);
-  const pageContext = useParams<ContextProps>();
 
   useEffect(() => {
     const fetchTables = async () => {
@@ -50,11 +45,6 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
     fetchTables();
   }, [selectedLakehouse]);
 
-  useEffect(() => {
-    if (pageContext.itemObjectId) {
-      setIsFrontendOnly(false);
-    }
-  }, []);
 
   async function setTables(additionalScopesToConsent: string) : Promise<boolean> {
     let accessToken = await callAuthAcquireAccessToken(workloadClient, additionalScopesToConsent);
