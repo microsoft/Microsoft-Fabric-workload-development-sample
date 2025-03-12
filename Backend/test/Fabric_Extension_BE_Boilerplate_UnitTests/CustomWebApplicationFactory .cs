@@ -16,6 +16,7 @@ namespace Boilerplate.Tests
         private Mock<IAuthenticationService>? _authenticationServiceMock;
         private Mock<IAuthorizationHandler>? _authorizationHandlerMock;
         private Mock<ILakehouseClientService>? _lakeHouseClientServiceMock;
+        private Mock<IOneLakeClientService>? _oneLakeClientServiceMock;
         private Mock<IItemFactory>? _itemFactoryMock;
         private Mock<IItemMetadataStore>? _itemMetadataStoreMock;
         private Mock<IItem1>? _item1Mock;
@@ -25,7 +26,8 @@ namespace Boilerplate.Tests
             Mock<IHttpContextAccessor>? httpContextAccessorMock = null,
             Mock<IAuthenticationService>? authenticationServiceMock = null,
             Mock<IAuthorizationHandler>? authorizationHandlerMock = null,
-            Mock<ILakehouseClientService>? lakeHouseClientServiceMock = null,
+            Mock<IOneLakeClientService>? oneLakeClientServiceMock = null,
+            Mock<ILakehouseClientService>? lakehouseClientServiceMock = null,
             Mock<IItemFactory>? itemFactoryMock = null,
             Mock<IItemMetadataStore>? itemMetadataStoreMock = null,
             Mock<IItem1>? item1Mock = null)
@@ -34,7 +36,8 @@ namespace Boilerplate.Tests
             _httpContextAccessorMock = httpContextAccessorMock;
             _authenticationServiceMock = authenticationServiceMock;
             _authorizationHandlerMock = authorizationHandlerMock;
-            _lakeHouseClientServiceMock = lakeHouseClientServiceMock;
+            _oneLakeClientServiceMock = oneLakeClientServiceMock;
+            _lakeHouseClientServiceMock = lakehouseClientServiceMock;
             _itemFactoryMock = itemFactoryMock;
             _itemMetadataStoreMock = itemMetadataStoreMock;
             _item1Mock = item1Mock;
@@ -53,6 +56,7 @@ namespace Boilerplate.Tests
                     AddOrReplaceService(services, _authenticationServiceMock);
                     AddOrReplaceService(services, _authorizationHandlerMock);
                     AddOrReplaceService(services, _lakeHouseClientServiceMock);
+                    AddOrReplaceService(services, _oneLakeClientServiceMock);
                     AddOrReplaceService(services, _itemFactoryMock);
                     AddOrReplaceService(services, _itemMetadataStoreMock);
                     AddOrReplaceService(services, _item1Mock);

@@ -1,4 +1,4 @@
-import { ItemJobStatus, ItemLikeV2 } from '@ms-fabric/workload-client';
+import { ItemJobStatus, ItemLikeV2, WorkloadClientAPI } from '@ms-fabric/workload-client';
 
 // Represents an item as defined in the frontend manifest.
 export interface ItemManifest {
@@ -37,6 +37,7 @@ export interface Item1Metadata {
     operand2?: number;
     operator?: string;
     lakehouse: ItemReference;
+    useOneLake: boolean;
 }
 
 // Represents extended metadata for item1, including additional information
@@ -137,4 +138,10 @@ export interface ItemJobActionResult {
      * hold data to be rendered in panel for the detail action
      */
     data?: ItemJobDetailData;
+}
+
+export interface TabContentProps {
+    workloadClient: WorkloadClientAPI;
+    sampleWorkloadName?: string;
+    sampleItem?: WorkloadItem<ItemPayload>;
 }

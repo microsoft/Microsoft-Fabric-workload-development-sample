@@ -48,22 +48,35 @@ namespace Boilerplate.Items
 
         protected AuthorizationContext AuthorizationContext { get; }
 
-        protected ItemBase(ILogger logger, IItemMetadataStore itemMetadataStore, AuthorizationContext authorizationContext)
+        protected IItemMetadataStore ItemMetadataStore { get; init; }
+
+        protected IAuthenticationService AuthenticationService { get; init; }
+
+        protected IOneLakeClientService OneLakeClientService { get; init; }
+
+        protected ItemBase(
+            ILogger logger,
+            IItemMetadataStore itemMetadataStore,
+            IAuthenticationService authenticationService,
+            IOneLakeClientService oneLakeClientService,
+            AuthorizationContext authorizationContext)
         {
             Logger = logger;
             AuthorizationContext = authorizationContext;
-            _itemMetadataStore = itemMetadataStore;
+            ItemMetadataStore = itemMetadataStore;
+            AuthenticationService = authenticationService;
+            OneLakeClientService = oneLakeClientService;
         }
 
         public async Task Load(Guid itemId)
         {
             var tenantObjectId = AuthorizationContext.TenantObjectId;
-            if (!_itemMetadataStore.Exists(tenantObjectId, itemId))
+            if (!ItemMetadataStore.Exists(tenantObjectId, itemId))
             {
                 throw new ItemMetadataNotFoundException(itemId);
             }
 
-            var itemMetadata = await _itemMetadataStore.Load<TItemMetadata>(tenantObjectId, itemId);
+            var itemMetadata = await ItemMetadataStore.Load<TItemMetadata>(tenantObjectId, itemId);
 
             Ensure.NotNull(itemMetadata, nameof(itemMetadata));
             Ensure.NotNull(itemMetadata.CommonMetadata, nameof(itemMetadata.CommonMetadata));
@@ -98,28 +111,30 @@ namespace Boilerplate.Items
 
             SetDefinition(createItemRequest.CreationPayload);
 
-            await Store();
-            await AllocateAndFreeResources();
-            await UpdateFabric();
+            await SaveChanges();
         }
 
         public async Task Update(UpdateItemRequest updateItemRequest)
         {
+            if (updateItemRequest == null)
+            {
+                // updateItemRequest might be null if the request payload is invalid. In this case, deserialization fails and interprets the entire request as null.
+                throw new InvalidItemPayloadException(ItemType, ItemObjectId);
+            }
+
             DisplayName = updateItemRequest.DisplayName;
             Description = updateItemRequest.Description;
 
             UpdateDefinition(updateItemRequest.UpdatePayload);
 
-            await Store();
-            await AllocateAndFreeResources();
-            await UpdateFabric();
+            await SaveChanges();
         }
 
         public async Task Delete()
         {
             // >>> Get a list of allocated resources and free them <<<
 
-            await _itemMetadataStore.Delete(TenantObjectId, ItemObjectId);
+            await ItemMetadataStore.Delete(TenantObjectId, ItemObjectId);
         }
 
         protected abstract void SetDefinition(CreateItemPayload payload);
@@ -143,7 +158,7 @@ namespace Boilerplate.Items
                 ErrorDetails = null,
                 CanceledTime = DateTime.UtcNow,
             };
-            await _itemMetadataStore.UpsertJobCancel(TenantObjectId, ItemObjectId, jobType, jobInstanceId, jobMetadata);
+            await ItemMetadataStore.UpsertJobCancel(TenantObjectId, ItemObjectId, jobType, jobInstanceId, jobMetadata);
         }
 
         protected async Task SaveChanges()
@@ -167,7 +182,7 @@ namespace Boilerplate.Items
 
             var typeSpecificMetadata = GetTypeSpecificMetadata();
 
-            await _itemMetadataStore.Upsert(TenantObjectId, ItemObjectId, commonMetadata, typeSpecificMetadata);
+            await ItemMetadataStore.Upsert(TenantObjectId, ItemObjectId, commonMetadata, typeSpecificMetadata);
         }
 
         private Task AllocateAndFreeResources()

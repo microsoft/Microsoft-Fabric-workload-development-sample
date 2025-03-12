@@ -40,9 +40,10 @@ namespace Boilerplate.Items
             ILogger<Item1> logger,
             IItemMetadataStore itemMetadataStore,
             ILakehouseClientService lakeHouseClientService,
+            IOneLakeClientService oneLakeClientService,
             IAuthenticationService authenticationService,
             AuthorizationContext authorizationContext)
-            : base(logger, itemMetadataStore, authorizationContext)
+            : base(logger, itemMetadataStore, authenticationService, oneLakeClientService, authorizationContext)
         {
             _lakeHouseClientService = lakeHouseClientService;
             _authenticationService = authenticationService;
@@ -62,11 +63,11 @@ namespace Boilerplate.Items
             var typeSpecificMetadata = GetTypeSpecificMetadata();
 
             FabricItem lakehouseItem = null;
-            if (typeSpecificMetadata.Lakehouse.Id != Guid.Empty)
+            if (typeSpecificMetadata.Lakehouse != null && typeSpecificMetadata.Lakehouse.Id != Guid.Empty)
             {
                 try
                 {
-                    var token = await _authenticationService.GetAccessTokenOnBehalfOf(AuthorizationContext, FabricScopes);
+                    var token = await AuthenticationService.GetAccessTokenOnBehalfOf(AuthorizationContext, FabricScopes);
                     lakehouseItem = await _lakeHouseClientService.GetFabricLakehouse(token, typeSpecificMetadata.Lakehouse.WorkspaceId, typeSpecificMetadata.Lakehouse.Id);
                 }
                 catch (Exception ex)
@@ -83,7 +84,13 @@ namespace Boilerplate.Items
 
         public override async Task ExecuteJob(string jobType, Guid jobInstanceId, JobInvokeType invokeType, CreateItemJobInstancePayload creationPayload)
         {
-            var token = await _authenticationService.GetAccessTokenOnBehalfOf(AuthorizationContext, OneLakeScopes);
+            if (string.Equals(jobType, Item1JobType.InstantJob, StringComparison.OrdinalIgnoreCase))
+            {
+                Logger.LogInformation($"Instant Job {jobInstanceId} executed.");
+                return;
+            }
+
+            var token = await AuthenticationService.GetAccessTokenOnBehalfOf(AuthorizationContext, OneLakeConstants.OneLakeScopes);
 
             var op1 = _metadata.Operand1;
             var op2 = _metadata.Operand2;
@@ -98,20 +105,31 @@ namespace Boilerplate.Items
             }
 
             // Write result to Lakehouse if job is not cancelled
-            if (!_itemMetadataStore.JobCancelRequestExists(TenantObjectId, ItemObjectId, jobInstanceId)) {
-                var filePath = GetLakehouseFilePath(jobType, jobInstanceId);
-                await _lakeHouseClientService.WriteToLakehouseFile(token, filePath, result);
+            if (!ItemMetadataStore.JobCancelRequestExists(TenantObjectId, ItemObjectId, jobInstanceId)) {
+                var filePath = GetCalculationResultFilePath(jobType, jobInstanceId);
+                await OneLakeClientService.WriteToOneLakeFile(token, filePath, result);
+                
+                _metadata.LastCalculationResultLocation = filePath;
+                await SaveChanges();
             }
         }
 
         public override async Task<ItemJobInstanceState> GetJobState(string jobType, Guid jobInstanceId)
         {
-            var token = await _authenticationService.GetAccessTokenOnBehalfOf(AuthorizationContext, OneLakeScopes);
+            if (string.Equals(jobType, Item1JobType.InstantJob, StringComparison.OrdinalIgnoreCase))
+            {
+                return new ItemJobInstanceState
+                {
+                    Status = JobInstanceStatus.Completed
+                };
+            }
 
-            var filePath = GetLakehouseFilePath(jobType, jobInstanceId);
-            var fileExists = await _lakeHouseClientService.CheckIfFileExists(token, filePath);
+            var token = await AuthenticationService.GetAccessTokenOnBehalfOf(AuthorizationContext, OneLakeConstants.OneLakeScopes);
 
-            if (_itemMetadataStore.JobCancelRequestExists(TenantObjectId, ItemObjectId, jobInstanceId))
+            var filePath = GetCalculationResultFilePath(jobType, jobInstanceId);
+            var fileExists = await OneLakeClientService.CheckIfFileExists(token, filePath);
+
+            if (ItemMetadataStore.JobCancelRequestExists(TenantObjectId, ItemObjectId, jobInstanceId))
             {
                 return new ItemJobInstanceState { Status = JobInstanceStatus.Cancelled };
             }
@@ -122,7 +140,7 @@ namespace Boilerplate.Items
             };
         }
 
-        private string GetLakehouseFilePath(string jobType, Guid jobInstanceId)
+        private string GetCalculationResultFilePath(string jobType, Guid jobInstanceId)
         {
             var typeToFileName = new Dictionary<string, string>
             {
@@ -135,7 +153,9 @@ namespace Boilerplate.Items
 
             if (fileName != null)
             {
-                return $"{_metadata.Lakehouse.WorkspaceId}/{_metadata.Lakehouse.Id}/Files/{fileName}";
+                return _metadata.UseOneLake 
+                    ? OneLakeClientService.GetOneLakeFilePath(WorkspaceObjectId,ItemObjectId, fileName)
+                    : OneLakeClientService.GetOneLakeFilePath(_metadata.Lakehouse.WorkspaceId, _metadata.Lakehouse.Id, fileName);
             }
             throw new NotSupportedException("Workload job type is not supported");
         }
@@ -174,7 +194,7 @@ namespace Boilerplate.Items
 
         public Item1Operator Operator => Metadata.Operator;
 
-        private Item1Metadata Metadata => Ensure.NotNull(_metadata, "The item object must be initialized before use");
+        public Item1Metadata Metadata => Ensure.NotNull(_metadata, "The item object must be initialized before use");
 
         private void ValidateOperandsBeforeDouble(int operand1, int operand2)
         {
@@ -223,7 +243,7 @@ namespace Boilerplate.Items
                 throw new InvalidItemPayloadException(ItemType, ItemObjectId);
             }
 
-            if (payload.Item1Metadata.Lakehouse == null)
+            if (payload.Item1Metadata.Lakehouse == null && !payload.Item1Metadata.UseOneLake)
             {
                 throw new InvalidItemPayloadException(ItemType, ItemObjectId)
                     .WithDetail(ErrorCodes.ItemPayload.MissingLakehouseReference, "Missing Lakehouse reference");
@@ -245,7 +265,7 @@ namespace Boilerplate.Items
                 throw new InvalidItemPayloadException(ItemType, ItemObjectId);
             }
 
-            if (payload.Item1Metadata.Lakehouse == null)
+            if (payload.Item1Metadata.Lakehouse == null && !payload.Item1Metadata.UseOneLake)
             {
                 throw new InvalidItemPayloadException(ItemType, ItemObjectId)
                     .WithDetail(ErrorCodes.ItemPayload.MissingLakehouseReference, "Missing Lakehouse reference");
@@ -262,6 +282,15 @@ namespace Boilerplate.Items
         protected override Item1Metadata GetTypeSpecificMetadata()
         {
             return Metadata.Clone();
+        }
+
+        public async Task<string> GetLastResult()
+        {
+            if (_metadata.LastCalculationResultLocation.IsNullOrEmpty())
+                return string.Empty;
+
+            var token = await AuthenticationService.GetAccessTokenOnBehalfOf(AuthorizationContext, OneLakeConstants.OneLakeScopes);
+            return await OneLakeClientService.GetOneLakeFile(token, _metadata.LastCalculationResultLocation);
         }
     }
 }

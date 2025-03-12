@@ -3,13 +3,14 @@ import { Route, Router, Switch } from "react-router-dom";
 import { History } from "history";
 
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-
-import { SampleWorkloadEditor, SamplePage } from "./components/SampleWorkloadEditor/SampleWorkloadEditor";
-import { Authentication } from './components/SampleWorkloadAuthEditor/SampleWorkloadAuthEditor';
+import { SampleWorkloadEditor } from "./components/SampleWorkloadEditor/SampleWorkloadEditor";
 import { Panel } from "./components/SampleWorkloadPanel/SampleWorkloadPanel";
 import { SaveAsDialog } from "./components/SampleWorkloadCreateDialog/SampleWorkloadCreateDialog";
 import CustomItemSettings from "./components/CustomItemSettings/CustomItemSettings";
 import CustomAbout from "./components/CustomItemSettings/CustomAbout";
+import SharedStatePage from "./components/SampleWorkloadSharedState/SharedStatePage"
+import { SamplePage, ClientSDKPlayground } from "./components/ClientSDKPlayground/ClientSDKPlayground";
+import { DataPlayground } from "./components/DataPlayground/DataPlayground";
 
 /*
     Add your Item Editor in the Route section of the App function below
@@ -29,6 +30,10 @@ export interface PageProps {
 export interface ContextProps {
     itemObjectId?: string;
     workspaceObjectId?: string
+}
+
+export interface SharedState {
+    message: string;
 }
 
 export function App({ history, workloadClient }: AppProps) {
@@ -80,6 +85,20 @@ export function App({ history, workloadClient }: AppProps) {
             <Route path="/custom-about">
                 <CustomAbout />
             </Route>
+            <Route path="/shared-state-page">
+                <SharedStatePage
+                    workloadClient={workloadClient} />
+            </Route>
+            <Route path="/client-sdk-playground">
+                <ClientSDKPlayground workloadClient={workloadClient} />
+            </Route>
+            <Route path="/sample-page">
+                <SamplePage workloadClient={workloadClient} />
+            </Route>
+            <Route path="/data-playground">
+                <DataPlayground workloadClient={workloadClient} />
+            </Route>
+
         </Switch>
     </Router>;
 }

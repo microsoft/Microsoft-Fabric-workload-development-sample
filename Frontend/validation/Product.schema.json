@@ -250,6 +250,7 @@
             "properties": {
               "mediaType": {
                 "type": "integer",
+                "enum": [0, 1],
                 "description": "The media type of the slide"
               },
               "source": {
@@ -259,7 +260,22 @@
               }
             },
             "required": ["mediaType", "source"],
-            "additionalProperties": false
+            "additionalProperties": false,
+            "if": {
+              "properties": {
+                "mediaType": { "const": 1 }
+              }
+            },
+            "then": {
+              "properties": {
+                "source": {
+                  "type": "string",
+                  "description": "Only vimeo or youtube video links are allowed",
+                  "examples": ["http://player.vimeo.com/video/1034765106", "https://youtube.com/embed/123"],
+                  "pattern": "^https://(player\\.vimeo\\.com/video/\\d+|(?:www\\.)?youtube\\.com/embed/[A-Za-z0-9_-]+)(\\?.*)?$"
+                }
+              }
+            }
           }
         },
         "supportLink": {

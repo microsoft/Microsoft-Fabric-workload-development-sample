@@ -1,12 +1,10 @@
-﻿﻿// <copyright company="Microsoft">
+﻿// <copyright company="Microsoft">
 // Copyright (c) Microsoft. All rights reserved.
 // </copyright>
 
 using Boilerplate.Constants;
 using Boilerplate.Contracts;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -15,6 +13,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Linq;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Boilerplate.Services
 {
@@ -154,97 +154,7 @@ namespace Boilerplate.Services
                 var flushQuery = BuildFlushQueryParameters(contentLength);
                 string flushUrl = url + "?" + flushQuery;
 
-                // Perform a flush to finalize the changes
-                var flushResponse = await _httpClientService.PatchAsync(flushUrl, null, token);
-                flushResponse.EnsureSuccessStatusCode();
-
-                _logger.LogInformation($"AppendToLakehouseFile succeeded for filePath: {filePath}");
-            }
-            catch (HttpRequestException ex)
-            {
-                // Handle HTTP request failure and log the error
-                _logger.LogError($"AppendToLakehouseFile failed for filePath: {filePath}. Error: {ex.Message}");
-            }
-            catch (Exception ex)
-            {
-                // Handle other types of exceptions and log the error
-                _logger.LogError($"AppendToLakehouseFile failed for filePath: {filePath}. Error: {ex.Message}");
-            }
-
-            _logger.LogInformation($"AppendToLakehouseFile completed for filePath: {filePath}");
-        }
-
-        /// <summary>
-        /// Retrieves the content of a file from Lakehouse using the provided bearer token.
-        /// </summary>
-        /// <param name="token">The bearer token for authentication.</param>
-        /// <param name="source">The source of the file.</param>
-        /// <returns>The content of the file as a string.</returns>
-        public async Task<string> GetLakehouseFile(string token, string source)
-        {
-            var url = $"{EnvironmentConstants.OneLakeDFSBaseUrl}/{source}";
-
-            try
-            {
-                var response = await _httpClientService.GetAsync(url, token);
-                response.EnsureSuccessStatusCode();
-
-                var content = await response.Content.ReadAsStringAsync();
-                _logger.LogInformation($"GetLakehouseFile succeeded for source: {source}");
-                return content;
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError($"GetLakehouseFile failed for source: {source}. Error: {ex.Message}");
-                return string.Empty;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"GetLakehouseFile failed for source: {source}. Error: {ex.Message}");
-                return string.Empty;
-            }
-        }
-
-        /// <summary>
-        /// Deletes a file from the Lakehouse storage using the provided access token and query parameters.
-        /// </summary>
-        /// <param name="token">The access token required to authorize the API requests.</param>
-        /// <param name="filePath">The path to the Lakehouse file that needs to be deleted.</param>
-        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
-        public async Task DeleteLakehouseFile(string token, string filePath)
-        {
-            var uriBuilder = new UriBuilder(EnvironmentConstants.OneLakeDFSBaseUrl);
-            uriBuilder.Path = filePath;
-            uriBuilder.Query = "recursive=true";
-
-            try
-            {
-                // Send the DELETE request using the _httpClientService
-                var response = await _httpClientService.DeleteAsync(uriBuilder.Uri.ToString(), token);
-                response.EnsureSuccessStatusCode();
-
-                _logger.LogInformation($"DeleteLakehouseFile succeeded for filePath: {filePath}");
-            }
-            catch (HttpRequestException ex)
-            {
-                _logger.LogError($"DeleteLakehouseFile failed for filePath: {filePath}. HTTP Error: {ex.Message}");
-                // Handle HTTP request failure and log the error
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError($"DeleteLakehouseFile failed for filePath: {filePath}. Error: {ex.Message}");
-                // Handle other types of exceptions and log the error
-            }
-        }
-
-        /// <summary>
-        /// Retrieves a list of tables available in the current lakehouse using the provided bearer token.
-        /// </summary>
-        /// <param name="token">The access token required to authorize the API requests.</param>
-        /// <param name="workspaceId">The id of the workspace that contains the selected lakehouse.</param>
-        /// <param name="lakehouseId">The id of the lakehouse from which we want to retrieve tables.</param>
-        /// <returns>A list of LakehouseTables</returns>
-        public async Task<IEnumerable<LakehouseTable>> GetOneLakeTables(string token, Guid workspaceId, Guid lakehouseId)
+        public async Task<IEnumerable<LakehouseTable>> GetLakehouseTables(string token, Guid workspaceId, Guid lakehouseId)
         {
             var directory = $"{lakehouseId}/Tables/";
             var oneLakeContainer = await GetPathList(token, workspaceId, directory, recursive: true);
@@ -285,6 +195,22 @@ namespace Boilerplate.Services
                 });
 
             return tables;
+        }
+
+        public async Task<FabricItem> GetFabricLakehouse(string token, Guid workspaceId, Guid lakehouseId)
+        {
+            string url = $"{EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/{workspaceId}/items/{lakehouseId}";
+            try
+            {
+                var response = await _httpClientService.GetAsync(url, token);
+                var lakehouse = await response.Content.ReadAsAsync<FabricItem>();
+                return lakehouse;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Failed to retrieve FabricLakehouse for lakehouse: {lakehouseId} in workspace: {workspaceId}. Error: {ex.Message}");
+                return null;
+            }
         }
 
         /// <summary>

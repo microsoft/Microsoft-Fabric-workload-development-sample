@@ -10,6 +10,7 @@ import {
 import * as Controller from './controller/SampleWorkloadController';
 import { ItemActionContext, ItemJobActionContext } from './models/SampleWorkloadModel';
 import { getJobDetailsPane } from './utils';
+import i18next from 'i18next';
 
 export async function initialize(params: InitParams) {
 
@@ -17,6 +18,7 @@ export async function initialize(params: InitParams) {
     const sampleWorkloadName = process.env.WORKLOAD_NAME;
     const sampleItemType = sampleWorkloadName + ".SampleWorkloadItem";
     const calculateAsText = sampleItemType + ".CalculateAsText";
+    const instantJob = sampleItemType + ".InstantJob";
 
     workloadClient.action.onAction(async function ({ action, data }) {
         switch (action) {
@@ -60,13 +62,26 @@ export async function initialize(params: InitParams) {
                     workloadClient);
 
             case 'run.calculate.job':
-                const { item } = data as ItemActionContext;
-                return await Controller.callRunItemJob(
-                    item.objectId,
-                    calculateAsText,
-                    JSON.stringify({ metadata: 'JobMetadata' }),
-                    true /* showNotification */,
-                    workloadClient);
+                {
+                    const { item } = data as ItemActionContext;
+                    return await Controller.callRunItemJob(
+                        item.objectId,
+                        calculateAsText,
+                        JSON.stringify({ metadata: 'JobMetadata' }),
+                        true /* showNotification */,
+                        workloadClient);
+                }
+               
+            case 'run.instant.job':
+                {
+                    const { item } = data as ItemActionContext;
+                    return await Controller.callRunItemJob(
+                        item.objectId,
+                        instantJob,
+                        JSON.stringify({ metadata: 'JobMetadata' }),
+                        true /* showNotification */,
+                        workloadClient);
+                }
 
             case 'item.job.retry':
                 const retryJobContext = data as ItemJobActionContext;
@@ -83,7 +98,10 @@ export async function initialize(params: InitParams) {
 
             case 'item.job.detail':
                 const jobDetailsContext = data as ItemJobActionContext;
-                const hostUrl = (await Controller.callSettingsGet(workloadClient)).workloadHostOrigin;
+                const settings = await Controller.callSettingsGet(workloadClient);
+                const hostUrl = settings.workloadHostOrigin;
+                const language = settings.currentFormatLocale;
+                await i18next.changeLanguage(language);
                 return getJobDetailsPane(jobDetailsContext, hostUrl);
 
             case 'getItemSettings': {
@@ -111,6 +129,20 @@ export async function initialize(params: InitParams) {
                     }
                 ];
             }
+            case 'open.ClientSDKPlaygroundPage':
+                return workloadClient.page.open({
+                    workloadName: sampleWorkloadName,
+                    route: {
+                        path: `/client-sdk-playground`,
+                    },
+                });
+            case 'open.DataApiSamplePage':
+                return workloadClient.page.open({
+                    workloadName: sampleWorkloadName,
+                    route: {
+                        path: `/data-playground`,
+                    },
+                });
             default:
                 throw new Error('Unknown action received');
         }

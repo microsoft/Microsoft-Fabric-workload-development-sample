@@ -70,6 +70,9 @@ namespace Boilerplate
                         services.AddSingleton<IHttpClientService, HttpClientService>();
                         services.AddSingleton<ILakehouseClientService, LakehouseClientService>();
 
+                        // Access to OneLake
+                        services.AddSingleton<IOneLakeClientService, OneLakeClientService>();
+
                         //// add more dependencies as needed
 
                         services.AddHostedService<FabricBackendExtension>();

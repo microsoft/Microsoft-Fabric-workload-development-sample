@@ -70,7 +70,8 @@ export function SaveAsDialog({ workloadClient, isImmediateSave }: SaveAsDialogPr
         try {
             const createItemPayload: CreateItemPayload = {
                  item1Metadata: {
-                     lakehouse: { id: EMPTY_GUID, workspaceId: EMPTY_GUID } 
+                     lakehouse: { id: EMPTY_GUID, workspaceId: EMPTY_GUID }, 
+                     useOneLake: false
                 }
             };
 
@@ -93,6 +94,11 @@ export function SaveAsDialog({ workloadClient, isImmediateSave }: SaveAsDialogPr
             else if (createError.error?.message?.code === "UnknownArtifactType") {
                 setValidationMessage(`Workspace capacity does not allow ${sampleItemDisplayName} creation`);
             }
+            else if (createError.error?.message?.code === "PowerBICapacityValidationFailed") { 
+                setValidationMessage(
+                    `Your workspace is assigned to invalid capacity.\n` +
+                    `Please verify that the workspace has a valid and active capacity assigned, and try again.`);
+            }   
             else {
                 setValidationMessage(`There was an error while trying to create a new ${sampleItemDisplayName}`);
             }

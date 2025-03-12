@@ -6,6 +6,7 @@ using Boilerplate.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace Boilerplate.Services
 {
@@ -64,6 +65,6 @@ namespace Boilerplate.Services
         /// <param name="workspaceId">The id of the workspace that contains the selected lakehouse.</param>
         /// <param name="lakehouseId">The id of the lakehouse from which we want to retrieve tables.</param>
         /// <returns>A list of LakehouseTables</returns>
-        Task<IEnumerable<LakehouseTable>> GetOneLakeTables(string token, Guid workspaceId, Guid lakehouseId);
+        Task<IEnumerable<LakehouseTable>> GetLakehouseTables(string token, Guid workspaceId, Guid lakehouseId);
     }
 }

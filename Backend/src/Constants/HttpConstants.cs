@@ -10,6 +10,7 @@ namespace Fabric_Extension_BE_Boilerplate.Constants
         public const string ActivityId = "ActivityId";
         public const string RequestId = "RequestId";
         public const string XmsClientTenantId = "x-ms-client-tenant-id";
+        public const string XmsClientRequestId = "x-ms-client-request-id";
     }
 
     public static class  AuthorizationSchemes

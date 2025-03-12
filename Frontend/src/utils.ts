@@ -1,5 +1,6 @@
 import { WorkloadItem, ItemJobActionContext, ItemJobActionResult } from "./models/SampleWorkloadModel";
 import { ItemJobStatus, GetItemResult } from "@ms-fabric/workload-client";
+import i18n from 'i18next';
 
 
 export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult): WorkloadItem<T> {
@@ -33,12 +34,14 @@ const calculateAsText = sampleItemType + ".CalculateAsText";
 const longRunningCalculateAsText = sampleItemType + ".LongRunningCalculateAsText";
 const scheduledJob = sampleItemType + ".ScheduledJob";
 const calculateAsParquet = sampleItemType + ".CalculateAsParquet";
+const instantJob = sampleItemType + ".InstantJob";
 
 export const jobTypeDisplayNames: Record<string, string> = {
     [scheduledJob]: 'Scheduled Job',
     [calculateAsText]: 'Calculate as Text',
     [longRunningCalculateAsText]: 'Long Running Calculate as Text',
-    [calculateAsParquet]: 'Calculate as Parquet'
+    [calculateAsParquet]: 'Calculate as Parquet',
+    [instantJob]: 'Instant Job'
 };
 
 export function getJobDetailsPane(jobContext: ItemJobActionContext, hostUrl: string): ItemJobActionResult {
@@ -47,27 +50,27 @@ export function getJobDetailsPane(jobContext: ItemJobActionContext, hostUrl: str
         title: 'Job Details',
         data: [
             {
-                label: 'Job type',
+                label: i18n.t("Job_Type"),
                 value: jobTypeDisplayNames[jobContext.itemJobType],
                 type: 'text',
             },
             {
-                label: 'Job status',
+                label: i18n.t("Job_Status"),
                 value: ItemJobStatus[jobContext.status],
                 type: 'text',
             },
             {
-                label: 'Job start time UTC',
+                label: i18n.t("Job_Start_Time_UTC"),
                 value: jobContext.jobStartTimeUtc,
                 type: 'text',
             },
             {
-                label: 'Job end time UTC',
+                label: i18n.t("Job_End_Time_UTC"),
                 value: jobContext.jobEndTimeUtc,
                 type: 'text',
             },
             {
-                label: 'Job instance id',
+                label: i18n.t("Job_Instance_ID"),
                 value: jobContext.itemJobInstanceId,
                 type: 'text',
             }                    
@@ -79,27 +82,27 @@ export function getJobDetailsPane(jobContext: ItemJobActionContext, hostUrl: str
         title: 'Item Details',
         data: [
             {
-                label: 'Item Type',
+                label: i18n.t("Item_Type"),
                 value: 'Sample Workload Item',
                 type: 'text',
             },
             {
-                label: 'Item Name',
+                label: i18n.t("Item_Name"),
                 value: jobContext.itemName,
                 type: 'text',
             },
             {
-                label: 'Item Id',
+                label: i18n.t("Item_ID"),
                 value: jobContext.itemObjectId,
                 type: 'text',
             },
             {
-                label: 'Workspace Name',
+                label: i18n.t("Workspace_Name"),
                 value: jobContext.workspaceName,
                 type: 'text',
             },
             {
-                label: 'Workspace Id',
+                label: i18n.t("Workspace_ID"),
                 value: jobContext.workspaceObjectId,
                 type: 'text',
             },

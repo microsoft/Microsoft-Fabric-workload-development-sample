@@ -20,6 +20,8 @@ namespace Boilerplate.Contracts
         public int Operand2 { get; set; }
         public Item1Operator Operator { get; set; }
         public TLakehouse Lakehouse { get; set; }
+        public bool UseOneLake { get; set; }
+        public string LastCalculationResultLocation { get; set; }
     }
 
     /// <summary>
@@ -37,6 +39,9 @@ namespace Boilerplate.Contracts
                 Operand1 = Operand1,
                 Operand2 = Operand2,
                 Operator = Operator,
+                Lakehouse = Lakehouse,
+                UseOneLake = UseOneLake,
+                LastCalculationResultLocation = LastCalculationResultLocation
             };
         }
 
@@ -47,7 +52,8 @@ namespace Boilerplate.Contracts
                 Operand1 = Operand1,
                 Operand2 = Operand2,
                 Operator = Operator,
-                Lakehouse = lakehouse
+                Lakehouse = lakehouse,
+                UseOneLake = UseOneLake,
             };
         }
     }

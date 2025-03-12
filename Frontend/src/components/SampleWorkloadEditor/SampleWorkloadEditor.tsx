@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FormEvent } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Stack } from "@fluentui/react";
 import {
@@ -22,7 +22,8 @@ import {
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
-  MessageBarActions
+  MessageBarActions,
+  RadioGroupOnChangeData
 } from "@fluentui/react-components";
 
 import { useTranslation } from "react-i18next";
@@ -60,7 +61,10 @@ import {
   callItemUpdate,
   callItemDelete,
   callGetItem1SupportedOperators,
-  callItem1DoubleResult
+  callItem1DoubleResult,
+  isOneLakeSupported,
+  getLastResult,
+  callOpenSettings
 } from "../../controller/SampleWorkloadController";
 import { Ribbon } from "../SampleWorkloadRibbon/SampleWorkloadRibbon";
 import { convertGetItemResultToWorkloadItem } from "../../utils";
@@ -72,8 +76,9 @@ import {
   WorkloadItem,
 } from "../../models/SampleWorkloadModel";
 import "./../../styles.scss";
-import { LakehouseExplorerComponent } from "../SampleWorkloadLakehouseExplorer/SampleWorkloadLakehouseExplorer";
-import { ItemMetadataNotFound} from "../../models/WorkloadExceptionsModel";
+import { ItemMetadataNotFound } from "../../models/WorkloadExceptionsModel";
+import { LoadingProgressBar } from "../LoadingIndicator/LoadingProgressBar";
+
 
 export function SampleWorkloadEditor(props: PageProps) {
   const sampleWorkloadName = process.env.WORKLOAD_NAME;
@@ -97,29 +102,7 @@ export function SampleWorkloadEditor(props: PageProps) {
     useState<string>("");
   const [operand2ValidationMessage, setOperand2ValidationMessage] =
     useState<string>("");
-  const [apiPanelIsLightDismiss, setApiPanelIsLightDismiss] =
-    useState<boolean>(false);
-  const [apiDialogMsgboxTitle, setApiDialogMsgboxTitle] = useState<string>("");
-  const [apiDialogMsgboxContent, setApiDialogMsgboxContent] =
-    useState<string>("");
-  const [apiDialogMsgboxLink, setApiDialogMsgboxLink] =
-    useState<string>("");
-  const [apiDialogMsgboxButtonCount, setApiDialogMsgboxButtonCount] =
-    useState<number>(0);
-  const [apiErrorTitle, setApiErrorTitle] = useState<string>("");
-  const [apiErrorMessage, setApiErrorMessage] = useState<string>("");
-  const [apiErrorFailureMessage, setApiErrorFailureMessage] =
-    useState<string>("");
-  const [apiErrorFailureCode, setApiErrorFailureCode] = useState<number>(1);
-  const [apiErrorStatusCode, setApiErrorStatusCode] = useState<string>("");
-  const [apiErrorRequestId, setApiErrorRequestId] = useState<string>("");
-  const [apiErrorStackTrace, setApiErrorStackTrace] = useState<string>("");
-  const [selectedLakehouse, setSelectedLakehouse] =
-    useState<GenericItem>(undefined);
-  const [selectedLinkedItem, setSelectedLinkedItem] = useState<GenericItem>(null);
-  const [datahubDialogDescription, setDatahubDialogDescription] = useState<string>("Dialog description");
-  const [dataHubMsgBoxType, setDataHubMsgBoxType] = useState<string>(sampleItemType);
-  const dataHubMsgBoxTypes = ["Lakehouse", sampleItemType];
+  const [selectedLakehouse, setSelectedLakehouse] = useState<GenericItem>(undefined);
   const [sampleItem, setSampleItem] =
     useState<WorkloadItem<ItemPayload>>(undefined);
   const [isWorkspaceExplorerPresented, setWorkspaceExplorerPresented] = useState<boolean>(false);
@@ -128,10 +111,15 @@ export function SampleWorkloadEditor(props: PageProps) {
   const [operand2, setOperand2] = useState<number>(0);
   const [operator, setOperator] = useState<string | null>(null);
   const [isDirty, setDirty] = useState<boolean>(false);
+  const [invalidOperands, setInvalidOperands] = useState<boolean>(false);
   const [supportedOperators, setSupportedOperators] = useState<string[]>([]);
   const [hasLoadedSupportedOperators, setHasLoadedSupportedOperators] = useState(false);
-  
-  const [lang, setLang] = useState<string>('en-US');
+  const [canUseOneLake, setCanUseOneLake] = useState<boolean>(false);
+  const [storageName, setStorageName] = useState<string>("Lakehouse");
+  const [calculationResult, setCalculationResult] = useState<string>("");
+  const [isLoadingOperators, setIsLoadingOperators] = useState<boolean>(true);
+  const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
+  const isLoading = isLoadingOperators || isLoadingData;
   const [itemEditorErrorMessage, setItemEditorErrorMessage] = useState<string>("");
   document.body.dir = i18n.dir();
 
@@ -171,7 +159,7 @@ export function SampleWorkloadEditor(props: PageProps) {
   // Effect to load supported operators once on component mount
   useEffect(() => {
     loadSupportedOperators();
-  }, []); 
+  }, []);
 
   useEffect(() => {
     if (hasLoadedSupportedOperators) {
@@ -179,8 +167,26 @@ export function SampleWorkloadEditor(props: PageProps) {
     }
   }, [hasLoadedSupportedOperators, pageContext, pathname]);
 
+  async function loadCanUseOneLake(workspaceId: string, itemId: string): Promise<void> {
+    try {
+      const oneLakeSupported = await isOneLakeSupported(sampleWorkloadBEUrl, workloadClient, workspaceId, itemId);
+      setCanUseOneLake(oneLakeSupported);
+    } catch (error) {
+      console.error(`Error loading oneLakeSupported: ${error}`);
+    }
+  }
+
+  async function loadCalculationResult(itemId: string): Promise<void> {
+    try {
+      const calcaulationResult = await getLastResult(sampleWorkloadBEUrl, workloadClient, itemId);
+      setCalculationResult(calcaulationResult);
+    } catch (error) {
+      console.error(`Error loading loadCalculationResult: ${error}`);
+    }
+  }
 
   async function loadSupportedOperators(): Promise<void> {
+    setIsLoadingOperators(true);
     try {
       const operators = await callGetItem1SupportedOperators(sampleWorkloadBEUrl, workloadClient);
       setSupportedOperators(operators);
@@ -188,6 +194,9 @@ export function SampleWorkloadEditor(props: PageProps) {
     } catch (error) {
       console.error(`Error loading supported operators: ${error}`);
       setHasLoadedSupportedOperators(false);
+    }
+    finally {
+      setIsLoadingOperators(false);
     }
   }
 
@@ -310,29 +319,35 @@ export function SampleWorkloadEditor(props: PageProps) {
     }
   }
 
-  async function onCallDatahubFromPlayground() {
-    const result = await callDatahubOpen(
-      [dataHubMsgBoxType],
-      datahubDialogDescription,
-      isMultiSelectionEnabled,
-      workloadClient,
-      isWorkspaceExplorerPresented
-    );
-    if (result) {
-      setSelectedLinkedItem(result);
-    }
+  function isValidOperand(operand: number) {
+    return operand > INT32_MIN && operand < INT32_MAX;
+  }
   }
 
   async function onOperand1InputChanged(value: number) {
     setOperand1ValidationMessage("");
     setOperand1(value);
     setDirty(true);
+    if (!isValidOperand(value)) {
+      setOperand1ValidationMessage("Operand 1 may lead to overflow");
+      setInvalidOperands(true);
+      return;
+    }
+    setOperand1ValidationMessage("");
+    setInvalidOperands(!isValidOperand(operand2));
   }
 
   async function onOperand2InputChanged(value: number) {
     setOperand2ValidationMessage("");
     setOperand2(value);
     setDirty(true);
+    if (!isValidOperand(value)) {
+      setOperand2ValidationMessage("Operand 2 may lead to overflow");
+      setInvalidOperands(true);
+      return;
+    }
+    setOperand2ValidationMessage("");
+    setInvalidOperands(!isValidOperand(operand1));
   }
 
   function onOperatorInputChanged(value: string | null) {
@@ -340,21 +355,22 @@ export function SampleWorkloadEditor(props: PageProps) {
     setDirty(true);
   }
 
-  function validateOperandsBeforeDouble() {
-    var valid = true;
-    if (operand1 < INT32_MIN/2 || operand1 > INT32_MAX/2) {
+  function canDoubleOperands(operand1: number, operand2: number) {
+    const isOperand1Valid = isValidOperand(operand1);
+    const isOperand2Valid = isValidOperand(operand2);
+    if (!isOperand1Valid) {
       setOperand1ValidationMessage("Operand 1 may lead to overflow if doubled");
       valid = false;
     }
-    if (operand2 < INT32_MIN/2 || operand2 > INT32_MAX/2) {
+    if (!isOperand2Valid) {
       setOperand2ValidationMessage("Operand 2 may lead to overflow if doubled");
       valid = false;
     }
-    return valid;
+    return isOperand1Valid && isOperand2Valid;
   }
 
   async function onDoubleButtonClick() {
-    if (sampleItem && validateOperandsBeforeDouble()) {
+    if (sampleItem && canDoubleOperands(operand1*2, operand2*2)) {
       const result = await callItem1DoubleResult(
         sampleWorkloadBEUrl,
         workloadClient,
@@ -373,6 +389,7 @@ export function SampleWorkloadEditor(props: PageProps) {
     pageContext: ContextProps,
     pathname: string
   ): Promise<void> {
+    setIsLoadingData(true);
     if (pageContext.itemObjectId) {
       // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
       try {
@@ -380,10 +397,9 @@ export function SampleWorkloadEditor(props: PageProps) {
           pageContext.itemObjectId,
           workloadClient
         );
-        const item =
-          convertGetItemResultToWorkloadItem<ItemPayload>(getItemResult);
-
+        const item = convertGetItemResultToWorkloadItem<ItemPayload>(getItemResult);
         setSampleItem(item);
+        setSelectedTab("home");
 
         // load extendedMetadata
         const item1Metadata: Item1ClientMetadata =
@@ -391,11 +407,15 @@ export function SampleWorkloadEditor(props: PageProps) {
         setSelectedLakehouse(item1Metadata?.lakehouse);
         setOperand1(item1Metadata?.operand1);
         setOperand2(item1Metadata?.operand2);
-        
+        setOperand1ValidationMessage("");
+        setOperand2ValidationMessage("");
+        setInvalidOperands(false);
+        setStorageName(item1Metadata?.useOneLake ? "OneLake" : "Lakehouse");
         const loadedOperator = item1Metadata?.operator;
         const isValidOperator = loadedOperator && supportedOperators.includes(loadedOperator);
         setOperator(isValidOperator ? loadedOperator : null);
-        
+        await loadCanUseOneLake(item.workspaceId, item.id);
+        await loadCalculationResult(item.id);
         setItemEditorErrorMessage("");
       } catch (error) {
         clearItemData();
@@ -409,9 +429,13 @@ export function SampleWorkloadEditor(props: PageProps) {
           error
         );
       }
+      finally {
+        setIsLoadingData(false);
+      }
     } else {
       console.log(`non-editor context. Current Path: ${pathname}`);
       clearItemData();
+      setIsLoadingData(false);
     }
   }
 
@@ -429,19 +453,18 @@ export function SampleWorkloadEditor(props: PageProps) {
         operand1: operand1,
         operand2: operand2,
         operator: operator,
+        useOneLake: storageName === "OneLake"
       },
     };
 
-    await callItemUpdate(sampleItem.id, payload, workloadClient);
-
-    setDirty(false);
+    var successResult = await callItemUpdate(sampleItem.id, payload, workloadClient);
+    setDirty(!successResult);
   }
 
-  async function deleteCurrentItem() {
+  async function openSettings() {
     if (sampleItem) {
-      await deleteItem(sampleItem.id);
-      // navigate to workspaces page after delete
-      await callNavigationNavigate("host", `/groups/${sampleItem.workspaceId}`, workloadClient);
+      const item = await callItemGet(sampleItem.id, workloadClient);
+      await callOpenSettings(item, workloadClient, 'About');
     }
   }
 
@@ -458,25 +481,42 @@ export function SampleWorkloadEditor(props: PageProps) {
     return isDirty || operator == "0" || sampleItem == undefined;
   }
 
+  const selectedStorageChanged = (ev: FormEvent<HTMLDivElement>, data: RadioGroupOnChangeData) => {
+    setStorageName(data.value);
+    setDirty(true);
+  };
+
+  function getOneLakeTooltipText(regularTooltipMessage: string, canUseOneLake: boolean): string {
+    return !canUseOneLake
+      ? 'OneLake is not supported for this item type. CreateOneLakeFoldersOnArtifactCreation attribute must be set in the item manifest.'
+      : regularTooltipMessage;
+  }
+
   // HTML page contents
+  if (isLoading) {
+    return <LoadingProgressBar message="Loading..." />;
+  }
   return (
     <Stack className="editor" data-testid="sample-workload-editor-inner">
       <Ribbon
         {...props}
-        isLakeHouseSelected={selectedLakehouse != undefined}
+        isStorageSelected={selectedLakehouse != undefined || storageName === "OneLake"}
         //  disable save when in Frontend-only
         isSaveButtonEnabled={
           sampleItem?.id !== undefined &&
-          selectedLakehouse != undefined &&
+          (selectedLakehouse != undefined || storageName === "OneLake") &&
           isDirty &&
+          !invalidOperands &&
           !!operator
         }
         saveItemCallback={SaveItem}
-        isDeleteEnabled={sampleItem?.id !== undefined}
-        deleteItemCallback={deleteCurrentItem}
+        isFEOnly={sampleItem?.id !== undefined}
+        openSettingsCallback={openSettings}
         itemObjectId={getItemObjectId()}
+        selectedTab={selectedTab}
         onTabChange={setSelectedTab}
         isDirty={isDirty}
+        invalidOperands={invalidOperands}
       />
 
       <Stack className="main">
@@ -516,41 +556,73 @@ export function SampleWorkloadEditor(props: PageProps) {
                     <Label>Item Description: {sampleItem?.description}</Label>
                   )}
                 </div>
-                <Divider alignContent="start">Selected Lakehouse Details</Divider>
+                <Divider alignContent="start">Calculation result storage</Divider>
                 <div className="section">
-                  <Stack horizontal>
-                    <Field
-                      label="Lakehouse"
-                      orientation="horizontal"
-                      className="field"
-                    >
-                      <Input
-                        size="small"
-                        placeholder="Lakehouse Name"
-                        style={{ marginLeft: "10px" }}
-                        value={
-                          selectedLakehouse ? selectedLakehouse.displayName : ""
-                        }
-                      />
+                  <Label>Store calculation result to {storageName}</Label>
+                  <RadioGroup onChange={selectedStorageChanged} value={storageName}>
+                    <Radio value="Lakehouse" label="Lakehouse" />
+                    {storageName === "Lakehouse" && (
+                      <div style={{ marginLeft: "32px", padding: "4px" }}>
+                        <Stack>
+                          <Field
+                            label="Name"
+                            orientation="horizontal"
+                            className="field"
+                          >
+                            <Stack horizontal>
+                              <Input
+                                size="small"
+                                placeholder="Lakehouse Name"
+                                style={{ marginLeft: "10px" }}
+                                value={
+                                  selectedLakehouse ? selectedLakehouse.displayName : ""
+                                }
+                              />
                     </Field>
-                    <Button
-                      style={{ width: "24px", height: "24px" }}
-                      icon={<Database16Regular />}
-                      appearance="primary"
-                      onClick={() => onCallDatahubLakehouse()}
-                      data-testid="item-editor-lakehouse-btn"
-                    />
-                  </Stack>
+                              <Button
+                                style={{ width: "24px", height: "24px" }}
+                                icon={<Database16Regular />}
+                                appearance="primary"
+                                onClick={() => onCallDatahubLakehouse()}
+                                data-testid="item-editor-lakehouse-btn"
+                              />
+                            </Stack>
+                          </Field>
+                          <Field
+                            label="ID"
+                            orientation="horizontal"
+                            className="field"
+                          >
+                            <Input
+                              size="small"
+                              placeholder="Lakehouse ID"
+                              style={{ marginLeft: "10px" }}
+                              value={selectedLakehouse ? selectedLakehouse.id : ""}
+                              data-testid="lakehouse-id-input"
+                            />
+                          </Field>
+                        </Stack>
+                      </div>)}
+                    <Tooltip
+                      content={getOneLakeTooltipText("Item folder in OneLake", canUseOneLake)}
+                      relationship="label">
+                      <Radio 
+                        value="OneLake" 
+                        label="Item folder in OneLake" 
+                        disabled={!canUseOneLake} 
+                        data-testid="onelake-radiobutton-tooltip" />
+                    </Tooltip>
+                  </RadioGroup>
                   <Field
-                    label="Lakehouse ID"
+                    label="Last result"
                     orientation="horizontal"
                     className="field"
                   >
                     <Input
                       size="small"
-                      placeholder="Lakehouse ID"
-                      value={selectedLakehouse ? selectedLakehouse.id : ""}
-                      data-testid="lakehouse-id-input"
+                      placeholder="Last calculation result"
+                      data-testid="lastresult-input"
+                      value={calculationResult}
                     />
                   </Field>
                 </div>

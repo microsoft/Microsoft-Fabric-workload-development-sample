@@ -35,5 +35,10 @@ namespace Fabric_Extension_BE_Boilerplate.Constants
             public const string ItemMetadataNotFound = "ItemMetadataNotFound";
             public const string DoubledOperandsOverflow = "DoubledOperandsOverflow";
         }
+
+        public static class Kusto
+        {
+            public const string KustoDataException = "KustoDataException";
+        }
     }
 }

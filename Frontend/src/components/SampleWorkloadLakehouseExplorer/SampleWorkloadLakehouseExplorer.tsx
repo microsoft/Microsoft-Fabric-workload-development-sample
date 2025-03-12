@@ -18,7 +18,7 @@ import { TableMetadata } from "../../models/LakehouseExplorerModel";
 import "./../../styles.scss";
 
 import { getTablesInLakehouse, getTablesInLakehousePath } from "../../controller/LakehouseExplorerController";
-import { ContextProps, PageProps } from "../../App";
+import {  PageProps } from "../../App";
 import { GenericItem as LakehouseMetadata } from "src/models/SampleWorkloadModel";
 import { TableTreeWithSchema } from "./TableTreeWithSchema";
 import { TableTreeWithoutSchema } from "./TableTreeWithoutSchema";
@@ -116,8 +116,8 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
           <Stack className="main-body" verticalAlign="center" horizontalAlign="center" tokens={{ childrenGap: 5 }}>
             <Image src="../../../internalAssets/Page.svg" />
             <span className="add">Add a Lakehouse</span>
-              <Tooltip content={isFrontendOnly ? "Feature not available in frontend only" : "Open Datahub Explorer"} relationship="label">
-                <Button className="add-button" size="small" disabled={isFrontendOnly} onClick={() => onDatahubClicked()} appearance="primary">
+              <Tooltip content={"Open Datahub Explorer"} relationship="label">
+                <Button className="add-button" size="small" onClick={() => onDatahubClicked()} appearance="primary">
                   Add
                 </Button>
               </Tooltip>

@@ -24,6 +24,7 @@ namespace Boilerplate.Controllers
         private readonly ILogger<FabricExtensionController> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IOneLakeClientService _oneLakeClientService;
         private readonly IAuthorizationHandler _authorizationHandler;
         private readonly IItemFactory _itemFactory;
 
@@ -31,12 +32,14 @@ namespace Boilerplate.Controllers
             ILogger<FabricExtensionController> logger,
             IHttpContextAccessor httpContextAccessor,
             IAuthenticationService authenticationService,
+            IOneLakeClientService oneLakeClientService,
             IAuthorizationHandler authorizationHandler,
             IItemFactory itemFactory)
         {
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _authenticationService = authenticationService;
+            _oneLakeClientService = oneLakeClientService;
             _authorizationHandler = authorizationHandler;
             _itemFactory = itemFactory;
         }
@@ -78,6 +81,18 @@ namespace Boilerplate.Controllers
 
             // Return the updated operands
             return Ok(serializedDoubleResult);
+        }
+
+        [HttpGet("{itemObjectId}/getLastResult")]
+        public async Task<IActionResult> GetLastResult(Guid itemObjectId)
+        {
+            // Authenticate the call
+            var authorizationContext = await _authenticationService.AuthenticateDataPlaneCall(_httpContextAccessor.HttpContext, allowedScopes: new[] { WorkloadScopes.Item1ReadWriteAll });
+
+            var item = (IItem1)_itemFactory.CreateItem(WorkloadConstants.ItemTypes.Item1, authorizationContext);
+            await item.Load(itemObjectId);
+            var lastResult = await item.GetLastResult();
+            return Ok(lastResult);
         }
     }
 }

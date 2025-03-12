@@ -10,7 +10,7 @@
       <xs:sequence>
         <xs:element name="Item" type="ItemMetadata" />
       </xs:sequence>
-      <xs:attribute name="SchemaVersion" type="SchemaVersion" use="required" fixed="1.0.0" />
+      <xs:attribute name="SchemaVersion" type="SchemaVersion" use="required" fixed="1.101.0" />
     </xs:complexType>
   </xs:element>
 
@@ -26,6 +26,7 @@
     </xs:sequence>
     <xs:attribute name="TypeName" type="TypeName" use="required"/>
     <xs:attribute name="Category" type="Category" use="optional" default="Unknown" />
+    <xs:attribute name="CreateOneLakeFoldersOnArtifactCreation" use="optional" default="false" />
   </xs:complexType>
 
   <xs:complexType name="JobScheduler">
