@@ -312,8 +312,7 @@ export function SampleWorkloadEditor(props: PageProps) {
   }
 
   function getItemObjectId() {
-    const params = useParams<ContextProps>();
-    return sampleItem?.id || params.itemObjectId;
+    return sampleItem?.id || pageContext.itemObjectId;
   }
 
   function isDisabledDoubleResultButton(): boolean {
