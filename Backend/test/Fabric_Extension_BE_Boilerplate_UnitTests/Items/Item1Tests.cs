@@ -3,6 +3,7 @@
 // </copyright>
 
 
+using Boilerplate.Constants;
 using Boilerplate.Contracts;
 using Boilerplate.Items;
 using Boilerplate.Services;
@@ -11,6 +12,7 @@ using Fabric_Extension_BE_Boilerplate.Contracts.FabricAPI.Workload;
 using Fabric_Extension_BE_Boilerplate.Exceptions;
 using Moq;
 using NUnit.Framework;
+using System.Text.Json;
 
 namespace Boilerplate.Tests
 {
@@ -28,12 +30,13 @@ namespace Boilerplate.Tests
             };
 
             // Mock setup
-            itemMetadataStoreMock ??= new Mock<IItemMetadataStore>();
+            itemMetadataStoreMock ??= new Mock<IItemMetadataStore>(MockBehavior.Strict);
             var iloggerMock = new Mock<ILogger<Item1>>();
-            var ilakehouseClientServiceMock = new Mock<ILakehouseClientService>();
-            var iauthenticationServiceMock = new Mock<IAuthenticationService>();
-            var authorizationContextMock = new Mock<AuthorizationContext>();
-            var item1Instance = new Item1(iloggerMock.Object, itemMetadataStoreMock.Object, ilakehouseClientServiceMock.Object, iauthenticationServiceMock.Object, authorizationContextMock.Object);
+            var ilakehouseClientServiceMock = new Mock<ILakehouseClientService>(MockBehavior.Strict);
+            var ionelakeClientServiceMock = new Mock<IOneLakeClientService>(MockBehavior.Strict);
+            var iauthenticationServiceMock = new Mock<IAuthenticationService>(MockBehavior.Strict);
+            var authorizationContextMock = new Mock<AuthorizationContext>(MockBehavior.Strict);
+            var item1Instance = new Item1(iloggerMock.Object, itemMetadataStoreMock.Object, ilakehouseClientServiceMock.Object, ionelakeClientServiceMock.Object, iauthenticationServiceMock.Object, authorizationContextMock.Object);
             var createItemReq = new CreateItemRequest
             {
                 CreationPayload = new CreateItemPayload
@@ -44,14 +47,35 @@ namespace Boilerplate.Tests
             itemMetadataStoreMock.Setup(m => m.Upsert(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CommonItemMetadata>(), It.IsAny<Item1Metadata>()))
                 .Callback<Guid, Guid, CommonItemMetadata, Item1Metadata>((tenantObjectIdParam, itemObjectIdGuidParam, commonItemMetadataParam, item1MetadataParam) =>
                 {
-
                     Assert.That(itemObjectIdGuidParam, Is.EqualTo(itemIdGuid));
                     Assert.That(item1MetadataParam.Operand1, Is.EqualTo(item1Instance.Operand1));
                     Assert.That(item1MetadataParam.Operand2, Is.EqualTo(item1Instance.Operand2));
-
                 })
                 .Returns(Task.CompletedTask)
                 .Verifiable();
+
+            iauthenticationServiceMock.Setup(m => m.GetAccessTokenOnBehalfOf(authorizationContextMock.Object, OneLakeConstants.OneLakeScopes))
+                .ReturnsAsync("myOneLakeToken")
+                .Verifiable();
+
+            var metadataFilePathInOneLake = $"{workspaceIdGuid}/{itemIdGuid}/Files/metadata.json";
+            ionelakeClientServiceMock.Setup(m => m.CheckIfFileExists(It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<string, string>((tokenParam, pathParam) =>
+                {
+                    Assert.That(tokenParam, Is.EqualTo("myOneLakeToken"));
+                    Assert.That(pathParam, Is.EqualTo(metadataFilePathInOneLake));
+                }).ReturnsAsync(false)
+                .Verifiable();
+
+            ionelakeClientServiceMock.Setup(m => m.WriteToOneLakeFile(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+                .Callback<string, string, string>((tokenParam, pathParam, contentParam) =>
+                {
+                    Assert.That(tokenParam, Is.EqualTo("myOneLakeToken"));
+                    Assert.That(pathParam, Is.EqualTo(metadataFilePathInOneLake));
+                    Assert.That(contentParam, Is.EqualTo(JsonSerializer.Serialize(item1Instance.Metadata)));
+                }).Returns(Task.CompletedTask)
+                .Verifiable();
+
             await item1Instance.Create(workspaceIdGuid, itemIdGuid, createItemReq);
             return item1Instance;
         }

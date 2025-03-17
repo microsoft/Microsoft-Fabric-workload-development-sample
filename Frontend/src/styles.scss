@@ -67,6 +67,7 @@
     padding-right: 8px;
 }
 
+.shared-state-dialog,
 .create-dialog {
     width: 360px;
     padding: 16px 24px 24px 24px;
@@ -86,7 +87,8 @@
         row-gap: 10px;
         white-space: inherit;
     }
-
+    
+    .shared-state-iframe-buttons,
     .create-buttons {
         justify-content: right;
     }

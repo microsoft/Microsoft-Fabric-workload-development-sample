@@ -17,16 +17,19 @@ import {
   History24Regular,
   Clock24Regular
 } from "@fluentui/react-icons";
-
 import { RibbonProps } from "./SampleWorkloadRibbon";
 import { callItemGet, callOpenRecentRuns, callOpenSettings, callRunItemJob } from "../../controller/SampleWorkloadController";
 import { jobTypeDisplayNames } from "../../utils";
 
 export function ItemTabToolbar(props: RibbonProps) {
-  const { itemObjectId, workloadClient, isLakeHouseSelected, saveItemCallback, isDirty } = props;
+  const { itemObjectId, workloadClient, isStorageSelected, saveItemCallback, isDirty } = props;
 
   async function onRunJob( jobType: string) {
     if (isDirty) {
+      if (props.invalidOperands) {
+        // Aborting save and job execution due to invalid operands
+        return;
+      }
       await saveItemCallback();
     }
 
@@ -50,7 +53,11 @@ export function ItemTabToolbar(props: RibbonProps) {
   async function onSchedulePane() {
     try {
       if (isDirty) {
-          await saveItemCallback();
+        if (props.invalidOperands) {
+          // Aborting save and job execution due to invalid operands
+          return;
+        }
+        await saveItemCallback();
       }
 
       const item = await callItemGet(itemObjectId, workloadClient);
@@ -67,9 +74,11 @@ export function ItemTabToolbar(props: RibbonProps) {
   ));
 
   function getJobActionTooltipText(regularTooltipMessage: string): string {
-    return !props.isLakeHouseSelected
-            ? 'Select a Lakehouse'
-            : regularTooltipMessage;
+    return !props.isStorageSelected
+            ? 'Select storage for calculation result (Lakehouse / OneLake)'
+            : (props.invalidOperands
+              ? 'Operands may lead to overflow'
+              : regularTooltipMessage);
   }
 
   console.log(itemObjectId)
@@ -86,7 +95,7 @@ export function ItemTabToolbar(props: RibbonProps) {
                   size="small"
                   icon={<TriangleRight20Regular/>}
                   data-testid="run-jobs-menu-button"
-                  disabled={!isLakeHouseSelected}>Run Jobs</MenuButton>
+                  disabled={!isStorageSelected || props.invalidOperands}>Run Jobs</MenuButton>
               </Tooltip>
             </MenuTrigger>
             <MenuPopover>
@@ -109,7 +118,7 @@ export function ItemTabToolbar(props: RibbonProps) {
             aria-label="Schedule"
             icon={<Clock24Regular/>}
             onClick={() => onSchedulePane()}
-            disabled={!isLakeHouseSelected}>Schedule</ToolbarButton>
+            disabled={!isStorageSelected}>Schedule</ToolbarButton>
         </Tooltip>
       </Toolbar>
     );

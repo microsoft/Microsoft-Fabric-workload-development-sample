@@ -32,7 +32,6 @@ namespace Boilerplate.Tests
         protected static readonly AuthorizationContext IncomingAuthorizationContext = new AuthorizationContext() { OriginalSubjectToken = IncomingToken, Claims = IncomingClaims };
 
         protected static readonly IList<string> FabricScopes = new[] { "https://analysis.windows.net/powerbi/api/.default" };
-        protected static readonly IList<string> OneLakeScopes = new[] { "https://storage.azure.com/.default" };
 
         protected Mock<ILogger<TLoggerMockCategory>> LoggerMock { get; private set; }
 
@@ -42,7 +41,9 @@ namespace Boilerplate.Tests
 
         protected Mock<IAuthorizationHandler> AuthorizationHandlerMock { get; private set; }
 
-        protected Mock<ILakehouseClientService> LakeHouseClientServiceMock { get; private set; }
+        protected Mock<IOneLakeClientService> OneLakeClientServiceMock { get; private set; }
+
+        protected Mock<ILakehouseClientService> LakehouseClientServiceMock { get; private set; }
 
         protected Mock<IItemFactory> ItemFactoryMock { get; private set; }
 
@@ -59,17 +60,19 @@ namespace Boilerplate.Tests
             HttpContextAccessorMock = new Mock<IHttpContextAccessor>(MockBehavior.Strict);
             AuthenticationServiceMock = new Mock<IAuthenticationService>(MockBehavior.Strict);
             AuthorizationHandlerMock = new Mock<IAuthorizationHandler>(MockBehavior.Strict);
-            LakeHouseClientServiceMock = new Mock<ILakehouseClientService>();
-            ItemFactoryMock = new Mock<IItemFactory>();
-            ItemMetadataStoreMock = new Mock<IItemMetadataStore>();
-            Item1Mock = new Mock<IItem1>();
+            OneLakeClientServiceMock = new Mock<IOneLakeClientService>(MockBehavior.Strict);
+            LakehouseClientServiceMock = new Mock<ILakehouseClientService>(MockBehavior.Strict);
+            ItemFactoryMock = new Mock<IItemFactory>(MockBehavior.Strict);
+            ItemMetadataStoreMock = new Mock<IItemMetadataStore>(MockBehavior.Strict);
+            Item1Mock = new Mock<IItem1>(MockBehavior.Strict);
 
             _webApplicationFactory = new CustomWebApplicationFactory<TLoggerMockCategory>(
                 LoggerMock,
                 HttpContextAccessorMock,
                 AuthenticationServiceMock,
                 AuthorizationHandlerMock,
-                LakeHouseClientServiceMock,
+                OneLakeClientServiceMock,
+                LakehouseClientServiceMock,
                 ItemFactoryMock,
                 ItemMetadataStoreMock,
                 Item1Mock);
@@ -232,14 +235,29 @@ namespace Boilerplate.Tests
                 .Verifiable();
         }
 
-        protected void SetupGetLakehouseFileCall(string exp_source, string ret_content)
+        protected void SetupGetOneLakeFileCall(string exp_source, string ret_content)
         {
-            LakeHouseClientServiceMock
-                .Setup(m => m.GetLakehouseFile(It.IsAny<string>(), It.IsAny<string>()))
+            OneLakeClientServiceMock
+                .Setup(m => m.GetOneLakeFile(It.IsAny<string>(), It.IsAny<string>()))
                 .Callback((string _token, string _source) =>
                 {
                     Assert.That(_token, Is.EqualTo(OneLakeToken));
                     Assert.That(_source, Is.EqualTo(exp_source));
+                })
+                .ReturnsAsync(ret_content)
+                .Verifiable();
+        }
+
+
+        protected void SetupGetOneLakeFolderNames(Guid exp_workspaceID, Guid exp_itemId, string[] ret_content)
+        {
+            OneLakeClientServiceMock
+                .Setup(m => m.GetOneLakeFolderNames(It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>()))
+                .Callback((string _token, Guid _workspaceID, Guid _itemId) =>
+                {
+                    Assert.That(_token, Is.EqualTo(OneLakeToken));
+                    Assert.That(_workspaceID, Is.EqualTo(exp_workspaceID));
+                    Assert.That(_itemId, Is.EqualTo(exp_itemId));
                 })
                 .ReturnsAsync(ret_content)
                 .Verifiable();
@@ -272,10 +290,10 @@ namespace Boilerplate.Tests
                 .Verifiable();
         }
 
-        protected void SetupWriteLakehouseFileCall(string exp_path, string exp_content)
+        protected void SetupWriteOneLakeFileCall(string exp_path, string exp_content)
         {
-            LakeHouseClientServiceMock
-                .Setup(m => m.WriteToLakehouseFile(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+            OneLakeClientServiceMock
+                .Setup(m => m.WriteToOneLakeFile(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
                 .Callback((string _token, string _path, string _content) =>
                 {
                     Assert.That(_token, Is.EqualTo(OneLakeToken));
@@ -288,7 +306,7 @@ namespace Boilerplate.Tests
 
         protected void SetupCheckIfFileExistsCall(string exp_path, bool ret_exists)
         {
-            LakeHouseClientServiceMock
+            OneLakeClientServiceMock
                 .Setup(m => m.CheckIfFileExists(It.IsAny<string>(), It.IsAny<string>()))
                 .Callback((string _token, string _path) =>
                 {
@@ -296,6 +314,20 @@ namespace Boilerplate.Tests
                     Assert.That(_path, Is.EqualTo(exp_path));
                 })
                 .ReturnsAsync(ret_exists)
+                .Verifiable();
+        }
+
+        protected void SetupGetOneLakeFilePathCall(Guid exp_workspaceId, Guid exp_itemId, string exp_filename, string ret_path)
+        {
+            OneLakeClientServiceMock
+                .Setup(m => m.GetOneLakeFilePath(It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<string>()))
+                .Callback((Guid _workspaceId, Guid _itemId, string _filename) =>
+                {
+                    Assert.That(_workspaceId, Is.EqualTo(exp_workspaceId));
+                    Assert.That(exp_itemId, Is.EqualTo(_itemId));
+                    Assert.That(exp_filename, Is.EqualTo(_filename));
+                })
+                .Returns(ret_path)
                 .Verifiable();
         }
     }

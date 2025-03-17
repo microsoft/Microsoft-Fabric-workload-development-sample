@@ -15,17 +15,20 @@ namespace Boilerplate.Services
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IItemMetadataStore _itemMetadataStore;
+        private readonly IOneLakeClientService _onelakeClientService;
         private readonly ILakehouseClientService _lakeHouseClientService;
         private readonly IAuthenticationService _authenticationService;
 
         public ItemFactory(
             IServiceProvider serviceProvider,
             IItemMetadataStore itemMetadataStore,
+            IOneLakeClientService oneLakeClientService,
             ILakehouseClientService lakeHouseClientService,
             IAuthenticationService authenticationService)
         {
             _serviceProvider = serviceProvider;
             _itemMetadataStore = itemMetadataStore;
+            _onelakeClientService = oneLakeClientService;
             _lakeHouseClientService = lakeHouseClientService;
             _authenticationService = authenticationService;
         }
@@ -35,7 +38,7 @@ namespace Boilerplate.Services
             switch (itemType)
             {
                 case WorkloadConstants.ItemTypes.Item1:
-                    return new Item1(_serviceProvider.GetService<ILogger<Item1>>(), _itemMetadataStore, _lakeHouseClientService, _authenticationService, authorizationContext);
+                    return new Item1(_serviceProvider.GetService<ILogger<Item1>>(), _itemMetadataStore, _lakeHouseClientService, _onelakeClientService, _authenticationService, authorizationContext);
 
                 default:
                     throw new NotSupportedException($"Items of type {itemType} are not supported");

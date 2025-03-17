@@ -17,24 +17,26 @@ namespace Boilerplate.Controllers
     [ApiController]
     public class LakehouseController : ControllerBase
     {
-        private static readonly IList<string> OneLakeScopes = new[] { $"{EnvironmentConstants.OneLakeResourceId}/.default" };
         private static readonly IList<string> ScopesForReadLakehouseFile = new[] { WorkloadScopes.FabricLakehouseReadAll, WorkloadScopes.FabricLakehouseReadWriteAll };
         private static readonly IList<string> ScopesForWriteLakehouseFile = new[] { WorkloadScopes.FabricLakehouseReadWriteAll };
 
         private readonly ILogger<LakehouseController> _logger;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthenticationService _authenticationService;
+        private readonly IOneLakeClientService _oneLakeClientService;
         private readonly ILakehouseClientService _lakeHouseClientService;
 
         public LakehouseController(
             ILogger<LakehouseController> logger,
             IHttpContextAccessor httpContextAccessor,
             IAuthenticationService authenticationService,
+            IOneLakeClientService oneLakeClientService,
             ILakehouseClientService lakeHouseClientService)
         {
             _logger = logger;
             _httpContextAccessor = httpContextAccessor;
             _authenticationService = authenticationService;
+            _oneLakeClientService = oneLakeClientService;
             _lakeHouseClientService = lakeHouseClientService;
         }
 
@@ -42,18 +44,18 @@ namespace Boilerplate.Controllers
         public async Task<IActionResult> GetLakehouseFile(string source)
         {
             var authorizationContext = await _authenticationService.AuthenticateDataPlaneCall(_httpContextAccessor.HttpContext, allowedScopes: ScopesForReadLakehouseFile);
-            var lakeHouseAccessToken = await _authenticationService.GetAccessTokenOnBehalfOf(authorizationContext, OneLakeScopes);
+            var lakeHouseAccessToken = await _authenticationService.GetAccessTokenOnBehalfOf(authorizationContext, OneLakeConstants.OneLakeScopes);
 
-            var data = await _lakeHouseClientService.GetLakehouseFile(lakeHouseAccessToken, source);
+            var data = await _oneLakeClientService.GetOneLakeFile(lakeHouseAccessToken, source);
 
             if (string.IsNullOrEmpty(data))
             {
-                _logger.LogWarning($"GetLakehouseFile returned empty data for source: {source}");
+                _logger.LogWarning($"GetOneLakeFile returned empty data for source: {source}");
                 // Return a 204 No Content status code for empty data
                 return NoContent();
             }
 
-            _logger.LogInformation($"GetLakehouseFile succeeded for source: {source}");
+            _logger.LogInformation($"GetOneLakeFile succeeded for source: {source}");
             return Ok(data);
         }
 
@@ -61,24 +63,24 @@ namespace Boilerplate.Controllers
         public async Task<IActionResult> WriteToLakehouseFile([FromBody] WriteToLakehouseFileRequest request)
         {
             var authorizationContext = await _authenticationService.AuthenticateDataPlaneCall(_httpContextAccessor.HttpContext, allowedScopes: ScopesForWriteLakehouseFile);
-            var lakeHouseAccessToken = await _authenticationService.GetAccessTokenOnBehalfOf(authorizationContext, OneLakeScopes);
+            var lakeHouseAccessToken = await _authenticationService.GetAccessTokenOnBehalfOf(authorizationContext, OneLakeConstants.OneLakeScopes);
 
-            var filePath = $"{request.WorkspaceId}/{request.LakehouseId}/Files/{request.FileName}";
+            var filePath = _oneLakeClientService.GetOneLakeFilePath(Guid.Parse(request.WorkspaceId), Guid.Parse(request.LakehouseId), request.FileName);
 
-            var fileExists = await _lakeHouseClientService.CheckIfFileExists(lakeHouseAccessToken, filePath);
+            var fileExists = await _oneLakeClientService.CheckIfFileExists(lakeHouseAccessToken, filePath);
 
             if (fileExists && !request.OverwriteIfExists)
             {
                 // File exists, and overwrite is not allowed, return an appropriate response
-                _logger.LogError($"WriteToLakehouseFile failed. The file already exists at filePath: {filePath}.");
+                _logger.LogError($"WriteToOneLakeFile failed. The file already exists at filePath: {filePath}.");
                 return Conflict("File already exists. Overwrite is not allowed.");
             }
 
-            // The WriteToLakehouseFile method creates a new item if it doesn't exist,
+            // The WriteToOneLakeFile method creates a new item if it doesn't exist,
             // but if it already exists and overwrite is allowed, it deletes the existing one and then creates a new one and writes content to it.
-            await _lakeHouseClientService.WriteToLakehouseFile(lakeHouseAccessToken, filePath, request.Content);
+            await _oneLakeClientService.WriteToOneLakeFile(lakeHouseAccessToken, filePath, request.Content);
 
-            _logger.LogInformation($"WriteToLakehouseFile succeeded for filePath: {filePath}");
+            _logger.LogInformation($"WriteToOneLakeFile succeeded for filePath: {filePath}");
             return Ok();
         }
 
@@ -86,8 +88,8 @@ namespace Boilerplate.Controllers
         public async Task<IActionResult> GetTablesAsync(Guid workspaceId, Guid lakehouseId)
         {
             var authorizationContext = await _authenticationService.AuthenticateDataPlaneCall(_httpContextAccessor.HttpContext, allowedScopes: ScopesForReadLakehouseFile);
-            var token = await _authenticationService.GetAccessTokenOnBehalfOf(authorizationContext, OneLakeScopes);
-            var tables = await _lakeHouseClientService.GetOneLakeTables(token, workspaceId, lakehouseId);
+            var token = await _authenticationService.GetAccessTokenOnBehalfOf(authorizationContext, OneLakeConstants.OneLakeScopes);
+            var tables = await _lakeHouseClientService.GetLakehouseTables(token, workspaceId, lakehouseId);
             return Ok(tables);
         }
 

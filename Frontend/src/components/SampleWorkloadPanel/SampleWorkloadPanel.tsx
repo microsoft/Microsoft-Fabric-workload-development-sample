@@ -6,7 +6,6 @@ import { PageProps } from 'src/App';
 import { Label, Stack } from '@fluentui/react';
 import { Button, Radio, RadioGroup, useId } from '@fluentui/react-components';
 import { CloseMode, WorkloadClientAPI } from '@ms-fabric/workload-client';
-
 import './../../styles.scss';
 
 export async function callPanelClose(workloadClient: WorkloadClientAPI) {

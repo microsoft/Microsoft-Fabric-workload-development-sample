@@ -38,7 +38,7 @@
           "name": "assets/images/execute.png"
         },
         "handler": {
-          "action": "run.calculate.job"
+          "action": "run.instant.job"
         },
         "tooltip": "Quick_Action_1_Tooltip"
       }
@@ -65,7 +65,7 @@
       },
       "getItemSettings": {
             "action": "getItemSettings"
-        },
+      },
       "recentRun": {
         "useRecentRunsComponent": true
       }

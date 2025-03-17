@@ -1,5 +1,18 @@
 {
     "Language_Changed_Title": "שינוי שפה",
-    "Language_Changed_Message": "השפה שונתה ל:"
+    "Language_Changed_Message": "השפה שונתה ל:",
+    "Default_Language_Title": "השפה היא ברירת מחדל",
+    "Job_Details": "פרטי עבודה",
+    "Job_Type": "סוג עבודה",
+    "Job_Status": "סטאטוס עבודה",
+    "Job_Start_Time_UTC": "שעת התחלה UTC",
+    "Job_End_Time_UTC": "שעת סיום UTC",
+    "Job_Instance_ID": "מזהה מופע עבודה",
+    "Item_Details": "פרטי פריט",
+    "Item_Type": "סוג פריט",
+    "Item_Name": "שם פריט",
+    "Item_ID": "מזהה פריט",
+    "Workspace_Name": "שם חלל עבודה",
+    "Workspace_ID": "מזהה חלל עבודה"
 }
   

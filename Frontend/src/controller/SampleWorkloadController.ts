@@ -32,6 +32,7 @@ import {
     WorkloadErrorDetails,
     ErrorKind,
     UpdateItemResult,
+    OpenBrowserTabParams,
 } from "@ms-fabric/workload-client";
 
 import { Dispatch, SetStateAction } from "react";
@@ -43,6 +44,9 @@ import {
     AuthUIRequired,
     FabricExternalWorkloadError,
 } from "../models/WorkloadExceptionsModel";
+import { EventhouseItemMetadata } from "src/models/EventhouseModel";
+import {v4 as uuidv4} from 'uuid';
+
 // --- Notification API
 
 
@@ -208,6 +212,28 @@ export async function callNavigationAfterNavigateAway(
     workloadClient: WorkloadClientAPI) {
     // Register the callback using the 'navigation.onAfterNavigateAway' function
     await workloadClient.navigation.onAfterNavigateAway(callback);
+}
+
+/**
+ * Calls the 'navigation.openBrowserTab' function from the WorkloadClientAPI to navigate to a url in a new tab.
+ *
+ * @param {string} path - The path or route to navigate to.
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ */
+export async function CallOpenInNewBrowserTab(
+    path: string,
+    workloadClient: WorkloadClientAPI) {
+    try {
+        var params: OpenBrowserTabParams = {
+            url: path,
+            queryParams: {
+                key1: "value1",
+            }
+        }
+        await workloadClient.navigation.openBrowserTab(params);
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 // --- Action API
@@ -756,6 +782,90 @@ export async function callItem1DoubleResult(workloadBEUrl: string, workloadClien
     }
 }
 
+/**
+ * Calls the GetEventhouseDatabases endpoint of the workload API to get the eventhouse item metadata
+ * 
+ * @param {string} workspaceObjectId - The workspace object ID.
+ * @param {string} eventhouseObjectId - The Eventhouse object ID.
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @returns {Promise<EventhouseItemMetadata>} A Promise that resolves to an object containing the eventhouse metadata.
+ */
+export async function callGetEventhouseItem(workloadBEUrl: string, workspaceObjectId: string, eventhouseObjectId: string, workloadClient: WorkloadClientAPI): Promise<EventhouseItemMetadata> {
+    try {
+        const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
+        const response: Response = await fetch(`${workloadBEUrl}/eventhouse/${workspaceObjectId}/${eventhouseObjectId}`, {
+            method: `GET`,
+            headers: {
+                'Authorization': 'Bearer ' + accessToken.token,
+                'Content-Type': 'application/json',
+            }
+        });
+
+        if (!response.ok) {
+            // Handle non-successful responses here
+            const errorMessage: string = await response.text();
+            console.error(`Error calling GetEventhouseItem API: ${errorMessage}`);
+            return await handleException(errorMessage, workloadClient, false /* isRetry */, true /* isDirectWorkloadCall */, callGetEventhouseItem, workloadBEUrl, workspaceObjectId, eventhouseObjectId);
+        }
+
+        const result: EventhouseItemMetadata = await response.json();
+
+        console.log('*** Successfully called GetEventhouseItem API');
+        return result;
+    } catch (error) {
+        console.error('Error in GetEventhouseItem:', error);
+        return null;
+    }
+}
+
+/**
+ * Calls the CallExecuteQuery endpoint to perform a query on selected Kusto DB.
+ * 
+ * @param {string} queryUrl - The database url.
+ * @param {string} databaseName - The database name.
+ * @param {string} query - The query to execute.
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @returns {Promise<object[]>} A Promise that resolves to an object containing the queries result.
+ */
+export async function CallExecuteQuery(workloadBEUrl: string, queryUrl: string, databaseName: string, query: string, setClientRequestId: (id: string) => void, workloadClient: WorkloadClientAPI) : Promise<object[]> {
+    try {
+
+        //KqlDatabases/query
+        const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
+        const clientRequestId = 'WS-' + uuidv4();
+        setClientRequestId(clientRequestId);
+        const response: Response = await fetch(`${workloadBEUrl}/KqlDatabases/query`, {
+            method: `POST`,
+            headers: {
+                'Authorization': 'Bearer ' + accessToken.token,
+                'Content-Type': 'application/json',
+                'x-ms-client-request-id': clientRequestId,
+            },
+            body: JSON.stringify({
+                'QueryServiceUri': queryUrl,
+                'DatabaseName': databaseName,
+                'Query': query
+            })
+        });
+        setClientRequestId(undefined);
+        if (!response.ok) {
+            // Handle non-successful responses here
+            const errorMessage: string = await response.text();
+            console.error(`Error calling ExecuteQuery API: ${errorMessage}`);
+            return await handleException(errorMessage, workloadClient, false /* isRetry */, true /* isDirectWorkloadCall */, CallExecuteQuery, workloadBEUrl, queryUrl, databaseName, query, setClientRequestId);
+        }
+
+        const result: object[] = await response.json();
+
+        console.log('*** Successfully called ExecuteQuery API');
+        return result;
+    }
+    catch (error) {
+        console.error('Error in CallExecuteQuery:', error);
+        return null;
+    }
+}
+
 // --- Theme API
 
 /**
@@ -870,6 +980,61 @@ export async function callOpenSettings(
     return null;
 }
 
+
+/**
+ * Calls workload API GetLastResult
+ * 
+ * @param {string} workloadBEUrl - The URL of the workload backend.
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {string} itemObjectId - the item object id.
+ * @param {boolean} isRetry - Indicates that the call is a retry
+ */
+export async function getLastResult(workloadBEUrl: string, workloadClient: WorkloadClientAPI, itemObjectId: string, isRetry?: boolean): Promise<string> {
+    const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
+    const response: Response = await fetch(`${workloadBEUrl}/${itemObjectId}/getLastResult`, { method: `GET`, headers: { 'Authorization': 'Bearer ' + accessToken.token } });
+    const responseBody: string = await response.text();
+    if (!response.ok) {
+        // Handle non-successful responses here
+        console.error(`Error get getLastResult API: ${responseBody}`);
+        return await handleException(
+            responseBody,
+            workloadClient,
+            isRetry,
+            /* isDirectWorkloadCall */ true,
+            getLastResult,
+            workloadBEUrl);
+    }
+    console.log(`*** Successfully got getLastResult: ${responseBody}`);
+    return responseBody;
+}
+
+/**
+ * Calls workload API isOneLakeSupported
+ * 
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {string} workspaceObjectId - the workspace object id.
+ * @param {string} itemObjectId - the item object id.
+ * @param {boolean} isRetry - Indicates that the call is a retry
+ */
+export async function isOneLakeSupported(workloadBEUrl: string, workloadClient: WorkloadClientAPI, workspaceObjectId: string, itemObjectId: string, isRetry?: boolean): Promise<boolean> {
+    const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
+    const response: Response = await fetch(`${workloadBEUrl}/${workspaceObjectId}/${itemObjectId}/isOneLakeSupported`, { method: `GET`, headers: { 'Authorization': 'Bearer ' + accessToken.token } });
+    const responseBody: string = await response.text();
+    if (!response.ok) {
+        // Handle non-successful responses here
+        console.error(`Error get item1 isOneLakeSupported API: ${responseBody}`);
+        return await handleException(
+            responseBody,
+            workloadClient,
+            isRetry,
+            /* isDirectWorkloadCall */ true,
+            isOneLakeSupported,
+            workloadBEUrl);
+    }
+    console.log(`*** Successfully got isOneLakeSupported: ${responseBody}`);
+    return responseBody == 'true';
+}
+
 /**
  * Handles errors propagated from workload backend.
  *
@@ -899,20 +1064,28 @@ async function handleException(
     }
 
     // If the error is a FabricExternalWorkloadError and we could parse it, check if we can handle it.
-    if (exception.error?.message?.code === FabricExternalWorkloadError && parsedException) {
+    if ((isDirectWorkloadCall /* data plane */ || exception.error?.message?.code === FabricExternalWorkloadError /* control plane */)
+        && parsedException) {
         const errorHandled = await handleWorkloadError(parsedException, workloadClient);
         if (!isRetry && errorHandled ) {
             // error handled, retry the action
             return await action(...actionArgs, workloadClient, true /*isRetry*/);
         }
-    } 
+    }
     
     // error could not be handled, show the error dialog
-    const message = parsedException?.Message || "Unknown error occurred";
+    let message = parsedException?.Message || "Unknown error occurred";
     const errorCode = parsedException?.ErrorCode ?? exception.error?.message?.code;
+    let title = `Could not handle exception: ${errorCode}`;
+
+    if (exception.error?.message?.code === "PowerBICapacityValidationFailed") { 
+        message = `Your workspace is assigned to invalid capacity.\n` +
+                  `Please verify that the workspace has a valid and active capacity assigned, and try again.`;
+        title = "Power BI Capacity Validation Failed";
+    }
     await callErrorHandlingOpenDialog(
         message,
-        `Could not handle exception: ${errorCode}`,
+        title,
         exception.error?.statusCode,
         exception.response?.stackTrace,
         exception.response?.headers?.requestId,

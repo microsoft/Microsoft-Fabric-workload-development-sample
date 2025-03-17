@@ -34,9 +34,9 @@ namespace Boilerplate.Tests
             var url = $"/getLakehouseFile?source={source}";
 
             SetupAuthenticateDataPlaneCall(new[] { WorkloadScopes.FabricLakehouseReadAll, WorkloadScopes.FabricLakehouseReadWriteAll });
-            SetupGetAccessTokenOnBehalfOfCall(exp_scopes: OneLakeScopes);
+            SetupGetAccessTokenOnBehalfOfCall(exp_scopes: OneLakeConstants.OneLakeScopes);
 
-            SetupGetLakehouseFileCall(exp_source: source, ret_content: fileContent);
+            SetupGetOneLakeFileCall(exp_source: source, ret_content: fileContent);
 
             // -----------------------------------------------------------------
             // Act
@@ -73,10 +73,12 @@ namespace Boilerplate.Tests
             // -----------------------------------------------------------------
             // Arrange
 
+            var workspaceId = Guid.NewGuid();
+            var lakehouseId = Guid.NewGuid();
             var request = new WriteToLakehouseFileRequest
             {
-                WorkspaceId = "workspace-id",
-                LakehouseId = "lakehouse-id",
+                WorkspaceId = workspaceId.ToString(),
+                LakehouseId = lakehouseId.ToString(),
                 FileName = "file-name",
                 Content = "content",
                 OverwriteIfExists = overwriteIfExists,
@@ -85,13 +87,14 @@ namespace Boilerplate.Tests
             var expectedFilePath = $"{request.WorkspaceId}/{request.LakehouseId}/Files/{request.FileName}";
 
             SetupAuthenticateDataPlaneCall(new[] { WorkloadScopes.FabricLakehouseReadWriteAll });
-            SetupGetAccessTokenOnBehalfOfCall(exp_scopes: OneLakeScopes);
+            SetupGetAccessTokenOnBehalfOfCall(exp_scopes: OneLakeConstants.OneLakeScopes);
 
+            SetupGetOneLakeFilePathCall(exp_workspaceId: workspaceId, exp_itemId: lakehouseId, exp_filename: request.FileName, ret_path: expectedFilePath);
             SetupCheckIfFileExistsCall(exp_path: expectedFilePath, ret_exists: fileExists);
 
             if (!fileExists || overwriteIfExists)
             {
-                SetupWriteLakehouseFileCall(exp_path: expectedFilePath, exp_content: request.Content);
+                SetupWriteOneLakeFileCall(exp_path: expectedFilePath, exp_content: request.Content);
             }
 
             // -----------------------------------------------------------------

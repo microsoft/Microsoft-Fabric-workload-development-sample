@@ -1,5 +1,5 @@
 {  
-    "WorkspaceGuid": "WORKSPACE_GUID",
-    "ManifestPackageFilePath": "MANIFEST_PACKAGE_FILE_PATH",
-    "WorkloadEndpointURL": "http://127.0.0.1:5000/workload"
+	"WorkspaceGuid": "WORKSPACE_GUID", 
+	"ManifestPackageFilePath": "MANIFEST_PACKAGE_FILE_PATH",
+	"WorkloadEndpointURL": "http://127.0.0.1:5000/workload"
 }

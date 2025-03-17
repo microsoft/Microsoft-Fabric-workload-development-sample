@@ -10,11 +10,36 @@
     "homePage": {
       "learningMaterials": [
         {
+          "title": "Frontend_only_playground_Title",
+          "introduction": "Frontend_only_playground_Introduction",
+          "description": "Frontend_only_playground_Description",
+          "image": "assets/images/playgroundCard.jpeg",
+          "onClick": {
+                  "action": "open.ClientSDKPlaygroundPage"
+                }
+        },
+        {
+          "title": "Working_with_data_playground_Title",
+          "introduction": "Working_with_data_playground_Introduction",
+          "description": "Working_with_data_playground_Description",
+          "image": "assets/images/playgroundCard.jpeg",
+          "onClick": {
+                  "action": "open.DataApiSamplePage"
+                }
+        },
+        {
           "title": "Learning_Material_1_Title",
           "introduction": "Learning_Material_1_Introduction",
           "description": "Learning_Material_1_Description",
           "image": "assets/images/learningMaterial.png",
           "link": "https://aka.ms/Fabricdeveloperdocumentation"
+        },
+        {
+          "title": "Fabric_UX_System_Title",
+          "introduction": "Fabric_UX_System_Introduction",
+          "description": "Fabric_UX_System_Description",
+          "image": "assets/images/fabricUX.jpg",
+          "link": "https://aka.ms/fabricux"
         }
       ],
       "newSection": {
@@ -67,6 +92,10 @@
         "source": "assets/images/BannerMedium.png"
       },
       "slideMedia": [
+        {
+          "mediaType": 1,
+          "source": "https://youtube.com/embed/UNgpBOCvwa8?si=KwsR879MaVZd5CJi"
+        },
         {
           "mediaType": 0,
           "source": "assets/images/SampleWorkload1.png"

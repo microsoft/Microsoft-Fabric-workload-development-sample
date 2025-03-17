@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ItemManifestConfiguration xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance" SchemaVersion="1.0.0">
-  <Item TypeName="Org.WorkloadSample.SampleWorkloadItem" Category="Data">
+<ItemManifestConfiguration xmlns:xsi= "http://www.w3.org/2001/XMLSchema-instance" SchemaVersion="1.101.0">
+  <Item TypeName="Org.WorkloadSample.SampleWorkloadItem" Category="Data" CreateOneLakeFoldersOnArtifactCreation="true">
     <Workload WorkloadName="Org.WorkloadSample" />
     <JobScheduler>
       <!-- Set the deduplicate option for on demand item job. 
@@ -14,6 +14,7 @@
         <ItemJobType Name="Org.WorkloadSample.SampleWorkloadItem.CalculateAsText" />
         <ItemJobType Name="Org.WorkloadSample.SampleWorkloadItem.CalculateAsParquet" />
         <ItemJobType Name="Org.WorkloadSample.SampleWorkloadItem.LongRunningCalculateAsText" />
+        <ItemJobType Name="Org.WorkloadSample.SampleWorkloadItem.InstantJob" />
       </ItemJobTypes>
     </JobScheduler>
   </Item>

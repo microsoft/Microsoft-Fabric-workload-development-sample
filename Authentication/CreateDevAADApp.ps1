@@ -56,6 +56,8 @@ $Item1ReadAllGuid = (New-Guid).ToString()
 $Item1ReadWriteAllGuid = (New-Guid).ToString()
 $FabricLakehouseReadAllGuid = (New-Guid).ToString()
 $FabricLakehouseReadWriteAllGuid = (New-Guid).ToString()
+$KQLDatabaseReadWriteAllGuid = (New-Guid).ToString()
+$FabricEventhouseReadAllGuid = (New-Guid).ToString()
 
 ## Generate URI
 
@@ -96,7 +98,7 @@ $application = @{
                 value = "FabricWorkloadControl"
                 id = $FabricWorkloadControlGuid
                 isEnabled = $true
-                type = "Admin"
+                type = "User"
             },
             @{
                 adminConsentDisplayName = "Item1.Read.All"
@@ -104,7 +106,7 @@ $application = @{
                 value = "Item1.Read.All"
                 id = $Item1ReadAllGuid
                 isEnabled = $true
-                type = "Admin"
+                type = "User"
             },
             @{
                 adminConsentDisplayName = "Item1.ReadWrite.All"
@@ -112,7 +114,7 @@ $application = @{
                 value = "Item1.ReadWrite.All"
                 id = $Item1ReadWriteAllGuid
                 isEnabled = $true
-                type = "Admin"
+                type = "User"
             },
             @{
                 adminConsentDisplayName = "FabricLakehouse.Read.All"
@@ -120,7 +122,7 @@ $application = @{
                 value = "FabricLakehouse.Read.All"
                 id = $FabricLakehouseReadAllGuid
                 isEnabled = $true
-                type = "Admin"
+                type = "User"
             },
             @{
                 adminConsentDisplayName = "FabricLakehouse.ReadWrite.All"
@@ -128,14 +130,30 @@ $application = @{
                 value = "FabricLakehouse.ReadWrite.All"
                 id = $FabricLakehouseReadWriteAllGuid
                 isEnabled = $true
-                type = "Admin"
+                type = "User"
+            },
+            @{
+                adminConsentDisplayName = "KQLDatabase.ReadWrite.All"
+                adminConsentDescription = "KQLDatabase.ReadWrite.All"
+                value = "KQLDatabase.ReadWrite.All"
+                id = $KQLDatabaseReadWriteAllGuid
+                isEnabled = $true
+                type = "User"
+            },
+            @{
+                adminConsentDisplayName = "FabricEventhouse.Read.All"
+                adminConsentDescription = "FabricEventhouse.Read.All"
+                value = "FabricEventhouse.Read.All"
+                id = $FabricEventhouseReadAllGuid
+                isEnabled = $true
+                type = "User"
             }
         )
         preAuthorizedApplications = @( # Preauthorize
             @{
                 appId = "871c010f-5e61-4fb1-83ac-98610a7e9110"
                 delegatedPermissionIds = @(
-                    $Item1ReadAllGuid, $Item1ReadWriteAllGuid, $FabricLakehouseReadAllGuid, $FabricLakehouseReadWriteAllGuid 
+                    $Item1ReadAllGuid, $Item1ReadWriteAllGuid, $FabricLakehouseReadAllGuid, $FabricLakehouseReadWriteAllGuid, $KQLDatabaseReadWriteAllGuid, $FabricEventhouseReadAllGuid
                 )
             },
              @{
@@ -158,6 +176,15 @@ $application = @{
                 resourceAccess = @(
                     @{
                         id = "03e0da56-190b-40ad-a80c-ea378c433f7f" # user_impersonation
+                        type = "Scope"
+                    }
+                )
+            },
+            @{
+                resourceAppId = "2746ea77-4702-4b45-80ca-3c97e680e8b7" # Azure Data Explorer
+                resourceAccess = @(
+                    @{
+                        id = "00d678f0-da44-4b12-a6d6-c98bcfd1c5fe" # user_impersonation
                         type = "Scope"
                     }
                 )
@@ -200,6 +227,14 @@ $application = @{
                     },
                     @{
                         id = "13060bfd-9305-4ec6-8388-8916580f4fa9" # Lakehouse.Read.All
+                        type = "Scope"
+                    },
+                    @{
+                        id = "cd1718e4-3e09-4381-a6e1-183e245f8613" # Eventhouse.Read.All
+                        type = "Scope"
+                    },
+                    @{
+                        id = "726667b1-01a6-4be4-b04c-e95eae4023a8" # KQLDatabase.ReadWrite.All
                         type = "Scope"
                     }
                 )
