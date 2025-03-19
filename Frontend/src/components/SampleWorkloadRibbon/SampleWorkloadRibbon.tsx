@@ -25,7 +25,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
   }
 
   async function onRefreshClicked() { 
-    // needs to be implemented
+    await props.refreshLakehouseCallback();
   }
 
   async function onSaveAsClicked() {
@@ -104,6 +104,7 @@ const CollabButtons = (props: RibbonProps) => {
 
 export interface RibbonProps extends PageProps {
   saveItemCallback: () => Promise<void>;
+  refreshLakehouseCallback: () => void;
   isStorageSelected?: boolean;
   isSaveButtonEnabled?: boolean;
   isFEOnly?: boolean;

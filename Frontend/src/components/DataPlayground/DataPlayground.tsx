@@ -6,7 +6,7 @@ import {
   TabValue,
 } from '@fluentui/react-components';
 import { Stack } from '@fluentui/react';
-import { TabContentProps } from '../../models/SampleWorkloadModel';
+import { GenericItem, TabContentProps } from '../../models/SampleWorkloadModel';
 import { EventhouseExplorerComponent } from '../SampleWorkloadEventhouseExplorer/SampleWorkloadEventhouseExplorer';
 import { LakehouseExplorerComponent } from '../SampleWorkloadLakehouseExplorer/SampleWorkloadLakehouseExplorer';
 import "./../../styles.scss";
@@ -14,6 +14,7 @@ import "./../../styles.scss";
 export function DataPlayground(props: TabContentProps) {
   const { workloadClient } = props;
   const [selectedTab, setSelectedTab] = useState<TabValue>("lakehouseExplorer");
+  const [selectedLakehouse, setSelectedLakehouse] = useState<GenericItem>(null);
 
   return (
     <Stack className="editor" >
@@ -29,7 +30,7 @@ export function DataPlayground(props: TabContentProps) {
 
       <Stack className="main">
         {selectedTab === 'lakehouseExplorer' && (
-          <LakehouseExplorerComponent workloadClient={workloadClient} />
+          <LakehouseExplorerComponent workloadClient={workloadClient} selectedLakehouse={selectedLakehouse} setSelectedLakehouse={setSelectedLakehouse} />
         )}
         {selectedTab === 'dataEventHouse' && (
           <EventhouseExplorerComponent workloadClient={workloadClient} />

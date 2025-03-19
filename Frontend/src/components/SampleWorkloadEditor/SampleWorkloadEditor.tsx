@@ -54,7 +54,6 @@ import { ItemMetadataNotFound } from "../../models/WorkloadExceptionsModel";
 import { LoadingProgressBar } from "../LoadingIndicator/LoadingProgressBar";
 import { LakehouseExplorerComponent } from '../SampleWorkloadLakehouseExplorer/SampleWorkloadLakehouseExplorer';
 
-
 export function SampleWorkloadEditor(props: PageProps) {
   const sampleWorkloadBEUrl = process.env.WORKLOAD_BE_URL;
   const { workloadClient } = props;
@@ -70,6 +69,7 @@ export function SampleWorkloadEditor(props: PageProps) {
   const [operand2ValidationMessage, setOperand2ValidationMessage] =
     useState<string>("");
   const [selectedLakehouse, setSelectedLakehouse] = useState<GenericItem>(undefined);
+  const [selectedLakehouseInExplorer, setSelectedLakehouseInExplorer] = useState<GenericItem>(undefined);
   const [sampleItem, setSampleItem] =
     useState<WorkloadItem<ItemPayload>>(undefined);
   const [operand1, setOperand1] = useState<number>(0);
@@ -349,6 +349,7 @@ export function SampleWorkloadEditor(props: PageProps) {
           !!operator
         }
         saveItemCallback={SaveItem}
+        refreshLakehouseCallback={() => setSelectedLakehouseInExplorer(null)}
         isFEOnly={sampleItem?.id !== undefined}
         openSettingsCallback={openSettings}
         itemObjectId={getItemObjectId()}
@@ -362,8 +363,7 @@ export function SampleWorkloadEditor(props: PageProps) {
         {["jobs", "home"].includes(selectedTab as string) && (
             <Stack horizontal tokens={{ childrenGap: 20 }}>
               <Stack.Item>
-                <LakehouseExplorerComponent workloadClient={workloadClient} />
-                
+                <LakehouseExplorerComponent workloadClient={workloadClient} selectedLakehouse={selectedLakehouseInExplorer} setSelectedLakehouse={setSelectedLakehouseInExplorer}/>
               </Stack.Item>
               <Stack.Item>
                 <span>

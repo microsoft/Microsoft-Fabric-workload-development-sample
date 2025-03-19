@@ -21,9 +21,14 @@ import { TableTreeWithSchema } from "./TableTreeWithSchema";
 import { TableTreeWithoutSchema } from "./TableTreeWithoutSchema";
 import { FileTree } from "./FileTree";
 
-export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
+export interface LakehouseExplorerProps extends PageProps
+{
+  selectedLakehouse: LakehouseMetadata;
+  setSelectedLakehouse: (lakehouse: LakehouseMetadata) => void;
+}
+
+export function LakehouseExplorerComponent({ workloadClient, selectedLakehouse, setSelectedLakehouse }: LakehouseExplorerProps) {
   const sampleWorkloadBEUrl = process.env.WORKLOAD_BE_URL;
-  const [selectedLakehouse, setSelectedLakehouse] = useState<LakehouseMetadata>(null);
   const [tablesInLakehouse, setTablesInLakehouse] = useState<TableMetadata[]>(null);
   const [tableSelected, setTableSelected] = useState<TableMetadata>(null);
   const [filesInLakehouse, setFilesInLakehouse] = useState<FileMetadata[]>(null);
@@ -182,7 +187,7 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
             </div>
           </Tree>
         )}
-        {loadingStatus === "error" && isExplorerVisible && <div className="main-body">
+        {loadingStatus === "error" && selectedLakehouse != null && isExplorerVisible && <div className="main-body">
           <Subtitle2>Error loading tables</Subtitle2>
           <p>Do you have permission to view this lakehouse?</p>
           </div>}
