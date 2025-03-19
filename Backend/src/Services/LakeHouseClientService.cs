@@ -31,6 +31,27 @@ namespace Boilerplate.Services
             _httpClientService = httpClientService;
         }
 
+        public async Task<IEnumerable<LakehouseFile>> GetLakehouseFiles(string token, Guid workspaceId, Guid lakehouseId)
+        {
+            var directory = $"{lakehouseId}/Files/";
+            var oneLakeContainer = await GetPathList(token, workspaceId, directory, recursive: true);
+            var files = oneLakeContainer.Paths
+                .Select(path =>
+                {
+                    var pathName = path.Name;
+                    var parts = pathName.Split('/');
+                    string fileName = parts[parts.Length - 1];;
+
+                    return new LakehouseFile
+                    {
+                        Name = fileName,
+                        Path = pathName + '/'
+                    };
+                });
+
+            return files;
+        }
+
         public async Task<IEnumerable<LakehouseTable>> GetLakehouseTables(string token, Guid workspaceId, Guid lakehouseId)
         {
             var directory = $"{lakehouseId}/Tables/";

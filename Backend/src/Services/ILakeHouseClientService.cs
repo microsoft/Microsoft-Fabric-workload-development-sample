@@ -28,5 +28,15 @@ namespace Boilerplate.Services
         /// <param name="lakehouseId">The id of the lakehouse from which we want to retrieve tables.</param>
         /// <returns>A list of LakehouseTables</returns>
         Task<IEnumerable<LakehouseTable>> GetLakehouseTables(string token, Guid workspaceId, Guid lakehouseId);
+
+
+                /// <summary>
+        /// Retrieves a list of files available in the current lakehouse using the provided bearer token.
+        /// </summary>
+        /// <param name="token">The access token required to authorize the API requests.</param>
+        /// <param name="workspaceId">The id of the workspace that contains the selected lakehouse.</param>
+        /// <param name="lakehouseId">The id of the lakehouse from which we want to retrieve files.</param>
+        /// <returns>A list of LakehouseFiles</returns>
+        Task<IEnumerable<LakehouseFile>> GetLakehouseFiles(string token, Guid workspaceId, Guid lakehouseId);
     }
 }

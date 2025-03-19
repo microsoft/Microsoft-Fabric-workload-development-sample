@@ -12,4 +12,13 @@ namespace Boilerplate.Contracts
 
         public string Schema { get; init; }
     }
+
+
+    public class LakehouseFile
+    {
+        public string Name { get; init; }
+
+        public string Path { get; init; }
+
+    }
 }

@@ -24,6 +24,10 @@ const HomeTabToolbar = (props: RibbonProps) => {
     await props.openSettingsCallback();
   }
 
+  async function onRefreshClicked() { 
+    // needs to be implemented
+  }
+
   async function onSaveAsClicked() {
     // your code to save as here
     await props.saveItemCallback();
@@ -52,6 +56,15 @@ const HomeTabToolbar = (props: RibbonProps) => {
           data-testid="item-editor-save-btn"
           icon={<Save24Regular />}
           onClick={onSaveAsClicked} />
+      </Tooltip>
+      <Tooltip
+        content="Refresh Explorer"
+        relationship="label">
+        <ToolbarButton
+          aria-label="Refresh Explorer"
+          data-testid="item-editor-save-btn"
+          icon={<Share24Regular />}
+          onClick={onRefreshClicked} />
       </Tooltip>
 
       <Tooltip

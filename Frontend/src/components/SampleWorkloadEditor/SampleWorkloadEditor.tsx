@@ -52,6 +52,7 @@ import {
 import "./../../styles.scss";
 import { ItemMetadataNotFound } from "../../models/WorkloadExceptionsModel";
 import { LoadingProgressBar } from "../LoadingIndicator/LoadingProgressBar";
+import { LakehouseExplorerComponent } from '../SampleWorkloadLakehouseExplorer/SampleWorkloadLakehouseExplorer';
 
 
 export function SampleWorkloadEditor(props: PageProps) {
@@ -359,177 +360,185 @@ export function SampleWorkloadEditor(props: PageProps) {
 
       <Stack className="main">
         {["jobs", "home"].includes(selectedTab as string) && (
-          <span>
-            <h2>Sample Item Editor</h2>
-            {/* Crud item API usage example */}
-            {itemEditorErrorMessage && (
-              <MessageBar intent="error">
-                <MessageBarBody className="message-bar-body">
-                  <MessageBarTitle>
-                    You cannot edit this item.
-                  </MessageBarTitle>
-                  {itemEditorErrorMessage}
-                  <MessageBarActions>
-                    <Button onClick={() => deleteItem(pageContext.itemObjectId)}>
+            <Stack horizontal tokens={{ childrenGap: 20 }}>
+              <Stack.Item>
+                <LakehouseExplorerComponent workloadClient={workloadClient} />
+                
+              </Stack.Item>
+              <Stack.Item>
+                <span>
+                  <h2>Sample Item Editor</h2>
+                  {/* Crud item API usage example */}
+                  {itemEditorErrorMessage && (
+                  <MessageBar intent="error">
+                    <MessageBarBody className="message-bar-body">
+                    <MessageBarTitle>
+                      You cannot edit this item.
+                    </MessageBarTitle>
+                    {itemEditorErrorMessage}
+                    <MessageBarActions>
+                      <Button onClick={() => deleteItem(pageContext.itemObjectId)}>
                       Delete Item
-                    </Button>
-                  </MessageBarActions>
-                </MessageBarBody>
-              </MessageBar>
-            )}
-            {!itemEditorErrorMessage && (
-              <div>
-                <Divider alignContent="start">
-                  {sampleItem ? "" : "New "}Item Details
-                </Divider>
-                <div className="section" data-testid='item-editor-metadata' >
-                  {sampleItem && (
-                    <Label>WorkspaceId Id: {sampleItem?.workspaceId}</Label>
+                      </Button>
+                    </MessageBarActions>
+                    </MessageBarBody>
+                  </MessageBar>
                   )}
-                  {sampleItem && <Label>Item Id: {sampleItem?.id}</Label>}
-                  {sampleItem && (
-                    <Label>Item Display Name: {sampleItem?.displayName}</Label>
-                  )}
-                  {sampleItem && (
-                    <Label>Item Description: {sampleItem?.description}</Label>
-                  )}
-                </div>
-                <Divider alignContent="start">Calculation result storage</Divider>
-                <div className="section">
-                  <Label>Store calculation result to {storageName}</Label>
-                  <RadioGroup onChange={selectedStorageChanged} value={storageName}>
-                    <Radio value="Lakehouse" label="Lakehouse" />
-                    {storageName === "Lakehouse" && (
+                  {!itemEditorErrorMessage && (
+                  <div>
+                    <Divider alignContent="start">
+                    {sampleItem ? "" : "New "}Item Details
+                    </Divider>
+                    <div className="section" data-testid='item-editor-metadata' >
+                    {sampleItem && (
+                      <Label>WorkspaceId Id: {sampleItem?.workspaceId}</Label>
+                    )}
+                    {sampleItem && <Label>Item Id: {sampleItem?.id}</Label>}
+                    {sampleItem && (
+                      <Label>Item Display Name: {sampleItem?.displayName}</Label>
+                    )}
+                    {sampleItem && (
+                      <Label>Item Description: {sampleItem?.description}</Label>
+                    )}
+                    </div>
+                    <Divider alignContent="start">Calculation result storage</Divider>
+                    <div className="section">
+                    <Label>Store calculation result to {storageName}</Label>
+                    <RadioGroup onChange={selectedStorageChanged} value={storageName}>
+                      <Radio value="Lakehouse" label="Lakehouse" />
+                      {storageName === "Lakehouse" && (
                       <div style={{ marginLeft: "32px", padding: "4px" }}>
                         <Stack>
-                          <Field
-                            label="Name"
-                            orientation="horizontal"
-                            className="field"
-                          >
-                            <Stack horizontal>
-                              <Input
-                                size="small"
-                                placeholder="Lakehouse Name"
-                                style={{ marginLeft: "10px" }}
-                                value={
-                                  selectedLakehouse ? selectedLakehouse.displayName : ""
-                                }
-                              />
-                              <Button
-                                style={{ width: "24px", height: "24px" }}
-                                icon={<Database16Regular />}
-                                appearance="primary"
-                                onClick={() => onCallDatahubLakehouse()}
-                                data-testid="item-editor-lakehouse-btn"
-                              />
-                            </Stack>
-                          </Field>
-                          <Field
-                            label="ID"
-                            orientation="horizontal"
-                            className="field"
-                          >
-                            <Input
-                              size="small"
-                              placeholder="Lakehouse ID"
-                              style={{ marginLeft: "10px" }}
-                              value={selectedLakehouse ? selectedLakehouse.id : ""}
-                              data-testid="lakehouse-id-input"
-                            />
-                          </Field>
+                        <Field
+                          label="Name"
+                          orientation="horizontal"
+                          className="field"
+                        >
+                          <Stack horizontal>
+                          <Input
+                            size="small"
+                            placeholder="Lakehouse Name"
+                            style={{ marginLeft: "10px" }}
+                            value={
+                            selectedLakehouse ? selectedLakehouse.displayName : ""
+                            }
+                          />
+                          <Button
+                            style={{ width: "24px", height: "24px" }}
+                            icon={<Database16Regular />}
+                            appearance="primary"
+                            onClick={() => onCallDatahubLakehouse()}
+                            data-testid="item-editor-lakehouse-btn"
+                          />
+                          </Stack>
+                        </Field>
+                        <Field
+                          label="ID"
+                          orientation="horizontal"
+                          className="field"
+                        >
+                          <Input
+                          size="small"
+                          placeholder="Lakehouse ID"
+                          style={{ marginLeft: "10px" }}
+                          value={selectedLakehouse ? selectedLakehouse.id : ""}
+                          data-testid="lakehouse-id-input"
+                          />
+                        </Field>
                         </Stack>
                       </div>)}
-                    <Tooltip
+                      <Tooltip
                       content={getOneLakeTooltipText("Item folder in OneLake", canUseOneLake)}
                       relationship="label">
                       <Radio 
                         value="OneLake" 
                         label="Item folder in OneLake" 
                         disabled={!canUseOneLake} 
-                        data-testid="onelake-radiobutton-tooltip" />
+                      data-testid="onelake-radiobutton-tooltip" />
                     </Tooltip>
-                  </RadioGroup>
-                  <Field
+                    </RadioGroup>
+                    <Field
                     label="Last result"
                     orientation="horizontal"
                     className="field"
-                  >
+                    >
                     <Input
                       size="small"
                       placeholder="Last calculation result"
                       data-testid="lastresult-input"
                       value={calculationResult}
                     />
-                  </Field>
-                </div>
-                <Divider alignContent="start">Calculation definition</Divider>
-                <div className="section">
-                  <Field
+                    </Field>
+                  </div>
+                  <Divider alignContent="start">Calculation definition</Divider>
+                  <div className="section">
+                    <Field
                     label="Operand 1"
                     validationMessage={operand1ValidationMessage}
                     orientation="horizontal"
                     className="field"
-                  >
+                    >
                     <Input
                       size="small"
                       type="number"
                       placeholder="Value of the 1st operand"
                       value={operand1.toString()}
                       onChange={(e) =>
-                        onOperand1InputChanged(parseInt(e.target.value))
+                      onOperand1InputChanged(parseInt(e.target.value))
                       }
                       data-testid="operand1-input"
                     />
-                  </Field>
-                  <Field
+                    </Field>
+                    <Field
                     label="Operand 2"
                     validationMessage={operand2ValidationMessage}
                     orientation="horizontal"
                     className="field"
-                  >
+                    >
                     <Input
                       size="small"
                       type="number"
                       placeholder="value of the 2nd operand"
                       value={operand2.toString()}
                       onChange={(e) =>
-                        onOperand2InputChanged(parseInt(e.target.value))
+                      onOperand2InputChanged(parseInt(e.target.value))
                       }
                       data-testid="operand2-input"
                     />
-                  </Field>
-                  <Field
+                    </Field>
+                    <Field
                     label="Operator"
                     orientation="horizontal"
                     className="field"
-                  >
+                    >
                     <Combobox
                       key={pageContext.itemObjectId}
                       data-testid="operator-combobox"
                       placeholder="Operator"
                       value={operator ?? ''}
                       onOptionSelect={(_, opt) =>
-                        onOperatorInputChanged(opt.optionValue)
+                      onOperatorInputChanged(opt.optionValue)
                       }
                     >
                       {supportedOperators.map((option) => (
-                        <Option key={option} data-testid={option} value={option}>{option}</Option>
+                      <Option key={option} data-testid={option} value={option}>{option}</Option>
                       ))}
                     </Combobox>
-                  </Field>
-                  <Button
+                    </Field>
+                    <Button
                     appearance="primary"
                     icon={<TriangleRight20Regular />}
                     disabled={isDisabledDoubleResultButton()}
                     onClick={() => onDoubleButtonClick()}
-                  >
-                    Double the operands
-                  </Button>
-                </div>
-              </div>
-            )}
-          </span>
+                    >
+                    Trigger clalculation job
+                    </Button>
+                  </div>
+                  </div>
+                )}
+              </span>
+            </Stack.Item>
+          </Stack>
         )}
       </Stack>
     </Stack>
