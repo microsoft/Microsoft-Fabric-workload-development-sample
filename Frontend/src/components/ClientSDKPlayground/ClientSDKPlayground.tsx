@@ -14,6 +14,7 @@ import { ApiNavigation } from './ApiNavigation';
 import { ApiData } from './ApiData';
 import { UIComponentsExample } from './UIComponents';
 import { ApiAuthentication } from './ApiAuthentication';
+import { ApiAuthenticationFrontend } from './ApiAuthenticationFrontend';
 import { TabContentProps } from '../../models/SampleWorkloadModel';
 import { PageProps } from 'src/App';
 import { callNavigationBeforeNavigateAway, callNavigationNavigate } from "../../controller/SampleWorkloadController";
@@ -53,7 +54,8 @@ export function ClientSDKPlayground(props: TabContentProps) {
         <Tab value="apiNavigation">Navigation</Tab>
         <Tab value="dataHub">Data Hub</Tab>
         <Tab value="uiComponents">UI Components</Tab>
-        <Tab value="authentication">Authentication</Tab>
+        <Tab value="authentication">Backend Authentication</Tab>
+        <Tab value="authenticationFrontend">Frontend Authentication (Private-Preview)</Tab>
       </TabList>
 
       <Stack className="main">
@@ -87,6 +89,9 @@ export function ClientSDKPlayground(props: TabContentProps) {
         {selectedApiTab === 'authentication' && (
           <ApiAuthentication workloadClient={workloadClient} />
         )}
+        {selectedApiTab === 'authenticationFrontend' && (
+          <ApiAuthenticationFrontend workloadClient={workloadClient} />
+        )}
       </Stack>
     </Stack>
   );
@@ -97,12 +102,11 @@ export function SamplePage({ workloadClient, history }: PageProps) {
     <Stack className="editor">
       <Stack className="main">
         <Button
-          onClick={() =>
-          {
+          onClick={() => {
             sessionStorage.setItem("selectedTab", "apiNavigation");
             callNavigationNavigate("workload", "/client-sdk-playground/", workloadClient);
           }
-            
+
           }
         >
           Navigate Back

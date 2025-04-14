@@ -8,9 +8,10 @@ const JsonProcessorHelper = require('./JsonProcessorHelper');
 console.log('******************** Build: Environment Variables *******************');
 console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
 console.log('process.env.WORKLOAD_BE_URL: ' + process.env.WORKLOAD_BE_URL);
-console.log('process.env.DEV_AAD_CONFIG_AUDIENCE: ' + process.env.DEV_AAD_CONFIG_AUDIENCE);
-console.log('process.env.DEV_AAD_CONFIG_APPID: ' + process.env.DEV_AAD_CONFIG_APPID);
-console.log('process.env.DEV_AAD_CONFIG_REDIRECT_URI: ' + process.env.DEV_AAD_CONFIG_REDIRECT_URI);
+console.log('process.env.DEV_AAD_CONFIG_BE_AUDIENCE: ' + process.env.DEV_AAD_CONFIG_BE_AUDIENCE);
+console.log('process.env.DEV_AAD_CONFIG_BE_APPID: ' + process.env.DEV_AAD_CONFIG_BE_APPID);
+console.log('process.env.DEV_AAD_CONFIG_BE_REDIRECT_URI: ' + process.env.DEV_AAD_CONFIG_BE_REDIRECT_URI);
+console.log('process.env.DEV_AAD_CONFIG_FE_APPID: ' + process.env.DEV_AAD_CONFIG_FE_APPID);
 console.log('*********************************************************************');
 
 module.exports = {

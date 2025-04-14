@@ -19,9 +19,12 @@ class JsonProcessorHelper {
             name: this.workloadName,
             url: "http://127.0.0.1:60006",
             devAADAppConfig: {
-                audience: process.env.DEV_AAD_CONFIG_AUDIENCE,
-                appId: process.env.DEV_AAD_CONFIG_APPID,
-                redirectUri: process.env.DEV_AAD_CONFIG_REDIRECT_URI
+                audience: process.env.DEV_AAD_CONFIG_BE_AUDIENCE,
+                appId: process.env.DEV_AAD_CONFIG_BE_APPID,
+                redirectUri: process.env.DEV_AAD_CONFIG_BE_REDIRECT_URI
+            },
+            devAADFEAppConfig: {
+                appId: process.env.DEV_AAD_CONFIG_FE_APPID,
             }
         };
 
@@ -70,7 +73,7 @@ class JsonProcessorHelper {
 
     processItemJson(jsonContent, isLocalized) {
         const publicItemSchema = Object.assign(new PublicItem, JSON.parse(jsonContent));
-        const {internalItemSchema, tab} = PublicToInternalTransformer.toInternal(publicItemSchema, this.workloadName, this.productName, isLocalized);
+        const { internalItemSchema, tab } = PublicToInternalTransformer.toInternal(publicItemSchema, this.workloadName, this.productName, isLocalized);
         this.internalFinalJson.artifacts.push(internalItemSchema);
         this.internalFinalJson.tabs.push(tab);
     }

@@ -45,7 +45,7 @@ import {
     FabricExternalWorkloadError,
 } from "../models/WorkloadExceptionsModel";
 import { EventhouseItemMetadata } from "src/models/EventhouseModel";
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 // --- Notification API
 
@@ -168,7 +168,7 @@ export async function callNavigationNavigate<T extends 'host' | 'workload'>(
 }
 
 /**
- * Calls acquire access token from the WorkloadClientAPI.
+ * Calls acquire backend access token from the WorkloadClientAPI.
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @param {string} additionalScopesToConsent - Extra scopes to consent (only provide if you are sure the user is missing a consent)
  * @param {string} claimsForConditionalAccessPolicy - Claims returned from the server indicating that token conversion failed because of some conditional access policy - see https://learn.microsoft.com/en-us/entra/msal/dotnet/acquiring-tokens/web-apps-apis/on-behalf-of-flow#handling-multi-factor-auth-mfa-conditional-access-and-incremental-consent
@@ -180,6 +180,16 @@ export async function callAuthAcquireAccessToken(workloadClient: WorkloadClientA
         claimsForConditionalAccessPolicy: claimsForConditionalAccessPolicy?.length > 0 ? claimsForConditionalAccessPolicy : null,
         promptFullConsent
     });
+}
+
+/**
+ * Calls acquire frontend access token from the WorkloadClientAPI.
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {string} scopes - The scopes for which the access token is requested.
+ * @returns {AccessToken}
+ */
+export async function callAuthAcquireFrontendAccessToken(workloadClient: WorkloadClientAPI, scopes: string): Promise<AccessToken> {
+    return workloadClient.auth.acquireFrontendAccessToken({ scopes: scopes?.length ? scopes.split(' ') : [] });
 }
 
 /**
@@ -372,10 +382,10 @@ export async function callDialogOpenMsgBox(
             title,
             content,
             link: link ? {
-                    url: link,
-                    label: link
-                }
-            : undefined,
+                url: link,
+                label: link
+            }
+                : undefined,
             actionButtons
         }
     });
@@ -546,7 +556,7 @@ export async function callItemUpdate<T>(
     } else {
         console.log(`Sending an update for item ${objectId} without updating the payload`);
     }
- 
+
     try {
         return await workloadClient.itemCrud.updateItem({
             objectId,
@@ -746,7 +756,7 @@ export async function callGetItem1SupportedOperators(workloadBEUrl: string, work
  * @returns {Promise<{ Operand1: number, Operand2: number }>} A Promise that resolves to an object containing the updated operands.
  */
 export async function callItem1DoubleResult(workloadBEUrl: string, workloadClient: WorkloadClientAPI, workspaceObjectId: string, itemObjectId: string, isRetry?: boolean): Promise<{ Operand1: number, Operand2: number }> {
-    try{
+    try {
         const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
         const response: Response = await fetch(`${workloadBEUrl}/${workspaceObjectId}/${itemObjectId}/item1DoubleResult`, {
             method: `POST`,
@@ -827,7 +837,7 @@ export async function callGetEventhouseItem(workloadBEUrl: string, workspaceObje
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @returns {Promise<object[]>} A Promise that resolves to an object containing the queries result.
  */
-export async function CallExecuteQuery(workloadBEUrl: string, queryUrl: string, databaseName: string, query: string, setClientRequestId: (id: string) => void, workloadClient: WorkloadClientAPI) : Promise<object[]> {
+export async function CallExecuteQuery(workloadBEUrl: string, queryUrl: string, databaseName: string, query: string, setClientRequestId: (id: string) => void, workloadClient: WorkloadClientAPI): Promise<object[]> {
     try {
 
         //KqlDatabases/query
@@ -1067,20 +1077,20 @@ async function handleException(
     if ((isDirectWorkloadCall /* data plane */ || exception.error?.message?.code === FabricExternalWorkloadError /* control plane */)
         && parsedException) {
         const errorHandled = await handleWorkloadError(parsedException, workloadClient);
-        if (!isRetry && errorHandled ) {
+        if (!isRetry && errorHandled) {
             // error handled, retry the action
             return await action(...actionArgs, workloadClient, true /*isRetry*/);
         }
     }
-    
+
     // error could not be handled, show the error dialog
     let message = parsedException?.Message || "Unknown error occurred";
     const errorCode = parsedException?.ErrorCode ?? exception.error?.message?.code;
     let title = `Could not handle exception: ${errorCode}`;
 
-    if (exception.error?.message?.code === "PowerBICapacityValidationFailed") { 
+    if (exception.error?.message?.code === "PowerBICapacityValidationFailed") {
         message = `Your workspace is assigned to invalid capacity.\n` +
-                  `Please verify that the workspace has a valid and active capacity assigned, and try again.`;
+            `Please verify that the workspace has a valid and active capacity assigned, and try again.`;
         title = "Power BI Capacity Validation Failed";
     }
     await callErrorHandlingOpenDialog(
@@ -1102,13 +1112,13 @@ async function handleWorkloadError(parsedException: WorkloadErrorDetails, worklo
                 let authenticationUIRequiredException: AuthenticationUIRequiredException = {
                     ClaimsForConditionalAccessPolicy: parsedException.MoreDetails?.[0].AdditionalParameters?.find(ap => ap.Name == "claimsForCondtionalAccessPolicy")?.Value,
                     ErrorMessage: parsedException.Message,
-                    ScopesToConsent:  parsedException?.MoreDetails?.[0].AdditionalParameters?.find(ap => ap.Name == "additionalScopesToConsent")?.Value?.split(", ")
+                    ScopesToConsent: parsedException?.MoreDetails?.[0].AdditionalParameters?.find(ap => ap.Name == "additionalScopesToConsent")?.Value?.split(", ")
                 };
                 if (authenticationUIRequiredException?.ErrorMessage?.includes("AADSTS65001")) { // consent
-                    await workloadClient.auth.acquireAccessToken({additionalScopesToConsent: authenticationUIRequiredException.ScopesToConsent});
+                    await workloadClient.auth.acquireAccessToken({ additionalScopesToConsent: authenticationUIRequiredException.ScopesToConsent });
                     return true;
                 } else { // conditional access policy
-                    await workloadClient.auth.acquireAccessToken({claimsForConditionalAccessPolicy: authenticationUIRequiredException.ClaimsForConditionalAccessPolicy});
+                    await workloadClient.auth.acquireAccessToken({ claimsForConditionalAccessPolicy: authenticationUIRequiredException.ClaimsForConditionalAccessPolicy });
                     return true;
                 }
             }

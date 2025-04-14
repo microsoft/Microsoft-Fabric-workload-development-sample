@@ -10,7 +10,7 @@
       <xs:sequence>
         <xs:element name="Workload" type="WorkloadMetadata" />
       </xs:sequence>
-      <xs:attribute name="SchemaVersion" type="SchemaVersion" use="required" fixed="1.101.0" />
+      <xs:attribute name="SchemaVersion" type="SchemaVersion" use="required" fixed="1.500.0" />
     </xs:complexType>
   </xs:element>
 
