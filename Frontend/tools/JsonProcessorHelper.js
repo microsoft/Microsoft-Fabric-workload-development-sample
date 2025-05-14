@@ -70,7 +70,7 @@ class JsonProcessorHelper {
 
     processItemJson(jsonContent, isLocalized) {
         const publicItemSchema = Object.assign(new PublicItem, JSON.parse(jsonContent));
-        const {internalItemSchema, tab} = PublicToInternalTransformer.toInternal(publicItemSchema, this.workloadName, this.productName, isLocalized);
+        const {internalItemSchema, tab} = PublicToInternalTransformer.toInternal(publicItemSchema, this.workloadName, isLocalized, this.productName);
         this.internalFinalJson.artifacts.push(internalItemSchema);
         this.internalFinalJson.tabs.push(tab);
     }
