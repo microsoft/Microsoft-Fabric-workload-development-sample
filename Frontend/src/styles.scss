@@ -184,12 +184,7 @@
     writing-mode: vertical-lr;
 }
 .tree {
-    .lvl1 {
-        padding-left: 15px;
-    }
-    .lvl2 {
-        padding-left: 39px;
-    }
+    --spacingHorizontalXXL: 16px;
     .selected {
         background-color: var(--colorNeutralBackground1Selected);
     }    
@@ -209,4 +204,52 @@
     display: flex;
     align-items: center;
     gap: 0.5rem
+}
+
+.card {
+    margin-bottom: 10px;
+}
+
+.card-content {
+    padding: 5px;
+}
+
+.field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.api-authentication-field {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.api-authentication-field-label {
+    flex: 0 0 250px;
+    margin-right: 10px;
+}
+
+.api-authentication-input {
+    flex: 1;
+    width: 100%; 
+    max-width: 500px;
+}
+
+.authButton {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    align-self: center;
+    display: flex;
+    justify-content: center;
+}
+
+.api-authentication-textarea {
+    resize: both;
+    overflow: auto;
+    width: 500px;
+    min-height: 100px; 
+    font-size: 14px;
+    font-weight: normal;
 }

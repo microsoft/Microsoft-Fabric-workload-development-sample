@@ -46,25 +46,16 @@ namespace Boilerplate.Services
 
         public async Task Upsert<TItemMetadata>(Guid tenantObjectId, Guid itemObjectId, CommonItemMetadata commonMetadata, TItemMetadata typeSpecificMetadata)
         {
-            var itemMetadataDirectoryPath = GetSubDirectoryFullPath(_baseDirectory, $"{tenantObjectId}\\{itemObjectId}");
+            var itemMetadataDirectoryPath = BuildItemMetadataDirectoryPath(tenantObjectId, itemObjectId);
             Directory.CreateDirectory(itemMetadataDirectoryPath);
 
             await StoreFile(itemMetadataDirectoryPath, CommonItemMetadataFilename, commonMetadata);
             await StoreFile(itemMetadataDirectoryPath, TypeSpecificMetadataFilename, typeSpecificMetadata);
         }
-
-        public async Task UpsertJobCancel(Guid tenantObjectId, Guid itemObjectId, string jobType, Guid jobInstanceId, ItemJobMetadata itemJobMetadata)
-        {
-            var itemMetadataDirectoryPath = GetSubDirectoryFullPath(_baseDirectory, $"{tenantObjectId}\\{itemObjectId}");
-            Directory.CreateDirectory(itemMetadataDirectoryPath);
-
-            var jobCancelRequestFilename = $"{jobInstanceId}.jobcancel.json";
-            await StoreFile(itemMetadataDirectoryPath, jobCancelRequestFilename, itemJobMetadata);
-        }
-
+        
         public async Task<ItemMetadata<TItemMetadata>> Load<TItemMetadata>(Guid tenantObjectId, Guid itemObjectId)
         {
-            var itemMetadataDirectoryPath = GetSubDirectoryFullPath(_baseDirectory, $"{tenantObjectId}\\{itemObjectId}");
+            var itemMetadataDirectoryPath = BuildItemMetadataDirectoryPath(tenantObjectId, itemObjectId);
             var commonMetadata = await LoadFile<CommonItemMetadata>(itemMetadataDirectoryPath, CommonItemMetadataFilename);
             var typeSpecificMetadata = await LoadFile<TItemMetadata>(itemMetadataDirectoryPath, TypeSpecificMetadataFilename);
             return new ItemMetadata<TItemMetadata> {  CommonMetadata = commonMetadata, TypeSpecificMetadata = typeSpecificMetadata };
@@ -72,7 +63,7 @@ namespace Boilerplate.Services
 
         public bool Exists(Guid tenantObjectId, Guid itemObjectId)
         {
-            var itemDirectoryPath = GetSubDirectoryFullPath(_baseDirectory, $"{tenantObjectId}\\{itemObjectId}");
+            var itemDirectoryPath = BuildItemMetadataDirectoryPath(tenantObjectId, itemObjectId);
             var commonItemMetadataFilePath = Path.Combine(itemDirectoryPath, CommonItemMetadataFilename);
             var itemMetadataFilePath = Path.Combine(itemDirectoryPath, TypeSpecificMetadataFilename);
             return File.Exists(commonItemMetadataFilePath) && File.Exists(itemMetadataFilePath);
@@ -80,9 +71,33 @@ namespace Boilerplate.Services
 
         public Task Delete(Guid tenantObjectId, Guid itemObjectId)
         {
-            var itemDirectoryPath = GetSubDirectoryFullPath(_baseDirectory, $"{tenantObjectId}\\{itemObjectId}");
+            var itemDirectoryPath = BuildItemMetadataDirectoryPath(tenantObjectId, itemObjectId);
             Directory.Delete(itemDirectoryPath, recursive: true);
             return Task.CompletedTask;
+        }
+
+        public async Task UpsertJob(Guid tenantObjectId, Guid itemObjectId, Guid jobInstanceId, ItemJobMetadata itemJobMetadata)
+        {
+            var itemJobMetadataDirectoryPath = BuildJobMetadataDirectoryPath(tenantObjectId, itemObjectId);
+            Directory.CreateDirectory(itemJobMetadataDirectoryPath);
+
+            var jobMetadataFilename = BuildJobMetadataFileName(jobInstanceId);
+            await StoreFile(itemJobMetadataDirectoryPath, jobMetadataFilename, itemJobMetadata);
+        }
+
+        public async Task<ItemJobMetadata> LoadJob(Guid tenantObjectId, Guid itemObjectId, Guid jobInstanceId)
+        {
+            var itemJobMetadataDirectoryPath = BuildJobMetadataDirectoryPath(tenantObjectId, itemObjectId);
+            var jobMetadataFilename = BuildJobMetadataFileName(jobInstanceId);
+            return await LoadFile<ItemJobMetadata>(itemJobMetadataDirectoryPath, jobMetadataFilename);
+        }
+
+        public bool ExistsJob(Guid tenantObjectId, Guid itemObjectId, Guid jobInstanceId)
+        {
+            var itemJobMetadataDirectoryPath = BuildJobMetadataDirectoryPath(tenantObjectId, itemObjectId);
+            var jobMetadataFilename = BuildJobMetadataFileName(jobInstanceId);
+            var jobMetadataFilePath = Path.Combine(itemJobMetadataDirectoryPath, jobMetadataFilename);
+            return File.Exists(jobMetadataFilePath);
         }
 
         private async Task StoreFile<TContent>(string directoryPath, string filename, TContent content)
@@ -133,12 +148,20 @@ namespace Boilerplate.Services
             return subDirectoryFullPath;
         }
 
-        public bool JobCancelRequestExists(Guid tenantObjectId, Guid itemObjectId, Guid jobInstanceId)
+        private string BuildJobMetadataFileName(Guid jobInstanceId)
         {
-            var itemDirectoryPath = GetSubDirectoryFullPath(_baseDirectory, $"{tenantObjectId}\\{itemObjectId}");
-            var jobCancelRequestFilename = $"{jobInstanceId}.jobcancel.json";
-            var jobCancelRequestFilePath = Path.Combine(itemDirectoryPath, jobCancelRequestFilename);
-            return File.Exists(jobCancelRequestFilePath);
+            return $"{jobInstanceId}.json";
+        }
+
+        private string BuildJobMetadataDirectoryPath(Guid tenantObjectId, Guid itemObjectId)
+        {
+            var itemMetadataDirectoryPath = BuildItemMetadataDirectoryPath(tenantObjectId, itemObjectId);
+            return Path.Combine(itemMetadataDirectoryPath, "Jobs");
+        }
+
+        private string BuildItemMetadataDirectoryPath(Guid tenantObjectId, Guid itemObjectId)
+        {
+            return GetSubDirectoryFullPath(_baseDirectory, $"{tenantObjectId}\\{itemObjectId}");
         }
     }
 }

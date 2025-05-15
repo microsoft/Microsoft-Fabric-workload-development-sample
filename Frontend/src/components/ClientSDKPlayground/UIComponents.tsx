@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Stack } from "@fluentui/react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Divider,
   MessageBar,
@@ -21,12 +22,27 @@ import {
   callSettingsOnChange,
 } from "../../controller/SampleWorkloadController";
 import { TabContentProps } from '../../models/SampleWorkloadModel';
+import { RootState } from "../../ClientSDKPlaygroundStore/Store";
+import {
+  setSampleInput,
+  setCheckboxChecked,
+  setSelectedRadio,
+  setSwitchChecked,
+} from "../../ClientSDKPlaygroundStore/uiComponentsSlice";
 import "./../../styles.scss";
 
 export function UIComponentsExample(props: TabContentProps) {
   const { workloadClient } = props;
   const { t, i18n } = useTranslation();
   const [lang, setLang] = useState<string>('en-US');
+  const dispatch = useDispatch();
+
+  const {
+    sampleInput,
+    checkboxChecked,
+    selectedRadio,
+    switchChecked,
+  } = useSelector((state: RootState) => state.uiComponents);
 
   const radioName = useId("radio");
   const labelId = useId("label");
@@ -64,7 +80,13 @@ export function UIComponentsExample(props: TabContentProps) {
           style={{ padding: "10px" }}
         >
           <Label htmlFor={inputId}>Sample input</Label>
-          <Input id={inputId} size="small" placeholder="hint" />
+          <Input
+            id={inputId}
+            size="small"
+            placeholder="hint"
+            value={sampleInput}
+            onChange={(e) => dispatch(setSampleInput(e.target.value))}
+          />
         </Stack>
         {/* Buttons */}
         <Stack
@@ -86,10 +108,15 @@ export function UIComponentsExample(props: TabContentProps) {
           </Button>
         </Stack>
         {/* Checkbox, Switch and Radio */}
-        <Checkbox title="my title" label="Checkbox sample" />
-        <Switch label="Switch sample" />
+        <Checkbox
+          title="my title"
+          label="Checkbox sample"
+          checked={checkboxChecked}
+          onChange={(e) => dispatch(setCheckboxChecked(e.target.checked))}
+        />
+        <Switch label="Switch sample" checked={switchChecked} onChange={(e) => dispatch(setSwitchChecked(e.target.checked))} />
         <Label id={labelId}>Radio group</Label>
-        <RadioGroup aria-labelledby={labelId} defaultValue="option1">
+        <RadioGroup aria-labelledby={labelId} value={selectedRadio} onChange={(e, data) => dispatch(setSelectedRadio(data.value))}>
           <Radio name={radioName} value="option1" label="Option 1" />
           <Radio name={radioName} value="option2" label="Option 2" />
           <Radio name={radioName} value="option3" label="Option 3" />

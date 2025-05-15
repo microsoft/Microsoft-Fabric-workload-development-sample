@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Stack } from "@fluentui/react";
 import {
     Button,
@@ -6,6 +7,11 @@ import {
     Input,
 } from "@fluentui/react-components";
 import { AlertOn24Regular } from "@fluentui/react-icons";
+import { RootState } from "../../ClientSDKPlaygroundStore/Store";
+import {
+    setTitle,
+    setMessage
+} from "../../ClientSDKPlaygroundStore/notificationSlice";
 import {
     callNotificationOpen,
     callNotificationHide,
@@ -15,11 +21,14 @@ import "./../../styles.scss";
 
 export function ApiNotification(props: TabContentProps) {
     const workloadClient = props.workloadClient;
+    const dispatch = useDispatch();
     const [notificationValidationMessage, setNotificationValidationMessage] = useState<string>("");
-    const [apiNotificationTitle, setNotificationTitle] = useState<string>("");
-    const [apiNotificationMessage, setNotificationMessage] = useState<string>("");  
     const [notificationId, setNotificationId] = useState<string>("");
-    
+    const {
+        apiNotificationTitle,
+        apiNotificationMessage,
+    } = useSelector((state: RootState) => state.notification);
+
     function onCallNotification() {
         if (apiNotificationTitle.trim() == "") {
             setNotificationValidationMessage("Notification title is required");
@@ -54,7 +63,7 @@ export function ApiNotification(props: TabContentProps) {
                         size="small"
                         placeholder="Notification Title"
                         value={apiNotificationTitle}
-                        onChange={(e) => setNotificationTitle(e.target.value)}
+                        onChange={(e) => dispatch(setTitle(e.target.value))}
                     />
                 </Field>
                 <Field
@@ -66,7 +75,7 @@ export function ApiNotification(props: TabContentProps) {
                         size="small"
                         placeholder="Notification Message"
                         value={apiNotificationMessage}
-                        onChange={(e) => setNotificationMessage(e.target.value)}
+                        onChange={(e) => dispatch(setMessage(e.target.value))}
                     />
                 </Field>
                 <Stack horizontal tokens={{ childrenGap: 10 }}>
