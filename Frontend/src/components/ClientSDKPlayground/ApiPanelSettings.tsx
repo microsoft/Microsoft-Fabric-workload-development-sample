@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Divider, Switch, Button } from "@fluentui/react-components";
 import { PanelRightExpand20Regular } from "@fluentui/react-icons";
+import { RootState } from "../../ClientSDKPlaygroundStore/Store";
+import { setApiPanelIsLightDismiss } from "../../ClientSDKPlaygroundStore/apiPanelSettingsSlice";
 import {
     callPanelOpen,
     callDialogOpenMsgBox,
@@ -14,8 +17,10 @@ import "./../../styles.scss";
 
 export function ApiPanelSettings(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;
-    const [apiPanelIsLightDismiss, setApiPanelIsLightDismiss] =
-        useState<boolean>(false);
+    const dispatch = useDispatch();
+    const apiPanelIsLightDismiss = useSelector(
+        (state: RootState) => state.apiPanelSettings.apiPanelIsLightDismiss
+    );
 
     async function onCallOpenPanel() {
         callPanelOpen(
@@ -55,7 +60,8 @@ export function ApiPanelSettings(props: TabContentProps) {
             <div className="section">
                 <Switch
                     label="Clicking outside of Panel closes it"
-                    onChange={(e) => setApiPanelIsLightDismiss(e.target.checked)}
+                    checked={apiPanelIsLightDismiss}
+                    onChange={(e) => dispatch(setApiPanelIsLightDismiss(e.target.checked))}
                 />
                 <Button
                     appearance="primary"

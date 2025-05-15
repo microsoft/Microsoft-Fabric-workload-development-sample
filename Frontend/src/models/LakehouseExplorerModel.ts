@@ -11,7 +11,19 @@ export interface TableMetadata {
     schema?: string;
 }
 
+export interface FileMetadata {
+    name: string;
+    path: string;
+    isDirectory: boolean;
+    isSelected: boolean;
+}
+
 export interface LakehouseExplorerTablesTreeProps {
     allTablesInLakehouse: TableMetadata[];
     onSelectTableCallback: (selectedTable: TableMetadata) => void;
+}
+
+export interface LakehouseExplorerFilesTreeProps {
+    allFilesInLakehouse: FileMetadata[];
+    onSelectFileCallback: (selectedFile: FileMetadata) => void;
 }

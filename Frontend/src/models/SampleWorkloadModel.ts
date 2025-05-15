@@ -1,4 +1,4 @@
-import { ItemJobStatus, ItemLikeV2, WorkloadClientAPI } from '@ms-fabric/workload-client';
+import { WorkloadClientAPI } from '@ms-fabric/workload-client';
 
 // Represents an item as defined in the frontend manifest.
 export interface ItemManifest {
@@ -59,85 +59,6 @@ export interface UpdateItemPayload {
 // Represents the item-specific payload returned by the GetItemPayload  request
 export interface ItemPayload {
     item1Metadata?: Item1ClientMetadata;
-}
-
-// Represents the generic action context recieved from fabric host
-export interface ItemActionContext {
-    item: ItemLikeV2;
-}
-
-export interface ItemTabActionContext{
-    id: string;
-}
-
-// Represents the job action context recieved from fabric host
-export interface ItemJobActionContext {
-    itemJobInstanceId: string;
-    jobEndTimeUtc: string;
-    jobStartTimeUtc: string
-    status: ItemJobStatus;
-    isSuccessful: boolean;
-    itemJobType: string;
-    itemName: string;
-    itemObjectId: string;
-    workspaceName: string;  
-    workspaceObjectId: string;
-}
-
-// Represents data to be displayed in the job details pane.
-export interface ItemJobDetailData {
-    /**
-     * We are currently rendering data in key/value format which is default type.
-     * In the future we may support data in table format.
-     */
-    type: 'default';
-    sections: ItemJobDetailSection[];
-}
-
-// Represents a section in the job details pane
-export interface ItemJobDetailSection {
-    title: string;
-    data: ItemJobDetailActionMetadataAttrs[];
-}
-
-// Represents metadata attributes in the job details pane data
-export interface ItemJobDetailActionMetadataAttrs {
-    /**
-     *  label of the metadata
-     */
-    label: string;
-    /**
-     *  value of the metadata
-     */
-    value: string;
-    /**
-     *  type of the metadata
-     */
-    type: string // 'text' | 'link';
-    /**
-     *  url need to be set when type is link
-     */
-    url?: string;
-}
-
-// Represents the result of an item job action.
-export interface ItemJobActionResult {
-    /**
-     * whether the action is successful or not.
-     */
-    isSuccess: boolean;
-    /**
-     * error code
-     */
-    errorCode?: number;
-    /**
-     * error message
-     */
-    errorMessage?: string;
-    /**
-     * hold data to be rendered in panel for the detail action
-     */
-    data?: ItemJobDetailData;
 }
 
 export interface TabContentProps {

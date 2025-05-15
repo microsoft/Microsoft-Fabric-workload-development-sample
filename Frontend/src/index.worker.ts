@@ -5,10 +5,12 @@ import {
     InitParams,
     NotificationToastDuration,
     NotificationType,
+    ItemActionContext,
+    ItemJobActionContext,
+    ItemJobData,
 } from '@ms-fabric/workload-client';
 
 import * as Controller from './controller/SampleWorkloadController';
-import { ItemActionContext, ItemJobActionContext } from './models/SampleWorkloadModel';
 import { getJobDetailsPane } from './utils';
 import i18next from 'i18next';
 
@@ -96,12 +98,11 @@ export async function initialize(params: InitParams) {
                 return await Controller.callCancelItemJob(cancelJobDetails.itemObjectId, cancelJobDetails.itemJobInstanceId, true, workloadClient);
 
             case 'item.job.detail':
-                const jobDetailsContext = data as ItemJobActionContext;
+                const jobDetailsData = data as ItemJobData;
                 const settings = await Controller.callSettingsGet(workloadClient);
-                const hostUrl = settings.workloadHostOrigin;
                 const language = settings.currentFormatLocale;
                 await i18next.changeLanguage(language);
-                return getJobDetailsPane(jobDetailsContext, hostUrl);
+                return getJobDetailsPane(jobDetailsData);
 
             case 'getItemSettings': {
                 return [

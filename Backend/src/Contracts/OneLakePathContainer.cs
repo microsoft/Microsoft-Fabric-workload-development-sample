@@ -11,6 +11,7 @@ namespace Boilerplate.Contracts
         public string Name { get; init; }
         public bool IsShortcut { get; init; }
         public string AccountType { get; init; }
+        public bool IsDirectory { get; init; }
     }
 
     internal class OneLakePathContainer

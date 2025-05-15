@@ -19,7 +19,7 @@ export function TableTreeWithoutSchema(props: LakehouseExplorerTablesTreeProps) 
                         relationship="label"
                         content={table.name}>
                             <TreeItemLayout
-                                className={"lvl1 " + (table.isSelected ? "selected" : "")}
+                                className={(table.isSelected ? "selected" : "")}
                                 iconBefore={<Table20Regular />}>
                                 {table.name}
                             </TreeItemLayout>

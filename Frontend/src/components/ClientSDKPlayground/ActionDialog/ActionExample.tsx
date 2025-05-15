@@ -23,6 +23,5 @@ export function ActionExample(props: TabContentProps) {
         Execute an Action
       </Button>
     </div>
-
   );
 };

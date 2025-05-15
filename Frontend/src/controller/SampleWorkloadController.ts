@@ -307,10 +307,12 @@ export async function callDialogOpen(
 
 /**
  * Calls the 'datahub.openDialog' function from the WorkloadClientAPI to open a OneLake data hub dialog to select Lakehouse item(s).
- *
+ * 
+ * @param {ExtendedItemTypeV2[]} supportedTypes - The item types supported by the datahub dialog.
  * @param {string} dialogDescription - The sub-title of the datahub dialog
  * @param {boolean} multiSelectionEnabled - Whether the datahub dialog supports multi selection of datahub items
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {boolean} workspaceNavigationEnabled - Whether the datahub dialog supports workspace navigation bar or not.
  */
 export async function callDatahubOpen(
     supportedTypes: ExtendedItemTypeV2[],
@@ -1076,7 +1078,7 @@ async function handleException(
     // error could not be handled, show the error dialog
     let message = parsedException?.Message || "Unknown error occurred";
     const errorCode = parsedException?.ErrorCode ?? exception.error?.message?.code;
-    let title = `Could not handle exception: ${errorCode}`;
+    let title = getAdditionalParameterValue(parsedException, "title") ?? `Could not handle exception: ${errorCode}`;
 
     if (exception.error?.message?.code === "PowerBICapacityValidationFailed") { 
         message = `Your workspace is assigned to invalid capacity.\n` +
@@ -1092,6 +1094,10 @@ async function handleException(
         workloadClient
     );
     return null;
+}
+
+function getAdditionalParameterValue(parsedException: WorkloadErrorDetails, parameterName: string): string {
+    return parsedException?.MoreDetails?.[0]?.AdditionalParameters?.find(ap => ap.Name == parameterName)?.Value;
 }
 
 async function handleWorkloadError(parsedException: WorkloadErrorDetails, workloadClient: WorkloadClientAPI): Promise<boolean> {

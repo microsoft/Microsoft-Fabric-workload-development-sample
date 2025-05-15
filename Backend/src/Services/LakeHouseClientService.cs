@@ -90,6 +90,33 @@ namespace Boilerplate.Services
             }
         }
 
+        public async Task<IEnumerable<LakehouseFile>> GetLakehouseFiles(string token, Guid workspaceId, Guid lakehouseId)
+        {
+            var directory = $"{lakehouseId}/Files/";
+            var oneLakeContainer = await GetPathList(token, workspaceId, directory, recursive: true);
+            var files = oneLakeContainer.Paths
+                .Select(path =>
+                {
+                    var pathName = path.Name;
+                    var parts = pathName.Split('/');
+                    
+                    // Path structure: <lakehouseId>/Files/...<Subdirectories>.../<fileName>
+                    string fileName = parts[parts.Length - 1];
+
+                    // Remove the prefix (lakehouseId/Files/) from the path
+                    var relativePath = pathName.Length > directory.Length ? pathName.Substring(directory.Length) : "";
+
+                    return new LakehouseFile
+                    {
+                        Name = fileName,
+                        Path = relativePath,
+                        IsDirectory = path.IsDirectory
+                    };
+                });
+
+            return files;
+        }
+
         /// <summary>
         /// Retrieves a list of paths available in the selected directory using the provided bearer token.
         /// </summary>

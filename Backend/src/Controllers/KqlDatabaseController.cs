@@ -35,6 +35,20 @@ namespace Fabric_Extension_BE_Boilerplate.Controllers
             _httpClientService = new HttpClient();
         }
 
+        /// <summary>
+        /// Executes a KQL query against a specified database.
+        /// In order for this method to succeed, the caller must have the appropriate permissions to access the KQL data base.
+        /// Permissions and scopes are defined in Entra ID application. For this request the scope is: KQLDatabase.ReadWrite.All
+        /// For more information please follow the link:
+        /// https://learn.microsoft.com/en-us/fabric/workload-development-kit/fabric-data-plane#api-permissions
+        /// </summary>
+        /// <param name="request">The request containing the query details.</param>
+        /// <returns>An IActionResult containing the query results or an error message.</returns>
+        /// <remarks>
+        /// This endpoint authenticates the user, constructs an HTTP request to the KQL service, and processes the response.
+        /// If the query is successful, the results are returned as a DataTable.
+        /// If the query fails, an appropriate error message is returned.
+        /// </remarks>
         [HttpPost("KqlDatabases/query")]
         public async Task<IActionResult> QueryKqlDatabase([FromBody] QueryKqlDatabaseRequest request)
         {

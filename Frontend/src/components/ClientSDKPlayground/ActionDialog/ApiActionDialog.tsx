@@ -4,7 +4,7 @@ import { TabContentProps } from '../../../models/SampleWorkloadModel';
 import { ActionExample } from './ActionExample';
 import { MessageBoxExample } from './MessageBoxExample';
 import { SharedStateExample } from './SharedStateExample';
-import { ErrorMessageExapmle } from './ErrorMessageExapmle';
+import { ErrorMessageExample } from './ErrorMessageExample';
 import "../../../styles.scss";
 
 export function ApiActionDialog(props: TabContentProps) {
@@ -33,7 +33,7 @@ export function ApiActionDialog(props: TabContentProps) {
 
             {/* Error Handling API usage example */}
             <Divider alignContent="start">Error Handling</Divider>
-            <ErrorMessageExapmle
+            <ErrorMessageExample
                 sampleWorkloadName={sampleWorkloadName}
                 workloadClient={workloadClient}
             />

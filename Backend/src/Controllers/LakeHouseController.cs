@@ -93,6 +93,15 @@ namespace Boilerplate.Controllers
             return Ok(tables);
         }
 
+        [HttpGet("onelake/{workspaceId:guid}/{lakehouseId:guid}/files")]
+        public async Task<IActionResult> GetFilesAsync(Guid workspaceId, Guid lakehouseId)
+        {
+            var authorizationContext = await _authenticationService.AuthenticateDataPlaneCall(_httpContextAccessor.HttpContext, allowedScopes: ScopesForReadLakehouseFile);
+            var token = await _authenticationService.GetAccessTokenOnBehalfOf(authorizationContext, OneLakeConstants.OneLakeScopes);
+            var files = await _lakeHouseClientService.GetLakehouseFiles(token, workspaceId, lakehouseId);
+            return Ok(files);
+        }
+
 
     }
 }

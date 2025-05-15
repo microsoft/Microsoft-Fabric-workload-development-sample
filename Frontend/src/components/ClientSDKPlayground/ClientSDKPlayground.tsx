@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from "react-redux";
 import {
   TabList,
   Tab,
@@ -7,6 +8,8 @@ import {
   Button,
 } from '@fluentui/react-components';
 import { Stack } from '@fluentui/react';
+import { RootState } from "../../ClientSDKPlaygroundStore/Store"
+import { setSelectedTab } from "../../ClientSDKPlaygroundStore/tabsSlice";
 import { ApiNotification } from './ApiNotification';
 import { ApiActionDialog } from './ActionDialog/ApiActionDialog';
 import { ApiPanelSettings } from './ApiPanelSettings';
@@ -19,23 +22,19 @@ import { PageProps } from 'src/App';
 import { callNavigationBeforeNavigateAway, callNavigationNavigate } from "../../controller/SampleWorkloadController";
 import "./../../styles.scss";
 
+
 export function ClientSDKPlayground(props: TabContentProps) {
   const { workloadClient } = props;
-  const [selectedApiTab, setSelectedApiTab] = useState<TabValue>("apiNotification");
   const sampleWorkloadName = process.env.WORKLOAD_NAME;
+  const dispatch = useDispatch();
+  const selectedApiTab = useSelector(
+    (state: RootState) => state.tabs.selectedTab
+  ) as TabValue;
 
   useEffect(() => {
     // Controller callbacks registrations:
     // register Blocking in Navigate.BeforeNavigateAway (for a forbidden url)
     callNavigationBeforeNavigateAway(workloadClient);
-
-    // Check session storage for a desired tab
-    const storedTab = sessionStorage.getItem("selectedTab");
-    if (storedTab) {
-      setSelectedApiTab(storedTab as TabValue);
-      // Remove it so next time we open fresh at default
-      sessionStorage.removeItem("selectedTab");
-    }
   }, [workloadClient]);
 
 
@@ -45,7 +44,8 @@ export function ClientSDKPlayground(props: TabContentProps) {
         className="tabListContainer"
         selectedValue={selectedApiTab}
         data-testid="item-editor-selected-tab-btn"
-        onTabSelect={(_, data: SelectTabData) => setSelectedApiTab(data.value)}
+        onTabSelect={(_, data: SelectTabData) =>
+          dispatch(setSelectedTab(data.value as string))}
       >
         <Tab value="apiNotification">Notification</Tab>
         <Tab value="apiActionDialog">Action & Dialog</Tab>
@@ -97,13 +97,9 @@ export function SamplePage({ workloadClient, history }: PageProps) {
     <Stack className="editor">
       <Stack className="main">
         <Button
-          onClick={() =>
-          {
-            sessionStorage.setItem("selectedTab", "apiNavigation");
+          onClick={() => {
             callNavigationNavigate("workload", "/client-sdk-playground/", workloadClient);
-          }
-            
-          }
+          }}
         >
           Navigate Back
         </Button>
