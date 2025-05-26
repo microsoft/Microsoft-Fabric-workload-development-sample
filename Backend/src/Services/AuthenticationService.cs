@@ -397,8 +397,11 @@ namespace Boilerplate.Services
 
             if (!scopes.Any(s => allowedScopes.Contains(s)))
             {
-                _logger.LogError("Missing or invalid 'scp' claim");
-                throw new AuthenticationException("Invalid scopes");
+                var invalidScopesMessage = "Workload's Entra ID application is missing required scopes";
+
+                _logger.LogError(invalidScopesMessage);
+                throw new AuthenticationException(invalidScopesMessage)
+                    .WithDetail(ErrorCodes.Authentication.AuthError, invalidScopesMessage, [("title", "Missing or invalid scopes")]);
             }
         }
 

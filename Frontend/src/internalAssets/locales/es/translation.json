@@ -5,12 +5,12 @@
     "Job_Type": "Tipo de trabajo",
     "Job_Status": "Estado del trabajo",
     "Job_Start_Time_UTC": "Hora de inicio del trabajo UTC",
-    "Job_End_Time_UTC": "Hora de finalización del trabajo UTC",
+    "Job_End_Time_UTC": "Hora de finalizaciÃ³n del trabajo UTC",
     "Job_Instance_ID": "ID de instancia de trabajo",
-    "Item_Details": "Detalles del artículo",
-    "Item_Type": "Tipo de artículo",
-    "Item_Name": "Nombre del artículo",
-    "Item_ID": "ID del artículo",
+    "Item_Details": "Detalles del artÃ­culo",
+    "Item_Type": "Tipo de artÃ­culo",
+    "Item_Name": "Nombre del artÃ­culo",
+    "Item_ID": "ID del artÃ­culo",
     "Workspace_Name": "Nombre del espacio de trabajo",
     "Workspace_ID": "ID del espacio de trabajo"
 }

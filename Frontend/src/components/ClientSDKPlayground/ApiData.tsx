@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
     Divider,
     Field,
@@ -9,19 +10,39 @@ import {
     Button,
 } from "@fluentui/react-components";
 import { Database16Regular } from "@fluentui/react-icons";
+import { RootState } from "../../ClientSDKPlaygroundStore/Store";
+import {
+    initializeApiData,
+    setDatahubDialogDescription,
+    setDataHubMsgBoxType,
+    setWorkspaceExplorerPresented,
+    setMultiSelectionEnabled,
+    setSelectedLinkedItem,
+} from "../../ClientSDKPlaygroundStore/apiDataSlice";
 import { callDatahubOpen } from "../../controller/SampleWorkloadController";
-import { GenericItem, TabContentProps } from "../../models/SampleWorkloadModel";
+import { TabContentProps } from "../../models/SampleWorkloadModel";
 import "./../../styles.scss";
 
 export function ApiData(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;
     const sampleItemType = sampleWorkloadName + ".SampleWorkloadItem";
-    const [datahubDialogDescription, setDatahubDialogDescription] = useState<string>("Dialog description");
-    const [dataHubMsgBoxType, setDataHubMsgBoxType] = useState<string>(sampleItemType);
     const dataHubMsgBoxTypes = ["Lakehouse", sampleItemType];
-    const [isWorkspaceExplorerPresented, setWorkspaceExplorerPresented] = useState<boolean>(false);
-    const [isMultiSelectionEnabled, setMultiSelectionEnabled] = useState<boolean>(false);
-    const [selectedLinkedItem, setSelectedLinkedItem] = useState<GenericItem>(null);
+    const dispatch = useDispatch();
+
+    const {
+        datahubDialogDescription,
+        dataHubMsgBoxType,
+        isWorkspaceExplorerPresented,
+        isMultiSelectionEnabled,
+        selectedLinkedItem,
+    } = useSelector((state: RootState) => state.apiData);
+
+    useEffect(() => {
+        if (!dataHubMsgBoxType) {
+            dispatch(initializeApiData(sampleItemType));
+        }
+    }, [dispatch, sampleItemType, dataHubMsgBoxType]);
+
 
     async function onCallDatahubFromPlayground() {
         const result = await callDatahubOpen(
@@ -32,7 +53,7 @@ export function ApiData(props: TabContentProps) {
             isWorkspaceExplorerPresented
         );
         if (result) {
-            setSelectedLinkedItem(result);
+            dispatch(setSelectedLinkedItem(result));
         }
     }
 
@@ -46,7 +67,7 @@ export function ApiData(props: TabContentProps) {
                         placeholder="Dialog description"
                         style={{ marginLeft: "10px" }}
                         value={datahubDialogDescription ?? ""}
-                        onChange={(e) => setDatahubDialogDescription(e.target.value)}
+                        onChange={(e) => dispatch(setDatahubDialogDescription(e.target.value))}
                         data-testid="api-playground-data-hub-description"
                     />
                 </Field>
@@ -55,7 +76,7 @@ export function ApiData(props: TabContentProps) {
                         placeholder="Item types"
                         value={dataHubMsgBoxType}
                         data-testid="api-playground-data-hub-supported-types"
-                        onOptionSelect={(_, opt) => setDataHubMsgBoxType(opt.optionValue)}
+                        onOptionSelect={(_, opt) => dispatch(setDataHubMsgBoxType(opt.optionValue))}
                     >
                         {dataHubMsgBoxTypes.map((option) => (
                             <Option key={option}>{option}</Option>
@@ -66,12 +87,12 @@ export function ApiData(props: TabContentProps) {
                     label="Present workspace explorer"
                     data-testid="api-playground-data-hub-workspace-explorer-switch"
                     checked={isWorkspaceExplorerPresented}
-                    onChange={(e) => setWorkspaceExplorerPresented(e.target.checked)}
+                    onChange={(e) => dispatch(setWorkspaceExplorerPresented(e.target.checked))}
                 />
                 <Switch
                     label="Allow multiselection"
                     checked={isMultiSelectionEnabled}
-                    onChange={(e) => setMultiSelectionEnabled(e.target.checked)}
+                    onChange={(e) => dispatch(setMultiSelectionEnabled(e.target.checked))}
                     data-testid="api-playground-data-hub-multiselection-switch"
                 />
                 <Button

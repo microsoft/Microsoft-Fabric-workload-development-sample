@@ -19,7 +19,6 @@ import {
   MessageBarActions,
   RadioGroupOnChangeData
 } from "@fluentui/react-components";
-import { initializeIcons } from "@fluentui/font-icons-mdl2";
 import {
   Database16Regular,
   TriangleRight20Regular,
@@ -59,9 +58,6 @@ export function SampleWorkloadEditor(props: PageProps) {
   const { workloadClient } = props;
   const pageContext = useParams<ContextProps>();
   const { pathname } = useLocation();
-
-  // initializing usage of FluentUI icons
-  initializeIcons();
 
   // React state for WorkloadClient APIs
   const [operand1ValidationMessage, setOperand1ValidationMessage] =

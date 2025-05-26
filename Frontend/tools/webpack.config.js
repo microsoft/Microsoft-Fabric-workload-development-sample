@@ -3,7 +3,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const Webpack = require("webpack");
 const path = require("path");
-const JsonProcessorHelper = require('./JsonProcessorHelper');
+const fs = require("fs").promises;
 
 console.log('******************** Build: Environment Variables *******************');
 console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
@@ -82,16 +82,47 @@ module.exports = {
                 console.log('****               Server is listening on port 60006             ****');
                 console.log('****   You can now override the Fabric manifest with your own.   ****');
                 console.log('*********************************************************************');
-                devServer.app.get('/manifests', async function (req, res) {
+
+                devServer.app.get('/manifests_new/metadata', function (req, res) {
                     res.writeHead(200, {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*',
                         'Access-Control-Allow-Methods': 'GET',
                         'Access-Control-Allow-Headers': 'Content-Type, Authorization'
                     });
-                    const processor = new JsonProcessorHelper();
-                    const data = await processor.createFrontendJsonStreamAsync();
-                    res.end(data);
+                
+                    const devParameters = {
+                        name: process.env.WORKLOAD_NAME,
+                        url: "http://127.0.0.1:60006",
+                        devAADAppConfig: {
+                            audience: process.env.DEV_AAD_CONFIG_AUDIENCE,
+                            appId: process.env.DEV_AAD_CONFIG_APPID,
+                            redirectUri: process.env.DEV_AAD_CONFIG_REDIRECT_URI
+                        }
+                    };
+                
+                    res.end(JSON.stringify({ extension: devParameters }));
+                });
+
+                devServer.app.get('/manifests_new', async function (req, res) {
+                    const filePath = path.resolve(__dirname, '../validation/ManifestPackageRelease.1.0.0.nupkg');
+                    try {
+                        // Check if the file exists
+                        await fs.access(filePath);
+                        
+                        res.status(200).set({
+                            'Content-Type': 'application/octet-stream',
+                            'Content-Disposition': `attachment; filename="ManifestPackageRelease.1.0.0.nupkg"`,
+                            'Access-Control-Allow-Origin': '*',
+                            'Access-Control-Allow-Methods': 'GET',
+                            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+                        });
+                        
+                        res.sendFile(filePath);
+                    } catch (err) {
+                        console.error(`❌ File not found: ${err.message}`);
+                        res.status(404).json({ error: "File not found" });
+                    }
                 });
                 return middlewares;
             },

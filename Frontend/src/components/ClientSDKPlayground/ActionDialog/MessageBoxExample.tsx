@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from "react-redux";
 import {
     Field,
     Input,
@@ -8,6 +9,13 @@ import {
     Option,
 } from '@fluentui/react-components';
 import { PanelRightExpand20Regular } from '@fluentui/react-icons';
+import { RootState } from "../../../ClientSDKPlaygroundStore/Store";
+import {
+    updateMessageBoxTitle,
+    updateMessageBoxMessage,
+    updateMessageBoxLink,
+    updateButtonCount
+} from "../../../ClientSDKPlaygroundStore/actionDialogSlice";
 import { TabContentProps } from '../../../models/SampleWorkloadModel';
 import { callDialogOpenMsgBox } from "../../../controller/SampleWorkloadController";
 import "../../../styles.scss";
@@ -15,10 +23,13 @@ import "../../../styles.scss";
 
 export function MessageBoxExample(props: TabContentProps) {
     const { workloadClient } = props
-    const [apiDialogMsgboxTitle, setApiDialogMsgboxTitle] = useState<string>("");
-    const [apiDialogMsgboxContent, setApiDialogMsgboxContent] = useState<string>("");
-    const [apiDialogMsgboxLink, setApiDialogMsgboxLink] = useState<string>("");
-    const [apiDialogMsgboxButtonCount, setApiDialogMsgboxButtonCount] = useState<number>(0);
+    const dispatch = useDispatch();
+    const {
+        apiDialogMsgboxTitle,
+        apiDialogMsgboxContent,
+        apiDialogMsgboxLink,
+        apiDialogMsgboxButtonCount,
+    } = useSelector((state: RootState) => state.actionDialog);
     const msgboxButtonCountOptions = ["0", "1", "2", "3"];
 
     async function onCallOpenMessageBox() {
@@ -46,7 +57,7 @@ export function MessageBoxExample(props: TabContentProps) {
                     size="small"
                     placeholder="Title"
                     value={apiDialogMsgboxTitle}
-                    onChange={(e) => setApiDialogMsgboxTitle(e.target.value)}
+                    onChange={(e) => dispatch(updateMessageBoxTitle(e.target.value))}
                 />
             </Field>
             <Field
@@ -58,7 +69,7 @@ export function MessageBoxExample(props: TabContentProps) {
                     size="small"
                     placeholder="Content..."
                     value={apiDialogMsgboxContent}
-                    onChange={(e) => setApiDialogMsgboxContent(e.target.value)}
+                    onChange={(e) => dispatch(updateMessageBoxMessage(e.target.value))}
                 />
             </Field>
             <Tooltip
@@ -74,7 +85,7 @@ export function MessageBoxExample(props: TabContentProps) {
                         size="small"
                         placeholder="Link"
                         value={apiDialogMsgboxLink}
-                        onChange={(e) => setApiDialogMsgboxLink(e.target.value)}
+                        onChange={(e) => dispatch(updateMessageBoxLink(e.target.value))}
                     />
                 </Field>
             </Tooltip>
@@ -82,7 +93,7 @@ export function MessageBoxExample(props: TabContentProps) {
                 placeholder="Buttons count"
                 value={apiDialogMsgboxButtonCount.toString()}
                 onOptionSelect={(_, opt) =>
-                    setApiDialogMsgboxButtonCount(Number.parseInt(opt.optionValue))
+                    dispatch(updateButtonCount(parseInt(opt.optionValue)))
                 }
             >
                 {msgboxButtonCountOptions.map((option) => (

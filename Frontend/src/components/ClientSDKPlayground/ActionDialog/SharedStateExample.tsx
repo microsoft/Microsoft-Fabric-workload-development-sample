@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useDispatch, useSelector } from "react-redux";
 import { Field, Input, Button } from '@fluentui/react-components';
 import { PanelRightExpand20Regular } from '@fluentui/react-icons';
+import { RootState } from "../../../ClientSDKPlaygroundStore/Store";
+import { setLocalSharedStateMessage } from "../../../ClientSDKPlaygroundStore/actionDialogSlice";
 import { callDialogOpen } from "../../../controller/SampleWorkloadController";
 import { TabContentProps } from '../../../models/SampleWorkloadModel';
 import { SharedState } from "src/App";
@@ -9,9 +12,11 @@ import "../../../styles.scss";
 
 export function SharedStateExample(props: TabContentProps) {
     const { workloadClient, sampleWorkloadName } = props;
-    const [localSharedStateMessage, setLocalSharedStateMessage] = useState<string>("");
+    const dispatch = useDispatch();
     const sharedState = workloadClient.state.sharedState as SharedState;
-    sharedState.message = "";
+    const localSharedStateMessage = useSelector(
+        (state: RootState) => state.actionDialog.sharedStateMessage
+    );
 
     async function onCallSharedStatePage() {
         sharedState.message = localSharedStateMessage;
@@ -25,7 +30,7 @@ export function SharedStateExample(props: TabContentProps) {
             workloadClient);
 
         if (localSharedStateMessage != sharedState.message) {
-            setLocalSharedStateMessage(sharedState.message);
+            dispatch(setLocalSharedStateMessage(localSharedStateMessage));
         }
     }
 
@@ -40,7 +45,7 @@ export function SharedStateExample(props: TabContentProps) {
                     size="small"
                     placeholder="Message"
                     value={localSharedStateMessage}
-                    onChange={(e) => setLocalSharedStateMessage(e.target.value)}
+                    onChange={(e) => dispatch(setLocalSharedStateMessage(e.target.value))}
                     data-testid="shared-state-input"
                 />
             </Field>

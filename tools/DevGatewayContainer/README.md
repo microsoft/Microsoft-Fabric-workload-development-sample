@@ -35,7 +35,7 @@ cp sample.env .env
 Run the following command to build and run the Docker image:
 
 ```sh
-docker compose up
+docker compose up --build
 ```
 
 ### 3. Authenticate to the DevGateway

@@ -1,5 +1,5 @@
-import { WorkloadItem, ItemJobActionContext, ItemJobActionResult } from "./models/SampleWorkloadModel";
-import { ItemJobStatus, GetItemResult } from "@ms-fabric/workload-client";
+import { WorkloadItem } from "./models/SampleWorkloadModel";
+import { ItemJobStatus, GetItemResult, ItemJobActionResult, ItemJobDetailSection, ItemJobData } from "@ms-fabric/workload-client";
 import i18n from 'i18next';
 
 export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult): WorkloadItem<T> {
@@ -43,40 +43,40 @@ export const jobTypeDisplayNames: Record<string, string> = {
     [instantJob]: 'Instant Job'
 };
 
-export function getJobDetailsPane(jobContext: ItemJobActionContext, hostUrl: string): ItemJobActionResult {
-    const jobDetailsSection = 
+export function getJobDetailsPane(jobData: ItemJobData): ItemJobActionResult {
+    const jobDetailsSection: ItemJobDetailSection = 
     {
         title: 'Job Details',
         data: [
             {
                 label: i18n.t("Job_Type"),
-                value: jobTypeDisplayNames[jobContext.itemJobType],
+                value: jobTypeDisplayNames[jobData.itemJobType],
                 type: 'text',
             },
             {
                 label: i18n.t("Job_Status"),
-                value: ItemJobStatus[jobContext.status],
+                value: ItemJobStatus[jobData.status],
                 type: 'text',
             },
             {
                 label: i18n.t("Job_Start_Time_UTC"),
-                value: jobContext.jobStartTimeUtc,
+                value: jobData.jobStartTimeUtc?.toString(),
                 type: 'text',
             },
             {
                 label: i18n.t("Job_End_Time_UTC"),
-                value: jobContext.jobEndTimeUtc,
+                value: jobData.jobEndTimeUtc?.toString(),
                 type: 'text',
             },
             {
                 label: i18n.t("Job_Instance_ID"),
-                value: jobContext.itemJobInstanceId,
+                value: jobData.itemJobInstanceId,
                 type: 'text',
             }                    
         ]
     }
 
-    const itemDetailsSection = 
+    const itemDetailsSection: ItemJobDetailSection = 
     {
         title: 'Item Details',
         data: [
@@ -87,22 +87,22 @@ export function getJobDetailsPane(jobContext: ItemJobActionContext, hostUrl: str
             },
             {
                 label: i18n.t("Item_Name"),
-                value: jobContext.itemName,
+                value: jobData.itemName,
                 type: 'text',
             },
             {
                 label: i18n.t("Item_ID"),
-                value: jobContext.itemObjectId,
+                value: jobData.itemObjectId,
                 type: 'text',
             },
             {
                 label: i18n.t("Workspace_Name"),
-                value: jobContext.workspaceName,
+                value: jobData.workspaceName,
                 type: 'text',
             },
             {
                 label: i18n.t("Workspace_ID"),
-                value: jobContext.workspaceObjectId,
+                value: jobData.workspaceObjectId,
                 type: 'text',
             },
             // IMPORTANT: Use the following item(as is, keeping the label and type) to show the item editor link

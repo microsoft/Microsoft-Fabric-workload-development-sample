@@ -24,12 +24,6 @@ namespace Boilerplate.Items
         where TItem : ItemBase<TItem, TItemMetadata, TItemClientMetadata>
         where TItemMetadata : class
     {
-        protected static readonly JsonSerializerOptions ClientSerializationOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Converters = { new JsonStringEnumConverter() },
-        };
-
         public Guid TenantObjectId { get; private set; }
 
         public Guid WorkspaceObjectId { get; private set; }
@@ -148,15 +142,30 @@ namespace Boilerplate.Items
         public abstract Task<ItemJobInstanceState> GetJobState(string jobType, Guid jobInstanceId);
 
         public async Task CancelJob(string jobType, Guid jobInstanceId) {
-            var jobMetadata = new ItemJobMetadata
+            ItemJobMetadata jobMetadata;
+            if (!ItemMetadataStore.ExistsJob(TenantObjectId, ItemObjectId, jobInstanceId))
             {
-                JobType = jobType,
-                JobInstanceId = jobInstanceId,
-                Status = JobInstanceStatus.Cancelled,
-                ErrorDetails = null,
-                CanceledTime = DateTime.UtcNow,
-            };
-            await ItemMetadataStore.UpsertJobCancel(TenantObjectId, ItemObjectId, jobType, jobInstanceId, jobMetadata);
+                // Demonstrating a way to handle removed or missing job metadata
+                Logger.LogWarning($"{nameof(CancelJob)} - Recreating missing job {jobInstanceId} metadata in tenant {TenantObjectId} item {ItemObjectId}.");
+                jobMetadata = new ItemJobMetadata
+                {
+                    JobType = jobType,
+                    JobInstanceId = jobInstanceId
+                };
+            }
+            else
+            {
+                jobMetadata = await ItemMetadataStore.LoadJob(TenantObjectId, ItemObjectId, jobInstanceId);
+            }
+
+            if (jobMetadata.IsCanceled)
+            {
+                return;
+            }
+
+            jobMetadata.CanceledTime = DateTime.UtcNow;
+
+            await ItemMetadataStore.UpsertJob(TenantObjectId, ItemObjectId, jobInstanceId, jobMetadata);
         }
 
         protected async Task SaveChanges()

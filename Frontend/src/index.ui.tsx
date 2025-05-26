@@ -3,13 +3,13 @@ import React from "react";
 import { createRoot } from 'react-dom/client';
 
 import { FluentProvider } from "@fluentui/react-components";
-import { createWorkloadClient, InitParams } from '@ms-fabric/workload-client';
+import { createWorkloadClient, InitParams, ItemTabActionContext } from '@ms-fabric/workload-client';
 
 import { fabricLightTheme } from "./theme";
 import { App } from "./App";
 import { convertGetItemResultToWorkloadItem } from "./utils";
 import { callItemGet } from "./controller/SampleWorkloadController";
-import { ItemPayload, ItemTabActionContext } from "./models/SampleWorkloadModel";
+import { ItemPayload } from "./models/SampleWorkloadModel";
 
 export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();

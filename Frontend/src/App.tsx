@@ -1,4 +1,6 @@
 import React from "react";
+import { Provider } from "react-redux";
+import { ClientSDKStore } from "./ClientSDKPlaygroundStore/Store";
 import { Route, Router, Switch } from "react-router-dom";
 import { History } from "history";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
@@ -77,7 +79,9 @@ export function App({ history, workloadClient }: AppProps) {
                     workloadClient={workloadClient} />
             </Route>
             <Route path="/client-sdk-playground">
-                <ClientSDKPlayground workloadClient={workloadClient} />
+                <Provider store={ClientSDKStore}>
+                    <ClientSDKPlayground workloadClient={workloadClient} />
+                </Provider>
             </Route>
             <Route path="/sample-page">
                 <SamplePage workloadClient={workloadClient} />

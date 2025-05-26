@@ -13,6 +13,7 @@ using Fabric_Extension_BE_Boilerplate.Exceptions;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -81,6 +82,14 @@ namespace Boilerplate.Items
                 return;
             }
 
+            var jobMetadata = new ItemJobMetadata
+            {
+                JobInstanceId = jobInstanceId,
+                JobType = jobType,
+                UseOneLake = _metadata.UseOneLake
+            };
+            await ItemMetadataStore.UpsertJob(TenantObjectId, ItemObjectId, jobInstanceId, jobMetadata);
+
             var token = await AuthenticationService.GetAccessTokenOnBehalfOf(AuthorizationContext, OneLakeConstants.OneLakeScopes);
 
             var op1 = _metadata.Operand1;
@@ -95,9 +104,21 @@ namespace Boilerplate.Items
                 await Task.Delay(TimeSpan.FromSeconds(60 * 8));
             }
 
+            try
+            {
+                // Reload job metadata to check later if the job was cancelled
+                jobMetadata = await ItemMetadataStore.LoadJob(TenantObjectId, ItemObjectId, jobInstanceId);
+            }
+            catch (FileNotFoundException exc)
+            {
+                // Demonstrating a way to recover job metadata if it has been deleted.
+                Logger.LogWarning(exc, $"{nameof(ExecuteJob)} - Recreating missing job {jobInstanceId} metadata in tenant {TenantObjectId} item {ItemObjectId}.");
+                await ItemMetadataStore.UpsertJob(TenantObjectId, ItemObjectId, jobInstanceId, jobMetadata);
+            }
+
             // Write result to Lakehouse if job is not cancelled
-            if (!ItemMetadataStore.JobCancelRequestExists(TenantObjectId, ItemObjectId, jobInstanceId)) {
-                var filePath = GetCalculationResultFilePath(jobType, jobInstanceId);
+            if (!jobMetadata.IsCanceled) {
+                var filePath = GetCalculationResultFilePath(jobMetadata);
                 await OneLakeClientService.WriteToOneLakeFile(token, filePath, result);
                 
                 _metadata.LastCalculationResultLocation = filePath;
@@ -115,15 +136,21 @@ namespace Boilerplate.Items
                 };
             }
 
-            var token = await AuthenticationService.GetAccessTokenOnBehalfOf(AuthorizationContext, OneLakeConstants.OneLakeScopes);
+            if (!ItemMetadataStore.ExistsJob(TenantObjectId, ItemObjectId, jobInstanceId))
+            {
+                Logger.LogError($"{nameof(GetJobState)} - Job {jobInstanceId} metadata does not exist in tenant {TenantObjectId} item {ItemObjectId}.");
+                return new ItemJobInstanceState() { Status = JobInstanceStatus.Failed };
+            }
 
-            var filePath = GetCalculationResultFilePath(jobType, jobInstanceId);
-            var fileExists = await OneLakeClientService.CheckIfFileExists(token, filePath);
-
-            if (ItemMetadataStore.JobCancelRequestExists(TenantObjectId, ItemObjectId, jobInstanceId))
+            var jobMetadata = await ItemMetadataStore.LoadJob(TenantObjectId, ItemObjectId, jobInstanceId);
+            if (jobMetadata.IsCanceled)
             {
                 return new ItemJobInstanceState { Status = JobInstanceStatus.Cancelled };
             }
+
+            var filePath = GetCalculationResultFilePath(jobMetadata);
+            var token = await AuthenticationService.GetAccessTokenOnBehalfOf(AuthorizationContext, OneLakeConstants.OneLakeScopes);
+            var fileExists = await OneLakeClientService.CheckIfFileExists(token, filePath);
 
             return new ItemJobInstanceState
             {
@@ -131,8 +158,9 @@ namespace Boilerplate.Items
             };
         }
 
-        private string GetCalculationResultFilePath(string jobType, Guid jobInstanceId)
+        private string GetCalculationResultFilePath(ItemJobMetadata jobMetadata)
         {
+            var jobInstanceId = jobMetadata.JobInstanceId;
             var typeToFileName = new Dictionary<string, string>
             {
                 { Item1JobType.ScheduledJob, $"CalculationResult_{jobInstanceId}.txt" },
@@ -140,11 +168,11 @@ namespace Boilerplate.Items
                 { Item1JobType.LongRunningCalculateAsText, $"CalculationResult_{jobInstanceId}.txt" },
                 { Item1JobType.CalculateAsParquet, $"CalculationResult_{jobInstanceId}.parquet" }
             };
-            typeToFileName.TryGetValue(jobType, out var fileName);
+            typeToFileName.TryGetValue(jobMetadata.JobType, out var fileName);
 
             if (fileName != null)
             {
-                return _metadata.UseOneLake 
+                return jobMetadata.UseOneLake
                     ? OneLakeClientService.GetOneLakeFilePath(WorkspaceObjectId,ItemObjectId, fileName)
                     : OneLakeClientService.GetOneLakeFilePath(_metadata.Lakehouse.WorkspaceId, _metadata.Lakehouse.Id, fileName);
             }

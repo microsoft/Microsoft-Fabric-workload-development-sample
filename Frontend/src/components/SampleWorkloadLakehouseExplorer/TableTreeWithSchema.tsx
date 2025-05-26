@@ -23,7 +23,7 @@ export function TableTreeWithSchema(props: LakehouseExplorerTablesTreeProps) {
                         <Tooltip
                         relationship="label"
                         content={schema}>
-                            <TreeItemLayout id={schema} className="lvl1" iconBefore={<ArrowCircleDownSplitRegular />}>
+                            <TreeItemLayout id={schema} iconBefore={<ArrowCircleDownSplitRegular />}>
                                 {schema}
                             </TreeItemLayout>
                         </Tooltip>
@@ -39,7 +39,7 @@ export function TableTreeWithSchema(props: LakehouseExplorerTablesTreeProps) {
                                     relationship='label'
                                     content={table.name}>
                                         <TreeItemLayout
-                                            className={"lvl2 " + (table.isSelected ? "selected" : "")}
+                                            className={(table.isSelected ? "selected" : "")}
                                             iconBefore={<Table20Regular />}>
                                             {table.name}
                                         </TreeItemLayout>
