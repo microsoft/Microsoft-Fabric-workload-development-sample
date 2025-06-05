@@ -1,11 +1,12 @@
 {
     "name": "Product",
+    "version": "1.100",
     "displayName": "Workload_Display_Name",
     "fullDisplayName": "Workload_Full_Display_Name",
     "description": "Workload_Description",
-    "favicon": "assets/images/briefcase.png",
+    "favicon": "assets/images/calculator.png",
     "icon": {
-    "name": "assets/images/briefcase.png"
+    "name": "assets/images/calculator.png"
     },
     "homePage": {
       "learningMaterials": [
@@ -47,7 +48,7 @@
             {
                 "title": "NewSection_Custom_Action_Title",
                 "icon": {
-                  "name": "assets/images/briefcase.png"
+                  "name": "assets/images/calculator.png"
                 },
                 "onClick": {
                   "action": "open.createSampleWorkloadFrontendOnly"
@@ -65,10 +66,10 @@
           "title": "CreateHub_Card_1_Title",
           "description": "CreateHub_Card_1_Description",
           "icon": {
-            "name": "assets/images/dial.png"
+            "name": "assets/images/calculator.png"
           },
           "icon_small": {
-            "name": "assets/images/dial.png"
+            "name": "assets/images/calculator.png"
           },
           "onClick": {
             "action": "open.createSampleWorkload"
@@ -80,6 +81,27 @@
             "workspace-plus-new-teams"
           ],
           "itemType": "SampleWorkloadItem"
+        },
+        {
+          "title": "CreateHub_Card_2_Title",
+          "description": "CreateHub_Card_2_Description",
+          "icon": {
+            "name": "assets/images/calculator.png"
+          },
+          "icon_small": {
+            "name": "assets/images/calculator.png"
+          },
+          "availableIn": [
+            "home",
+            "create-hub",
+            "workspace-plus-new",
+            "workspace-plus-new-teams"
+          ],
+          "itemType": "SampleWorkloadItem",
+          "createItemDialogConfig": {
+            "onCreationFailure": { "action": "item.onCreationFailure" },
+            "onCreationSuccess": { "action": "item.onCreationSuccess" }
+          }
         }
       ]
     },

@@ -16,7 +16,6 @@ import {
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
-  MessageBarActions,
   RadioGroupOnChangeData
 } from "@fluentui/react-components";
 import {
@@ -31,33 +30,33 @@ import {
   callThemeOnChange,
   callDatahubOpen,
   callItemGet,
-  callItemUpdate,
-  callItemDelete,
-  callGetItem1SupportedOperators,
-  callItem1DoubleResult,
-  isOneLakeSupported,
-  getLastResult,
-  callOpenSettings
+  callOpenSettings,
+  callPublicItemGetDefinition,
+  callPublicItemUpdateDefinition
 } from "../../controller/SampleWorkloadController";
 import { Ribbon } from "../SampleWorkloadRibbon/SampleWorkloadRibbon";
-import { convertGetItemResultToWorkloadItem } from "../../utils";
+import { calculateResult, convertGetItemResultToWorkloadItem } from "../../utils";
 import {
   Item1ClientMetadata,
   GenericItem,
   ItemPayload,
   UpdateItemPayload,
   WorkloadItem,
+  DefinitionPath,
+  Item1Operator,
 } from "../../models/SampleWorkloadModel";
 import "./../../styles.scss";
 import { ItemMetadataNotFound } from "../../models/WorkloadExceptionsModel";
 import { LoadingProgressBar } from "../LoadingIndicator/LoadingProgressBar";
+import { getOneLakeFile, getOneLakeFilePath, writeToOneLakeFile } from "../../controller/OneLakeController";
 
 
 export function SampleWorkloadEditor(props: PageProps) {
-  const sampleWorkloadBEUrl = process.env.WORKLOAD_BE_URL;
   const { workloadClient } = props;
   const pageContext = useParams<ContextProps>();
   const { pathname } = useLocation();
+  const supportedOperators = ['Undefined', 'Add', 'Subtract', 'Multiply', 'Divide', 'Random'];
+  const calculationFileName = "calculationResult.txt";
 
   // React state for WorkloadClient APIs
   const [operand1ValidationMessage, setOperand1ValidationMessage] =
@@ -72,14 +71,11 @@ export function SampleWorkloadEditor(props: PageProps) {
   const [operator, setOperator] = useState<string | null>(null);
   const [isDirty, setDirty] = useState<boolean>(false);
   const [invalidOperands, setInvalidOperands] = useState<boolean>(false);
-  const [supportedOperators, setSupportedOperators] = useState<string[]>([]);
-  const [hasLoadedSupportedOperators, setHasLoadedSupportedOperators] = useState(false);
-  const [canUseOneLake, setCanUseOneLake] = useState<boolean>(false);
+  const canUseOneLake = true;
   const [storageName, setStorageName] = useState<string>("Lakehouse");
   const [calculationResult, setCalculationResult] = useState<string>("");
-  const [isLoadingOperators, setIsLoadingOperators] = useState<boolean>(true);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
-  const isLoading = isLoadingOperators || isLoadingData;
+  const isLoading = isLoadingData;
   const [itemEditorErrorMessage, setItemEditorErrorMessage] = useState<string>("");
 
   const INT32_MIN = -2147483648;
@@ -99,47 +95,25 @@ export function SampleWorkloadEditor(props: PageProps) {
     callThemeOnChange(workloadClient);
   }, []);
 
-  // Effect to load supported operators once on component mount
   useEffect(() => {
-    loadSupportedOperators();
-  }, []);
+    loadDataFromUrl(pageContext, pathname);
+  }, [pageContext, pathname]);
 
-  useEffect(() => {
-    if (hasLoadedSupportedOperators) {
-      loadDataFromUrl(pageContext, pathname);
+  async function loadCalculationResult(item: WorkloadItem<ItemPayload>): Promise<void> {
+    if (!item.extendedMetdata?.item1Metadata) {
+      console.log("metadata is not defined.");
+      return;
     }
-  }, [hasLoadedSupportedOperators, pageContext, pathname]);
-
-  async function loadCanUseOneLake(workspaceId: string, itemId: string): Promise<void> {
     try {
-      const oneLakeSupported = await isOneLakeSupported(sampleWorkloadBEUrl, workloadClient, workspaceId, itemId);
-      setCanUseOneLake(oneLakeSupported);
-    } catch (error) {
-      console.error(`Error loading oneLakeSupported: ${error}`);
-    }
-  }
-
-  async function loadCalculationResult(itemId: string): Promise<void> {
-    try {
-      const calcaulationResult = await getLastResult(sampleWorkloadBEUrl, workloadClient, itemId);
-      setCalculationResult(calcaulationResult);
+      const fileName = `${calculationFileName}-${item.id}.txt`;
+      const itemMetadata = item.extendedMetdata.item1Metadata;
+      const filePath = itemMetadata?.useOneLake
+        ? getOneLakeFilePath(item.workspaceId, item.id, fileName)
+        : getOneLakeFilePath(itemMetadata.lakehouse?.workspaceId, itemMetadata?.lakehouse?.id, fileName);
+      const result = await getOneLakeFile(workloadClient, filePath);
+      setCalculationResult(result);
     } catch (error) {
       console.error(`Error loading loadCalculationResult: ${error}`);
-    }
-  }
-
-  async function loadSupportedOperators(): Promise<void> {
-    setIsLoadingOperators(true);
-    try {
-      const operators = await callGetItem1SupportedOperators(sampleWorkloadBEUrl, workloadClient);
-      setSupportedOperators(operators);
-      setHasLoadedSupportedOperators(true);
-    } catch (error) {
-      console.error(`Error loading supported operators: ${error}`);
-      setHasLoadedSupportedOperators(false);
-    }
-    finally {
-      setIsLoadingOperators(false);
     }
   }
 
@@ -147,6 +121,7 @@ export function SampleWorkloadEditor(props: PageProps) {
     //clears the data after navigation
     setSelectedLakehouse(undefined);
     setSampleItem(undefined);
+    setCalculationResult("");
     return;
   }
 
@@ -196,7 +171,7 @@ export function SampleWorkloadEditor(props: PageProps) {
     setDirty(true);
   }
 
-  function canDoubleOperands(operand1: number, operand2: number) {
+  function canCalculateOperands(operand1: number, operand2: number) {
     const isOperand1Valid = isValidOperand(operand1);
     const isOperand2Valid = isValidOperand(operand2);
     if (!isOperand1Valid) {
@@ -208,19 +183,23 @@ export function SampleWorkloadEditor(props: PageProps) {
     return isOperand1Valid && isOperand2Valid;
   }
 
-  async function onDoubleButtonClick() {
-    if (sampleItem && canDoubleOperands(operand1*2, operand2*2)) {
-      const result = await callItem1DoubleResult(
-        sampleWorkloadBEUrl,
-        workloadClient,
-        sampleItem.workspaceId,
-        sampleItem.id
-      );
-      if (result) {
-        // Update both operands
-        setOperand1(result.Operand1);
-        setOperand2(result.Operand2);
-      }
+  async function onCalculateAndSaveButtonClick() {
+    if (!canCalculateOperands(operand1, operand2)) {
+      setInvalidOperands(true);
+      return;
+    }
+    try {
+      const fileName = `${calculationFileName}-${sampleItem.id}.txt`;
+      const result = calculateResult(operand1, operand2, Item1Operator[operator as keyof typeof Item1Operator]);
+      const filePath = storageName === "OneLake"
+        ? getOneLakeFilePath(sampleItem.workspaceId, sampleItem.id, fileName)
+        : getOneLakeFilePath(selectedLakehouse.workspaceId, selectedLakehouse.id, fileName);
+      await writeToOneLakeFile(workloadClient, filePath, result.toString());
+      setCalculationResult(result.toString());
+    } catch (error: Error | any) {
+      console.error(`Error calculating result: ${error.message}`);
+      setCalculationResult("Error in calculation");
+      return;
     }
   }
 
@@ -236,16 +215,17 @@ export function SampleWorkloadEditor(props: PageProps) {
           pageContext.itemObjectId,
           workloadClient
         );
-        const item = convertGetItemResultToWorkloadItem<ItemPayload>(getItemResult);
+        const getItemDefinitionResult = await callPublicItemGetDefinition(pageContext.itemObjectId, workloadClient);
+        const item = convertGetItemResultToWorkloadItem<ItemPayload>(getItemResult, getItemDefinitionResult);
         setSampleItem(item);
         setSelectedTab("home");
 
         // load extendedMetadata
         const item1Metadata: Item1ClientMetadata =
-          item.extendedMetdata.item1Metadata;
+          item.extendedMetdata?.item1Metadata;
         setSelectedLakehouse(item1Metadata?.lakehouse);
-        setOperand1(item1Metadata?.operand1);
-        setOperand2(item1Metadata?.operand2);
+        setOperand1(item1Metadata?.operand1 ?? 0);
+        setOperand2(item1Metadata?.operand2 ?? 0);
         setOperand1ValidationMessage("");
         setOperand2ValidationMessage("");
         setInvalidOperands(false);
@@ -253,8 +233,9 @@ export function SampleWorkloadEditor(props: PageProps) {
         const loadedOperator = item1Metadata?.operator;
         const isValidOperator = loadedOperator && supportedOperators.includes(loadedOperator);
         setOperator(isValidOperator ? loadedOperator : null);
-        await loadCanUseOneLake(item.workspaceId, item.id);
-        await loadCalculationResult(item.id);
+        if (!pageContext.source) {
+          await loadCalculationResult(item);
+        }
         setItemEditorErrorMessage("");
       } catch (error) {
         clearItemData();
@@ -292,7 +273,13 @@ export function SampleWorkloadEditor(props: PageProps) {
       },
     };
 
-    var successResult = await callItemUpdate(sampleItem.id, payload, workloadClient);
+    var successResult = await callPublicItemUpdateDefinition(
+      sampleItem.id,
+      [
+        { payloadPath: DefinitionPath.ItemMetadata, payloadData: payload }
+      ],
+      workloadClient
+    )
     setDirty(!successResult);
   }
 
@@ -303,15 +290,11 @@ export function SampleWorkloadEditor(props: PageProps) {
     }
   }
 
-  async function deleteItem(itemId: string) {
-    await callItemDelete(itemId, workloadClient);
-  }
-
   function getItemObjectId() {
     return sampleItem?.id || pageContext.itemObjectId;
   }
 
-  function isDisabledDoubleResultButton(): boolean {
+  function isDisabledCalculateButton(): boolean {
     return isDirty || operator == "0" || sampleItem == undefined;
   }
 
@@ -354,9 +337,9 @@ export function SampleWorkloadEditor(props: PageProps) {
       />
 
       <Stack className="main">
-        {["jobs", "home"].includes(selectedTab as string) && (
+        {["home"].includes(selectedTab as string) && (
           <span>
-            <h2>Sample Item Editor</h2>
+            <h2>Lightweight Sample Item Editor</h2>
             {/* Crud item API usage example */}
             {itemEditorErrorMessage && (
               <MessageBar intent="error">
@@ -365,11 +348,6 @@ export function SampleWorkloadEditor(props: PageProps) {
                     You cannot edit this item.
                   </MessageBarTitle>
                   {itemEditorErrorMessage}
-                  <MessageBarActions>
-                    <Button onClick={() => deleteItem(pageContext.itemObjectId)}>
-                      Delete Item
-                    </Button>
-                  </MessageBarActions>
                 </MessageBarBody>
               </MessageBar>
             )}
@@ -439,10 +417,10 @@ export function SampleWorkloadEditor(props: PageProps) {
                     <Tooltip
                       content={getOneLakeTooltipText("Item folder in OneLake", canUseOneLake)}
                       relationship="label">
-                      <Radio 
-                        value="OneLake" 
-                        label="Item folder in OneLake" 
-                        disabled={!canUseOneLake} 
+                      <Radio
+                        value="OneLake"
+                        label="Item folder in OneLake"
+                        disabled={!canUseOneLake}
                         data-testid="onelake-radiobutton-tooltip" />
                     </Tooltip>
                   </RadioGroup>
@@ -504,7 +482,7 @@ export function SampleWorkloadEditor(props: PageProps) {
                       key={pageContext.itemObjectId}
                       data-testid="operator-combobox"
                       placeholder="Operator"
-                      value={operator ?? ''}
+                      value={operator ? (operator == "Undefined" ? "" : operator) : ""}
                       onOptionSelect={(_, opt) =>
                         onOperatorInputChanged(opt.optionValue)
                       }
@@ -517,10 +495,10 @@ export function SampleWorkloadEditor(props: PageProps) {
                   <Button
                     appearance="primary"
                     icon={<TriangleRight20Regular />}
-                    disabled={isDisabledDoubleResultButton()}
-                    onClick={() => onDoubleButtonClick()}
+                    disabled={isDisabledCalculateButton()}
+                    onClick={() => onCalculateAndSaveButtonClick()}
                   >
-                    Double the operands
+                    Calculate & Save Result
                   </Button>
                 </div>
               </div>

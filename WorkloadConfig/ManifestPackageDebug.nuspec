@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <!-- Package information -->
+    <id>ManifestPackage</id>
+    <version>1.0.0</version>
+    <authors>author</authors>
+    <owners>owner</owners>
+    <description>A NuGet package that holds the workload and frontend manifests.</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+  </metadata>
+  <files>
+    <!-- Include the XML and FE files -->
+    <file src="Packages\manifest\WorkloadPath" target="BE\WorkloadManifest.xml" />
+    <file src="Packages\manifest\Item\Item1.xml" target="BE\Item1.xml" />
+    <file src="..\Frontend\Package\*" target="FE" />
+    <file src="..\Frontend\Package\assets\**" target="FE\assets" />
+  </files>
+</package>

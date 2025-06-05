@@ -8,9 +8,10 @@ const fs = require("fs").promises;
 console.log('******************** Build: Environment Variables *******************');
 console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
 console.log('process.env.WORKLOAD_BE_URL: ' + process.env.WORKLOAD_BE_URL);
-console.log('process.env.DEV_AAD_CONFIG_AUDIENCE: ' + process.env.DEV_AAD_CONFIG_AUDIENCE);
-console.log('process.env.DEV_AAD_CONFIG_APPID: ' + process.env.DEV_AAD_CONFIG_APPID);
-console.log('process.env.DEV_AAD_CONFIG_REDIRECT_URI: ' + process.env.DEV_AAD_CONFIG_REDIRECT_URI);
+console.log('process.env.DEV_AAD_CONFIG_BE_AUDIENCE: ' + process.env.DEV_AAD_CONFIG_BE_AUDIENCE);
+console.log('process.env.DEV_AAD_CONFIG_BE_APPID: ' + process.env.DEV_AAD_CONFIG_BE_APPID);
+console.log('process.env.DEV_AAD_CONFIG_BE_REDIRECT_URI: ' + process.env.DEV_AAD_CONFIG_BE_REDIRECT_URI);
+console.log('process.env.DEV_AAD_CONFIG_FE_APPID: ' + process.env.DEV_AAD_CONFIG_FE_APPID);
 console.log('*********************************************************************');
 
 module.exports = {
@@ -90,17 +91,20 @@ module.exports = {
                         'Access-Control-Allow-Methods': 'GET',
                         'Access-Control-Allow-Headers': 'Content-Type, Authorization'
                     });
-                
+
                     const devParameters = {
                         name: process.env.WORKLOAD_NAME,
                         url: "http://127.0.0.1:60006",
                         devAADAppConfig: {
-                            audience: process.env.DEV_AAD_CONFIG_AUDIENCE,
-                            appId: process.env.DEV_AAD_CONFIG_APPID,
-                            redirectUri: process.env.DEV_AAD_CONFIG_REDIRECT_URI
+                            audience: process.env.DEV_AAD_CONFIG_BE_AUDIENCE,
+                            appId: process.env.DEV_AAD_CONFIG_BE_APPID,
+                            redirectUri: process.env.DEV_AAD_CONFIG_BE_REDIRECT_URI
+                        },
+                        devAADFEAppConfig: {
+                            appId: process.env.DEV_AAD_CONFIG_FE_APPID,
                         }
                     };
-                
+
                     res.end(JSON.stringify({ extension: devParameters }));
                 });
 
@@ -109,7 +113,7 @@ module.exports = {
                     try {
                         // Check if the file exists
                         await fs.access(filePath);
-                        
+
                         res.status(200).set({
                             'Content-Type': 'application/octet-stream',
                             'Content-Disposition': `attachment; filename="ManifestPackageRelease.1.0.0.nupkg"`,
@@ -117,7 +121,7 @@ module.exports = {
                             'Access-Control-Allow-Methods': 'GET',
                             'Access-Control-Allow-Headers': 'Content-Type, Authorization'
                         });
-                        
+
                         res.sendFile(filePath);
                     } catch (err) {
                         console.error(`❌ File not found: ${err.message}`);

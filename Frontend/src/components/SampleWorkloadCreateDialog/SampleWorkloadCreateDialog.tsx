@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Stack } from "@fluentui/react";
 import { Field, Input, Button, Checkbox } from "@fluentui/react-components";
 import { PageProps, ContextProps } from "../../App";
-import { callAuthAcquireAccessToken, callDialogClose, callItemCreate, callPageOpen } from "../../controller/SampleWorkloadController";
+import { callDialogClose, callItemCreate, callPageOpen } from "../../controller/SampleWorkloadController";
 import { GenericItem, CreateItemPayload } from "../../models/SampleWorkloadModel";
 
 interface SaveAsDialogProps extends PageProps {
@@ -33,9 +33,9 @@ export function SaveAsDialog({ workloadClient, isImmediateSave }: SaveAsDialogPr
             try {
                 setIsSaveInProgress(true);
                 setIsSaveDisabled(true);
-                
+                console.log(promptFullConsent);
                 // raise consent dialog for the user
-                await callAuthAcquireAccessToken(workloadClient, null /*additionalScopesToConsent*/, null /*claimsForConditionalAccessPolicy*/, promptFullConsent);
+                //await callAuthAcquireAccessToken(workloadClient, null /*additionalScopesToConsent*/, null /*claimsForConditionalAccessPolicy*/, promptFullConsent);
 
                 createResult = await handleCreateSampleItem(pageContext.workspaceObjectId, displayName, description);
             } finally {

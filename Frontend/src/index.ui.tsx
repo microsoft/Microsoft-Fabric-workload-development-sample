@@ -8,7 +8,7 @@ import { createWorkloadClient, InitParams, ItemTabActionContext } from '@ms-fabr
 import { fabricLightTheme } from "./theme";
 import { App } from "./App";
 import { convertGetItemResultToWorkloadItem } from "./utils";
-import { callItemGet } from "./controller/SampleWorkloadController";
+import { callItemGet, callPublicItemGetDefinition } from "./controller/SampleWorkloadController";
 import { ItemPayload } from "./models/SampleWorkloadModel";
 
 export async function initialize(params: InitParams) {
@@ -25,7 +25,8 @@ export async function initialize(params: InitParams) {
                         id,
                         workloadClient
                     );
-                    const item = convertGetItemResultToWorkloadItem<ItemPayload>(getItemResult);
+                    const getItemDefinitionResult = await callPublicItemGetDefinition(id, workloadClient);
+                    const item = convertGetItemResultToWorkloadItem<ItemPayload>(getItemResult, getItemDefinitionResult);
                     return {title: item.displayName};
                 } catch (error) {
                     console.error(

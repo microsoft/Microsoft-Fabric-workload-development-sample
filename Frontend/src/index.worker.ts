@@ -13,9 +13,11 @@ import {
 import * as Controller from './controller/SampleWorkloadController';
 import { getJobDetailsPane } from './utils';
 import i18next from 'i18next';
+import { ItemCreationFailureData, ItemCreationSuccessData } from './models/SampleWorkloadModel';
 
 export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();
+    const sampleItemEditorPath = "/sample-workload-editor";
     const sampleWorkloadName = process.env.WORKLOAD_NAME;
     const sampleItemType = sampleWorkloadName + ".SampleWorkloadItem";
     const calculateAsText = sampleItemType + ".CalculateAsText";
@@ -41,6 +43,22 @@ export async function initialize(params: InitParams) {
                         hasCloseButton: false
                     },
                 });
+
+            case 'item.onCreationSuccess':
+                const { item: createdItem } = data as ItemCreationSuccessData;
+                await Controller.callPageOpen(sampleWorkloadName, `${sampleItemEditorPath}/${createdItem.objectId}/create`, workloadClient);
+
+                return Promise.resolve({ succeeded: true });
+
+            case 'item.onCreationFailure':
+                const failureData = data as ItemCreationFailureData;
+                await workloadClient.notification.open(
+                    {
+                        title: 'Error creating item',
+                        notificationType: NotificationType.Error,
+                        message: `Failed to create item, error code: ${failureData.errorCode}, result code: ${failureData.resultCode}`
+                    });
+                return;
 
             /**
              * This opens the Frontend-only experience, allowing to experiment with the UI without the need for CRUD operations.
@@ -72,7 +90,7 @@ export async function initialize(params: InitParams) {
                         true /* showNotification */,
                         workloadClient);
                 }
-               
+
             case 'run.instant.job':
                 {
                     const { item } = data as ItemActionContext;

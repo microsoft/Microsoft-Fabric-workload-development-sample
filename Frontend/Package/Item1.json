@@ -6,71 +6,24 @@
       "path": "/sample-workload-editor"
     },
     "icon": {
-      "name": "assets/images/execute.png"
+      "name": "assets/images/calculator.png"
     },
     "activeIcon": {
-      "name": "assets/images/execute.png"
+      "name": "assets/images/calculator.png"
     },
     "contextMenuItems": [
-      {
-        "name": "schedule"
-      },
-      {
-        "name": "recentruns"
-      },
-      {
-        "name": "SampleItemCustomAction",
-        "displayName": "Context_Menu_1_Display_Name",
-        "icon": {
-          "name": "assets/images/execute.png"
-        },
-        "handler": {
-          "action": "run.calculate.job"
-        },
-        "tooltip": "Context_Menu_1_Tooltip"
-      }
     ],
     "quickActionItems": [
-      {
-        "name": "SampleItemCustomAction",
-        "displayName": "Quick_Action_1_Display_Name",
-        "icon": {
-          "name": "assets/images/execute.png"
-        },
-        "handler": {
-          "action": "run.instant.job"
-        },
-        "tooltip": "Quick_Action_1_Tooltip"
-      }
     ],
     "supportedInMonitoringHub": true,
     "supportedInDatahubL1": true,
     "itemJobActionConfig": {
-      "registeredActions": {
-        "detail": {
-          "action": "item.job.detail"
-        },
-        "cancel": {
-          "action": "item.job.cancel"
-        },
-        "retry": {
-          "action": "item.job.retry"
-        }
-      }
     },
     "itemSettings": {
-      "schedule": {
-        "itemJobType": "ScheduledJob",
-        "refreshType": "Refresh"
-      },
       "getItemSettings": {
             "action": "getItemSettings"
-      },
-      "recentRun": {
-        "useRecentRunsComponent": true
       }
     },
-    "itemJobTypes": ["getData", "storeData"],
     "editorTab": {
       "maxInstanceCount": "10",
       "onInit": "sample.tab.onInit",

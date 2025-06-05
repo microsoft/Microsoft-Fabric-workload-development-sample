@@ -33,11 +33,14 @@ import {
     ErrorKind,
     UpdateItemResult,
     OpenBrowserTabParams,
+    GetItemDefinitionResult,
+    UpdateItemDefinitionResult,
+    UpdateItemDefinitionPayload,
 } from "@ms-fabric/workload-client";
 
 import { Dispatch, SetStateAction } from "react";
-import { GenericItem } from '../models/SampleWorkloadModel';
-import { jobTypeDisplayNames } from "../utils";
+import { DefinitionPath, GenericItem } from '../models/SampleWorkloadModel';
+import { buildPublicAPIPayloadWithParts, jobTypeDisplayNames } from "../utils";
 
 import {
     AuthenticationUIRequiredException,
@@ -168,7 +171,7 @@ export async function callNavigationNavigate<T extends 'host' | 'workload'>(
 }
 
 /**
- * Calls acquire access token from the WorkloadClientAPI.
+ * Calls acquire backend access token from the WorkloadClientAPI.
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @param {string} additionalScopesToConsent - Extra scopes to consent (only provide if you are sure the user is missing a consent)
  * @param {string} claimsForConditionalAccessPolicy - Claims returned from the server indicating that token conversion failed because of some conditional access policy - see https://learn.microsoft.com/en-us/entra/msal/dotnet/acquiring-tokens/web-apps-apis/on-behalf-of-flow#handling-multi-factor-auth-mfa-conditional-access-and-incremental-consent
@@ -180,6 +183,16 @@ export async function callAuthAcquireAccessToken(workloadClient: WorkloadClientA
         claimsForConditionalAccessPolicy: claimsForConditionalAccessPolicy?.length > 0 ? claimsForConditionalAccessPolicy : null,
         promptFullConsent
     });
+}
+
+/**
+ * Calls acquire frontend access token from the WorkloadClientAPI.
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {string} scopes - The scopes for which the access token is requested.
+ * @returns {AccessToken}
+ */
+export async function callAuthAcquireFrontendAccessToken(workloadClient: WorkloadClientAPI, scopes: string): Promise<AccessToken> {
+    return workloadClient.auth.acquireFrontendAccessToken({ scopes: scopes?.length ? scopes.split(' ') : [] });
 }
 
 /**
@@ -558,6 +571,45 @@ export async function callItemUpdate<T>(
     } catch (exception) {
         console.error(`Failed updating Item ${objectId}`, exception);
         return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callItemUpdate, objectId, payloadData);
+    }
+}
+
+export async function callPublicItemUpdateDefinition(
+    itemObjectId: string,
+    parts: { payloadPath: DefinitionPath, payloadData: any }[],
+    workloadClient: WorkloadClientAPI,
+    updateMetadata: boolean = false,
+    isRetry?: boolean): Promise<UpdateItemDefinitionResult> {
+
+    const itemDefinitions: UpdateItemDefinitionPayload = buildPublicAPIPayloadWithParts(parts);
+    try {
+        return await workloadClient.itemCrudPublic.updateItemDefinition({
+            itemId: itemObjectId,
+            payload: itemDefinitions,
+            updateMetadata: updateMetadata
+        });
+    } catch (exception) {
+        console.error(`Failed updating Item definition ${itemObjectId}`, exception);
+        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callPublicItemUpdateDefinition, itemObjectId, parts, updateMetadata);
+    }
+}
+
+export async function callPublicItemGetDefinition(
+    itemObjectId: string,
+    workloadClient: WorkloadClientAPI,
+    format?: string,
+    isRetry?: boolean): Promise<GetItemDefinitionResult> {
+
+    try {
+        const itemDefinition: GetItemDefinitionResult = await workloadClient.itemCrudPublic.getItemDefinition({
+            itemId: itemObjectId,
+            format: format
+        });
+        console.log(`Successfully fetched item definition for item ${itemObjectId}: ${itemDefinition}`);
+        return itemDefinition;
+    } catch (exception) {
+        console.error(`Failed getting Item definition ${itemObjectId}`, exception);
+        return undefined;
     }
 }
 

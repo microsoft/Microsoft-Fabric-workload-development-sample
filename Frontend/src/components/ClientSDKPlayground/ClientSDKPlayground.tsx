@@ -16,6 +16,7 @@ import { ApiPanelSettings } from './ApiPanelSettings';
 import { ApiNavigation } from './ApiNavigation';
 import { ApiData } from './ApiData';
 import { UIComponentsExample } from './UIComponents';
+import { ApiAuthenticationFrontend } from './ApiAuthenticationFrontend';
 import { ApiAuthentication } from './ApiAuthentication';
 import { TabContentProps } from '../../models/SampleWorkloadModel';
 import { PageProps } from 'src/App';
@@ -53,7 +54,8 @@ export function ClientSDKPlayground(props: TabContentProps) {
         <Tab value="apiNavigation">Navigation</Tab>
         <Tab value="dataHub">Data Hub</Tab>
         <Tab value="uiComponents">UI Components</Tab>
-        <Tab value="authentication">Authentication</Tab>
+        <Tab value="authentication">Backend Authentication</Tab>
+        <Tab value="authenticationFrontend">Frontend Authentication (Private-Preview)</Tab>
       </TabList>
 
       <Stack className="main">
@@ -86,6 +88,9 @@ export function ClientSDKPlayground(props: TabContentProps) {
         )}
         {selectedApiTab === 'authentication' && (
           <ApiAuthentication workloadClient={workloadClient} />
+        )}
+        {selectedApiTab === 'authenticationFrontend' && (
+          <ApiAuthenticationFrontend workloadClient={workloadClient} />
         )}
       </Stack>
     </Stack>

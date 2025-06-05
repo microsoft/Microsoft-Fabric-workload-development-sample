@@ -16,7 +16,7 @@ import {
 import { Stack } from '@fluentui/react';
 import { PageProps } from 'src/App';
 import './../../styles.scss';
-import { ItemTabToolbar } from "./ItemTabToolbar";
+//import { ItemTabToolbar } from "./ItemTabToolbar";
 
 const HomeTabToolbar = (props: RibbonProps) => {
 
@@ -115,12 +115,10 @@ export function Ribbon(props: RibbonProps) {
         selectedValue={selectedTab}
         onTabSelect={onTabSelect}>
         <Tab value="home" data-testid="home-tab-btn">Home</Tab>
-        <Tab value="jobs" data-testid="jobs-tab-btn">Jobs</Tab>
       </TabList>
 
       <div className="toolbarContainer">
         {selectedTab === "home" && <HomeTabToolbar {...props} />}
-        {selectedTab === "jobs" && <ItemTabToolbar {...props} />}
       </div>
 
     </div>

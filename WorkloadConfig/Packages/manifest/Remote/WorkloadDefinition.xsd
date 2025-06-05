@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="WorkloadDefinition"
+	elementFormDefault="qualified"
+	xmlns=""
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="./CommonTypesDefinitions.xsd" />
+
+  <xs:element name="WorkloadManifestConfiguration">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Workload" type="WorkloadMetadata" />
+      </xs:sequence>
+      <xs:attribute name="SchemaVersion" type="SchemaVersion" use="required" fixed="1.101.0" />
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="WorkloadMetadata">
+    <xs:sequence>
+      <xs:element name="Version" type="Version" minOccurs="1" maxOccurs="1"></xs:element>
+      <xs:element name="RemoteServiceConfiguration" type="RemoteServiceConfiguration"></xs:element>
+    </xs:sequence>
+    <xs:attribute name="WorkloadName" type="WorkloadName" use="required"/>
+    <xs:attribute name="HostingType" type="HostingType" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="RemoteServiceConfiguration">
+    <xs:sequence>
+      <xs:element name="CloudServiceConfiguration" type="CloudServiceConfiguration" minOccurs="1" maxOccurs="1"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="CloudServiceConfiguration">
+    <xs:sequence>
+      <xs:element name="Cloud" type="Cloud" minOccurs="1" maxOccurs="1"></xs:element>
+      <xs:element name="AADApp" type="AADAppConfiguration" minOccurs="1" maxOccurs="1"></xs:element>
+      <xs:element name="Endpoints" type="ServiceEndpoints" minOccurs="1" maxOccurs="1"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AADAppConfiguration">
+    <xs:sequence>
+      <xs:element name="AppId" type="Guid" minOccurs="1" maxOccurs="1"></xs:element>
+      <xs:element name="RedirectUri" type="NonEmptyString" minOccurs="1" maxOccurs="1"></xs:element>
+      <xs:element name="ResourceId" type="NonEmptyString" minOccurs="1" maxOccurs="1"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ServiceEndpoints">
+    <xs:sequence>
+      <xs:element name="ServiceEndpoint" type="ServiceEndpoint" minOccurs="2" maxOccurs="unbounded"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ServiceEndpoint">
+    <xs:sequence>
+      <xs:element name="Name" type="EndpointName" minOccurs="1" maxOccurs="1"></xs:element>
+      <xs:element name="Url" type="NonEmptyString" minOccurs="1" maxOccurs="1"></xs:element>
+      <xs:element name="IsEndpointResolutionService" type="xs:boolean" minOccurs="1" maxOccurs="1"></xs:element>
+      <xs:element name="EndpointResolutionContext" type="ResolutionContextProperties" minOccurs="0" maxOccurs="1"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ResolutionContextProperties">
+    <xs:sequence>
+      <xs:element name="ResolutionContextProperty" type="EndpointResolutionContextPropertyName" minOccurs="1" maxOccurs="unbounded"></xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="EndpointResolutionContextPropertyName">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="EndpointName" />
+      <xs:enumeration value="TenantRegion" />
+      <xs:enumeration value="WorkspaceRegion" />
+      <xs:enumeration value="TenantId" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="EndpointName">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Workload" />
+      <xs:enumeration value="Frontend" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="WorkloadName">
+    <xs:restriction base ="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="32" />
+      <xs:pattern value="([a-zA-Z0-9-]+)\.([a-zA-Z0-9-]+)" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Version">
+    <xs:annotation>
+      <xs:documentation>
+        The version should be SemVer compliant. https://semver.org/
+      </xs:documentation>
+    </xs:annotation>
+    <xs:restriction base ="xs:string">
+      <xs:minLength value="1" />
+      <xs:maxLength value="16" />
+      <xs:pattern value="(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="HostingType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Remote"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="Cloud">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Public"></xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

@@ -31,6 +31,7 @@ export interface PageProps {
 export interface ContextProps {
     itemObjectId?: string;
     workspaceObjectId?: string
+    source?: string;
 }
 
 export interface SharedState {
@@ -42,7 +43,7 @@ export function App({ history, workloadClient }: AppProps) {
         <Switch>
             {/* This is the routing to the Sample Workload Editor.
                  Add your workload editor path here, and reference it in index.worker.ts  */}
-            <Route path="/sample-workload-editor/:itemObjectId">
+            <Route path="/sample-workload-editor/:itemObjectId/:source?">
                 <SampleWorkloadEditor
                     workloadClient={workloadClient} data-testid="sample-workload-editor" />
             </Route>

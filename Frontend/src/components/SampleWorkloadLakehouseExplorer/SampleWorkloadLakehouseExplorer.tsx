@@ -11,18 +11,18 @@ import {
   Tooltip,
 } from "@fluentui/react-components";
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular, ArrowSwap20Regular } from "@fluentui/react-icons";
-import { callDatahubOpen, callAuthAcquireAccessToken } from "../../controller/SampleWorkloadController";
+import { callDatahubOpen } from "../../controller/SampleWorkloadController";
 import { TableMetadata, FileMetadata } from "../../models/LakehouseExplorerModel";
 import "./../../styles.scss";
-import { getTablesInLakehouse, getTablesInLakehousePath, getFilesInLakehouse, getFilesInLakehousePath } from "../../controller/LakehouseExplorerController";
-import {  PageProps } from "../../App";
+import { getTablesInLakehouse, getFilesInLakehouse } from "../../controller/LakehouseExplorerController";
+import { PageProps } from "../../App";
 import { GenericItem as LakehouseMetadata } from "src/models/SampleWorkloadModel";
 import { TableTreeWithSchema } from "./TableTreeWithSchema";
 import { TableTreeWithoutSchema } from "./TableTreeWithoutSchema";
 import { FileTree } from "./FileTree";
+import { getOneLakeFile, getOneLakeFilePath } from "../../controller/OneLakeController";
 
 export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
-  const sampleWorkloadBEUrl = process.env.WORKLOAD_BE_URL;
   const [selectedLakehouse, setSelectedLakehouse] = useState<LakehouseMetadata>(null);
   const [tablesInLakehouse, setTablesInLakehouse] = useState<TableMetadata[]>(null);
   const [tableSelected, setTableSelected] = useState<TableMetadata>(null);
@@ -31,6 +31,7 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
   const [loadingStatus, setLoadingStatus] = useState<string>("idle");
   const [isExplorerVisible, setIsExplorerVisible] = useState<boolean>(true);
   const [hasSchema, setHasSchema] = useState<boolean>(false);
+  const [selectedFileContent, setSelectedFileContent] = useState<string>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,27 +43,16 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
         } catch (exception) {
           success = await setTablesAndFiles(".default");
         }
-          setLoadingStatus( success ? "idle" : "error");
+        setLoadingStatus(success ? "idle" : "error");
       }
     };
     fetchData();
   }, [selectedLakehouse]);
 
 
-  async function setTablesAndFiles(additionalScopesToConsent: string) : Promise<boolean> {
-    let accessToken = await callAuthAcquireAccessToken(workloadClient, additionalScopesToConsent);
-    const tablePath = getTablesInLakehousePath(
-      sampleWorkloadBEUrl,
-      selectedLakehouse.workspaceId,
-      selectedLakehouse.id
-    );
-    const filePath = getFilesInLakehousePath(
-      sampleWorkloadBEUrl,
-      selectedLakehouse.workspaceId,
-      selectedLakehouse.id
-    );
-    let tables = await getTablesInLakehouse(tablePath, accessToken.token);
-    let files = await getFilesInLakehouse(filePath, accessToken.token);
+  async function setTablesAndFiles(additionalScopesToConsent: string): Promise<boolean> {
+    let tables = await getTablesInLakehouse(workloadClient, selectedLakehouse.workspaceId, selectedLakehouse.id);
+    let files = await getFilesInLakehouse(workloadClient, selectedLakehouse.workspaceId, selectedLakehouse.id);
 
     // Valid response from backend
     if (tables && files) {
@@ -76,8 +66,8 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
 
   async function onDatahubClicked() {
     const result = await callDatahubOpen(
-      ["Lakehouse"],
-      "Select a Lakehouse to use for Sample Workload",
+      ["Lakehouse", "Fabric.ClientSideAuthFERemote1.SampleWorkloadItem"],
+      "Select an item to use for Lightweight Sample Workload",
       false,
       workloadClient
     );
@@ -103,8 +93,11 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
     setTablesInLakehouse(updatedTables);
   }
 
-  function fileSelectedCallback(fileSelected: FileMetadata) {
+  async function fileSelectedCallback(fileSelected: FileMetadata) {
+    const fullFilePath = getOneLakeFilePath(selectedLakehouse.workspaceId, selectedLakehouse.id, fileSelected.path);
+    const fileContent = await getOneLakeFile(workloadClient, fullFilePath);
     setFileSelected(fileSelected);
+    setSelectedFileContent(fileContent);
     // setFilesInLakehouse to rerender the tree
     const updatedFiles = filesInLakehouse.map((file: FileMetadata) => {
       return { ...file, isSelected: file.path === fileSelected.path };
@@ -119,7 +112,7 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
           {!isExplorerVisible && (
             <Button onClick={toggleExplorer} appearance="subtle" icon={<ChevronDoubleRight20Regular />}></Button>
           )}
-          <h1>Lakehouse explorer</h1>
+          <h1>OneLake Explorer</h1>
           {isExplorerVisible && (
             <Button onClick={toggleExplorer} appearance="subtle" icon={<ChevronDoubleLeft20Regular />}></Button>
           )}
@@ -127,12 +120,12 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
         {selectedLakehouse == null && isExplorerVisible && (
           <Stack className="main-body" verticalAlign="center" horizontalAlign="center" tokens={{ childrenGap: 5 }}>
             <Image src="../../../internalAssets/Page.svg" />
-            <span className="add">Add a Lakehouse</span>
-              <Tooltip content={"Open Datahub Explorer"} relationship="label">
-                <Button className="add-button" size="small" onClick={() => onDatahubClicked()} appearance="primary">
-                  Add
-                </Button>
-              </Tooltip>
+            <span className="add">Add an item</span>
+            <Tooltip content={"Open Datahub Explorer"} relationship="label">
+              <Button className="add-button" size="small" onClick={() => onDatahubClicked()} appearance="primary">
+                Add
+              </Button>
+            </Tooltip>
           </Stack>
         )}
         {loadingStatus === "loading" && <Spinner className="main-body" label="Loading Data" />}
@@ -158,15 +151,15 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
                   <TreeItem itemType="branch" value="Tables">
                     <TreeItemLayout>Tables</TreeItemLayout>
                     <Tree className="tree" selectionMode="single">
-                      {hasSchema && 
-                      <TableTreeWithSchema 
-                        allTablesInLakehouse={tablesInLakehouse}
-                        onSelectTableCallback= {tableSelectedCallback}/>
+                      {hasSchema &&
+                        <TableTreeWithSchema
+                          allTablesInLakehouse={tablesInLakehouse}
+                          onSelectTableCallback={tableSelectedCallback} />
                       }
-                      {!hasSchema && 
-                      <TableTreeWithoutSchema
-                        allTablesInLakehouse={tablesInLakehouse}
-                        onSelectTableCallback= {tableSelectedCallback}/>
+                      {!hasSchema &&
+                        <TableTreeWithoutSchema
+                          allTablesInLakehouse={tablesInLakehouse}
+                          onSelectTableCallback={tableSelectedCallback} />
                       }
                     </Tree>
                   </TreeItem>
@@ -175,7 +168,7 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
                     <Tree className="tree" selectionMode="single">
                       <FileTree
                         allFilesInLakehouse={filesInLakehouse}
-                        onSelectFileCallback= {fileSelectedCallback}/>
+                        onSelectFileCallback={fileSelectedCallback} />
                     </Tree>
                   </TreeItem>
                 </Tree>
@@ -186,10 +179,11 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
         {loadingStatus === "error" && isExplorerVisible && <div className="main-body">
           <Subtitle2>Error loading data</Subtitle2>
           <p>Do you have permission to view this lakehouse?</p>
-          </div>}
+        </div>}
       </Stack>
       <Subtitle2>Table Selected: {tableSelected?.name}</Subtitle2>
       <Subtitle2>File Selected: {fileSelected?.name}</Subtitle2>
+      <Subtitle2>Selected File Content: {selectedFileContent}</Subtitle2>
     </>
   );
 }

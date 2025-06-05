@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<WorkloadManifestConfiguration SchemaVersion="2.0.0">
+  <Workload WorkloadName="Org.FERemoteWorkloadSample" HostingType="FERemote">
+    <Version>20.5.2025</Version>
+    <RemoteServiceConfiguration>
+      <CloudServiceConfiguration>
+        <Cloud>Public</Cloud>
+        <AADFEApp>
+          <AppId>903b57e1-0591-44df-ac54-188789f87f52</AppId>
+        </AADFEApp>
+        <EnableSandboxRelaxation>false</EnableSandboxRelaxation>
+        <Endpoints>
+          <ServiceEndpoint>
+            <Name>Frontend</Name>
+            <Url>https://lwwfe.child-Of-msa.extensibility-test-domain.net</Url>
+            <IsEndpointResolutionService>false</IsEndpointResolutionService>
+          </ServiceEndpoint>
+        </Endpoints>
+      </CloudServiceConfiguration>
+    </RemoteServiceConfiguration>
+  </Workload>
+</WorkloadManifestConfiguration>
