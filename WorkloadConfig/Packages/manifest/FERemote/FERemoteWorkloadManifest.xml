@@ -6,7 +6,7 @@
       <CloudServiceConfiguration>
         <Cloud>Public</Cloud>
         <AADFEApp>
-          <AppId>903b57e1-0591-44df-ac54-188789f87f52</AppId>
+          <AppId></AppId>
         </AADFEApp>
         <EnableSandboxRelaxation>false</EnableSandboxRelaxation>
         <Endpoints>
