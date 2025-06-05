@@ -1,11 +1,11 @@
 import React from "react";
-import { TableMetadata, LakehouseExplorerTablesTreeProps } from "src/models/LakehouseExplorerModel";
+import { TableMetadata, OneLakeItemExplorerTablesTreeProps } from "src/models/OneLakeItemExplorerModel";
 import { ArrowCircleDownSplitRegular, Table20Regular } from "@fluentui/react-icons";
 import { Tree, TreeItem, TreeItemLayout, Tooltip } from "@fluentui/react-components";
 
 
-export function TableTreeWithSchema(props: LakehouseExplorerTablesTreeProps) {
-    const {allTablesInLakehouse, onSelectTableCallback} = props;
+export function TableTreeWithSchema(props: OneLakeItemExplorerTablesTreeProps) {
+    const {allTablesInItem: allTablesInLakehouse, onSelectTableCallback} = props;
     // group the tables by schema
     const tablesInLakehouseGroupedBySchema: { [key: string]: TableMetadata[] } =
     allTablesInLakehouse.reduce((acc: { [key: string]: TableMetadata[] }, table) => {

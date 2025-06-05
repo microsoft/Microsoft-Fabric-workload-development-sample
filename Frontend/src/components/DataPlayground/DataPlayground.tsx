@@ -7,12 +7,12 @@ import {
 } from '@fluentui/react-components';
 import { Stack } from '@fluentui/react';
 import { TabContentProps } from '../../models/SampleWorkloadModel';
-import { LakehouseExplorerComponent } from '../SampleWorkloadOneLakeExplorer/SampleWorkloadOneLakeExplorer';
+import { OneLakeItemExplorerComponent } from '../SampleWorkloadOneLakeExplorer/SampleWorkloadOneLakeItemExplorer';
 import "./../../styles.scss";
 
 export function DataPlayground(props: TabContentProps) {
   const { workloadClient } = props;
-  const [selectedTab, setSelectedTab] = useState<TabValue>("lakehouseExplorer");
+  const [selectedTab, setSelectedTab] = useState<TabValue>("onelakeItemExplorer");
 
   return (
     <Stack className="editor" >
@@ -22,12 +22,12 @@ export function DataPlayground(props: TabContentProps) {
         data-testid="item-editor-selected-tab-btn"
         onTabSelect={(_, data: SelectTabData) => setSelectedTab(data.value)}
       >
-        <Tab value="lakehouseExplorer">OneLake Explorer</Tab>
+        <Tab value="onelakeItemExplorer">OneLake Explorer</Tab>
       </TabList>
 
       <Stack className="main">
-        {selectedTab === 'lakehouseExplorer' && (
-          <LakehouseExplorerComponent workloadClient={workloadClient} />
+        {selectedTab === 'onelakeItemExplorer' && (
+          <OneLakeItemExplorerComponent workloadClient={workloadClient} />
         )}
       </Stack>
     </Stack>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Document20Regular, FolderRegular } from "@fluentui/react-icons";
 import { Tree, TreeItem, TreeItemLayout, Tooltip } from "@fluentui/react-components";
-import { FileMetadata, LakehouseExplorerFilesTreeProps } from "src/models/LakehouseExplorerModel";
+import { FileMetadata, OneLakeItemExplorerFilesTreeProps } from "src/models/OneLakeItemExplorerModel";
 
 interface TreeNode {
     metadata: FileMetadata;
@@ -10,8 +10,8 @@ interface TreeNode {
 
 type FolderMap = Map<string, TreeNode>;
 
-export function FileTree(props: LakehouseExplorerFilesTreeProps) {
-    const {allFilesInLakehouse, onSelectFileCallback} = props;
+export function FileTree(props: OneLakeItemExplorerFilesTreeProps) {
+    const {allFilesInItem: allFilesInLakehouse, onSelectFileCallback} = props;
 
     const buildFileTree = (files: FileMetadata[]) => {
         const root: TreeNode[] = [];

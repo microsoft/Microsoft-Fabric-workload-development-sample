@@ -1,4 +1,4 @@
-export interface LakehouseMetadata {
+export interface ItemMetadata {
     workspaceObjectId: string;
     objectId: string;
     displayName: string;
@@ -18,12 +18,12 @@ export interface FileMetadata {
     isSelected: boolean;
 }
 
-export interface LakehouseExplorerTablesTreeProps {
-    allTablesInLakehouse: TableMetadata[];
+export interface OneLakeItemExplorerTablesTreeProps {
+    allTablesInItem: TableMetadata[];
     onSelectTableCallback: (selectedTable: TableMetadata) => void;
 }
 
-export interface LakehouseExplorerFilesTreeProps {
-    allFilesInLakehouse: FileMetadata[];
+export interface OneLakeItemExplorerFilesTreeProps {
+    allFilesInItem: FileMetadata[];
     onSelectFileCallback: (selectedFile: FileMetadata) => void;
 }

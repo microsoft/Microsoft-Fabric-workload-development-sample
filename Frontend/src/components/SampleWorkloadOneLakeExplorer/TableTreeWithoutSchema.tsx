@@ -1,10 +1,10 @@
 import React from "react";
-import { LakehouseExplorerTablesTreeProps } from "src/models/LakehouseExplorerModel";
+import { OneLakeItemExplorerTablesTreeProps } from "src/models/OneLakeItemExplorerModel";
 import { Table20Regular } from "@fluentui/react-icons";
 import { TreeItem, TreeItemLayout, Tooltip } from "@fluentui/react-components";
 
-export function TableTreeWithoutSchema(props: LakehouseExplorerTablesTreeProps) {
-    const {allTablesInLakehouse, onSelectTableCallback} = props;
+export function TableTreeWithoutSchema(props: OneLakeItemExplorerTablesTreeProps) {
+    const {allTablesInItem: allTablesInLakehouse, onSelectTableCallback} = props;
     return (
         <>
             {allTablesInLakehouse &&

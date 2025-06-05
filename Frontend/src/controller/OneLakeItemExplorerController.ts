@@ -2,7 +2,7 @@ import { GenericItem } from "src/models/SampleWorkloadModel";
 import { EnvironmentConstants, oneLakeScope } from "../constants";
 import { callAuthAcquireFrontendAccessToken } from "./SampleWorkloadController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { FileMetadata, TableMetadata } from "src/models/LakehouseExplorerModel";
+import { FileMetadata, TableMetadata } from "src/models/OneLakeItemExplorerModel";
 
 export interface LakehouseTable {
     name: string;
