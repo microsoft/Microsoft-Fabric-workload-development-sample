@@ -26,11 +26,12 @@ To register for the private preview, you will need your Tenant ID and Tenant Reg
 3. In the About dialog, you will find your Tenant ID and Tenant Region.
 
 ![Get Tenant Info Step 1](./media/Get-tenant-info-1.jpg)
+
 *Figure: Accessing the About dialog in Microsoft Fabric.*
 
 ![Get Tenant Info Step 2](./media/Get-tenant-info-2.jpg)
-*Figure: Locating Tenant ID and Tenant Region in the About dialog.*
 
+*Figure: Locating Tenant ID and Tenant Region in the About dialog.*
 
 
 ## FERemote vs. Remote Hosting Types
@@ -50,19 +51,27 @@ At the moment only **FERemote** workloads are supported for WDKv2. We are workin
 
 ![WDKv2 FERemote High Level Architecture](./media/WDKv2-FERemote-high-level-architecture.jpg)
 
+*Figure: High level Architecture for FERemote hosting type.*
+
 *Figure: The new high-level architecture for FERemote workloads in WDKv2. This diagram illustrates the streamlined, frontend-only approach enabled by FERemote, allowing developers to build and deploy workloads that interact directly with APIs from the frontend without requiring backend components.*
 
 
 ![WDKv2 Remote High Level Architecture](./media/WDKv2-Remote-high-level-architecture.jpg)
 
-*Figure: The high-level architecture for Remote workloads in WDKv2. This diagram represents how existing WDKv1 workloads that require backend components can envision their future migration path. As WDKv2 evolves to support Remote hosting, workloads with backend dependencies will be able to leverage the new capabilities while maintaining necessary backend integrations.*
+*Figure: High level Architecture for Remote hosting type.*
+
+*Figure: The high-level architecture for Remote workloads in WDKv2. 
+
+This diagram represents how existing WDKv1 workloads that require backend components can envision their future migration path. As WDKv2 evolves to support Remote hosting, workloads with backend dependencies will be able to leverage the new capabilities while maintaining necessary backend integrations.*
 
 
 ## Main new functionallity
 
 WDKv2 introduces a suite of new capabilities designed to simplify and enhance workload development for Microsoft Fabric. These features enable developers to build richer, more integrated experiences with less effort. With WDKv2, you can easily access Fabric APIs directly from the frontend, persist item state within Fabric, leverage a standardized item creation flow, and take advantage of improved security and interoperability through IFrame relaxation and public API support. Additionally, WDKv2 streamlines your development lifecycle with built-in CI/CD support, making it easier to automate deployment and testing. The following sections provide an overview of each new functionality and guidance on how to incorporate them into your workloads.
 
+
 To see how you can interact with the new functaionallity take a look into the [WDKv2-How-To Guide](WDKv2-How-To.md)
+
 
 For detailed setup instructions, please refer to the [WDKv2 Setup Guide](./WDKv2-Setup.md).
 

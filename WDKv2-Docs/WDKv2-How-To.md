@@ -3,7 +3,7 @@
 
 ## Frontend API access
 
-The code containing the Frontend Authentication can be found in your repo under [ApiAuthenticationFrontend.tsx](../Frontend/src/components/ClientSDKPlayground/ApiAuthenticationFrontend.tsx.
+The code containing the Frontend Authentication can be found in your repo under [ApiAuthenticationFrontend.tsx](./../Frontend/src/components/ClientSDKPlayground/ApiAuthenticationFrontend.tsx).
 
 There are two important methods in there that will showcase the new functionality: 
 1)	 callAuthAcquireFrontendAccessToken  - which provides you with the ability to get a Entra Token for your FE application
@@ -16,7 +16,7 @@ There are two important methods in there that will showcase the new functionalit
 
 ## Storing Item state in Fabric
 
-You can find the code for storing item state in the `saveItemState` method within the `SampleWorkloadEditor.tsx` file. Here is the method content for reference:
+You can find the code for storing item state in the `saveItemState` method within the [SampleWorkloadEditor.tsx](./../Frontend/src/components/SampleWorkloadEditor/SampleWorkloadEditor.tsx) file. Here is the method content for reference:
 
 ```typescript
 async function SaveItem() {
