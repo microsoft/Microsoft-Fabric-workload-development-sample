@@ -14,7 +14,7 @@ import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular, ArrowSwap20Reg
 import { callDatahubOpen } from "../../controller/SampleWorkloadController";
 import { TableMetadata, FileMetadata } from "../../models/LakehouseExplorerModel";
 import "./../../styles.scss";
-import { getTablesInLakehouse, getFilesInLakehouse } from "../../controller/LakehouseExplorerController";
+import { getTables, getFiles } from "../../controller/OneLakeExplorerController";
 import { PageProps } from "../../App";
 import { GenericItem as LakehouseMetadata } from "src/models/SampleWorkloadModel";
 import { TableTreeWithSchema } from "./TableTreeWithSchema";
@@ -51,8 +51,8 @@ export function LakehouseExplorerComponent({ workloadClient }: PageProps) {
 
 
   async function setTablesAndFiles(additionalScopesToConsent: string): Promise<boolean> {
-    let tables = await getTablesInLakehouse(workloadClient, selectedLakehouse.workspaceId, selectedLakehouse.id);
-    let files = await getFilesInLakehouse(workloadClient, selectedLakehouse.workspaceId, selectedLakehouse.id);
+    let tables = await getTables(workloadClient, selectedLakehouse.workspaceId, selectedLakehouse.id);
+    let files = await getFiles(workloadClient, selectedLakehouse.workspaceId, selectedLakehouse.id);
 
     // Valid response from backend
     if (tables && files) {

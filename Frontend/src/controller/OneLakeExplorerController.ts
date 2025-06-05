@@ -1,5 +1,5 @@
 import { GenericItem } from "src/models/SampleWorkloadModel";
-import { EnvironmentConstants, oneLakeScope } from "../../src/constants";
+import { EnvironmentConstants, oneLakeScope } from "../constants";
 import { callAuthAcquireFrontendAccessToken } from "./SampleWorkloadController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FileMetadata, TableMetadata } from "src/models/LakehouseExplorerModel";
@@ -24,12 +24,12 @@ export interface OneLakePathContainer {
 /**
  * Retrieves a list of Lakehouse tables.
  */
-export async function getTablesInLakehouse(
+export async function getTables(
     workloadClient: WorkloadClientAPI,
     workspaceId: string,
-    lakehouseId: string
+    itemId: string
 ): Promise<TableMetadata[]> {
-    const directory = `${lakehouseId}/Tables/`;
+    const directory = `${itemId}/Tables/`;
     const oneLakeContainer = await getPathList(workloadClient, workspaceId, directory, true);
     const deltaLogDirectory = "/_delta_log";
     const tables = (oneLakeContainer.paths || [])
@@ -68,12 +68,12 @@ export async function getTablesInLakehouse(
 /**
  * Retrieves a Fabric Lakehouse item.
  */
-export async function getFabricLakehouse(
+export async function getItem(
     token: string,
     workspaceId: string,
-    lakehouseId: string
+    itemId: string
 ): Promise<GenericItem | null> {
-    const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/items/${lakehouseId}`;
+    const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/items/${itemId}`;
     try {
         const response = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` }
@@ -82,12 +82,12 @@ export async function getFabricLakehouse(
         const lakehouse: GenericItem = await response.json();
         return lakehouse;
     } catch (ex: any) {
-        console.error(`Failed to retrieve FabricLakehouse for lakehouse: ${lakehouseId} in workspace: ${workspaceId}. Error: ${ex.message}`);
+        console.error(`Failed to retrieve FabricLakehouse for lakehouse: ${itemId} in workspace: ${workspaceId}. Error: ${ex.message}`);
         return null;
     }
 }
 
-export async function getFilesInLakehouse(
+export async function getFiles(
     workloadClient: WorkloadClientAPI,
     workspaceId: string,
     lakehouseId: string

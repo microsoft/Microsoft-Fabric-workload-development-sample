@@ -1,7 +1,7 @@
 
 # Microsoft Fabric Software Developer Kit
 
-Welcome to the Fabric workload development documentation. This comprehensive guide covers everything you need to know to create a custom Fabric workload for your organization. We’re here to assist you every step of the way, so please don’t hesitate to reach out with any questions. Happy developing!
+Welcome to the Fabric workload development sample. This comprehensive guide covers everything you need to know to create a custom Fabric workload for your organization. We’re here to assist you every step of the way, so please don’t hesitate to reach out with any questions. Happy developing!
 
 ## Trademarks
 
@@ -40,7 +40,7 @@ For more information about Fabric [click here](https://learn.microsoft.com/en-us
 
 In Microsoft Fabric, workloads signify different components that are integrated into the Fabric framework. Workloads enhance the usability of your service within the familiar Fabric workspace, eliminating the need to leave the Fabric environment for different services. [Data Factory](https://learn.microsoft.com/en-us/fabric/data-factory/data-factory-overview), [Data Warehouse](https://learn.microsoft.com/en-us/fabric/data-warehouse/data-warehousing), [Power BI](https://learn.microsoft.com/en-us/power-bi/enterprise/service-premium-what-is) and [Fabric Activator](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/data-activator/activator-introduction) are some of the built-in Fabric workloads.
 
-With the Workload Development Kit, you can create your own workload for your data applications. Publishing a Fabric Workload to the [Fabric Workload Hub](https://learn.microsoft.com/en-us/fabric/workload-development-kit/more-workloads-add) increases your application’s discoverability and user engagement. The Microsoft Fabric Workloads Development Kit provides the necessary tools and interfaces to embed your data application into Microsoft Fabric.
+With the Workload Development Kit, you can create your own workload for your data applications. Publishing a Fabric Workload to the [Fabric Workload Hub](https://learn.microsoft.com/en-us/fabric/workload-development-kit/more-workloads-add) increases your application’s discoverability and user engagement. The Microsoft Fabric Workload Development Kit provides the necessary tools and interfaces to embed your data application into Microsoft Fabric.
 
 For more information on what workloads can offer Microsoft partners, and for useful examples, head to our official [Workload Dev Kit documentation](https://learn.microsoft.com/en-us/fabric/workload-development-kit/development-kit-overview).
 
