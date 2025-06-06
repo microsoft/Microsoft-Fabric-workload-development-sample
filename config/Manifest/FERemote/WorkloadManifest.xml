@@ -1,12 +1,13 @@
 <?xml version='1.0' encoding='utf-8'?>
 <WorkloadManifestConfiguration SchemaVersion="2.0.0">
   <Workload WorkloadName="Org.MyFERemoteWorkloadSample" HostingType="FERemote">
-    <Version>20.5.2025</Version>
+    <Version>1.0.0001</Version>
     <RemoteServiceConfiguration>
       <CloudServiceConfiguration>
         <Cloud>Public</Cloud>
         <AADFEApp>
-          <AppId>99be0241-17d5-47fc-a930-76506db00d2e</AppId>
+        <!-- Add your entra application here that you have created for the Workload -->
+          <AppId></AppId>
         </AADFEApp>
         <EnableSandboxRelaxation>false</EnableSandboxRelaxation>
         <Endpoints>
