@@ -399,3 +399,6 @@ FodyWeavers.xsd
 
 # Fabric DevGateway Container Environment Files
 /tools/DevGatewayContainer/.env
+
+# Fabric Configs
+/WorklaodConfig/*.pupkg

@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<ItemManifestConfiguration SchemaVersion="2.0.0">
-  <Item TypeName="Org.FERemoteWorkloadSample.SampleWorkloadItem" Category="Data">
-    <Workload WorkloadName="Org.FERemoteWorkloadSample" />
-  </Item>
-</ItemManifestConfiguration>

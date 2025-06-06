@@ -19,7 +19,7 @@ export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();
     const sampleItemEditorPath = "/sample-workload-editor";
     const sampleWorkloadName = process.env.WORKLOAD_NAME;
-    const sampleItemType = sampleWorkloadName + ".SampleWorkloadItem";
+    const sampleItemType = sampleWorkloadName + ".SampleItem";
     const calculateAsText = sampleItemType + ".CalculateAsText";
     const instantJob = sampleItemType + ".InstantJob";
 

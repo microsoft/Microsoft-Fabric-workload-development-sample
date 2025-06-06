@@ -70,7 +70,7 @@ The configuration for the standard item creation experience can be found in the 
                 "workspace-plus-new",
                 "workspace-plus-new-teams"
               ],
-              "itemType": "SampleWorkloadItem",
+              "itemType": "SampleItem",
               "createItemDialogConfig": {
                 "onCreationFailure": { "action": "item.onCreationFailure" },
                 "onCreationSuccess": { "action": "item.onCreationSuccess" }

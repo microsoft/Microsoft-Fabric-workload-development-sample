@@ -1,0 +1,6 @@
+Write-Output "Setting up the environment..."
+Write-Output "Creating a new Entra Application..."
+Write-Output "Configuring the project..."
+Write-Output "Building the manifes..."
+Write-Output "Starting the Frontend..."
+Write-Output "Starting the Dev-Gateway..."

@@ -1,7 +1,7 @@
 {
-    "name": "SampleWorkloadItem",
-    "displayName": "Item_1_DisplayName",
-    "displayNamePlural": "Item_1_DisplayName_Plural",
+    "name": "SampleItem",
+    "displayName": "SampleItem_DisplayName",
+    "displayNamePlural": "SampleItem_DisplayName_Plural",
     "editor": {
       "path": "/sample-workload-editor"
     },

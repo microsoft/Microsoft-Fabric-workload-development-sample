@@ -25,7 +25,7 @@ import "./../../styles.scss";
 
 export function ApiData(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;
-    const sampleItemType = sampleWorkloadName + ".SampleWorkloadItem";
+    const sampleItemType = sampleWorkloadName + ".SampleItem";
     const dataHubMsgBoxTypes = ["Lakehouse", sampleItemType];
     const dispatch = useDispatch();
 

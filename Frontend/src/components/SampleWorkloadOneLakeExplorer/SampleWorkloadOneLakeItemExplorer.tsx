@@ -66,8 +66,8 @@ export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
 
   async function onDatahubClicked() {
     const result = await callDatahubOpen(
-      ["Lakehouse", "Fabric.ClientSideAuthFERemote1.SampleWorkloadItem"],
-      "Select an item to use for Lightweight Sample Workload",
+      ["Lakehouse",  "Org.MyFERemoteWorkloadSample.SampleItem"],
+      "Select an item to use for Frontend Sample Workload",
       false,
       workloadClient
     );

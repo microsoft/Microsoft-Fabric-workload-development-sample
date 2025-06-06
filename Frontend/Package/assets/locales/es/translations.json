@@ -16,13 +16,11 @@
   "Fabric_UX_System_Introduction": "Comienza con el sistema de UX de Fabric",
   "NewSection_Custom_Action_Title": "Prácticas solo para la interfaz de usuario",
   "CreateHub_Workload_Description": "Descripción del producto CreateHub",
-  "CreateHub_Card_1_Title": "Elemento de muestra",
-  "CreateHub_Card_1_Description": "Cree un elemento de carga de trabajo de muestra para su experiencia de desarrollo",
-  "CreateHub_Card_2_Title": "Elemento de muestra (Estándar)",
-  "CreateHub_Card_2_Description": "Cree un elemento de carga de trabajo de muestra para su experiencia de desarrollo (Estándar)",
+  "CreateHub_Card_Title": "Elemento de muestra",
+  "CreateHub_Card_Description": "Cree un elemento de carga de trabajo de muestra para su experiencia de desarrollo",
   "Workload_Hub_Workload_Slogan": "La forma más rápida de pasar de mil millones de puntos de datos a un punto de vista.",
   "Workload_Hub_Workload_Description": "La carga de trabajo de Contoso permite a las organizaciones interactuar con los clientes en tiempo real y automatizar las decisiones comerciales operativas a gran escala. Admite una amplia variedad de actividades orientadas al cliente, como marketing personalizado y la siguiente mejor acción, y decisiones que afectan al cliente, incluidos los servicios de crédito y la prevención del fraude.",
-  "Item_1_DisplayName": "Elemento de carga de trabajo de muestra",
-  "Item_1_DisplayName_Plural": "Elementos de carga de trabajo de muestra"
+  "SampleItem_DisplayName": "Elemento de carga de trabajo de muestra",
+  "SampleItem_DisplayName_Plural": "Elementos de carga de trabajo de muestra"
   }
   

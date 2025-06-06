@@ -339,7 +339,7 @@ export function SampleWorkloadEditor(props: PageProps) {
       <Stack className="main">
         {["home"].includes(selectedTab as string) && (
           <span>
-            <h2>Lightweight Sample Item Editor</h2>
+            <h2>Frontend Sample Item Editor</h2>
             {/* Crud item API usage example */}
             {itemEditorErrorMessage && (
               <MessageBar intent="error">

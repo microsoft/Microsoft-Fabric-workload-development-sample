@@ -581,6 +581,7 @@ export async function callPublicItemUpdateDefinition(
     updateMetadata: boolean = false,
     isRetry?: boolean): Promise<UpdateItemDefinitionResult> {
 
+ 
     const itemDefinitions: UpdateItemDefinitionPayload = buildPublicAPIPayloadWithParts(parts);
     try {
         return await workloadClient.itemCrudPublic.updateItemDefinition({
@@ -590,7 +591,7 @@ export async function callPublicItemUpdateDefinition(
         });
     } catch (exception) {
         console.error(`Failed updating Item definition ${itemObjectId}`, exception);
-        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callPublicItemUpdateDefinition, itemObjectId, parts, updateMetadata);
+        return await handleException(exception, workloadClient, isRetry, false , callPublicItemUpdateDefinition, itemObjectId, parts, updateMetadata);
     }
 }
 

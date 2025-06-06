@@ -97,7 +97,7 @@ export function formatResult(op1: number, op2: number, calculationOperator: Item
 }
 
 const sampleWorkloadName = process.env.WORKLOAD_NAME;
-const sampleItemType = sampleWorkloadName + ".SampleWorkloadItem";
+const sampleItemType = sampleWorkloadName + ".SampleItem";
 const calculateAsText = sampleItemType + ".CalculateAsText";
 const longRunningCalculateAsText = sampleItemType + ".LongRunningCalculateAsText";
 const scheduledJob = sampleItemType + ".ScheduledJob";
