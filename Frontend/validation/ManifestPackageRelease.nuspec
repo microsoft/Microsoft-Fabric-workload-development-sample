@@ -18,6 +18,7 @@
     <file src="../Package/assets\images\playgroundCard.jpeg" target="FE/assets/images/playgroundCard.jpeg" />
     <file src="../Package/assets\images\SampleWorkload1.png" target="FE/assets/images/SampleWorkload1.png" />
     <file src="../Package/assets\images\SampleWorkload2.png" target="FE/assets/images/SampleWorkload2.png" />
+    <file src="../Package/assets\images\workload.png" target="FE/assets/images/workload.png" />
     <file src="../Package/assets\locales\en-US\translations.json" target="FE/assets/locales/en-US/translations.json" />
     <file src="../Package/assets\locales\es\translations.json" target="FE/assets/locales/es/translations.json" />
 
