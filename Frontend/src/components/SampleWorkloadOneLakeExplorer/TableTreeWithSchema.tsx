@@ -5,10 +5,10 @@ import { Tree, TreeItem, TreeItemLayout, Tooltip } from "@fluentui/react-compone
 
 
 export function TableTreeWithSchema(props: OneLakeItemExplorerTablesTreeProps) {
-    const {allTablesInItem: allTablesInLakehouse, onSelectTableCallback} = props;
+    const {allTablesInItem: allTablesInOneLake, onSelectTableCallback} = props;
     // group the tables by schema
-    const tablesInLakehouseGroupedBySchema: { [key: string]: TableMetadata[] } =
-    allTablesInLakehouse.reduce((acc: { [key: string]: TableMetadata[] }, table) => {
+    const tablesInOneLakeGroupedBySchema: { [key: string]: TableMetadata[] } =
+    allTablesInOneLake.reduce((acc: { [key: string]: TableMetadata[] }, table) => {
             if (!acc[table.schema]) {
                 acc[table.schema] = [];
             }
@@ -17,8 +17,8 @@ export function TableTreeWithSchema(props: OneLakeItemExplorerTablesTreeProps) {
         }, {});
     return (
         <>
-            {tablesInLakehouseGroupedBySchema &&
-                Object.keys(tablesInLakehouseGroupedBySchema).map((schema) => (
+            {tablesInOneLakeGroupedBySchema &&
+                Object.keys(tablesInOneLakeGroupedBySchema).map((schema) => (
                     <TreeItem id={schema} key={schema} itemType="branch">
                         <Tooltip
                         relationship="label"
@@ -28,7 +28,7 @@ export function TableTreeWithSchema(props: OneLakeItemExplorerTablesTreeProps) {
                             </TreeItemLayout>
                         </Tooltip>
                         <Tree selectionMode="single" size='medium'>
-                            {tablesInLakehouseGroupedBySchema[schema].map((table) => (
+                            {tablesInOneLakeGroupedBySchema[schema].map((table) => (
                                 <TreeItem 
                                 key={table.name} 
                                 accessKey={table.path} 

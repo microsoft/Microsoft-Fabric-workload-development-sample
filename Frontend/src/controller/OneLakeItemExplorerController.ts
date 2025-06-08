@@ -4,12 +4,6 @@ import { callAuthAcquireFrontendAccessToken } from "./SampleWorkloadController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FileMetadata, TableMetadata } from "src/models/OneLakeItemExplorerModel";
 
-export interface LakehouseTable {
-    name: string;
-    path: string;
-    schema?: string | null;
-}
-
 export interface OneLakePath {
     name: string;
     isShortcut?: boolean;
@@ -22,7 +16,7 @@ export interface OneLakePathContainer {
 }
 
 /**
- * Retrieves a list of Lakehouse tables.
+ * Retrieves a list of tables from the specified Fabric Item.
  */
 export async function getTables(
     workloadClient: WorkloadClientAPI,
@@ -66,7 +60,7 @@ export async function getTables(
 }
 
 /**
- * Retrieves a Fabric Lakehouse item.
+ * Retrieves a Fabric item.
  */
 export async function getItem(
     token: string,
@@ -79,10 +73,10 @@ export async function getItem(
             headers: { Authorization: `Bearer ${token}` }
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const lakehouse: GenericItem = await response.json();
-        return lakehouse;
+        const item: GenericItem = await response.json();
+        return item;
     } catch (ex: any) {
-        console.error(`Failed to retrieve FabricLakehouse for lakehouse: ${itemId} in workspace: ${workspaceId}. Error: ${ex.message}`);
+        console.error(`Failed to retrieve Fabric item for id: ${itemId} in workspace: ${workspaceId}. Error: ${ex.message}`);
         return null;
     }
 }
@@ -90,18 +84,18 @@ export async function getItem(
 export async function getFiles(
     workloadClient: WorkloadClientAPI,
     workspaceId: string,
-    lakehouseId: string
+    itemId: string
 ): Promise<FileMetadata[]> {
-    const directory = `${lakehouseId}/Files/`;
+    const directory = `${itemId}/Files/`;
     const oneLakeContainer = await getPathList(workloadClient, workspaceId, directory, true);
     const files = (oneLakeContainer.paths || []).map(path => {
         const pathName = path.name;
         const parts = pathName.split('/');
 
-        // Path structure: <lakehouseId>/Files/...<Subdirectories>.../<fileName>
+        // Path structure: <itemId>/Files/...<Subdirectories>.../<fileName>
         const fileName = parts[parts.length - 1];
 
-        // Remove the prefix (lakehouseId/Files/) from the path
+        // Remove the prefix (itemId/Files/) from the path
         const relativePath = pathName.length > directory.length ? pathName.substring(directory.length) : "";
 
         return {

@@ -14,10 +14,10 @@ The first step is to create a Frontend Entra Application that you can use in ord
 3.	Add the following SPA redirectURIs to the application manifest:
 
 a.	“https://app.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}”
-
 b.	“https://app.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}”
 
-c.	“https://msit.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}”
+c.	“https://msit.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}”
+d.	“https://msit.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}”
 
 
 ## Workload BE Preauthorization (optional):

@@ -22,7 +22,7 @@ export function DataPlayground(props: TabContentProps) {
         data-testid="item-editor-selected-tab-btn"
         onTabSelect={(_, data: SelectTabData) => setSelectedTab(data.value)}
       >
-        <Tab value="onelakeItemExplorer">OneLake Explorer</Tab>
+        <Tab value="onelakeItemExplorer">OneLake Item Explorer</Tab>
       </TabList>
 
       <Stack className="main">

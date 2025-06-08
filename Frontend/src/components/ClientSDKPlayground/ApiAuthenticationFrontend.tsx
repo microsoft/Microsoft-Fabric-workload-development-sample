@@ -35,6 +35,7 @@ export function ApiAuthenticationFrontend({ workloadClient }: PageProps) {
                         .then(result => setToken(result.token))
                         .catch((errorResult) => {
                             setToken(null);
+                            console.error("Error acquiring token:", errorResult);
                             switch (errorResult.error) {
                                 case WorkloadAuthError.WorkloadConfigError:
                                     setAcquireTokenError("Workload config error - make sure that you have added the right configuration for your AAD app!");

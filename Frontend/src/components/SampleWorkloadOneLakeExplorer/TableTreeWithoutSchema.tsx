@@ -4,11 +4,11 @@ import { Table20Regular } from "@fluentui/react-icons";
 import { TreeItem, TreeItemLayout, Tooltip } from "@fluentui/react-components";
 
 export function TableTreeWithoutSchema(props: OneLakeItemExplorerTablesTreeProps) {
-    const {allTablesInItem: allTablesInLakehouse, onSelectTableCallback} = props;
+    const {allTablesInItem: allTablesInOneLake, onSelectTableCallback} = props;
     return (
         <>
-            {allTablesInLakehouse &&
-                allTablesInLakehouse.map((table) => (
+            {allTablesInOneLake &&
+                allTablesInOneLake.map((table) => (
                     <TreeItem 
                     key={table.name} 
                     accessKey={table.path} 

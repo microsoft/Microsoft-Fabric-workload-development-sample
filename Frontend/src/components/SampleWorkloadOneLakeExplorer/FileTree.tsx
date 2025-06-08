@@ -11,7 +11,7 @@ interface TreeNode {
 type FolderMap = Map<string, TreeNode>;
 
 export function FileTree(props: OneLakeItemExplorerFilesTreeProps) {
-    const {allFilesInItem: allFilesInLakehouse, onSelectFileCallback} = props;
+    const {allFilesInItem: allFilesInOneLake, onSelectFileCallback} = props;
 
     const buildFileTree = (files: FileMetadata[]) => {
         const root: TreeNode[] = [];
@@ -111,7 +111,7 @@ export function FileTree(props: OneLakeItemExplorerFilesTreeProps) {
         }
     };
 
-    const fileTree = buildFileTree(allFilesInLakehouse || []);
+    const fileTree = buildFileTree(allFilesInOneLake || []);
 
     return (
         <>
