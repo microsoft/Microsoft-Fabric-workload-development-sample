@@ -45,7 +45,7 @@ This method demonstrates how to persist the state of an item using the SDK.
 ## Standard Item creation experience
 
 
-The configuration for the standard item creation experience can be found in the `Product.json` file, specifically within the `create` section under `createItemDialogConfig`. it allows to define event handlers for failur and success. Here is a snippet for reference:
+The configuration for the standard item creation experience can be found in the [Product.json](../Frontend/Package/Product.json) file, specifically within the `create` section under `createItemDialogConfig`. it allows to define event handlers for failur and success. Here is a snippet for reference:
 
 ```json
 {
