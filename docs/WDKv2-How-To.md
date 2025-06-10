@@ -90,7 +90,42 @@ This configuration defines the dialog used for creating new items, including the
 
 ## Public API Support
 
-**TODO**
+An example of how to aquire a Token with the the right scope and make a call to the API can be found in the [ApiAuthenticationFrontend.tsx](../Frontend/src/components/ClientSDKPlayground/ApiAuthenticationFrontend.tsx) file. The mthod `callAuthAcquireFrontendAcces` implements how to get a token with a specific scope where the `sendWorkloadServerRequest`shows a generic method to parse the token for Fabric API calls. 
+
+```typescript
+
+function callAuthAcquireFrontendAcces(workloadClient, scopes) {
+    callAuthAcquireFrontendAccessToken(workloadClient, scopes)
+      .then(result => setToken(result.token))
+      .catch((errorResult) => {
+          setToken(null);
+          console.error("Error acquiring token:", errorResult);
+          switch (errorResult.error) {
+              case WorkloadAuthError.WorkloadConfigError:
+                  setAcquireTokenError("Workload config error - make sure that you have added the right configuration for your AAD app!");
+                  break;
+              case WorkloadAuthError.UserInteractionFailedError:
+                  setAcquireTokenError("User interaction failed!");
+                  break;
+              case WorkloadAuthError.UnsupportedError:
+                  setAcquireTokenError("Authentication is not supported in this environment!");
+                  break;
+              default:
+                  setAcquireTokenError("Failed to fetch token");
+          }
+      }
+}
+
+function sendWorkloadServerRequest(url: string, token: string, httpMethod: string, requestBody?: string): Promise<string> {
+    if (url.length == 0) {
+        return Promise.resolve('Please provide a valid url');
+    }
+    if (httpMethod == 'PUT') {
+        return fetch(url, { method: httpMethod, body: requestBody, headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token } }).then(response => response.text());
+    }
+    return fetch(url, { method: httpMethod, headers: { 'Authorization': 'Bearer ' + token } }).then(response => response.text());
+}
+```
 
 ## CI/CD Support
 
