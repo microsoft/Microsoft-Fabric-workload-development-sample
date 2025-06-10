@@ -9,15 +9,17 @@ To start using the Frontend authentication you need to perform certain steps.
 ### Register a Frontend Entra Application:
 The first step is to create a Frontend Entra Application that you can use in order to access the Fabric APIs. 
 1. Navigate to App registrations in the Azure Portal.
-2.	Create new Multitenant application .
+2. Create new Multitenant application .
  ![Setup Step 1](./media/Setup-EntraApp-Registration.jpg)
 3.	Add the following SPA redirectURIs to the application manifest:
 
-a.	https://app.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
-b.	https://app.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
+a. https://app.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
 
-c.	https://msit.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
-d.	https://msit.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
+b. https://app.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
+
+c. https://msit.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
+
+d. https://msit.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
 
 
 ## Workload BE Preauthorization (optional):
