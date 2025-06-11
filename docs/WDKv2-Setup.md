@@ -93,6 +93,10 @@ Start the workload in Development mode:
     1. Open **PowerShell** and navigate to the **DevGateway** folder.
 
     2. In PowerShell, run the command: `.\Microsoft.Fabric.Workload.DevGateway.exe`. When the output shows the message *info: DevGateway started*. the workload is running successfully.
+    ```powershell
+    .\Microsoft.Fabric.Workload.DevGateway.exe -DevMode:<absolute_path_to_workload-dev-mode.json>
+    ```
+    
 
 ### Test the Frontend Application: 
 If you are using the latest version of our WDK, you can test out a component that we have built to generate a FE Token to access the APIs. To try this out:
