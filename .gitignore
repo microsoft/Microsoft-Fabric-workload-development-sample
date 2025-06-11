@@ -402,3 +402,5 @@ FodyWeavers.xsd
 
 # Fabric Configs
 /WorklaodConfig/*.pupkg
+/tools/DevGateway
+
