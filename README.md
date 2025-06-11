@@ -1,7 +1,7 @@
 
 # Microsoft Fabric Software Developer Kit
 
-Welcome to the Fabric workload development sample. This comprehensive guide covers everything you need to know to create a custom Fabric workload for your organization. We’re here to assist you every step of the way, so please don’t hesitate to reach out with any questions. Happy developing!
+Welcome to the Fabric Workload Development Kit. This comprehensive guide covers everything you need to know to create a custom Fabric workload for your organization. We’re here to assist you every step of the way, so please don’t hesitate to reach out with any questions. Happy developing!
 
 ## Trademarks
 
@@ -69,13 +69,15 @@ Our architecture is designed to integrate flawlessly with OneLake, enabling oper
 
 ## Get Started
 
-Head to our documentation for a step-by-step guide to getting your environment set up and your first workload up and running: [Getting Started](https://learn.microsoft.com/en-us/fabric/workload-development-kit/environment-setup).
+Head to our documentation for a step-by-step guide to getting your environment set up and your first workload up and running: [Getting Started](/docs/WDKv2-Setup.md).
 
 ## Implement your custom workload
 
-After you have completed the initial guides on spinning up your sample workload, follow along on our [Frontend](https://learn.microsoft.com/en-us/fabric/workload-development-kit/extensibility-front-end) and [Backend](https://learn.microsoft.com/en-us/fabric/workload-development-kit/extensibility-back-end) implementation guides to learn more about how to start developing a custom workload for your application. 
+After you have completed the initial guides on spinning up your first workload, follow along on our [Frontend](https://learn.microsoft.com/en-us/fabric/workload-development-kit/extensibility-front-end) and [Backend](https://learn.microsoft.com/en-us/fabric/workload-development-kit/extensibility-back-end) implementation guides to learn more about how to start developing a custom workload for your application. 
 
-## Publish you workload
+Be sure to look at what has been released with the [newest version of the WDK](/docs/WDKv2-Introduction.md) and our guide on [how to use those new features](docs/WDKv2-How-To.md).
+
+## Publish your workload
 
 After developing your Fabric Workload according to the [certification requirements](https://learn.microsoft.com/en-us/fabric/workload-development-kit/publish-workload-requirements), you can publish it to the Workload Hub which will allow every Fabric user a chance to easily start a trial experience and then buy your workload. An in-depth description of how to publish a workload can be found [here](https://learn.microsoft.com/en-us/fabric/workload-development-kit/publish-workload-flow).
 
@@ -83,7 +85,7 @@ After developing your Fabric Workload according to the [certification requiremen
 
 Here are all the resources included and referenced. These documents provide additional information and can serve as a reference:
 * [WDK Documentation](https://learn.microsoft.com/en-us/fabric/workload-development-kit/)
-* [Quickstart Guide](https://learn.microsoft.com/en-us/fabric/workload-development-kit/quickstart-sample)
+* [Quickstart Guide](/docs/WDKv2-Setup.md)
 * [Workload Architecture](https://learn.microsoft.com/en-us/fabric/workload-development-kit/workload-environment)
 * [Authentication Overview](https://learn.microsoft.com/en-us/fabric/workload-development-kit/authentication-concept)
 * [OneLake](https://learn.microsoft.com/en-us/fabric/onelake/onelake-overview)
