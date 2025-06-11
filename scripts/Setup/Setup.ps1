@@ -24,3 +24,6 @@ Write-Output "TODO:Update worksapace Id  in ../config/DevGateway/workload-dev-mo
 
 
 Write-Output "TODO:for starting DevGateway call abdc.exe -DevMode:LocalConfigFilePath ../config/DevGateway/workload-dev-mode.json "
+
+Write-Output "open website to fabric "
+Write-Output "Turn on development mode  "
