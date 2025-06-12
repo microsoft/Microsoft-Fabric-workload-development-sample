@@ -86,8 +86,45 @@ This configuration defines the dialog used for creating new items, including the
 
 ## IFrame Relaxation
 
-**TODO**
+### Prereuisite
+Sandbox relaxation currently works only when `AADFEApp` is defined in the manifest.
 
+### Best Practices
+Only request sandbox relaxation if absolutely necessary, since each relaxed permission introduces potential security risks.
+
+### Enable in Manifest
+Add the `enableSandboxRelaxation` setting to your workload manifest:
+
+```xml
+    <RemoteServiceConfiguration>
+      <CloudServiceConfiguration>
+        <Cloud>Public</Cloud>
+        <AADFEApp>
+          <AppId>e5d2793e-bc5e-4140-b3c5-7dbea0d723d8</AppId>
+        </AADFEApp>
+        <EnableSandboxRelaxation>true</EnableSandboxRelaxation>  
+```
+**Important**: The line **`<EnableSandboxRelaxation>true</EnableSandboxRelaxation>`** must be included to enable this feature.
+### Development Mode
+For local development, you can use sandbox relaxation and bypass consent using the dev override. [Add to devParameters](../Frontend/tools/webpack.config.js)
+
+
+```typescript
+const devParameters = {
+  name: process.env.WORKLOAD_NAME,
+  url: "http://127.0.0.1:60006",
+  devAADAppConfig: {
+    audience: process.env.DEV_AAD_CONFIG_BE_AUDIENCE,
+    appId: process.env.DEV_AAD_CONFIG_BE_APPID,
+    redirectUri: process.env.DEV_AAD_CONFIG_BE_REDIRECT_URI
+  },
+  devAADFEAppConfig: {
+    appId: process.env.DEV_AAD_CONFIG_FE_APPID,
+  },
+  devSandboxRelaxation: true
+};
+```
+**Note**: The line **`devSandboxRelaxation: true`** enables sandbox relaxation in development mode without requiring user consent.
 ## Public API Support
 
 An example of how to aquire a Token with the the right scope and make a call to the API can be found in the [ApiAuthenticationFrontend.tsx](../Frontend/src/components/ClientSDKPlayground/ApiAuthenticationFrontend.tsx) file. The mthod `callAuthAcquireFrontendAcces` implements how to get a token with a specific scope where the `sendWorkloadServerRequest`shows a generic method to parse the token for Fabric API calls. 
