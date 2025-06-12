@@ -116,5 +116,6 @@
           "license": {"url": "https://example.com/license"}
       }
     },
+    "itemJobTypes" :["storeData", "others"],
     "compatibleItemTypes" : ["Lakehouse"]
 }
