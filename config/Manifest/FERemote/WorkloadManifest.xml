@@ -7,7 +7,7 @@
         <Cloud>Public</Cloud>
         <AADFEApp>
           <!-- Add your entra application here that you have created for the Workload -->
-          <AppId>4ab7456a-b7f9-4c7e-8c09-448647c6363e</AppId>
+          <AppId></AppId>
         </AADFEApp>
         <EnableSandboxRelaxation>false</EnableSandboxRelaxation>
         <Endpoints>
