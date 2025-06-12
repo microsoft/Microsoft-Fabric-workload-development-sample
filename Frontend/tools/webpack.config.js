@@ -95,11 +95,6 @@ module.exports = {
                     const devParameters = {
                         name: process.env.WORKLOAD_NAME,
                         url: "http://127.0.0.1:60006",
-                        devAADAppConfig: {
-                            audience: process.env.DEV_AAD_CONFIG_BE_AUDIENCE,
-                            appId: process.env.DEV_AAD_CONFIG_BE_APPID,
-                            redirectUri: process.env.DEV_AAD_CONFIG_BE_REDIRECT_URI
-                        },
                         devAADFEAppConfig: {
                             appId: process.env.DEV_AAD_CONFIG_FE_APPID,
                         }
