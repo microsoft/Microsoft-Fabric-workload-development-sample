@@ -96,7 +96,6 @@ Only request sandbox relaxation if absolutely necessary, since each relaxed perm
 Add the `enableSandboxRelaxation` setting to your workload manifest:
 
 ```xml
-{
     <RemoteServiceConfiguration>
       <CloudServiceConfiguration>
         <Cloud>Public</Cloud>
@@ -104,7 +103,6 @@ Add the `enableSandboxRelaxation` setting to your workload manifest:
           <AppId>e5d2793e-bc5e-4140-b3c5-7dbea0d723d8</AppId>
         </AADFEApp>
         <EnableSandboxRelaxation>true</EnableSandboxRelaxation>  
-}
 ```
 **Important**: The line **`<EnableSandboxRelaxation>true</EnableSandboxRelaxation>`** must be included to enable this feature.
 ### Development Mode
