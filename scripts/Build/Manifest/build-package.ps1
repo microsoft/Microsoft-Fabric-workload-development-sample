@@ -3,21 +3,21 @@ param (
 )
 
 # Set the source manifest file and definition file based on the parameter
-$manifestDir = $PSScriptRoot + "\..\..\config\Manifest\"
+$manifestDir = Join-Path $PSScriptRoot "..\..\..\config\Manifest"
+$packageConfigDir =  $manifestDir
 
-$packageConfigDir =  $manifestDir 
 if ($ManifestType -eq "Remote") {
-    $packageConfigDir = $packageConfigDir + "Remote\"
+    $packageConfigDir = Join-Path $packageConfigDir "Remote"
+    $manifestFile = "WorkloadManifest.xml"
 } elseif ($ManifestType -eq "FERemote") {
-    $packageConfigDir =  $packageConfigDir + "FERemote\"
+    $packageConfigDir = Join-Path $packageConfigDir "FERemote"
+    $manifestFile = "WorkloadManifest.xml"
 } else {
     Write-Host "Invalid parameter. Use 'Remote' or 'FERemote'."
     exit 1
 }
 
-$manifestFile =  "\WorkloadManifest.xml"
-$FEPath =  $PSScriptRoot + "\..\..\Frontend\"
-
+$FEPath = Join-Path $PSScriptRoot "..\..\..\Frontend"
 
 # --- Validation steps ---
 Write-Output "Validating configuration files..."
@@ -36,13 +36,13 @@ if (Test-Path $validationErrorFile) {
 
 # Use a temporary nuspec file
 Write-Output "Create temp nuspec file..."
-$nuspecFile = $manifestDir + "ManifestPackage.nuspec"
-$tempNuspecFile = $manifestDir + "ManifestPackage.temp.nuspec"
+$nuspecFile = Join-Path $manifestDir "ManifestPackage.nuspec"
+$tempNuspecFile = Join-Path $manifestDir "ManifestPackage.temp.nuspec"
 
 # Read and update nuspec content
 $nuspecContent = Get-Content $nuspecFile -Raw
-$nuspecContent = $nuspecContent -replace '<BEPath>', $packageConfigDir
-$nuspecContent = $nuspecContent -replace '<FEPath>', ($FEPath + "Package\")
+$nuspecContent = $nuspecContent -replace '<BEPath>', ($packageConfigDir + '\')
+$nuspecContent = $nuspecContent -replace '<FEPath>', (Join-Path $FEPath "Package\")
 
 # Write to the temporary nuspec file
 Set-Content $tempNuspecFile -Value $nuspecContent

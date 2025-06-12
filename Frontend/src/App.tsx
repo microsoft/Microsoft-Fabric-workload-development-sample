@@ -6,7 +6,6 @@ import { History } from "history";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { SampleWorkloadEditor } from "./components/SampleWorkloadEditor/SampleWorkloadEditor";
 import { Panel } from "./components/SampleWorkloadPanel/SampleWorkloadPanel";
-import { SaveAsDialog } from "./components/SampleWorkloadCreateDialog/SampleWorkloadCreateDialog";
 import CustomItemSettings from "./components/CustomItemSettings/CustomItemSettings";
 import CustomAbout from "./components/CustomItemSettings/CustomAbout";
 import SharedStatePage from "./components/SampleWorkloadSharedState/SharedStatePage"
@@ -55,14 +54,6 @@ export function App({ history, workloadClient }: AppProps) {
                     workloadClient={workloadClient} data-testid="sample-workload-frontend-only" />
             </Route>
 
-            {/* This is the routing to the Sample Workload Create Dialog experience, 
-                where an Item will be saved and the Editor will be opened
-                Add your workload creator path here, and reference it in index.worker.ts  */}
-            <Route path="/sample-workload-create-dialog/:workspaceObjectId">
-                <SaveAsDialog
-                    workloadClient={workloadClient}
-                    isImmediateSave={true} data-testid="sample-workload-create-dialog" />
-            </Route>
             {/* Routing to a sample Panel  */}
             <Route path="/panel">
                 <Panel
