@@ -1,7 +1,7 @@
 
 # Getting Started with WDKv2
 
-In this section we will present all necessary steps to get started with the newest version of our Workload Development Kit.
+In this section we will present all of the necessary steps to get started with the newest version of our Workload Development Kit.
 
 ## Register for Private Preview
 
@@ -25,15 +25,16 @@ To clone the latest version of the workload kit:
 
 ## Frontend Authentication
 
-One of the updates released with WDKv2 is Frontend Authenticaiton that will allow you to access Fabric APIs. To start using the Frontend authentication you will first need to register a Frontend Entra Application.
+One of the updates released with WDKv2 is Frontend Authentication that will allow you to access Fabric APIs. To start using the Frontend Authentication you will first need to register a Frontend Entra Application.
 
 ### Register a Frontend Entra Application:
 
 Lets create a Frontend Entra Application: 
 1. Navigate to App registrations in the [Azure Admin Portal](https://entra.microsoft.com/?culture=en-us&country=us#view/Microsoft_AAD_IAM/StartboardApplicationsMenuBlade/~/AppAppsPreview).
-2. Create a new Multitenant application .
- ![Setup Step 1](./media/Setup-EntraApp-Registration.jpg)
-3. Add the following SPA redirectURIs to the application manifest:
+2. Create a new Multitenant application.
+
+    ![Setup Step 1](./media/Setup-EntraApp-Registration.jpg)
+4. Add the following SPA redirectURIs to the application manifest:
 
 a. https://app.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
 
@@ -42,6 +43,8 @@ b. https://app.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
 c. https://msit.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
 
 d. https://msit.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
+
+You can find your Workload ID in the `WorkloadManifest.xml` as the value `WorkloadName`.
 
 Looking for your Tenant ID? Follow these steps:
 
@@ -56,14 +59,12 @@ Looking for your Tenant ID? Follow these steps:
 ![Get Tenant Info Step 2](./media/Get-tenant-info-2.jpg)
 
 *Figure: Locating Tenant ID and Tenant Region in the About dialog.*
-
-You can find your Workload ID in the `WorkloadManifest.xml` as the value `WorkloadName`.
  
 ### Configure your Workload to use the Frontend App: 
 
 The next step is to configure your workload to make use of the new Frontend App. 
 
-1.	Open the “.env.dev” file and insert your workload name in the “WORKLOAD_NAME” configuration property and your frontend application client id in the “DEV_AAD_FE_CONFIG_APPID” configuration property.
+1.	Open the “Frontend/.env.dev” file and insert your workload name in the “WORKLOAD_NAME” configuration property and your frontend application client id in the “DEV_AAD_FE_CONFIG_APPID” configuration property.
 2.	Run `npm install`
 
 ### Change the Workload Manifest:
@@ -77,29 +78,29 @@ The next step is to configure your workload to make use of the new Frontend App.
 ## Test your workload
 
 ### Run your workload:
-After you have completed all the steps you are ready to test the workload. 
-Start the workload in Development mode: 
-1.	Run npm start in the Frontend folder
-1.	Navigate to the Fabric portal. Head to Admin Settings and enable the following tenant settings:
+After you have completed all of the above steps, you are ready to test the workload. 
+Start the workload in development mode: 
+1.	Run `npm start` from within the Frontend folder
+1.	Navigate to the Fabric portal. Head to the Admin Portal settings and enable the following tenant settings:
   ![Setup Test](./media/Setup-Test-1.jpg)
 2.	Navigate to the Fabric Developer Settings and enable the Fabric Developer Mode:
    ![Setup Test](./media/Setup-Test-2.jpg)
-4. Find the [`workload-dev-mode.json`](../config/DevGateway/workload-dev-mode.json) file. Fill in `ManifestPackageFilePath` with the path to your project directory and the `WorkspaceGuid`.	
+4. Find the [`config/DevGateway/workload-dev-mode.json`](../config/DevGateway/workload-dev-mode.json) file. Fill in `ManifestPackageFilePath` with the path to your project directory and the `WorkspaceGuid`.	
 5. Start the Development Gateway:
 
 [!NOTE]
->If you're not using Windows, you need to run the DevGateway in a Docker container as described in [DevGateway Container](https://github.com/microsoft/Microsoft-Fabric-workload-development-sample/blob/main/tools/DevGatewayContainer/README.md).
+>If you're not using Windows, you might find it easier to run the DevGateway in a Docker container as described in [DevGateway Container](https://github.com/microsoft/Microsoft-Fabric-workload-development-sample/blob/main/tools/DevGatewayContainer/README.md).
 
     1. Open **PowerShell** and navigate to the **DevGateway** folder.
 
-    2. In PowerShell, run the command: `.\Microsoft.Fabric.Workload.DevGateway.exe`. When the output shows the message *info: DevGateway started*. the workload is running successfully.
-    ```powershell
+    2. Run the command: 
     .\Microsoft.Fabric.Workload.DevGateway.exe -DevMode:<absolute_path_to_workload-dev-mode.json>
-    ```
+
+    When the output shows the message *info: DevGateway started*. the workload is running successfully.
     
 
 ### Test the Frontend Application: 
-If you are using the latest version of our WDK, you can test out a component that we have built to generate a FE Token to access the APIs. To try this out:
+In this version of our WDK sample, there is a component that will generate a FE Token to access the APIs. To try this out:
  
 1.	Navigate to `https://app.fabric.microsoft.com/workloads/<WORKLOAD_NAME>/client-sdk-playground`
 2.	Open the “Frontend Authentication (Private-Preview)” tab
@@ -114,7 +115,7 @@ If you are using the latest version of our WDK, you can test out a component tha
 
 ## Workload BE Preauthorization (optional):
 
-If you would like the workload frontend app to generate tokens targeting the workload backend app, the workload frontend app must be preauthorized by the workload backend app with the relevant scopes.
+If you would like the workload frontend app to generate tokens targeting a workload backend app, the workload frontend app must be preauthorized by the workload backend app with the relevant scopes.
 1.	Navigate to App registrations in the Azure Portal.
 2.	Navigate to the Workload Backend app registration.
 3.	Navigate to “Expose an API”.
