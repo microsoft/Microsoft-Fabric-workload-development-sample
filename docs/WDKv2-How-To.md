@@ -89,6 +89,25 @@ This configuration defines the dialog used for creating new items, including the
 ### Prereuisite
 Sandbox relaxation currently works only when `AADFEApp` is defined in the manifest.
 
+### How It Works
+
+When you enable sandbox relaxation in your manifest, the following happens:
+
+1. **AAD Consent Scopes**: Your workload will request two scopes:
+   - **Basic Fabric scope** - The standard scope required for any workload to function
+   - **Fabric relaxation scope** - Additional scope specifically for sandbox relaxation capabilities
+
+2. **User Consent Flow**: When a user first accesses your extension with sandbox relaxation enabled, they will be prompted to consent to both scopes. If they deny, the iframe will not load.
+
+3. **Additional IFrame Capabilities**: Once consent is granted, your iframes receive these additional sandbox attributes:
+   - `allow-downloads` - Enables file downloads from your extension
+   - `allow-forms` - Enables form submissions to external services
+   - `allow-popups` - Enables opening new windows or tabs
+
+   Default sandbox (without relaxation): `allow-same-origin allow-scripts`
+   
+   Relaxed sandbox (with consent): `allow-same-origin allow-scripts allow-downloads allow-forms allow-popups`
+
 ### Best Practices
 Only request sandbox relaxation if absolutely necessary, since each relaxed permission introduces potential security risks.
 
