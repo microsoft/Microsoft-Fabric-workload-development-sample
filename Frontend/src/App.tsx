@@ -42,7 +42,7 @@ export function App({ history, workloadClient }: AppProps) {
         <Switch>
             {/* This is the routing to the Sample Workload Editor.
                  Add your workload editor path here, and reference it in index.worker.ts  */}
-            <Route path="/sample-workload-editor/:itemObjectId/:source?">
+            <Route path="/sample-workload-editor/:itemObjectId">
                 <SampleWorkloadEditor
                     workloadClient={workloadClient} data-testid="sample-workload-editor" />
             </Route>

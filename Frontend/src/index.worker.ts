@@ -17,7 +17,7 @@ export async function initialize(params: InitParams) {
         switch (action) {
             case 'item.onCreationSuccess':
                 const { item: createdItem } = data as ItemCreationSuccessData;
-                await Controller.callPageOpen(sampleWorkloadName, `${sampleItemEditorPath}/${createdItem.objectId}/create`, workloadClient);
+                await Controller.callPageOpen(sampleWorkloadName, `${sampleItemEditorPath}/${createdItem.objectId}`, workloadClient);
 
                 return Promise.resolve({ succeeded: true });
 

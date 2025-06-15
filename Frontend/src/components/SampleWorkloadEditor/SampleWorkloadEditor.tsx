@@ -50,7 +50,6 @@ import { ItemMetadataNotFound } from "../../models/WorkloadExceptionsModel";
 import { LoadingProgressBar } from "../LoadingIndicator/LoadingProgressBar";
 import { getOneLakeFile, getOneLakeFilePath, writeToOneLakeFile } from "../../controller/OneLakeController";
 
-
 export function SampleWorkloadEditor(props: PageProps) {
   const { workloadClient } = props;
   const pageContext = useParams<ContextProps>();
@@ -77,6 +76,7 @@ export function SampleWorkloadEditor(props: PageProps) {
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const isLoading = isLoadingData;
   const [itemEditorErrorMessage, setItemEditorErrorMessage] = useState<string>("");
+  const [hasLastResult, setHasLastResult] = useState<boolean>(false);
 
   const INT32_MIN = -2147483648;
   const INT32_MAX = 2147483647;
@@ -195,7 +195,9 @@ export function SampleWorkloadEditor(props: PageProps) {
         ? getOneLakeFilePath(sampleItem.workspaceId, sampleItem.id, fileName)
         : getOneLakeFilePath(selectedLakehouse.workspaceId, selectedLakehouse.id, fileName);
       await writeToOneLakeFile(workloadClient, filePath, result.toString());
+      setHasLastResult(true);
       setCalculationResult(result.toString());
+      await SaveItem(true /** calculationPerformed */);
     } catch (error: Error | any) {
       console.error(`Error calculating result: ${error.message}`);
       setCalculationResult("Error in calculation");
@@ -226,6 +228,7 @@ export function SampleWorkloadEditor(props: PageProps) {
         setSelectedLakehouse(item1Metadata?.lakehouse);
         setOperand1(item1Metadata?.operand1 ?? 0);
         setOperand2(item1Metadata?.operand2 ?? 0);
+        setHasLastResult(item1Metadata?.hasLastResult ?? false);
         setOperand1ValidationMessage("");
         setOperand2ValidationMessage("");
         setInvalidOperands(false);
@@ -233,7 +236,7 @@ export function SampleWorkloadEditor(props: PageProps) {
         const loadedOperator = item1Metadata?.operator;
         const isValidOperator = loadedOperator && supportedOperators.includes(loadedOperator);
         setOperator(isValidOperator ? loadedOperator : null);
-        if (!pageContext.source) {
+        if (item1Metadata?.hasLastResult) {
           await loadCalculationResult(item);
         }
         setItemEditorErrorMessage("");
@@ -262,14 +265,15 @@ export function SampleWorkloadEditor(props: PageProps) {
     setSampleItem(undefined);
   }
 
-  async function SaveItem() {
+  async function SaveItem(calculationPerformed?: boolean) {
     let payload: UpdateItemPayload = {
       item1Metadata: {
         lakehouse: selectedLakehouse,
         operand1: operand1,
         operand2: operand2,
         operator: operator,
-        useOneLake: storageName === "OneLake"
+        useOneLake: storageName === "OneLake",
+        hasLastResult: calculationPerformed ?? hasLastResult,
       },
     };
 

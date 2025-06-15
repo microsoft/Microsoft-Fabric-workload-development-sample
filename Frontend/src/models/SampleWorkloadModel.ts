@@ -38,6 +38,7 @@ export interface Item1Metadata {
     operator?: string;
     lakehouse: ItemReference;
     useOneLake: boolean;
+    hasLastResult: boolean;
 }
 
 // Represents extended metadata for item1, including additional information
