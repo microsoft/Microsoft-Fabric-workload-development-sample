@@ -6,7 +6,7 @@
       <CloudServiceConfiguration>
         <Cloud>Public</Cloud>
         <AADFEApp>
-        <!-- Add your entra application here that you have created for the Workload -->
+          <!-- Add your entra application here that you have created for the Workload -->
           <AppId></AppId>
         </AADFEApp>
         <EnableSandboxRelaxation>false</EnableSandboxRelaxation>

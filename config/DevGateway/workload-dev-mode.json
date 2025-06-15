@@ -1,7 +1,5 @@
 {  
-	//TODO: add the workspace guid you want to use for development
 	"WorkspaceGuid": "",
-	//TODO: set the right absolut to the manifest located in after you run the build_package script it will land in .\\..\\ManifestPackage.1.0.0.nupkg
-	"ManifestPackageFilePath": "",
+	"ManifestPackageFilePath": ".\\..\\..\\Manifest\\ManifestPackage.1.0.0.nupkg",
 	"WorkloadEndpointURL": "http://127.0.0.1:5000/workload"
 }
