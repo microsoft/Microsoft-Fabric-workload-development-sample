@@ -3,7 +3,7 @@ param (
     [String]$WorkloadName = "Org.MyWorkloadSample",
     [String]$ItemName = "SampleItem",
     [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
-    [String]$AADBackendAppId = "00000000-0000-0000-0000-000000000000"
+    [String]$AADBackendAppId
 )
 
 
@@ -15,21 +15,20 @@ if ($HostingType -eq "FERemote" || $HostingType -eq "Remote") {
 }
 
 # Define source and destination directories
-$srcManifestDir = Resolve-Path ".\..\..\config\Templates\Manifest"
-$srcManifestDir = Join-Path $srcManifestDir "\$HostingType"
+$srcTemplateDir = Resolve-Path ".\..\..\config\Templates\"
+$srcManifestDir = Join-Path $srcTemplateDir "\Manifest\$HostingType"
 Write-Output "Using template in $srcManifestDir"
 
 $destManifestDir = Resolve-Path ".\..\..\config\"
 $destManifestDir = Join-Path $destManifestDir "Manifest" 
 if (!(Test-Path $destManifestDir)) { New-Item -ItemType Directory -Path $destManifestDir | Out-Null }
-Write-Output "Writing Manifest files in $destManifestDir"
 
 $destPackageDir = Resolve-Path ".\..\..\Frontend\Package"
 
 Write-Output "Workload Name: $WorkloadName"
 Write-Output "Item Name: $ItemName"
 Write-Output "AAD Frontend App ID: $AADFrontendAppId"
-#Write-Output "AAD Backend App ID: $AADBackendAppId"
+Write-Output "AAD Backend App ID: $AADBackendAppId"
 
 # Define key-value dictionary for replacements
 $replacements = @{
@@ -51,13 +50,12 @@ Get-ChildItem -Path $srcManifestDir -File | ForEach-Object {
 
     $destPath = Join-Path $destManifestDir $_.Name
     Set-Content -Path $destPath -Value $content
-    Write-Output "Writing Manifest file: $destPath"
+    Write-Output "$destPath"
 }
 
 # Use a temporary nuspec file
 Write-Output "Create nuspec file ..."
 $srcNuspecFile = Join-Path $srcManifestDir "..\ManifestPackage.nuspec"
-Write-Output "Using Nuspec template $srcNuspecFile"
 $destNuspecFile = Join-Path $destManifestDir "ManifestPackage.nuspec"
 
 # Read and update nuspec content
@@ -67,6 +65,23 @@ $nuspecContent = $nuspecContent -replace '<FEPath>', (Join-Path $destPackageDir 
 
 # Write to the temporary nuspec file
 Set-Content $destNuspecFile -Value $nuspecContent
-Write-Output "Writing Nuspec file: $destNuspecFile"
+Write-Output "$destNuspecFile"
 
 
+$srcFrontendDir = Join-Path $srcTemplateDir "Frontend"
+$destFrontendDir = Resolve-Path ".\..\..\Frontend"
+
+# Get all files in the source directory
+Write-Output "Writing Frontend files ..."
+Get-ChildItem -Path $srcFrontendDir -File | ForEach-Object {
+    $filePath = $_.FullName
+    $content = Get-Content $filePath -Raw
+
+    foreach ($key in $replacements.Keys) {
+        $content = $content -replace "\{\{$key\}\}", $replacements[$key]
+    }
+
+    $destPath = Join-Path $destFrontendDir $_.Name
+    Set-Content -Path $destPath -Value $content
+    Write-Output "$destPath"
+}
