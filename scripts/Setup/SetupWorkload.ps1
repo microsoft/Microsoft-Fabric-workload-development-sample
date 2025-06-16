@@ -15,15 +15,16 @@ if ($HostingType -eq "FERemote" || $HostingType -eq "Remote") {
 }
 
 # Define source and destination directories
-$srcDir = Resolve-Path ".\..\..\config\Templates"
-$destDir = Resolve-Path ".\..\..\config\" 
-
-$srcManifestDir = Join-Path $srcDir "Manifest\$HostingType"
+$srcManifestDir = Resolve-Path ".\..\..\config\Templates\Manifest"
+$srcManifestDir = Join-Path $srcManifestDir "\$HostingType"
 Write-Output "Using template in $srcManifestDir"
 
-$destManifestDir = Join-Path $destDir "Manifest"
+$destManifestDir = Resolve-Path ".\..\..\config\"
+$destManifestDir = Join-Path $destManifestDir "Manifest" 
 if (!(Test-Path $destManifestDir)) { New-Item -ItemType Directory -Path $destManifestDir | Out-Null }
 Write-Output "Writing Manifest files in $destManifestDir"
+
+$destPackageDir = Resolve-Path ".\..\..\Frontend\Package"
 
 Write-Output "Workload Name: $WorkloadName"
 Write-Output "Item Name: $ItemName"
@@ -39,6 +40,7 @@ $replacements = @{
 }
 
 # Get all files in the source directory
+Write-Output "Writing Manifest files ..."
 Get-ChildItem -Path $srcManifestDir -File | ForEach-Object {
     $filePath = $_.FullName
     $content = Get-Content $filePath -Raw
@@ -49,4 +51,22 @@ Get-ChildItem -Path $srcManifestDir -File | ForEach-Object {
 
     $destPath = Join-Path $destManifestDir $_.Name
     Set-Content -Path $destPath -Value $content
+    Write-Output "Writing Manifest file: $destPath"
 }
+
+# Use a temporary nuspec file
+Write-Output "Create nuspec file ..."
+$srcNuspecFile = Join-Path $srcManifestDir "..\ManifestPackage.nuspec"
+Write-Output "Using Nuspec template $srcNuspecFile"
+$destNuspecFile = Join-Path $destManifestDir "ManifestPackage.nuspec"
+
+# Read and update nuspec content
+$nuspecContent = Get-Content $srcNuspecFile -Raw
+$nuspecContent = $nuspecContent -replace '<BEPath>', (Join-Path $destManifestDir '\')
+$nuspecContent = $nuspecContent -replace '<FEPath>', (Join-Path $destPackageDir '\')
+
+# Write to the temporary nuspec file
+Set-Content $destNuspecFile -Value $nuspecContent
+Write-Output "Writing Nuspec file: $destNuspecFile"
+
+
