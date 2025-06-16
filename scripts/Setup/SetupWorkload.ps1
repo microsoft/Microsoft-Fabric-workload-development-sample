@@ -1,6 +1,6 @@
 param (
     [string]$HostingType,
-    [String]$WorkloadName = "Org.MyFERemoteWorkloadSample",
+    [String]$WorkloadName = "Org.MyWorkloadSample",
     [String]$ItemName = "SampleItem",
     [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
     [String]$AADBackendAppId = "00000000-0000-0000-0000-000000000000"
@@ -21,16 +21,14 @@ $destDir = Resolve-Path ".\..\..\config\"
 $srcManifestDir = Join-Path $srcDir "Manifest\$HostingType"
 Write-Output "Using template in $srcManifestDir"
 
-$destManifestDir = Join-Path $destDir "Manifest\$HostingType"
+$destManifestDir = Join-Path $destDir "Manifest"
+if (!(Test-Path $destManifestDir)) { New-Item -ItemType Directory -Path $destManifestDir | Out-Null }
 Write-Output "Writing Manifest files in $destManifestDir"
 
-Write-Output "Using Workload Name $WorkloadName"
-Write-Output "Using Item Name $ItemName"
-Write-Output "Using AAD Frontend App ID $AADFrontendAppId"
-#Write-Output "Using AAD Backend App ID $AADBackendAppId"
-
-
-if (!(Test-Path $destManifestDir)) { New-Item -ItemType Directory -Path $destManifestDir | Out-Null }
+Write-Output "Workload Name: $WorkloadName"
+Write-Output "Item Name: $ItemName"
+Write-Output "AAD Frontend App ID: $AADFrontendAppId"
+#Write-Output "AAD Backend App ID: $AADBackendAppId"
 
 # Define key-value dictionary for replacements
 $replacements = @{

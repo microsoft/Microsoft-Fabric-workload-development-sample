@@ -398,9 +398,10 @@ FodyWeavers.xsd
 /package-lock.json
 
 # Fabric Configs
-/config/Manifest
-/config/DevGateway
+config/Manifest
+config/DevGateway
 
 # Fabric Tools
-/tools/DevGateway
-/tools/DevGatewayContainer/.env
+tools/DevGateway
+tools/DevGatewayContainer/.env
+scripts/Build/Manifest/ValidationScripts/ValidationErrors.txt
