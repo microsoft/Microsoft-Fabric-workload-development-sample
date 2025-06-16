@@ -1,21 +1,11 @@
 param (
-    [string]$ManifestType
+    [string]$HostingType
 )
 
 # Set the source manifest file and definition file based on the parameter
 $manifestDir = Join-Path $PSScriptRoot "..\..\..\config\Manifest"
-$packageConfigDir =  $manifestDir
-
-if ($ManifestType -eq "Remote") {
-    $packageConfigDir = Join-Path $packageConfigDir "Remote"
-    $manifestFile = "WorkloadManifest.xml"
-} elseif ($ManifestType -eq "FERemote") {
-    $packageConfigDir = Join-Path $packageConfigDir "FERemote"
-    $manifestFile = "WorkloadManifest.xml"
-} else {
-    Write-Host "Invalid parameter. Use 'Remote' or 'FERemote'."
-    exit 1
-}
+$packageConfigDir = Join-Path $manifestDir "Current"
+ 
 
 $FEPath = Join-Path $PSScriptRoot "..\..\..\Frontend"
 

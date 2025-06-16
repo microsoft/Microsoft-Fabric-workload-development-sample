@@ -9,7 +9,7 @@ The Workload Development Kit v2 (WDK v2) builds upon the foundation established 
 
 - **Standardization:** v2 introduces more consistent patterns and practices, reducing ambiguity and simplifying the development process.
 - **Accelerated Development:** Enhanced tooling and templates help organizations get started quickly and reduce time-to-market for new workloads.
-- **Expanded Hosting Options:** In addition to the existing Remote hosting type, v2 introduces a new hosting type called **FERemote**. This allows developers to focus exclusively on frontend-only workloads, significantly reducing complexity and lowering the barrier to entry for building Fabric workloads.
+- **Expanded Hosting Options:** In addition to the existing **Remote** hosting type, v2 introduces a new type called **FERemote**. This allows developers to focus building frontend focused workloads where they don't need long running jobs or specific backend to backen integration. This hosting type significantly reduces the complexity and lowers the barrier to entry for building Fabric workloads.
 
 With these enhancements, WDK v2 empowers a broader range of developers to contribute to the Fabric ecosystem, making workload development more accessible and efficient.
 

@@ -397,10 +397,10 @@ FodyWeavers.xsd
 /Frontend/package-lock.json
 /package-lock.json
 
-# Fabric DevGateway Container Environment Files
-/tools/DevGatewayContainer/.env
-
 # Fabric Configs
-/WorklaodConfig/*.pupkg
-/tools/DevGateway
+/config/Manifest
+/config/DevGateway
 
+# Fabric Tools
+/tools/DevGateway
+/tools/DevGatewayContainer/.env

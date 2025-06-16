@@ -1,5 +1,0 @@
-{  
-	"WorkspaceGuid": "",
-	"ManifestPackageFilePath": ".\\..\\..\\Manifest\\ManifestPackage.1.0.0.nupkg",
-	"WorkloadEndpointURL": "http://127.0.0.1:5000/workload"
-}
