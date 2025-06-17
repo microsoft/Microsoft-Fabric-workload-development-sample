@@ -10,6 +10,8 @@ try
     {
         throw "Invalid input"
     }
+    Write-Host "inputDirectory: $inputDirectory"
+    Write-Host "workloadManifest: $workloadManifest"
     $workloadXmlPath = Join-Path $inputDirectory $workloadManifest
     $workloadXml = [xml](Get-Content -Path $workloadXmlPath)
     $workloadName = $workloadXml.WorkloadManifestConfiguration.Workload.WorkloadName
@@ -18,7 +20,7 @@ try
     foreach ($itemXml in $itemXmls)
     {
         if ($itemXml.Name -ne $workloadManifest)
-        {
+        {            
             if($itemXml.Name -ne "WorkloadManifest.xml")
             {
             

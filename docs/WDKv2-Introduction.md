@@ -9,7 +9,7 @@ The Workload Development Kit v2 (WDK v2) builds upon the foundation established 
 
 - **Standardization:** v2 introduces more consistent patterns and practices, reducing ambiguity and simplifying the development process.
 - **Accelerated Development:** Enhanced tooling and templates help organizations get started quickly and reduce time-to-market for new workloads.
-- **Expanded Hosting Options:** In addition to the existing Remote hosting type, v2 introduces a new hosting type called **FERemote**. This allows developers to focus exclusively on frontend-only workloads, significantly reducing complexity and lowering the barrier to entry for building Fabric workloads.
+- **Expanded Hosting Options:** In addition to the existing **Remote** hosting type, v2 introduces a new type called **FERemote**. This allows developers to focus building frontend focused workloads where they don't need long running jobs or specific backend to backen integration. This hosting type significantly reduces the complexity and lowers the barrier to entry for building Fabric workloads.
 
 With these enhancements, WDK v2 empowers a broader range of developers to contribute to the Fabric ecosystem, making workload development more accessible and efficient.
 
@@ -90,7 +90,8 @@ With WDKv2, item creation is standardized through a dedicated Fabric control tha
 
 ### IFrame Relaxation
 
-With WDKv2, partners can request additional IFrame attributes to enable advanced scenarios such as file downloads or opening external websites. This feature allows your workload to prompt users for explicit consent before performing actions that require broader browser capabilities—such as initiating downloads or connecting users to external APIs using their current Fabric credentials. By specifying these requirements in your workload configuration, you ensure that users are informed and can grant the necessary permissions, enabling seamless integration with external systems while maintaining security and user trust.
+With WDKv2, partners can request additional IFrame attributes to enable advanced scenarios such as file downloads or opening external websites. This feature allows your workload to prompt users for explicit consent before performing actions that require broader browser capabilities—such as initiating downloads or connecting users to external APIs using their current Fabric credentials. By specifying these requirements in your workload configuration, you ensure that users are informed and can grant the necessary permissions, enabling seamless integration with external systems while maintaining security and user trust.  
+**Note**: Enabling this feature requires users to grant additional AAD consent for the relaxation scope, beyond the standard Fabric scope required for basic workload functionality.
 
 ### Public API Support
 

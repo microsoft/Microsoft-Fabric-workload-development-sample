@@ -279,8 +279,6 @@ FakesAssemblies/
 
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
-Frontend/node_modules/*
-!Frontend/node_modules/@trident/
 
 # Visual Studio 6 build log
 *.plg
@@ -394,13 +392,22 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
-/Frontend/package-lock.json
+# Fabric files
 /package-lock.json
 
-# Fabric DevGateway Container Environment Files
-/tools/DevGatewayContainer/.env
+# Fabric Config files
+config/Manifest
+config/DevGateway
 
-# Fabric Configs
-/WorklaodConfig/*.pupkg
-/tools/DevGateway
+# Fabric Tool files 
+tools/DevGateway
+tools/DevGatewayContainer/.env
+
+# Fabric Script files
+scripts/Build/Manifest/ValidationScripts/ValidationErrors.txt
+
+# Fabric Frontend files
+Frontend/node_modules/*
+Frontend/package-lock.json
+Frontend/.env*
 
