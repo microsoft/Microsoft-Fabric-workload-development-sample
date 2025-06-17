@@ -1,10 +1,9 @@
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { callAuthAcquireFrontendAccessToken } from "./SampleWorkloadController";
-import { EnvironmentConstants, livyScope } from "../constants";
+import { EnvironmentConstants } from "../constants";
 import { BatchRequest, BatchResponse, BatchState, ErrorResponse, SessionRequest, SessionResponse, StatementRequest, StatementResponse } from "src/models/SparkLivyModel";
 
-// Base URL for Livy API
-const livyBaseUrl = EnvironmentConstants.LivyApiBaseUrl;
+const livyScope = "https://api.fabric.microsoft.com/Lakehouse.Execute.All https://api.fabric.microsoft.com/Lakehouse.Read.All https://api.fabric.microsoft.com/Item.ReadWrite.All https://api.fabric.microsoft.com/Workspace.ReadWrite.All https://api.fabric.microsoft.com/Code.AccessStorage.All https://api.fabric.microsoft.com/Code.AccessAzureKeyvault.All https://api.fabric.microsoft.com/Code.AccessAzureDataExplorer.All https://api.fabric.microsoft.com/Code.AccessAzureDataLake.All https://api.fabric.microsoft.com/Code.AccessFabric.All"
 
 // Livy API version
 const LIVY_API_VERSION = "2024-07-30";
@@ -43,7 +42,7 @@ export async function createBatch(
 ): Promise<BatchResponse> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches`;
         
         const response = await fetch(url, {
             method: "POST",
@@ -75,7 +74,7 @@ export async function listBatches(
 ): Promise<BatchResponse[]> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches`;
         
         const response = await fetch(url, {
             method: "GET",
@@ -107,7 +106,7 @@ export async function getBatch(
 ): Promise<BatchResponse> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}`;
         
         const response = await fetch(url, {
             method: "GET",
@@ -139,7 +138,7 @@ export async function deleteBatch(
 ): Promise<void> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}`;
         
         const response = await fetch(url, {
             method: "DELETE",
@@ -174,7 +173,7 @@ export async function cancelBatch(
 ): Promise<BatchResponse> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}/state`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}/state`;
         
         const response = await fetch(url, {
             method: "DELETE",
@@ -210,7 +209,7 @@ export async function getBatchLogs(
 ): Promise<{ id: string, log: string[] }> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        let url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}/log`;
+        let url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}/log`;
         
         // Add optional query parameters if provided
         const params = new URLSearchParams();
@@ -251,7 +250,7 @@ export async function getBatchState(
 ): Promise<{ id: string, state: BatchState }> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}/state`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}/state`;
         
         const response = await fetch(url, {
             method: "GET",
@@ -283,7 +282,7 @@ export async function createSession(
 ): Promise<SessionResponse> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions`;
         
         const response = await fetch(url, {
             method: "POST",
@@ -315,7 +314,7 @@ export async function listSessions(
 ): Promise<SessionResponse[]> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions`;
         
         const response = await fetch(url, {
             method: "GET",
@@ -347,7 +346,7 @@ export async function getSession(
 ): Promise<SessionResponse> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}`;
         
         const response = await fetch(url, {
             method: "GET",
@@ -379,7 +378,7 @@ export async function deleteSession(
 ): Promise<void> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}`;
         
         const response = await fetch(url, {
             method: "DELETE",
@@ -416,7 +415,7 @@ export async function submitStatement(
 ): Promise<StatementResponse> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/statements`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/statements`;
         
         const response = await fetch(url, {
             method: "POST",
@@ -452,7 +451,7 @@ export async function getStatement(
 ): Promise<StatementResponse> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/statements/${statementId}`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/statements/${statementId}`;
         
         const response = await fetch(url, {
             method: "GET",
@@ -484,7 +483,7 @@ export async function listStatements(
 ): Promise<StatementResponse[]> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/statements`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/statements`;
         
         const response = await fetch(url, {
             method: "GET",
@@ -516,7 +515,7 @@ export async function cancelSession(
 ): Promise<SessionResponse> {
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
-        const url = `${livyBaseUrl}/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/state`;
+        const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/state`;
         
         const response = await fetch(url, {
             method: "DELETE",

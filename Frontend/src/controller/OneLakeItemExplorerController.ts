@@ -1,8 +1,10 @@
 import { GenericItem } from "src/models/SampleWorkloadModel";
-import { EnvironmentConstants, oneLakeScope } from "../constants";
+import { EnvironmentConstants } from "../constants";
 import { callAuthAcquireFrontendAccessToken } from "./SampleWorkloadController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FileMetadata, OneLakePathContainer, TableMetadata } from "src/models/OneLakeItemExplorerModel";
+
+export const oneLakeScope = "https://storage.azure.com/user_impersonation";
 
 /**
  * Retrieves a list of tables from the specified Fabric Item.

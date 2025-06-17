@@ -14,12 +14,12 @@ import {
     TriangleRight20Regular,
   } from "@fluentui/react-icons";
 
-  import { EventhouseItemMetadata } from "src/models/EventhouseModel";
-import { callDatahubOpen, CallExecuteQuery, callGetEventhouseItem } from "../../controller/SampleWorkloadController";
+import { EventhouseItemMetadata } from "src/models/EventhouseModel";
+import { CallExecuteQuery, callGetEventhouseItem } from "../../controller/EventHouseController";
 import { GenericItem } from "src/models/SampleWorkloadModel";
+import { callDatahubOpen } from "../../controller/SampleWorkloadController";
 
 export function EventhouseExplorerComponent({ workloadClient }: PageProps) {
-    const sampleWorkloadBEUrl = process.env.WORKLOAD_BE_URL;
     const [selectedEventhouse, setSelectedEventhouse] = useState<GenericItem>(undefined);
     const [selectedEventhouseItemMetadata, setSelectedEventhouseItemMetadata] = useState<EventhouseItemMetadata>(undefined);
      const [isDirtyEventhouse, setDirtyEventhouse] = useState<boolean>(false);
@@ -50,10 +50,9 @@ export function EventhouseExplorerComponent({ workloadClient }: PageProps) {
       console.log(`loadKqlDatabasesWhenEventhouseSelected: ${selectedEventhouse}`);
       if (selectedEventhouse) {
           const result = await callGetEventhouseItem(
-              sampleWorkloadBEUrl,
+              workloadClient,
               selectedEventhouse.workspaceId,
-              selectedEventhouse.id,
-              workloadClient
+              selectedEventhouse.id,              
           );
     
           if (result) {
@@ -91,12 +90,12 @@ export function EventhouseExplorerComponent({ workloadClient }: PageProps) {
     async function onExecuteQueryButtonClick() {
       if (selectedEventhouse) {
           const result = await CallExecuteQuery(
-              sampleWorkloadBEUrl,
+              workloadClient,
               selectedEventhouseItemMetadata?.properties.queryServiceUri,
               selectedDatabaseForQuery,
               selectedQueryToExecute,
               setQueryClientRequestId,
-              workloadClient
+              
           );
           
           if (result) {
@@ -111,12 +110,11 @@ export function EventhouseExplorerComponent({ workloadClient }: PageProps) {
             
             const query = `.cancel query '${queryClientRequestId}'`;
             const result = await CallExecuteQuery(
-              sampleWorkloadBEUrl,
+              workloadClient,
               selectedEventhouseItemMetadata?.properties.queryServiceUri,
               selectedDatabaseForQuery,
               query,
-              setQueryClientRequestId,
-              workloadClient
+              setQueryClientRequestId              
           );
           if (result) {
             setQueryResult(JSON.stringify(result));

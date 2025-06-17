@@ -1,15 +1,9 @@
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { callAuthAcquireFrontendAccessToken } from "./SampleWorkloadController";
-import { EnvironmentConstants, oneLakeScope } from "../constants";
+import { EnvironmentConstants } from "../constants";
 
-interface GetFoldersResult {
-    paths: OneLakeFolder[];
-}
+export const oneLakeScope = "https://storage.azure.com/user_impersonation";
 
-interface OneLakeFolder {
-    name: string;
-    isDirectory: boolean;
-}
 
 export async function checkIfFileExists(workloadClient: WorkloadClientAPI, filePath: string): Promise<boolean> {
     const url = `${EnvironmentConstants.OneLakeDFSBaseUrl}/${filePath}?resource=file`;
