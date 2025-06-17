@@ -7,7 +7,7 @@ import {
 } from '@fluentui/react-components';
 import { Stack } from '@fluentui/react';
 import { TabContentProps } from '../../models/SampleWorkloadModel';
-import { OneLakeItemExplorerComponent } from '../SampleWorkloadOneLakeExplorer/SampleWorkloadOneLakeItemExplorer';
+import { OneLakeItemExplorerComponent } from '../SampleOneLakeItemExplorer/SampleOneLakeItemExplorer';
 import "./../../styles.scss";
 
 export function DataPlayground(props: TabContentProps) {

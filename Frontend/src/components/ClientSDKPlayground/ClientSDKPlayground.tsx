@@ -23,6 +23,7 @@ import { PageProps } from 'src/App';
 import { callNavigationBeforeNavigateAway, callNavigationNavigate } from "../../controller/SampleWorkloadController";
 import "./../../styles.scss";
 import { ApiArtifactCrudPublic } from './ApiArtifactCrudPublic';
+import SampleSparkTerminal from '../SampleSparkTerminal/SampleSparkTerminal';
 
 
 export function ClientSDKPlayground(props: TabContentProps) {
@@ -58,6 +59,7 @@ export function ClientSDKPlayground(props: TabContentProps) {
         <Tab value="authentication">Backend Authentication</Tab>
         <Tab value="authenticationFrontend">Frontend Authentication (Private-Preview)</Tab>
         <Tab value="publicJSCrud">Public Definition JS API</Tab>
+        <Tab value="sparkTerminal">Spark Terminal</Tab>
       </TabList>
 
       <Stack className="main">
@@ -96,6 +98,9 @@ export function ClientSDKPlayground(props: TabContentProps) {
         )}
         {selectedApiTab === 'publicJSCrud' && (
           <ApiArtifactCrudPublic workloadClient={workloadClient} />
+        )}
+        {selectedApiTab === 'sparkTerminal' && (
+          <SampleSparkTerminal workloadClient={workloadClient} />
         )}
       </Stack>
     </Stack>
