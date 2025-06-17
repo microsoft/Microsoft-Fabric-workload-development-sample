@@ -22,7 +22,7 @@ if (Test-Path $setupDevGatewayScript) {
 if ([string]::IsNullOrWhiteSpace($AADFrontendAppId) -or $AADFrontendAppId -eq "00000000-0000-0000-0000-000000000000") {
     Write-Warning "AADFrontendAppId is not set or is using the default placeholder value."
     Write-Host "Please provide a valid AADFrontendAppId for your Entra Application or run CreateDevAADApp.ps1 to create one."
-    $AADFrontendAppId = Read-Host "Enter your Entra Workspace Id"
+    $AADFrontendAppId = Read-Host "Enter your Entra App Id"
 }
 
 # Run SetupWorkload.ps1
@@ -37,6 +37,12 @@ if (Test-Path $setupWorkloadScript) {
 } else {
     Write-Host "SetupWorkload.ps1 not found at $setupWorkloadScript"
 }
+
+Write-Output "Downloading Frontend dependencies..."
+cd ..\..\Frontend
+npm install
+cd $PSScriptRoot
+# Ensure we are back in the scripts directory
 
 Write-Output "Building the manifes..."
 
