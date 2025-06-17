@@ -1,10 +1,6 @@
-param (
-    [string]$ManifestType
-)
 
 # Set the source manifest file and definition file based on the parameter
 $manifestDir = Join-Path $PSScriptRoot "..\..\..\config\Manifest"
-$FEPath = Join-Path $PSScriptRoot "..\..\..\Frontend"
 
 # --- Validation steps ---
 Write-Output "Validating configuration files..."
@@ -25,8 +21,13 @@ if (Test-Path $validationErrorFile) {
 $nuspecFile = Join-Path $manifestDir "ManifestPackage.nuspec"
 
 # Build the NuGet package using the temporary nuspec file
+# Find nuget.exe in node_modules/.bin (relative to repo root)
+$repoRoot = Join-Path $PSScriptRoot "..\..\..\Frontend"
+$nugetExe = Join-Path $repoRoot "node_modules\.bin\nuget"
+
+# Build the NuGet package using the temporary nuspec file
 Write-Output "Creating nuget package..."
-& nuget pack $nuspecFile -OutputDirectory $manifestDir -Verbosity detailed
+& $nugetExe pack $nuspecFile -OutputDirectory $manifestDir -Verbosity detailed
 $nugetExitCode = $LASTEXITCODE
 
 if ($nugetExitCode -eq 0) {
