@@ -69,7 +69,9 @@ Our architecture is designed to integrate flawlessly with OneLake, enabling oper
 
 ## Get Started
 
-Head to our documentation for a step-by-step guide to getting your environment set up and your first workload up and running: [Getting Started](/docs/WDKv2-Setup.md).
+The easiest way to get started is by cloning or forking this repository. After that navigate to the .\scripts\Setup\ directory and run the [Start.ps1](./scripts/Setup/Setup.ps1) script which will set up everything for you.
+
+Alternatively you can use the documentation for a step-by-step guide to getting your environment set up and your first workload up and running: [Getting Started](/docs/WDKv2-Setup.md).
 
 ## Implement your custom workload
 
