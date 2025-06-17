@@ -23,10 +23,10 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
   const [shortcutName, setShortcutName] = useState<string>("");
 
   const [sourceItem, setSourceItem] = useState<ItemMetadata>(null);
-  const [sourceShortcutPath, setSourceShortcutPath] = useState<string>("/");
+  const [sourceShortcutPath, setSourceShortcutPath] = useState<string>("Files");
 
   const [targetItem, setTargetItem] = useState<ItemMetadata>(null);
-  const [targetShortcutPath, setTargetShortcutPath] = useState<string>("/");
+  const [targetShortcutPath, setTargetShortcutPath] = useState<string>("Files");
   
   // UI states
   const [isProcessing, setIsProcessing] = useState<boolean>(false);

@@ -55,7 +55,7 @@ export function SampleWorkloadEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
   const { pathname } = useLocation();
   const supportedOperators = ['Undefined', 'Add', 'Subtract', 'Multiply', 'Divide', 'Random'];
-  const calculationFileName = "calculationResult.txt";
+  const calculationFileName = "CalcResult";
 
   // React state for WorkloadClient APIs
   const [operand1ValidationMessage, setOperand1ValidationMessage] =
@@ -105,7 +105,7 @@ export function SampleWorkloadEditor(props: PageProps) {
       return;
     }
     try {
-      const fileName = `${calculationFileName}-${item.id}.txt`;
+      const fileName = `CalcResults/${calculationFileName}-${item.id}.txt`;
       const itemMetadata = item.extendedMetdata.item1Metadata;
       const filePath = itemMetadata?.useOneLake
         ? getOneLakeFilePath(item.workspaceId, item.id, fileName)
