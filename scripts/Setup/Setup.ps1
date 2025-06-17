@@ -1,29 +1,82 @@
+param (
+    [string]$HostingType = "FERemote",
+    [String]$WorkloadName = "Org.MyWorkloadSample",
+    [String]$ItemName = "SampleItem",
+    [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
+    [String]$AADBackendAppId
+)
+
+
 Write-Output "Setting up the environment..."
-Write-Output "TODO:Ask for download of DevGateway..."
-Write-Output "TODO:Extract DevGateway to tools directory ..."
 
-#Write-Output "Creating a new Entra Application..."
-#& "$PSScriptRoot\CreateDevAADApp.ps1"
-#To make CreateDevAADApp. work
-# remove the scopes and only keep the FabricExtend (first one) scope
-# add the new redirect URIs - for that you need to ask for tenant id and replace the workloadId 
-Write-Output "TODO:Give me Entra App Id ..."
+# Run SetupDevGateway.ps1
+$setupDevGatewayScript = Join-Path $PSScriptRoot "..\Setup\SetupDevGateway.ps1"
+if (Test-Path $setupDevGatewayScript) {
+    $workspaceId = Read-Host "Enter your Entra Workspace Id"
+    Write-Host "Running SetupDevGateway.ps1..."
+    & $setupDevGatewayScript -WorkspaceGuid $workspaceId
+} else {
+    Write-Host "SetupDevGateway.ps1 not found at $setupDevGatewayScript"
+}
 
+if ([string]::IsNullOrWhiteSpace($AADFrontendAppId) -or $AADFrontendAppId -eq "00000000-0000-0000-0000-000000000000") {
+    Write-Warning "AADFrontendAppId is not set or is using the default placeholder value."
+    Write-Host "Please provide a valid AADFrontendAppId for your Entra Application or run CreateDevAADApp.ps1 to create one."
+    $AADFrontendAppId = Read-Host "Enter your Entra Workspace Id"
+}
 
-Write-Output "Configuring the project..."
-Write-Output "TODO:Updateing Entra App ids in Workload Manfest.xml & .env.dev ..."
+# Run SetupWorkload.ps1
+$setupWorkloadScript = Join-Path $PSScriptRoot "..\Setup\SetupWorkload.ps1"
+if (Test-Path $setupWorkloadScript) {
+    Write-Host "Running SetupWorkload.ps1..."
+    & $setupWorkloadScript -HostingType $HostingType `
+        -WorkloadName $WorkloadName `
+        -ItemName $ItemName `
+        -AADFrontendAppId $AADFrontendAppId `
+        -AADBackendAppId $AADBackendAppId
+} else {
+    Write-Host "SetupWorkload.ps1 not found at $setupWorkloadScript"
+}
 
 Write-Output "Building the manifes..."
-Write-Output "TODO:Update the build-package.ps1 file to use js instead of Nuget.exe ..."
-& "$PSScriptRoot\..\Manifest\build-package.ps1" FERemote
+# Prompt user to build the manifest package
+$buildManifestScript = Join-Path $PSScriptRoot "..\Build\Manifest\build-package.ps1"
+if (Test-Path $buildManifestScript) {
+    $buildManifestScriptFull = (Resolve-Path $buildManifestScript).Path
+    Write-Host ""
+    Write-Host "To build the manifest package, please run the following script:"
+    Write-Host "`"$buildManifestScriptFull`""
+} else {
+    Write-Host "build-package.ps1 not found at $buildManifestScript"
+}
 
-Write-Output "TODO:Give me Entra Workspac Id ..."
+Write-Host ""
+Write-Host "Everything is set up."
+Write-Host "Now you can run the following scripts to start your development environment."
+Write-Host "--------------------------------------------------------------------------------"
 
-Write-Output "TODO:Update absolute path in ../config/DevGateway/workload-dev-mode.json"
-Write-Output "TODO:Update worksapace Id  in ../config/DevGateway/workload-dev-mode.json"
+
+# Prompt user to run StartDevGateway.ps1 with absolute path
+$startDevGatewayScript = Join-Path $PSScriptRoot "..\Run\StartDevGateway.ps1"
+if (Test-Path $startDevGatewayScript) {
+    $startDevGatewayScriptFull = (Resolve-Path $startDevGatewayScript).Path
+    Write-Host ""
+    Write-Host "To start DevGateway, please run the following script:"
+    Write-Host "`"$startDevGatewayScriptFull`""
+} else {
+    Write-Host "StartDevGateway.ps1 not found at $startDevGatewayScript"
+}
 
 
-Write-Output "TODO:for starting DevGateway call abdc.exe -DevMode:LocalConfigFilePath ../config/DevGateway/workload-dev-mode.json "
+# Promt user to run mpn start
+Write-Host ""
+Write-Host "To start the Frontend locally, run the following command in the Frontend directory:"
+Write-Host "mpn start"
 
-Write-Output "open website to fabric "
-Write-Output "Turn on development mode  "
+
+Write-Host ""
+Write-Host "Make sure you have enabled the Fabcic Develper mode in the Fabric portal."
+Write-Host "Open https://msit.fabric.microsoft.com/ and Activate it under Settings > Developer settings > Fabric Developer mode."
+
+Write-Host "After following all the instructions above, you will see your workload being available in the Fabric portal."
+Write-Host "Happy coding! 🚀"
