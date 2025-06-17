@@ -39,12 +39,14 @@ if (Test-Path $setupWorkloadScript) {
 }
 
 Write-Output "Building the manifes..."
+
 # Prompt user to build the manifest package
 $buildManifestScript = Join-Path $PSScriptRoot "..\Build\Manifest\build-package.ps1"
 if (Test-Path $buildManifestScript) {
     $buildManifestScriptFull = (Resolve-Path $buildManifestScript).Path
+    & $buildManifestScriptFull -WorkloadName $WorkloadName -ItemName $ItemName
     Write-Host ""
-    Write-Host "To build the manifest package, please run the following script:"
+    Write-Host "Manifest has been built. If you change configuration, please run the following script again:"
     Write-Host "`"$buildManifestScriptFull`""
 } else {
     Write-Host "build-package.ps1 not found at $buildManifestScript"
