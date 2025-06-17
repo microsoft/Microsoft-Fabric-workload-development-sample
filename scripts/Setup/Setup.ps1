@@ -12,7 +12,7 @@ Write-Output "Setting up the environment..."
 # Run SetupDevGateway.ps1
 $setupDevGatewayScript = Join-Path $PSScriptRoot "..\Setup\SetupDevGateway.ps1"
 if (Test-Path $setupDevGatewayScript) {
-    $workspaceId = Read-Host "Enter your Entra Workspace Id"
+    $workspaceId = Read-Host "Enter your Workspace Id that should be used for development"
     Write-Host "Running SetupDevGateway.ps1..."
     & $setupDevGatewayScript -WorkspaceGuid $workspaceId
 } else {
@@ -22,7 +22,7 @@ if (Test-Path $setupDevGatewayScript) {
 if ([string]::IsNullOrWhiteSpace($AADFrontendAppId) -or $AADFrontendAppId -eq "00000000-0000-0000-0000-000000000000") {
     Write-Warning "AADFrontendAppId is not set or is using the default placeholder value."
     Write-Host "Please provide a valid AADFrontendAppId for your Entra Application or run CreateDevAADApp.ps1 to create one."
-    $AADFrontendAppId = Read-Host "Enter your Entra App Id"
+    $AADFrontendAppId = Read-Host "Enter your Entra Frontend App Id"
 }
 
 # Run SetupWorkload.ps1
@@ -75,12 +75,16 @@ if (Test-Path $startDevGatewayScript) {
     Write-Host "StartDevGateway.ps1 not found at $startDevGatewayScript"
 }
 
-
 # Promt user to run mpn start
-Write-Host ""
-Write-Host "To start the Frontend locally, run the following command in the Frontend directory:"
-Write-Host "mpn start"
-
+$startFrontendScript = Join-Path $PSScriptRoot "..\Run\StartFrontend.ps1"
+if (Test-Path $startFrontendScript) {
+    $startFrontendScriptFull = (Resolve-Path $startFrontendScript).Path
+    Write-Host ""
+    Write-Host "To start Frontend, please run the following script:"
+    Write-Host "`"$startFrontendScriptFull`""
+} else {
+    Write-Host "StartFrontend.ps1 not found at $startFrontendScript"
+}
 
 Write-Host ""
 Write-Host "Make sure you have enabled the Fabcic Develper mode in the Fabric portal."
