@@ -12,16 +12,18 @@ import {
 import { Send24Regular } from '@fluentui/react-icons';
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import {
-  createSession,
-  submitStatement,
-  getSession,
-  getStatement,
-  cancelSession,
   SessionState,
   SessionRequest,
   SessionResponse,
   StatementRequest,
   StatementResponse
+} from '../../models/SparkLivyModel';
+import {
+  createSession,
+  submitStatement,
+  getSession,
+  getStatement,
+  cancelSession
 } from '../../controller/SparkLivyController';
 import { callDatahubOpen } from '../../controller/SampleWorkloadController';
 import { GenericItem } from '../../models/SampleWorkloadModel';

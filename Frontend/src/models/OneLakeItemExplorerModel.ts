@@ -27,3 +27,14 @@ export interface OneLakeItemExplorerFilesTreeProps {
     allFilesInItem: FileMetadata[];
     onSelectFileCallback: (selectedFile: FileMetadata) => void;
 }
+
+export interface OneLakePath {
+    name: string;
+    isShortcut?: boolean;
+    accountType?: string;
+    isDirectory?: boolean;
+}
+
+export interface OneLakePathContainer {
+    paths: OneLakePath[];
+}

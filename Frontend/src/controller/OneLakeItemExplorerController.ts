@@ -2,18 +2,7 @@ import { GenericItem } from "src/models/SampleWorkloadModel";
 import { EnvironmentConstants, oneLakeScope } from "../constants";
 import { callAuthAcquireFrontendAccessToken } from "./SampleWorkloadController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { FileMetadata, TableMetadata } from "src/models/OneLakeItemExplorerModel";
-
-export interface OneLakePath {
-    name: string;
-    isShortcut?: boolean;
-    accountType?: string;
-    isDirectory?: boolean;
-}
-
-export interface OneLakePathContainer {
-    paths: OneLakePath[];
-}
+import { FileMetadata, OneLakePathContainer, TableMetadata } from "src/models/OneLakeItemExplorerModel";
 
 /**
  * Retrieves a list of tables from the specified Fabric Item.
