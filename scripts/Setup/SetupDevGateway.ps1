@@ -46,7 +46,7 @@ Write-Output "Manifest location used $manifestFile"
 # Define key-value dictionary for replacements
 $replacements = @{
     "WORKSPACE_GUID"                     = $WorkspaceGuid
-    "WORLOAD_MANIFEST_PACKAGE_FILE_PATH" = $manifestFile
+    "WORLOAD_MANIFEST_PACKAGE_FILE_PATH" = [regex]::Escape($manifestFile).Replace("\.", ".")
 }
 
 # Get all files in the source directory
@@ -55,7 +55,7 @@ Get-ChildItem -Path $srcDir -File | ForEach-Object {
     $content = Get-Content $filePath -Raw
 
     foreach ($key in $replacements.Keys) {
-        $content = $content -replace "\{\{$key\}\}", [regex]::Escape($replacements[$key])
+        $content = $content -replace "\{\{$key\}\}", $replacements[$key]
     }
 
     $destPath = Join-Path $destDir $_.Name
