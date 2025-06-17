@@ -22,6 +22,7 @@ import { TabContentProps } from '../../models/SampleWorkloadModel';
 import { PageProps } from 'src/App';
 import { callNavigationBeforeNavigateAway, callNavigationNavigate } from "../../controller/SampleWorkloadController";
 import "./../../styles.scss";
+import { ApiArtifactCrudPublic } from './ApiArtifactCrudPublic';
 
 
 export function ClientSDKPlayground(props: TabContentProps) {
@@ -56,6 +57,7 @@ export function ClientSDKPlayground(props: TabContentProps) {
         <Tab value="uiComponents">UI Components</Tab>
         <Tab value="authentication">Backend Authentication</Tab>
         <Tab value="authenticationFrontend">Frontend Authentication (Private-Preview)</Tab>
+        <Tab value="publicJSCrud">Public Definition JS API</Tab>
       </TabList>
 
       <Stack className="main">
@@ -91,6 +93,9 @@ export function ClientSDKPlayground(props: TabContentProps) {
         )}
         {selectedApiTab === 'authenticationFrontend' && (
           <ApiAuthenticationFrontend workloadClient={workloadClient} />
+        )}
+        {selectedApiTab === 'publicJSCrud' && (
+          <ApiArtifactCrudPublic workloadClient={workloadClient} />
         )}
       </Stack>
     </Stack>
