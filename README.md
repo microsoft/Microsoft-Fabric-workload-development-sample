@@ -82,7 +82,7 @@ Be sure to look at what has been released with the [newest version of the WDK](/
 
 ## Publish your workload
 
-After developing your Fabric Workload according to the [certification requirements](https://learn.microsoft.com/en-us/fabric/workload-development-kit/publish-workload-requirements), you can publish it to the Workload Hub which will allow every Fabric user a chance to easily start a trial experience and then buy your workload. An in-depth description of how to publish a workload can be found [here](https://learn.microsoft.com/en-us/fabric/workload-development-kit/publish-workload-flow).
+After developing your Fabric Workload according to the [certification requirements](https://learn.microsoft.com/en-us/fabric/workload-development-kit/publish-workload-requirements), you can publish it to the Workload Hub which will allow every Fabric user a chance to easily start a trial experience and then buy your workload. Use the  in-depth description of [how to publish a workload](https://learn.microsoft.com/en-us/fabric/workload-development-kit/publish-workload-flow) for the different stages and concepts provided by the platform. 
 
 # Resources
 
