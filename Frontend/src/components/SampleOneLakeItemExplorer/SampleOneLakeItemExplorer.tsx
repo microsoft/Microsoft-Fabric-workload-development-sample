@@ -66,7 +66,7 @@ export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
 
   async function onDatahubClicked() {
     const result = await callDatahubOpen(
-      ["Lakehouse",  process.env.WORKLOAD_NAME + ".SampleItem"],
+      ["Lakehouse",  process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME],
       "Select an item to use for Frontend Sample Workload",
       false,
       workloadClient

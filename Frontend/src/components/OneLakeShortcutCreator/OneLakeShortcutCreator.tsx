@@ -36,7 +36,7 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
   // Select source item using datahub
   const selectSourceItem = async () => {
     const result = await callDatahubOpen(
-      ["Lakehouse", process.env.WORKLOAD_NAME + ".SampleItem"],
+      ["Lakehouse", process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME],
       "Select source item for shortcut",
       false,
       workloadClient
@@ -51,7 +51,7 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
   // Select target item using datahub
   const selectTargetItem = async () => {
     const result = await callDatahubOpen(
-      ["Lakehouse", process.env.WORKLOAD_NAME + ".SampleItem"],
+      ["Lakehouse", process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME],
       "Select target item for shortcut",
       false,
       workloadClient
