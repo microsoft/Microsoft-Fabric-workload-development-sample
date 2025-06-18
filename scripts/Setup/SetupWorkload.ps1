@@ -48,7 +48,7 @@ Get-ChildItem -Path $srcManifestDir -File | ForEach-Object {
     }
 
     $destPath = Join-Path $destManifestDir $_.Name
-    Set-Content -Path $destPath -Value $content
+    Set-Content -Path $destPath -Value $content -Force
     Write-Output "$destPath"
 }
 

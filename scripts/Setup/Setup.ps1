@@ -72,11 +72,11 @@ if (Test-Path $setupWorkloadScript) {
 Write-Host ""
 Write-Output "Downloading Frontend dependencies..."
 $frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
-$npmDir = Join-Path $frontendDir "node_modules\nuget-bin"
+$nugetDir = Join-Path $frontendDir "node_modules\nuget-bin"
 # Ensure the frontend directory exists
-if (-not (Test-Path $npmDir)) {
+if (-not (Test-Path $nugetDir)) {
     Write-Host ""
-    Write-Host "Running npm install to get the npm executables..."
+    Write-Host "Running npm install to get the nuget executables..."
     try{
         Push-Location $frontendDir
         npm install
@@ -84,7 +84,7 @@ if (-not (Test-Path $npmDir)) {
         Pop-Location
     }
 } else {
-    Write-Host "npm executables already exists."
+    Write-Host "nuget executable already exists."
 }
 # Ensure we are back in the scripts directory
 Write-Host ""
