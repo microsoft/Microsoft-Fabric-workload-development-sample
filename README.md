@@ -69,7 +69,14 @@ To run the development enviroment locally you need the follwoing components:
 ### Setting things up
 
 * Clone or fork this repository
-* Run the [Setup.ps1](./scripts/Setup/Setup.ps1) Script in your local repository
+```
+git clone -b wdkv2_preview https://github.com/microsoft/Microsoft-Fabric-workload-development-sample.git
+```
+* Run the [Setup.ps1](./scripts/Setup/Setup.ps1) Script in your local repository with your configuration parameters.
+
+```
+Setup.ps -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -AADFrontendAppId "00000000-0000-0000-0000-000000000000"
+```
 * Follow the guidance the Script provides to get everyting setup
 
 Alternatively you can use the documentation for a step-by-step guide to getting your environment set up and your first workload up and running: [Getting Started](/docs/WDKv2-Setup.md).

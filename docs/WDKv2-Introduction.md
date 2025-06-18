@@ -34,18 +34,18 @@ To register for the private preview, you will need your Tenant ID and Tenant Reg
 *Figure: Locating Tenant ID and Tenant Region in the About dialog.*
 
 
-## FERemote vs. Remote Hosting Types
+## Select your Hosting type
 
-WDKv2 introduces a new hosting type called **FERemote**, in addition to the existing **Remote** hosting type. The main difference is that **FERemote** only requires a frontend application, making it ideal for frontend-only workloads. FERemote workloads can still access various backend APIs—including Fabric APIs, public APIs, or proprietary APIs—directly from the frontend.
+The hosting type defines how your workload will be run and wich functionallity it can use. WDKv2 introduces a new hosting type called **FERemote**, in addition to the existing **Remote** hosting type. The main difference is that with **FERemote** only worklods can now be build as a frontend application, making it ideal to get started. FERemote workloads can still access various backend APIs—including Fabric APIs, public APIs, or proprietary APIs—directly from the frontend.
 
 However, there are scenarios where the **Remote** hosting type is required:
-* If your backend service needs access to Fabric APIs using an On-Behalf-Of (OBO) user token 
-- If you have operations that need to be scheduled from Fabric when the user is not active in the UI
+- If you have operations that need to be scheduled from Fabric UX when the user is not active in the UI
+- If you want your service to participate in CRUD events without active UX interaction
 - If your workload needs to perform long-running operations (such as background processing) and you can't use Fabric spark for this
 
 Choose **FERemote** for simpler, frontend-focused workloads, and **Remote** when backend integration or advanced scheduling is required.
 
-At the moment only **FERemote** workloads are supported for WDKv2. We are working to make the functionallity availalbe for **Remote** workloads as well. Once the functionallity is available it will be streight forward for you to move to the new hosting type by changing the type in the type in the manifest, adding the neceseary configuration for Entra and implementing the Backend.
+At the moment only **FERemote** workloads are supported for WDKv2. We are working to make the functionallity availalbe for **Remote** workloads as well. Once it is available it will be streight forward for you to move to the new hosting type by changing the type in the type in the manifest, adding the neceseary configuration for Entra and adding the neccesary Backend APIs that Fabric needs to communicate with your existing service for the integration.
 
 ### High level architecture
 
