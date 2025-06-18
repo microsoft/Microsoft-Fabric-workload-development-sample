@@ -1,7 +1,9 @@
 param (
     [string]$applicationName, # The desired name of the application for your workload
     [string]$workloadName, # The name of the workload
-    [string]$tenantId # The ID of the tenant where the workload dev instance will be published
+    [string]$tenantId, # The ID of the tenant where the workload dev instance will be published
+    [ValidateSet("Remote", "FERemote")]
+    [string]$HostingType = "Remote"
 )
 
 function PostAADRequest {
@@ -9,7 +11,7 @@ function PostAADRequest {
         [string]$url,
         [string]$body
     )
-
+    
     # Use Azure CLI's @<file> to avoid issues with different shells / OSs.
     # see https://learn.microsoft.com/en-us/cli/azure/use-azure-cli-successfully-troubleshooting#error-failed-to-parse-string-as-json
     $tempFile = [System.IO.Path]::GetTempFileName()
@@ -73,108 +75,140 @@ $randomString = -join ((65..90) + (97..122) | Get-Random -Count $length | ForEac
 # 4. The last part is a random string - this is optional, but we add it everytime to avoid collisions as AAD does not allow 2 applications to have the same audience.
 $applicationIdUri = "api://localdevinstance/" + $tenantId + "/" + $workloadName + "/" + $randomString
 
-$application = @{
-    displayName = $applicationName
-    signInAudience = "AzureADMultipleOrgs"
-    optionalClaims = @{
-        accessToken = @(
+if ($HostingType -eq "FERemote") {
+    $application = @{
+        displayName = $applicationName
+        signInAudience = "AzureADMultipleOrgs"
+        optionalClaims = @{
+            accessToken = @(
+                @{
+                    essential = $false
+                    name = "idtyp"
+                }
+            )
+        }
+        spa = @{
+            redirectUris = @(
+                $redirectUri
+            )
+        }
+        identifierUris = @($applicationIdUri)
+        requiredResourceAccess = @(
             @{
-                essential = $false
-                name = "idtyp"
-            }
-        )
-    }
-    spa = @{
-        redirectUris = @(
-            $redirectUri
-        )
-    }
-    identifierUris = @($applicationIdUri)
-    api = @{
-        oauth2PermissionScopes = @( # Scopes
-            @{
-                adminConsentDisplayName = "FabricWorkloadControl"
-                adminConsentDescription = "FabricWorkloadControl"
-                value = "FabricWorkloadControl"
-                id = $FabricWorkloadControlGuid
-                isEnabled = $true
-                type = "User"
-            },
-            @{
-                adminConsentDisplayName = "Item1.Read.All"
-                adminConsentDescription = "Item1.Read.All"
-                value = "Item1.Read.All"
-                id = $Item1ReadAllGuid
-                isEnabled = $true
-                type = "User"
-            },
-            @{
-                adminConsentDisplayName = "Item1.ReadWrite.All"
-                adminConsentDescription = "Item1.ReadWrite.All"
-                value = "Item1.ReadWrite.All"
-                id = $Item1ReadWriteAllGuid
-                isEnabled = $true
-                type = "User"
-            },
-            @{
-                adminConsentDisplayName = "FabricLakehouse.Read.All"
-                adminConsentDescription = "FabricLakehouse.Read.All"
-                value = "FabricLakehouse.Read.All"
-                id = $FabricLakehouseReadAllGuid
-                isEnabled = $true
-                type = "User"
-            },
-            @{
-                adminConsentDisplayName = "FabricLakehouse.ReadWrite.All"
-                adminConsentDescription = "FabricLakehouse.ReadWrite.All"
-                value = "FabricLakehouse.ReadWrite.All"
-                id = $FabricLakehouseReadWriteAllGuid
-                isEnabled = $true
-                type = "User"
-            },
-            @{
-                adminConsentDisplayName = "KQLDatabase.ReadWrite.All"
-                adminConsentDescription = "KQLDatabase.ReadWrite.All"
-                value = "KQLDatabase.ReadWrite.All"
-                id = $KQLDatabaseReadWriteAllGuid
-                isEnabled = $true
-                type = "User"
-            },
-            @{
-                adminConsentDisplayName = "FabricEventhouse.Read.All"
-                adminConsentDescription = "FabricEventhouse.Read.All"
-                value = "FabricEventhouse.Read.All"
-                id = $FabricEventhouseReadAllGuid
-                isEnabled = $true
-                type = "User"
-            }
-        )
-        preAuthorizedApplications = @( # Preauthorize
-            @{
-                appId = "871c010f-5e61-4fb1-83ac-98610a7e9110"
-                delegatedPermissionIds = @(
-                    $Item1ReadAllGuid, $Item1ReadWriteAllGuid, $FabricLakehouseReadAllGuid, $FabricLakehouseReadWriteAllGuid, $KQLDatabaseReadWriteAllGuid, $FabricEventhouseReadAllGuid
-                )
-            },
-             @{
-                appId = "00000009-0000-0000-c000-000000000000"
-                delegatedPermissionIds = @(
-                    $FabricWorkloadControlGuid
-                )
-            },
-            @{
-                appId = "d2450708-699c-41e3-8077-b0c8341509aa"
-                delegatedPermissionIds = @(
-                    $FabricWorkloadControlGuid
+                resourceAppId  = "00000009-0000-0000-c000-000000000000" # PBI Service
+                resourceAccess = @(
+                    @{
+                        id   = "7ba630b9-8110-4e27-8d17-81e5f2218787" # Fabric.Extend
+                        type = "Scope"
+                    }
                 )
             }
         )
     }
-     requiredResourceAccess = @( # API Permissions
+}
+else {
+    $application = @{
+        displayName = $applicationName
+        signInAudience = "AzureADMultipleOrgs"
+        optionalClaims = @{
+            accessToken = @(
+                @{
+                    essential = $false
+                    name = "idtyp"
+                }
+            )
+        }
+        spa = @{
+            redirectUris = @(
+                $redirectUri
+            )
+        }
+        identifierUris = @($applicationIdUri)
+        api = @{
+            oauth2PermissionScopes = @( # Scopes
+                @{
+                    adminConsentDisplayName = "FabricWorkloadControl"
+                    adminConsentDescription = "FabricWorkloadControl"
+                    value = "FabricWorkloadControl"
+                    id = $FabricWorkloadControlGuid
+                    isEnabled = $true
+                    type = "User"
+                },
+                @{
+                    adminConsentDisplayName = "Item1.Read.All"
+                    adminConsentDescription = "Item1.Read.All"
+                    value = "Item1.Read.All"
+                    id = $Item1ReadAllGuid
+                    isEnabled = $true
+                    type = "User"
+                },
+                @{
+                    adminConsentDisplayName = "Item1.ReadWrite.All"
+                    adminConsentDescription = "Item1.ReadWrite.All"
+                    value = "Item1.ReadWrite.All"
+                    id = $Item1ReadWriteAllGuid
+                    isEnabled = $true
+                    type = "User"
+                },
+                @{
+                    adminConsentDisplayName = "FabricLakehouse.Read.All"
+                    adminConsentDescription = "FabricLakehouse.Read.All"
+                    value = "FabricLakehouse.Read.All"
+                    id = $FabricLakehouseReadAllGuid
+                    isEnabled = $true
+                    type = "User"
+                },
+                @{
+                    adminConsentDisplayName = "FabricLakehouse.ReadWrite.All"
+                    adminConsentDescription = "FabricLakehouse.ReadWrite.All"
+                    value = "FabricLakehouse.ReadWrite.All"
+                    id = $FabricLakehouseReadWriteAllGuid
+                    isEnabled = $true
+                    type = "User"
+                },
+                @{
+                    adminConsentDisplayName = "KQLDatabase.ReadWrite.All"
+                    adminConsentDescription = "KQLDatabase.ReadWrite.All"
+                    value = "KQLDatabase.ReadWrite.All"
+                    id = $KQLDatabaseReadWriteAllGuid
+                    isEnabled = $true
+                    type = "User"
+                },
+                @{
+                    adminConsentDisplayName = "FabricEventhouse.Read.All"
+                    adminConsentDescription = "FabricEventhouse.Read.All"
+                    value = "FabricEventhouse.Read.All"
+                    id = $FabricEventhouseReadAllGuid
+                    isEnabled = $true
+                    type = "User"
+                }
+            )
+            preAuthorizedApplications = @( # Preauthorize
+                @{
+                    appId = "871c010f-5e61-4fb1-83ac-98610a7e9110"
+                    delegatedPermissionIds = @(
+                        $Item1ReadAllGuid, $Item1ReadWriteAllGuid, $FabricLakehouseReadAllGuid, $FabricLakehouseReadWriteAllGuid, $KQLDatabaseReadWriteAllGuid, $FabricEventhouseReadAllGuid
+                    )
+                },
+                @{
+                    appId = "00000009-0000-0000-c000-000000000000"
+                    delegatedPermissionIds = @(
+                        $FabricWorkloadControlGuid
+                    )
+                },
+                @{
+                    appId = "d2450708-699c-41e3-8077-b0c8341509aa"
+                    delegatedPermissionIds = @(
+                        $FabricWorkloadControlGuid
+                    )
+                }
+            )
+        }
+        requiredResourceAccess = @( # API Permissions
             @{
                 resourceAppId = "e406a681-f3d4-42a8-90b6-c2b029497af1" # Azure Storage
                 resourceAccess = @(
-                    @{
+                    @{ 
                         id = "03e0da56-190b-40ad-a80c-ea378c433f7f" # user_impersonation
                         type = "Scope"
                     }
@@ -240,6 +274,7 @@ $application = @{
                 )
             }
         )
+    }
 }
 
 # Convert to valid json format (escape the '"')
