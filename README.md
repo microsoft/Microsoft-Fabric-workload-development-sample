@@ -71,6 +71,14 @@ Our architecture is designed to integrate flawlessly with OneLake, enabling oper
 
 The easiest way to get started is by cloning or forking this repository. After that navigate to the .\scripts\Setup\ directory and run the [Start.ps1](./scripts/Setup/Setup.ps1) script which will set up everything for you.
 
+### Prerequisits
+To run the development enviroment locally you need the follwoing components: 
+* [Node.js](https://nodejs.org/en/download/)
+* [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.5)
+* [VSCode](https://code.visualstudio.com/download) or simmilar development enviroment
+* [Fabric Tenant](https://app.fabric.microsoft.com/)
+* Fabric Workspace with a Capacity assigned
+
 Alternatively you can use the documentation for a step-by-step guide to getting your environment set up and your first workload up and running: [Getting Started](/docs/WDKv2-Setup.md).
 
 ## Implement your custom workload
