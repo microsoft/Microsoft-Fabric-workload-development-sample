@@ -18,7 +18,7 @@ For this we have provided scripts that will help you set everything up in the [S
 The easiest way to get startet is by running the [Setup.ps1](./scripts/Setup/Setup.ps1) Script in your local repository with your configuration parameters.
 
 ```
-.\Setup.ps1 -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -AADFrontendAppId "00000000-0000-0000-0000-000000000000"
+.\Setup.ps1 -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -AADFrontendAppId "00000000-0000-0000-0000-000000000000" -WorkspaceId "00000000-0000-0000-0000-000000000000"
 ```
 
 After that follow the guidance the script is providing you. 
