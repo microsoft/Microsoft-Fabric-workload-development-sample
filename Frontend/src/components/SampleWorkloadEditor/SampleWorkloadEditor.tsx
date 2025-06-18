@@ -189,7 +189,7 @@ export function SampleWorkloadEditor(props: PageProps) {
       return;
     }
     try {
-      const fileName = `${calculationFileName}-${sampleItem.id}.txt`;
+      const fileName = `CalcResults/${calculationFileName}-${sampleItem.id}.txt`;
       const result = calculateResult(operand1, operand2, Item1Operator[operator as keyof typeof Item1Operator]);
       const filePath = storageName === "OneLake"
         ? getOneLakeFilePath(sampleItem.workspaceId, sampleItem.id, fileName)
