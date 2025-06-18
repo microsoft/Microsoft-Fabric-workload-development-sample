@@ -41,6 +41,10 @@ export interface Item1Metadata {
     hasLastResult: boolean;
 }
 
+export interface ItemPlatformMetadata {
+    metadata: GenericItem;
+}
+
 // Represents extended metadata for item1, including additional information
 // about the associated lakehouse, tailored for client-side usage.
 export interface Item1ClientMetadata extends Item1Metadata {
@@ -79,7 +83,7 @@ export interface ItemCreationSuccessData {
 
 export enum DefinitionPath {
     ItemMetadata = "Item/metadata.json",
-    ItemInfo = "Item/info.json",
+    Platform = ".platform",
 }
 
 export enum Item1Operator {

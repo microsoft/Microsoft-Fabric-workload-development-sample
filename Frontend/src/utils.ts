@@ -1,13 +1,18 @@
-import { DefinitionPath, Item1Operator, WorkloadItem } from "./models/SampleWorkloadModel";
+import { DefinitionPath, GenericItem, Item1Operator, WorkloadItem } from "./models/SampleWorkloadModel";
 import { ItemJobStatus, GetItemResult, ItemJobActionResult, ItemJobDetailSection, ItemJobData, GetItemDefinitionResult, ItemDefinitionPart, UpdateItemDefinitionPayload, PayloadType } from "@ms-fabric/workload-client";
 import i18n from 'i18next';
 
 export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult, itemDefinitionResult: GetItemDefinitionResult): WorkloadItem<T> {
     let payload: T;
+    let itemPlatformMetadata: GenericItem | undefined;
     if (itemDefinitionResult?.definition?.parts) {
         try {
             const itemMetadata = itemDefinitionResult.definition.parts.find((part) => part.path === DefinitionPath.ItemMetadata);
             payload = itemMetadata ? JSON.parse(atob(itemMetadata?.payload)) : undefined;
+
+            const platformDefinition = itemDefinitionResult.definition.parts.find((part) => part.path === DefinitionPath.Platform);
+            const itemPlatformPayload= platformDefinition ? JSON.parse(atob(platformDefinition?.payload)) : undefined;
+            itemPlatformMetadata = itemPlatformPayload ? itemPlatformPayload.metadata : undefined;
         } catch (payloadParseError) {
             console.error(`Failed parsing payload for item ${item.objectId}, itemDefinitionResult: ${itemDefinitionResult}`, payloadParseError);
         }
@@ -16,9 +21,9 @@ export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult, itemD
     return {
         id: item.objectId,
         workspaceId: item.folderObjectId,
-        type: item.itemType,
-        displayName: item.displayName,
-        description: item.description,
+        type: itemPlatformMetadata?.type ?? item.itemType,
+        displayName: itemPlatformMetadata?.displayName ?? item.displayName,
+        description: itemPlatformMetadata?.description ?? item.description,
         extendedMetdata: payload,
         createdBy: item.createdByUser.name,
         createdDate: item.createdDate,
