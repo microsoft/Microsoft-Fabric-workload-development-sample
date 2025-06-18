@@ -39,8 +39,8 @@ To register for the private preview, you will need your Tenant ID and Tenant Reg
 The hosting type defines how your workload will be run and wich functionallity it can use. WDKv2 introduces a new hosting type called **FERemote**, in addition to the existing **Remote** hosting type. The main difference is that with **FERemote** only worklods can now be build as a frontend application, making it ideal to get started. FERemote workloads can still access various backend APIs—including Fabric APIs, public APIs, or proprietary APIs—directly from the frontend.
 
 However, there are scenarios where the **Remote** hosting type is required:
-* If your backend service needs access to Fabric APIs using an On-Behalf-Of (OBO) user token 
-- If you have operations that need to be scheduled from Fabric when the user is not active in the UI
+- If you have operations that need to be scheduled from Fabric UX when the user is not active in the UI
+- If you want your service to participate in CRUD events without active UX interaction
 - If your workload needs to perform long-running operations (such as background processing) and you can't use Fabric spark for this
 
 Choose **FERemote** for simpler, frontend-focused workloads, and **Remote** when backend integration or advanced scheduling is required.
