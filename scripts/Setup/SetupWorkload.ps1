@@ -63,7 +63,7 @@ $nuspecContent = $nuspecContent -replace '<BEPath>', ($destManifestDir + '\')
 $nuspecContent = $nuspecContent -replace '<FEPath>', ($destPackageDir + '\')
 
 # Write to the temporary nuspec file
-Set-Content $destNuspecFile -Value $nuspecContent
+Set-Content $destNuspecFile -Value $nuspecContent -Force
 Write-Output "$destNuspecFile"
 
 $srcFrontendDir = Join-Path $srcTemplateDir "Frontend"
@@ -83,3 +83,5 @@ Get-ChildItem -Path $srcFrontendDir -File | ForEach-Object {
     Set-Content -Path $destPath -Value $content
     Write-Output "$destPath"
 }
+
+Write-Host "Setup Workload finished successfully ..."  -ForegroundColor Green

@@ -61,3 +61,5 @@ Get-ChildItem -Path $srcDir -File | ForEach-Object {
     $destPath = Join-Path $destDir $_.Name
     Set-Content -Path $destPath -Value $content
 }
+
+Write-Host "Setup DevGateway finished successfully ..."  -ForegroundColor Green

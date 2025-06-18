@@ -1,5 +1,9 @@
 Write-Output "Starting the Frontend ..."
 
-$frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
-Push-Location $frontendDir
-npm start
+try {
+    $frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
+    Push-Location $frontendDir
+    npm start
+} finally {
+    Pop-Location
+}

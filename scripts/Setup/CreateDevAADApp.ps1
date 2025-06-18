@@ -321,10 +321,8 @@ if ($null -eq $secret) {
     Write-Host "Failed to add secret, please add it manually..."
 }
 
-# Result
-$greenColor = [char]27 + "[32m"
 
-Write-Host "${greenColor}All set! Here's what you need:"
+Write-Host "All set! Here's what you need:"  -ForegroundColor Green
 Write-Host "------------------------------------------------"
 PrintInfo -key "ApplicationIdUri / Audience" -value $applicationIdUri
 PrintInfo -key "RedirectURI" -value $redirectUri

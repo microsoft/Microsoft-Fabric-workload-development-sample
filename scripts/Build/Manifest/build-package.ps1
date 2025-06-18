@@ -31,8 +31,8 @@ Write-Output "Creating nuget package..."
 $nugetExitCode = $LASTEXITCODE
 
 if ($nugetExitCode -eq 0) {
-    Write-Host "NuGet package built successfully ..."
+    Write-Host "NuGet package built successfully ..."  -ForegroundColor Green
 } else {
-    Write-Host "NuGet packaging failed. See output above."
+    Write-Error "NuGet packaging failed. See output above."
     exit $nugetExitCode
 }

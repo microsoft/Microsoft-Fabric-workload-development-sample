@@ -57,6 +57,7 @@ if ([string]::IsNullOrWhiteSpace($AADFrontendAppId) -or $AADFrontendAppId -eq "0
 # Run SetupWorkload.ps1
 $setupWorkloadScript = Join-Path $PSScriptRoot "..\Setup\SetupWorkload.ps1"
 if (Test-Path $setupWorkloadScript) {
+    Write-Host ""
     Write-Host "Running SetupWorkload.ps1..."
     & $setupWorkloadScript -HostingType $HostingType `
         -WorkloadName $WorkloadName `
@@ -68,13 +69,25 @@ if (Test-Path $setupWorkloadScript) {
     exit 1
 }
 
+Write-Host ""
 Write-Output "Downloading Frontend dependencies..."
 $frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
-Push-Location $frontendDir
-npm install
-Pop-Location
+$npmDir = Join-Path $frontendDir "node_modules\nuget-bin"
+# Ensure the frontend directory exists
+if (-not (Test-Path $npmDir)) {
+    Write-Host ""
+    Write-Host "Running npm install to get the npm executables..."
+    try{
+        Push-Location $frontendDir
+        npm install
+    } finally {
+        Pop-Location
+    }
+} else {
+    Write-Host "npm executables already exists."
+}
 # Ensure we are back in the scripts directory
-
+Write-Host ""
 Write-Output "Building the manifest..."
 
 # Prompt user to build the manifest package
@@ -83,14 +96,16 @@ if (Test-Path $buildManifestScript) {
     $buildManifestScriptFull = (Resolve-Path $buildManifestScript).Path
     & $buildManifestScriptFull -WorkloadName $WorkloadName -ItemName $ItemName
     Write-Host ""
-    Write-Host "Manifest has been built. If you change configuration, please run the following script again:"
+    Write-Host "Manifest has been built. If you change configuration, please run the following script again:" -ForegroundColor Blue
     Write-Host "`"$buildManifestScriptFull`""
 } else {
     Write-Host "${redColor}build-package.ps1 not found at $buildManifestScript"
 }
 
 Write-Host ""
-Write-Host "Everything is set up." -ForegroundColor Green
+Write-Host "Setup finished successfully ..." -ForegroundColor Green
+Write-Host ""
+Write-Host ""
 Write-Host "Now you can run the following scripts to start your development environment."
 Write-Host "--------------------------------------------------------------------------------"
 
