@@ -2,6 +2,7 @@ param (
     [string]$HostingType = "FERemote",
     [String]$WorkloadName = "Org.MyWorkloadSample",
     [String]$ItemName = "SampleItem",
+    [String]$WorkspaceId = "00000000-0000-0000-0000-000000000000",
     [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
     [String]$AADBackendAppId
 )
@@ -12,17 +13,45 @@ Write-Output "Setting up the environment..."
 # Run SetupDevGateway.ps1
 $setupDevGatewayScript = Join-Path $PSScriptRoot "..\Setup\SetupDevGateway.ps1"
 if (Test-Path $setupDevGatewayScript) {
-    $workspaceId = Read-Host "Enter your Workspace Id that should be used for development"
+    if ([string]::IsNullOrWhiteSpace($WorkspaceId) -or $WorkspaceId -eq "00000000-0000-0000-0000-000000000000") {
+        $WorkspaceId = Read-Host "Enter your Workspace Id that should be used for development"
+        if ([string]::IsNullOrWhiteSpace($WorkspaceId) -or $WorkspaceId -eq "00000000-0000-0000-0000-000000000000") {
+           Write-Error "Workspace Id is not set or is using the default placeholder value. Please provide a valid Workspace Id."
+           exit 1
+        }
+    }
     Write-Host "Running SetupDevGateway.ps1..."
-    & $setupDevGatewayScript -WorkspaceGuid $workspaceId
+    & $setupDevGatewayScript -WorkspaceGuid $WorkspaceId
 } else {
-    Write-Host "SetupDevGateway.ps1 not found at $setupDevGatewayScript"
+    Write-Error "SetupDevGateway.ps1 not found at $setupDevGatewayScript"
+    exit 1
 }
 
 if ([string]::IsNullOrWhiteSpace($AADFrontendAppId) -or $AADFrontendAppId -eq "00000000-0000-0000-0000-000000000000") {
     Write-Warning "AADFrontendAppId is not set or is using the default placeholder value."
-    Write-Host "Please provide a valid AADFrontendAppId for your Entra Application or run CreateDevAADApp.ps1 to create one."
-    $AADFrontendAppId = Read-Host "Enter your Entra Frontend App Id"
+    $confirmation = Read-Host "Do you have an Entra Application ID you can use? (y/n)"
+    if ($confirmation -eq 'y') {
+        $AADFrontendAppId = Read-Host "Enter your Entra Frontend App Id"
+    } else {
+        $confirmation = Read-Host "Do you want to create a new Entra Application? (y/n)"   
+        if ($confirmation -eq 'y') {
+            $createDevAADAppScript = Join-Path $PSScriptRoot "..\Setup\CreateDevAADApp.ps1"
+            if (Test-Path $createDevAADAppScript) { 
+                $TenantId = Read-Host "Provide your Entra Tenant Id"             
+                $AADFrontendAppId = & $createDevAADAppScript -HostingType $HostingType -WorkloadName $WorkloadName -ApplicationName $WorkloadName -TenantId $TenantId
+            } else {
+                Write-Error "SetupDevGateway.ps1 not found at $setupDevGatewayScript"
+                exit 1
+            } 
+        } else {
+            $AADFrontendAppId = "00000000-0000-0000-0000-000000000000"
+        }
+    }
+}
+# Validate AADFrontendAppId
+if ([string]::IsNullOrWhiteSpace($AADFrontendAppId) -or $AADFrontendAppId -eq "00000000-0000-0000-0000-000000000000") {
+    Write-Error "We can't setup the workload without an Entra App. Please make sure you have one an run the script again."
+    exit 1
 }
 
 # Run SetupWorkload.ps1
@@ -35,7 +64,8 @@ if (Test-Path $setupWorkloadScript) {
         -AADFrontendAppId $AADFrontendAppId `
         -AADBackendAppId $AADBackendAppId
 } else {
-    Write-Host "SetupWorkload.ps1 not found at $setupWorkloadScript"
+    Write-Host "SetupWorkload.ps1 not found at $setupWorkloadScript" -ForegroundColor Red
+    exit 1
 }
 
 Write-Output "Downloading Frontend dependencies..."
@@ -55,11 +85,11 @@ if (Test-Path $buildManifestScript) {
     Write-Host "Manifest has been built. If you change configuration, please run the following script again:"
     Write-Host "`"$buildManifestScriptFull`""
 } else {
-    Write-Host "build-package.ps1 not found at $buildManifestScript"
+    Write-Host "${redColor}build-package.ps1 not found at $buildManifestScript"
 }
 
 Write-Host ""
-Write-Host "Everything is set up."
+Write-Host "Everything is set up." -ForegroundColor Green
 Write-Host "Now you can run the following scripts to start your development environment."
 Write-Host "--------------------------------------------------------------------------------"
 
@@ -69,7 +99,7 @@ $startDevGatewayScript = Join-Path $PSScriptRoot "..\Run\StartDevGateway.ps1"
 if (Test-Path $startDevGatewayScript) {
     $startDevGatewayScriptFull = (Resolve-Path $startDevGatewayScript).Path
     Write-Host ""
-    Write-Host "To start DevGateway, please run the following script:"
+    Write-Host “To register your workload in dev-mode on the Fabric tenant, start the DevGateway with the following script:" -ForegroundColor Blue
     Write-Host "`"$startDevGatewayScriptFull`""
 } else {
     Write-Host "StartDevGateway.ps1 not found at $startDevGatewayScript"
@@ -80,15 +110,17 @@ $startFrontendScript = Join-Path $PSScriptRoot "..\Run\StartFrontend.ps1"
 if (Test-Path $startFrontendScript) {
     $startFrontendScriptFull = (Resolve-Path $startFrontendScript).Path
     Write-Host ""
-    Write-Host "To start Frontend, please run the following script:"
+    Write-Host "To launch your workload webapp, start your Fronend locally with the following script:" -ForegroundColor Blue
     Write-Host "`"$startFrontendScriptFull`""
 } else {
     Write-Host "StartFrontend.ps1 not found at $startFrontendScript"
 }
 
 Write-Host ""
-Write-Host "Make sure you have enabled the Fabcic Develper mode in the Fabric portal."
-Write-Host "Open https://msit.fabric.microsoft.com/ and Activate it under Settings > Developer settings > Fabric Developer mode."
-
+Write-Host "Make sure you have enabled the Fabcic Develper mode in the Fabric portal." -ForegroundColor Blue
+Write-Host "Open https://msit.fabric.microsoft.com/ and activate it under Settings > Developer settings > Fabric Developer mode."
+Write-Host ""
 Write-Host "After following all the instructions above, you will see your workload being available in the Fabric portal."
+Write-Host "It will appear in the Workload Hub and items can be created in the workspace you have configured."
+
 Write-Host "Happy coding! 🚀"

@@ -1,18 +1,11 @@
 param (
+    [ValidateSet("Remote", "FERemote")]
     [string]$HostingType,
     [String]$WorkloadName = "Org.MyWorkloadSample",
     [String]$ItemName = "SampleItem",
     [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
     [String]$AADBackendAppId
 )
-
-
-if ($HostingType -eq "FERemote" || $HostingType -eq "Remote") {
-    Write-Output "Using Hosting template $HostingType"
-} else {
-    Write-Host "Invalid parameter. Use 'Remote' or 'FERemote'."
-    exit 1
-}
 
 # Define source and destination directories
 $srcTemplateDir = Resolve-Path ".\..\..\config\Templates\"

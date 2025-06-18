@@ -75,7 +75,7 @@ git clone -b wdkv2_preview https://github.com/microsoft/Microsoft-Fabric-workloa
 * Run the [Setup.ps1](./scripts/Setup/Setup.ps1) Script in your local repository with your configuration parameters.
 
 ```
-Setup.ps -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -AADFrontendAppId "00000000-0000-0000-0000-000000000000"
+.\Setup.ps1 -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -AADFrontendAppId "00000000-0000-0000-0000-000000000000"
 ```
 * Follow the guidance the Script provides to get everyting setup
 

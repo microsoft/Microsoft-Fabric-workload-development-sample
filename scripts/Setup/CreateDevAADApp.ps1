@@ -1,9 +1,9 @@
 param (
-    [string]$applicationName, # The desired name of the application for your workload
-    [string]$workloadName, # The name of the workload
-    [string]$tenantId, # The ID of the tenant where the workload dev instance will be published
     [ValidateSet("Remote", "FERemote")]
-    [string]$HostingType = "Remote"
+    [string]$HostingType = "FERemote",
+    [string]$ApplicationName, # The desired name of the application for your workload
+    [string]$WorkloadName, # The name of the workload
+    [string]$TenantId # The ID of the tenant where the workload dev instance will be published
 )
 
 function PostAADRequest {
@@ -37,18 +37,18 @@ Write-Host "------------------------------------------------"
 Write-Host "------------------------------------------------"
 Write-Host "------------------------------------------------"
 
-if (-not $applicationName) {
-    $applicationName = Read-Host "Enter the desired application name"
+if (-not $ApplicationName) {
+    $ApplicationName = Read-Host "Enter the desired application name"
 }
-if (-not $workloadName) {
-    $workloadName = Read-Host "Enter your workload name"
+if (-not $WorkloadName) {
+    $WorkloadName = Read-Host "Enter your workload name"
 }
-while (-not ($workloadName -match "^Org\.[^.]+$"))
+while (-not ($WorkloadName -match "^Org\.[^.]+$"))
 {
-    $workloadName = Read-Host "Workload name must start with Org. and contain only 2 segments!. please re-enter your workload name"
+    $WorkloadName = Read-Host "Workload name must start with Org. and contain only 2 segments!. please re-enter your workload name"
 }
-if (-not $tenantId) {
-    $tenantId = Read-Host "Enter your tenant id (tenant id of the user you are using in Fabric to develop your workload)"
+if (-not $TenantId) {
+    $TenantId = Read-Host "Enter your tenant id (tenant id of the user you are using in Fabric to develop your workload)"
 }
 
 $redirectUri = "http://localhost:60006/close"
@@ -70,14 +70,14 @@ $randomString = -join ((65..90) + (97..122) | Get-Random -Count $length | ForEac
 
 # Create an audience for the application that contains 4 parts:
 # 1. The audience should start with api://localdevinstance.
-# 2. The next part should be the tenantId where the workload dev instance will be published.
+# 2. The next part should be the TenantId where the workload dev instance will be published.
 # 3. After that should come the wokrload name.
 # 4. The last part is a random string - this is optional, but we add it everytime to avoid collisions as AAD does not allow 2 applications to have the same audience.
-$applicationIdUri = "api://localdevinstance/" + $tenantId + "/" + $workloadName + "/" + $randomString
+$applicationIdUri = "api://localdevinstance/" + $TenantId + "/" + $WorkloadName + "/" + $randomString
 
 if ($HostingType -eq "FERemote") {
     $application = @{
-        displayName = $applicationName
+        displayName = $ApplicationName
         signInAudience = "AzureADMultipleOrgs"
         optionalClaims = @{
             accessToken = @(
@@ -108,7 +108,7 @@ if ($HostingType -eq "FERemote") {
 }
 else {
     $application = @{
-        displayName = $applicationName
+        displayName = $ApplicationName
         signInAudience = "AzureADMultipleOrgs"
         optionalClaims = @{
             accessToken = @(
@@ -334,4 +334,6 @@ PrintInfo -key "secret" -value $secret
 Write-Host "------------------------------------------------"
 Write-Host "You can see the application here:" ("https://ms.portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/Overview/appId/" + $applicationId + "/isMSAApp~/false")
 Write-Host "------------------------------------------------"
-Write-Host ("You can consent for the application for your tenant (Valid from tenant admin only) here, wait a minute before navigating: " + "https://login.microsoftonline.com/" + $tenantId + "/adminconsent?client_id=" + $applicationId)
+Write-Host ("You can consent for the application for your tenant (Valid from tenant admin only) here, wait a minute before navigating: " + "https://login.microsoftonline.com/" + $TenantId + "/adminconsent?client_id=" + $applicationId)
+
+return $applicationId

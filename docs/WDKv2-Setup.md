@@ -13,23 +13,27 @@ We look forward to hearing your feedback and good luck!
 
 First things first, let's make sure you have a workload setup. 
 
-If you already have a workload from WDKv1, you can either move on to the next step and migrate your existing workload or you can opt to clone this latest version of our sample which also contains code to demonstrate how to call the public APIs - either option will work fine.
+For this we have provided scripts that will help you set everything up in the [Scripts/Setup](./scripts/Setup/) folder of this repository. 
+
+The easiest way to get startet is by running the [Setup.ps1](./scripts/Setup/Setup.ps1) Script in your local repository with your configuration parameters.
+
+```
+.\Setup.ps1 -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -AADFrontendAppId "00000000-0000-0000-0000-000000000000"
+```
+
+After that follow the guidance the script is providing you. 
+
+
+## Setup your workload manually
 
 If you are new to the Workload Development Kit, follow our [setup instructions](https://learn.microsoft.com/en-us/fabric/workload-development-kit/environment-setup) before you proceed to ensure you have the prerequisites that you need to continue. Then, clone this version of the WDK.
 
-To clone the latest version of the workload kit:
-
-1. Clone the [Microsoft-Fabric-workload-development-sample](https://github.com/microsoft/Microsoft-Fabric-workload-development-sample)
-2. Checkout the “dev/dbrailovsky/wld_fe_auth_api” branch
-
-
-## Frontend Authentication
-
-One of the updates released with WDKv2 is Frontend Authentication that will allow you to access Fabric APIs. To start using the Frontend Authentication you will first need to register a Frontend Entra Application.
 
 ### Register a Frontend Entra Application:
 
-Lets create a Frontend Entra Application: 
+You can leverage the [CreateDevAADApp.ps1](./../scripts/Setup/CreateDevAADApp.ps1) to create a new Entra app or you can follow the steps below. 
+
+
 1. Navigate to App registrations in the [Azure Admin Portal](https://entra.microsoft.com/?culture=en-us&country=us#view/Microsoft_AAD_IAM/StartboardApplicationsMenuBlade/~/AppAppsPreview).
 2. Create a new Multitenant application.
 
