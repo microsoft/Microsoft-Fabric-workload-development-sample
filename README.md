@@ -69,15 +69,22 @@ Our architecture is designed to integrate flawlessly with OneLake, enabling oper
 
 ## Get Started
 
-The easiest way to get started is by cloning or forking this repository. After that navigate to the .\scripts\Setup\ directory and run the [Start.ps1](./scripts/Setup/Setup.ps1) script which will set up everything for you.
-
 ### Prerequisits
-To run the development enviroment locally you need the follwoing components: 
+To run the development enviroment locally you need the follwoing components:
+
 * [Node.js](https://nodejs.org/en/download/)
-* [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.5)
+* [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
 * [VSCode](https://code.visualstudio.com/download) or simmilar development enviroment
-* [Fabric Tenant](https://app.fabric.microsoft.com/)
-* Fabric Workspace with a Capacity assigned
+* [Fabric Tenant](https://app.fabric.microsoft.com/) that you use for development and publishing the Workload later on
+* [Fabric Workspace](https://learn.microsoft.com/en-us/fabric/fundamentals/workspaces) that you can use to build your workload
+* [Fabric Capacity](https://learn.microsoft.com/en-us/fabric/enterprise/licenses) that is assigned to the workspace you are planning to use
+* [Entra App](https://entra.microsoft.com/) You either need an existing Entra App you can use that is [configured](./docs/WDKv2-How-To.md) corectly or you need permission to create a new Entra App.
+
+### Steps
+
+* Clone or fork this repository
+* Run the [Setup.ps1](./scripts/Setup/Setup.ps1) Script in your local repository
+* Follow the guidance the Script provides to get everyting setup
 
 Alternatively you can use the documentation for a step-by-step guide to getting your environment set up and your first workload up and running: [Getting Started](/docs/WDKv2-Setup.md).
 
