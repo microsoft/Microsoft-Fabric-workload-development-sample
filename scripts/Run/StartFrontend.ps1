@@ -1,3 +1,5 @@
 Write-Output "Starting the Frontend ..."
-cd ..\..\Frontend
+
+$frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
+Push-Location $frontendDir
 npm start

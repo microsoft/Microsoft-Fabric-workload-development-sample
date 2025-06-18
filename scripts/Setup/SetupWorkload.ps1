@@ -6,8 +6,7 @@ param (
     [String]$AADBackendAppId
 )
 
-
-if ($HostingType -eq "FERemote" || $HostingType -eq "Remote") {
+if ($HostingType -eq "FERemote" -or $HostingType -eq "Remote") {
     Write-Output "Using Hosting template $HostingType"
 } else {
     Write-Host "Invalid parameter. Use 'Remote' or 'FERemote'."
@@ -15,15 +14,14 @@ if ($HostingType -eq "FERemote" || $HostingType -eq "Remote") {
 }
 
 # Define source and destination directories
-$srcTemplateDir = Resolve-Path ".\..\..\config\Templates\"
-$srcManifestDir = Join-Path $srcTemplateDir "\Manifest\$HostingType"
+$srcTemplateDir = Join-Path $PSScriptRoot "..\..\config\Templates"
+$srcManifestDir = Join-Path $srcTemplateDir "Manifest\$HostingType"
 Write-Output "Using template in $srcManifestDir"
 
-$destManifestDir = Resolve-Path ".\..\..\config\"
-$destManifestDir = Join-Path $destManifestDir "Manifest" 
+$destManifestDir = Join-Path $PSScriptRoot "..\..\config\Manifest"
 if (!(Test-Path $destManifestDir)) { New-Item -ItemType Directory -Path $destManifestDir | Out-Null }
 
-$destPackageDir = Resolve-Path ".\..\..\Frontend\Package"
+$destPackageDir = Join-Path $PSScriptRoot "..\..\Frontend\Package"
 
 Write-Output "Workload Name: $WorkloadName"
 Write-Output "Item Name: $ItemName"
@@ -55,21 +53,20 @@ Get-ChildItem -Path $srcManifestDir -File | ForEach-Object {
 
 # Use a temporary nuspec file
 Write-Output "Create nuspec file ..."
-$srcNuspecFile = Join-Path $srcManifestDir "..\ManifestPackage.nuspec"
+$srcNuspecFile = Join-Path $srcTemplateDir "Manifest\ManifestPackage.nuspec"
 $destNuspecFile = Join-Path $destManifestDir "ManifestPackage.nuspec"
 
 # Read and update nuspec content
 $nuspecContent = Get-Content $srcNuspecFile -Raw
-$nuspecContent = $nuspecContent -replace '<BEPath>', (Join-Path $destManifestDir '\')
-$nuspecContent = $nuspecContent -replace '<FEPath>', (Join-Path $destPackageDir '\')
+$nuspecContent = $nuspecContent -replace '<BEPath>', ($destManifestDir + '\')
+$nuspecContent = $nuspecContent -replace '<FEPath>', ($destPackageDir + '\')
 
 # Write to the temporary nuspec file
 Set-Content $destNuspecFile -Value $nuspecContent
 Write-Output "$destNuspecFile"
 
-
 $srcFrontendDir = Join-Path $srcTemplateDir "Frontend"
-$destFrontendDir = Resolve-Path ".\..\..\Frontend"
+$destFrontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
 
 # Get all files in the source directory
 Write-Output "Writing Frontend files ..."

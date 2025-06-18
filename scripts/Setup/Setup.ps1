@@ -39,12 +39,13 @@ if (Test-Path $setupWorkloadScript) {
 }
 
 Write-Output "Downloading Frontend dependencies..."
-cd ..\..\Frontend
+$frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
+Push-Location $frontendDir
 npm install
-cd $PSScriptRoot
+Pop-Location
 # Ensure we are back in the scripts directory
 
-Write-Output "Building the manifes..."
+Write-Output "Building the manifest..."
 
 # Prompt user to build the manifest package
 $buildManifestScript = Join-Path $PSScriptRoot "..\Build\Manifest\build-package.ps1"
