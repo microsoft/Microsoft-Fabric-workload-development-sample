@@ -40,32 +40,18 @@ For more information about Fabric [click here](https://learn.microsoft.com/en-us
 
 In Microsoft Fabric, workloads signify different components that are integrated into the Fabric framework. Workloads enhance the usability of your service within the familiar Fabric workspace, eliminating the need to leave the Fabric environment for different services. [Data Factory](https://learn.microsoft.com/en-us/fabric/data-factory/data-factory-overview), [Data Warehouse](https://learn.microsoft.com/en-us/fabric/data-warehouse/data-warehousing), [Power BI](https://learn.microsoft.com/en-us/power-bi/enterprise/service-premium-what-is) and [Fabric Activator](https://learn.microsoft.com/en-us/fabric/real-time-intelligence/data-activator/activator-introduction) are some of the built-in Fabric workloads.
 
+## What is the Workload Development Kit
+
 With the Workload Development Kit, you can create your own workload for your data applications. Publishing a Fabric Workload to the [Fabric Workload Hub](https://learn.microsoft.com/en-us/fabric/workload-development-kit/more-workloads-add) increases your application’s discoverability and user engagement. The Microsoft Fabric Workload Development Kit provides the necessary tools and interfaces to embed your data application into Microsoft Fabric.
 
 For more information on what workloads can offer Microsoft partners, and for useful examples, head to our official [Workload Dev Kit documentation](https://learn.microsoft.com/en-us/fabric/workload-development-kit/development-kit-overview).
 
 You can also learn more about the Fabric workload architecture [here](https://learn.microsoft.com/en-us/fabric/workload-development-kit/workload-environment).
 
-## What the Workload Development Kit Offers
-
-### Workload Extensibility Framework
-This is a robust mechanism designed to enhance the existing Fabric experience by integrating custom capabilities. The entire Fabric platform has been engineered with interoperability in mind, allowing for others to seamlessly incorporate their own workload capabilities. 
-
-The Fabric workspace includes various components, known as Fabric items, which handle the storage, analysis, and presentation of your data. You can leverage the item editor to create a native, consistent user experience by embedding your application within the context of a Fabric workspace item.
-
-### Authentication
-Fabric workloads integrate with Microsoft [Entra Id](https://learn.microsoft.com/en-us/entra/fundamentals/whatis) for authentication and authorization. All interactions between workloads and other Fabric or Azure components necessitate proper authentication support for incoming and outgoing requests, ensuring correct generation and validation of tokens.
-
-### Fabric Permission Model
-This represents user permissions pertaining to the workspace and specific items. It is utilized to inherit user permissions and applied as part of provisioning resources (see [Roles in workspaces in Power BI - Power BI | Microsoft Learn](https://learn.microsoft.com/power-bi/collaborate-share/service-roles-new-workspaces)).
-
-### Monitoring Hub & Scheduler
-The monitoring hub provides a comprehensive view of all background jobs to Fabric users, enhancing transparency and control.
-
-#### OneLake Integration
-Our architecture is designed to integrate flawlessly with OneLake, enabling operations such as saving, reading, and fetching data. This interaction is facilitated facilitated through OneLake APIs, ensuring secure and authenticated communication. Learn more about OneLake [here.](https://learn.microsoft.com/en-us/fabric/onelake/onelake-overview)
 
 # Build Your Own Workload
+
+This repository provides the basis for you to get started building your customer workload.
 
 ## Get Started
 
@@ -80,7 +66,7 @@ To run the development enviroment locally you need the follwoing components:
 * [Fabric Capacity](https://learn.microsoft.com/en-us/fabric/enterprise/licenses) that is assigned to the workspace you are planning to use
 * [Entra App](https://entra.microsoft.com/) You either need an existing Entra App you can use that is [configured](./docs/WDKv2-How-To.md) corectly or you need permission to create a new Entra App.
 
-### Steps
+### Setting things up
 
 * Clone or fork this repository
 * Run the [Setup.ps1](./scripts/Setup/Setup.ps1) Script in your local repository
@@ -90,7 +76,7 @@ Alternatively you can use the documentation for a step-by-step guide to getting 
 
 ## Implement your custom workload
 
-After you have completed the initial guides on spinning up your first workload, follow along on our [Frontend](https://learn.microsoft.com/en-us/fabric/workload-development-kit/extensibility-front-end) and [Backend](https://learn.microsoft.com/en-us/fabric/workload-development-kit/extensibility-back-end) implementation guides to learn more about how to start developing a custom workload for your application. 
+After you have completed the initial steps you are all set to start adopting the Workload semple to your needs. 
 
 Be sure to look at what has been released with the [newest version of the WDK](/docs/WDKv2-Introduction.md) and our guide on [how to use those new features](docs/WDKv2-How-To.md).
 
