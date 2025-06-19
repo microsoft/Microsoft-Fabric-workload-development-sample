@@ -18,8 +18,8 @@ export async function initialize(params: InitParams) {
                 const { item: createdItem } = data as ItemCreationSuccessData;
                 var path = "/item-editor";
                 //TODO: check if calculator and then set correct path
-                if(createdItem.systemItemType.indexOf('calculator') > -1) {
-                    path = "calculator-sample-item-editor"
+                if(createdItem.itemType.indexOf('Calculator') > -1) {
+                    path = "/calculator-sample-item-editor"
                 }
                 createdItem.itemType
                 await Controller.callPageOpen(sampleWorkloadName, `${path}/${createdItem.objectId}`, workloadClient);
