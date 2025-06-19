@@ -23,11 +23,11 @@ $nuspecFile = Join-Path $manifestDir "ManifestPackage.nuspec"
 # Build the NuGet package using the temporary nuspec file
 # Find nuget.exe in node_modules/.bin (relative to repo root)
 $repoRoot = Join-Path $PSScriptRoot "..\..\..\Frontend"
-$nugetExe = Resolve-Path -Path (Join-Path $repoRoot "node_modules\.bin\nuget")
+$nugetExe = Resolve-Path -Path (Join-Path $repoRoot "node_modules\nuget-bin\nuget.exe")
 
 # Build the NuGet package using the temporary nuspec file
 Write-Output "Creating nuget package..."
-& $nugetExe pack $nuspecFile -OutputDirectory $manifestDir -Verbosity detailed
+& $nugetExe pack $nuspecFile -OutputDirectory $manifestDir -Verbosity detailed 2>&1
 $nugetExitCode = $LASTEXITCODE
 
 if ($nugetExitCode -eq 0) {
