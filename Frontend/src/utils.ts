@@ -1,6 +1,5 @@
 import { DefinitionPath, GenericItem, Item1Operator, WorkloadItem } from "./models/SampleWorkloadModel";
-import { ItemJobStatus, GetItemResult, ItemJobActionResult, ItemJobDetailSection, ItemJobData, GetItemDefinitionResult, ItemDefinitionPart, UpdateItemDefinitionPayload, PayloadType } from "@ms-fabric/workload-client";
-import i18n from 'i18next';
+import { GetItemResult, GetItemDefinitionResult, ItemDefinitionPart, UpdateItemDefinitionPayload, PayloadType } from "@ms-fabric/workload-client";
 
 export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult, itemDefinitionResult: GetItemDefinitionResult): WorkloadItem<T> {
     let payload: T;
@@ -99,101 +98,4 @@ export function calculateResult(op1: number, op2: number, calculationOperator: I
 
 export function formatResult(op1: number, op2: number, calculationOperator: Item1Operator, result: number): string {
     return `op1 = ${op1}, op2 = ${op2}, operator = ${calculationOperator}, result = ${result}`;
-}
-
-const sampleWorkloadName = process.env.WORKLOAD_NAME;
-const sampleItemName = process.env.DEFAULT_ITEM_NAME;
-const sampleItemType = sampleWorkloadName + "." + sampleItemName;
-const calculateAsText = sampleItemType + ".CalculateAsText";
-const longRunningCalculateAsText = sampleItemType + ".LongRunningCalculateAsText";
-const scheduledJob = sampleItemType + ".ScheduledJob";
-const calculateAsParquet = sampleItemType + ".CalculateAsParquet";
-const instantJob = sampleItemType + ".InstantJob";
-
-export const jobTypeDisplayNames: Record<string, string> = {
-    [scheduledJob]: 'Scheduled Job',
-    [calculateAsText]: 'Calculate as Text',
-    [longRunningCalculateAsText]: 'Long Running Calculate as Text',
-    [calculateAsParquet]: 'Calculate as Parquet',
-    [instantJob]: 'Instant Job'
-};
-
-export function getJobDetailsPane(jobData: ItemJobData): ItemJobActionResult {
-    const jobDetailsSection: ItemJobDetailSection = 
-    {
-        title: 'Job Details',
-        data: [
-            {
-                label: i18n.t("Job_Type"),
-                value: jobTypeDisplayNames[jobData.itemJobType],
-                type: 'text',
-            },
-            {
-                label: i18n.t("Job_Status"),
-                value: ItemJobStatus[jobData.status],
-                type: 'text',
-            },
-            {
-                label: i18n.t("Job_Start_Time_UTC"),
-                value: jobData.jobStartTimeUtc?.toString(),
-                type: 'text',
-            },
-            {
-                label: i18n.t("Job_End_Time_UTC"),
-                value: jobData.jobEndTimeUtc?.toString(),
-                type: 'text',
-            },
-            {
-                label: i18n.t("Job_Instance_ID"),
-                value: jobData.itemJobInstanceId,
-                type: 'text',
-            }                    
-        ]
-    }
-
-    const itemDetailsSection: ItemJobDetailSection = 
-    {
-        title: 'Item Details',
-        data: [
-            {
-                label: i18n.t("Item_Type"),
-                value: 'Sample Workload Item',
-                type: 'text',
-            },
-            {
-                label: i18n.t("Item_Name"),
-                value: jobData.itemName,
-                type: 'text',
-            },
-            {
-                label: i18n.t("Item_ID"),
-                value: jobData.itemObjectId,
-                type: 'text',
-            },
-            {
-                label: i18n.t("Workspace_Name"),
-                value: jobData.workspaceName,
-                type: 'text',
-            },
-            {
-                label: i18n.t("Workspace_ID"),
-                value: jobData.workspaceObjectId,
-                type: 'text',
-            },
-            // IMPORTANT: Use the following item(as is, keeping the label and type) to show the item editor link
-            {
-                label: 'Item Editor',
-                value: 'Open',
-                type: 'link',
-            },                
-        ]
-    }
-
-    return {
-        isSuccess: true,
-        data: {
-            type: 'default',
-            sections: [jobDetailsSection, itemDetailsSection],
-        },
-    }; 
 }

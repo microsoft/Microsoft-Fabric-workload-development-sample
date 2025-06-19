@@ -1,12 +1,6 @@
 {
     "Language_Changed_Title": "Idioma cambiado",
     "Language_Changed_Message": "El idioma fue cambiado a:",
-    "Job_Details": "Detalles del trabajo",
-    "Job_Type": "Tipo de trabajo",
-    "Job_Status": "Estado del trabajo",
-    "Job_Start_Time_UTC": "Hora de inicio del trabajo UTC",
-    "Job_End_Time_UTC": "Hora de finalización del trabajo UTC",
-    "Job_Instance_ID": "ID de instancia de trabajo",
     "Item_Details": "Detalles del artículo",
     "Item_Type": "Tipo de artículo",
     "Item_Name": "Nombre del artículo",

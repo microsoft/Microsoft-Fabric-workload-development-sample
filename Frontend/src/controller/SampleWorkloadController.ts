@@ -2,12 +2,9 @@ import {
     AccessToken,
     ActionButton,
     AfterNavigateAwayData,
-    ItemJobInstance,
     ItemLikeV2,
     BeforeNavigateAwayData,
     BeforeNavigateAwayResult,
-    CancelItemJobParams,
-    CancelItemJobResult,
     CloseMode,
     CreateItemParams,
     CreateItemResult,
@@ -21,11 +18,9 @@ import {
     HandleRequestFailureResult,
     NotificationToastDuration,
     NotificationType,
-    OpenItemRecentRunsConfig,
     OpenItemSettingsConfig,
     OpenMode,
     OpenUIResult,
-    RunItemJobParams,
     ThemeConfiguration,
     Tokens,
     ExtendedItemTypeV2,
@@ -40,7 +35,7 @@ import {
 
 import { Dispatch, SetStateAction } from "react";
 import { DefinitionPath, GenericItem } from '../models/SampleWorkloadModel';
-import { buildPublicAPIPayloadWithParts, jobTypeDisplayNames } from "../utils";
+import { buildPublicAPIPayloadWithParts } from "../utils";
 
 import {
     AuthenticationUIRequiredException,
@@ -629,135 +624,6 @@ export async function callItemDelete(
         console.error(`Failed deleting Item ${objectId}`, exception);
         return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callItemDelete, objectId);
     }
-}
-
-// --- Item Jobs related Api
-
-/**
- * Calls the 'itemSchedule.runItemJob' function from the WorkloadClientAPI, starting item job execution
- *
- * @param {string} objectId - The ObjectId of the item which will run the job.
- * @param {string} jobType - The job type to run.
- * @param {string} jobPayload - Payload to be sent as part of the job
- * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {boolean} showNotification - show pop-up notification.
- * @param {boolean} isRetry - Indicates that the call is a retry
- * @returns {ItemJobInstance} - The executed job instance metadata.
- */
-export async function callRunItemJob(
-    objectId: string,
-    jobType: string,
-    jobPayload: string,
-    showNotification: boolean = false,
-    workloadClient: WorkloadClientAPI,
-    isRetry?: boolean): Promise<ItemJobInstance> {
-
-    const params: RunItemJobParams = {
-        itemObjectId: objectId,
-        itemJobType: jobType,
-        payload: { jobPayloadJson: jobPayload }
-    };
-
-    console.log(`Call Run Item Job. request: ${params}`);
-
-    try {
-        const result: ItemJobInstance = await workloadClient.itemSchedule.runItemJob(params);
-        console.log(`Executed job id: ${result.itemJobInstanceId}`);
-        if (showNotification) {
-            callNotificationOpen(
-                `${jobTypeDisplayNames[result.itemJobType]} execution has begun.`,
-                `Job instance ID: ${result.itemJobInstanceId}.`,
-                NotificationType.Success,
-                NotificationToastDuration.Medium,
-                workloadClient);
-        }
-
-        return result;
-    } catch (exception) {
-        console.error(`Failed running item job ${jobType} for item ${objectId}`);
-        console.log(exception);
-        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callRunItemJob, objectId, jobType, jobPayload, showNotification);
-    }
-}
-
-/**
- * Calls the 'itemSchedule.cancelItemJob' function from the WorkloadClientAPI, canceling item job execution
- *
- * @param {string} objectId - The ObjectId of the item which will run the job.
- * @param {string} jobInstanceObjectId - The Id of the job instance
- * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {boolean} showNotification - show pop-up notification.
- * @param {boolean} isRetry - Indicates that the call is a retry
- * @returns {CancelItemJobParams} - The executed job instance metadata.
- */
-export async function callCancelItemJob(
-    objectId: string,
-    jobInstanceObjectId: string,
-    showNotification: boolean = false,
-    workloadClient: WorkloadClientAPI,
-    isRetry?: boolean): Promise<CancelItemJobResult> {
-
-    const params: CancelItemJobParams = {
-        itemObjectId: objectId,
-        jobInstanceId: jobInstanceObjectId,
-    };
-
-    console.log(`Call cancel Item Job. request: ${params}`);
-
-    try {
-        const result: CancelItemJobResult = await workloadClient.itemSchedule.cancelItemJob(params);
-        console.log(`CancelItemJobResult: ${result}`);
-        if (showNotification) {
-            const success = result.success;
-            const notificationMessage = success
-                ? `Job instance ID: ${jobInstanceObjectId} for item: ${objectId} was canceled successfully`
-                : `Failed to cancel job instance ID: ${jobInstanceObjectId} for item: ${objectId} `;
-
-            callNotificationOpen(
-                'Cancel Job result',
-                notificationMessage,
-                success ? NotificationType.Success : NotificationType.Error,
-                NotificationToastDuration.Medium,
-                workloadClient);
-        }
-
-        return result;
-    }
-    catch (exception) {
-        console.error(`Failed to cancel job instance ID: ${jobInstanceObjectId} for item: ${objectId}`);
-        console.log(exception);
-        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callCancelItemJob, objectId, jobInstanceObjectId, showNotification);
-    }
-}
-
-/**
- * Calls the 'itemRecentRuns.open' function from the WorkloadClientAPI, opening the shared UI component displaying recent runs of item jobs.
- *
- * @param {ItemLikeV2} item - The item for which we want to display recent job runs.
- * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @returns {OpenUIResult} - The result of the UI operation.
- */
-export async function callOpenRecentRuns(
-    item: ItemLikeV2,
-    workloadClient: WorkloadClientAPI): Promise<OpenUIResult> {
-
-    const config: OpenItemRecentRunsConfig = {
-        item: item
-    };
-
-    console.log(`Call OpenRecentRuns. request: ${item}`);
-
-    try {
-        const result: OpenUIResult = await workloadClient.itemRecentRuns.open(config);
-        console.log(`OpenRecentRuns: ${result}`);
-        return result;
-    }
-    catch (exception) {
-        console.error(`Failed to open recent run for item: ${item}`);
-        console.log(exception);
-    }
-
-    return null;
 }
 
 // --- Workload data plane API

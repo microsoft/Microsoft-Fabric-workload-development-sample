@@ -16,7 +16,6 @@ import {
 import { Stack } from '@fluentui/react';
 import { PageProps } from 'src/App';
 import './../../styles.scss';
-//import { ItemTabToolbar } from "./ItemTabToolbar";
 
 const HomeTabToolbar = (props: RibbonProps) => {
 
@@ -30,21 +29,10 @@ const HomeTabToolbar = (props: RibbonProps) => {
     return;
   }
 
-  function getSaveButtonTooltipText(): string {
-    return !props.isFEOnly
-      ? 'Save is not supported in Frontend-only'
-      : (!props.isStorageSelected
-        ? 'Select calculation result storage (Lakehouse / OneLake)'
-        : (props.invalidOperands
-          ? 'Operands may lead to overflow'
-          : 'Save')
-        );
-  }
-
   return (
     <Toolbar>
       <Tooltip
-        content={getSaveButtonTooltipText()}
+        content="Save"
         relationship="label">
         <ToolbarButton
           disabled={!props.isSaveButtonEnabled}
@@ -91,15 +79,10 @@ const CollabButtons = (props: RibbonProps) => {
 
 export interface RibbonProps extends PageProps {
   saveItemCallback: () => Promise<void>;
-  isStorageSelected?: boolean;
   isSaveButtonEnabled?: boolean;
-  isFEOnly?: boolean;
   openSettingsCallback: () => Promise<void>;
-  itemObjectId?: string;
   onTabChange: (tabValue: TabValue) => void;
   selectedTab: TabValue;
-  isDirty: boolean;
-  invalidOperands: boolean;
 }
 
 export function Ribbon(props: RibbonProps) {

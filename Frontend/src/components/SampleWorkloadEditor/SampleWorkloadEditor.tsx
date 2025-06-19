@@ -69,8 +69,6 @@ export function SampleWorkloadEditor(props: PageProps) {
   const [operand2, setOperand2] = useState<number>(0);
   const [operator, setOperator] = useState<string | null>(null);
   const [isDirty, setDirty] = useState<boolean>(false);
-  const [invalidOperands, setInvalidOperands] = useState<boolean>(false);
-  const canUseOneLake = true;
   const [storageName, setStorageName] = useState<string>("Lakehouse");
   const [calculationResult, setCalculationResult] = useState<string>("");
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
@@ -147,11 +145,9 @@ export function SampleWorkloadEditor(props: PageProps) {
     setDirty(true);
     if (!isValidOperand(value)) {
       setOperand1ValidationMessage("Operand 1 may lead to overflow");
-      setInvalidOperands(true);
       return;
     }
     setOperand1ValidationMessage("");
-    setInvalidOperands(!isValidOperand(operand2));
   }
 
   async function onOperand2InputChanged(value: number) {
@@ -159,11 +155,9 @@ export function SampleWorkloadEditor(props: PageProps) {
     setDirty(true);
     if (!isValidOperand(value)) {
       setOperand2ValidationMessage("Operand 2 may lead to overflow");
-      setInvalidOperands(true);
       return;
     }
     setOperand2ValidationMessage("");
-    setInvalidOperands(!isValidOperand(operand1));
   }
 
   function onOperatorInputChanged(value: string | null) {
@@ -185,7 +179,6 @@ export function SampleWorkloadEditor(props: PageProps) {
 
   async function onCalculateAndSaveButtonClick() {
     if (!canCalculateOperands(operand1, operand2)) {
-      setInvalidOperands(true);
       return;
     }
     try {
@@ -231,7 +224,6 @@ export function SampleWorkloadEditor(props: PageProps) {
         setHasLastResult(item1Metadata?.hasLastResult ?? false);
         setOperand1ValidationMessage("");
         setOperand2ValidationMessage("");
-        setInvalidOperands(false);
         setStorageName(item1Metadata?.useOneLake ? "OneLake" : "Lakehouse");
         const loadedOperator = item1Metadata?.operator;
         const isValidOperator = loadedOperator && supportedOperators.includes(loadedOperator);
@@ -294,24 +286,14 @@ export function SampleWorkloadEditor(props: PageProps) {
     }
   }
 
-  function getItemObjectId() {
-    return sampleItem?.id || pageContext.itemObjectId;
-  }
-
   function isDisabledCalculateButton(): boolean {
-    return isDirty || operator == "0" || sampleItem == undefined;
+    return operator == "0" || sampleItem == undefined;
   }
 
   const selectedStorageChanged = (ev: FormEvent<HTMLDivElement>, data: RadioGroupOnChangeData) => {
     setStorageName(data.value);
     setDirty(true);
   };
-
-  function getOneLakeTooltipText(regularTooltipMessage: string, canUseOneLake: boolean): string {
-    return !canUseOneLake
-      ? 'OneLake is not supported for this item type. CreateOneLakeFoldersOnArtifactCreation attribute must be set in the item manifest.'
-      : regularTooltipMessage;
-  }
 
   // HTML page contents
   if (isLoading) {
@@ -320,24 +302,12 @@ export function SampleWorkloadEditor(props: PageProps) {
   return (
     <Stack className="editor" data-testid="sample-workload-editor-inner">
       <Ribbon
-        {...props}
-        isStorageSelected={selectedLakehouse != undefined || storageName === "OneLake"}
-        //  disable save when in Frontend-only
-        isSaveButtonEnabled={
-          sampleItem?.id !== undefined &&
-          (selectedLakehouse != undefined || storageName === "OneLake") &&
-          isDirty &&
-          !invalidOperands &&
-          !!operator
-        }
+        {...props}        
+        isSaveButtonEnabled={true}
         saveItemCallback={SaveItem}
-        isFEOnly={sampleItem?.id !== undefined}
         openSettingsCallback={openSettings}
-        itemObjectId={getItemObjectId()}
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
-        isDirty={isDirty}
-        invalidOperands={invalidOperands}
       />
 
       <Stack className="main">
@@ -419,12 +389,11 @@ export function SampleWorkloadEditor(props: PageProps) {
                         </Stack>
                       </div>)}
                     <Tooltip
-                      content={getOneLakeTooltipText("Item folder in OneLake", canUseOneLake)}
+                      content="Item folder in OneLake"
                       relationship="label">
                       <Radio
                         value="OneLake"
                         label="Item folder in OneLake"
-                        disabled={!canUseOneLake}
                         data-testid="onelake-radiobutton-tooltip" />
                     </Tooltip>
                   </RadioGroup>

@@ -101,16 +101,11 @@ export function SampleTerminalEditor(props: PageProps) {
     <Stack className="editor" data-testid="sample-terminal-editor">
       <Ribbon
         {...props}
-        isStorageSelected={false}
         isSaveButtonEnabled={isDirty}
-        isFEOnly={pageContext.itemObjectId !== undefined}
         saveItemCallback={saveItem}
         openSettingsCallback={openSettings}
-        itemObjectId={pageContext.itemObjectId}
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
-        isDirty={isDirty}
-        invalidOperands={false}
       />
 
       <Stack className="main">
