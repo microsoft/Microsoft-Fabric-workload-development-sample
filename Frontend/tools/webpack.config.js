@@ -28,6 +28,7 @@ module.exports = {
         new Webpack.DefinePlugin({
             "process.env.WORKLOAD_NAME": JSON.stringify(process.env.WORKLOAD_NAME),
             "process.env.WORKLOAD_BE_URL": JSON.stringify(process.env.WORKLOAD_BE_URL),
+            "process.env.DEFAULT_ITEM_NAME": JSON.stringify(process.env.DEFAULT_ITEM_NAME),
         }),
         new HtmlWebpackPlugin({
             template: "./src/index.html",

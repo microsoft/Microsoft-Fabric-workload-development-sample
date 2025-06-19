@@ -94,7 +94,7 @@ Write-Output "Building the manifest..."
 $buildManifestScript = Join-Path $PSScriptRoot "..\Build\Manifest\build-package.ps1"
 if (Test-Path $buildManifestScript) {
     $buildManifestScriptFull = (Resolve-Path $buildManifestScript).Path
-    & $buildManifestScriptFull -WorkloadName $WorkloadName -ItemName $ItemName
+    & $buildManifestScriptFull
     Write-Host ""
     Write-Host "Manifest has been built. If you change configuration, please run the following script again:" -ForegroundColor Blue
     Write-Host "`"$buildManifestScriptFull`""
