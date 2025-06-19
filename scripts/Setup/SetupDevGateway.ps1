@@ -39,8 +39,8 @@ Write-Output "Writing configuration files in $destDir"
 
 $manifestConfigFile= Join-Path $PSScriptRoot ".\..\..\config"
 if (!(Test-Path $manifestConfigFile)) { New-Item -ItemType Directory -Path $manifestConfigFile | Out-Null }
-$manifestDir = (Resolve-Path -Path (Join-Path $PSScriptRoot "..\..\config\Manifest")).Path
-$manifestFile = Join-Path $manifestDir "ManifestPackage.1.0.0.nupkg"
+$manifestDir = (Resolve-Path -Path (Join-Path $PSScriptRoot "..\..\config")).Path
+$manifestFile = Join-Path $manifestDir "Manifest\ManifestPackage.1.0.0.nupkg"
 Write-Output "Manifest location used $manifestFile"
 
 # Define key-value dictionary for replacements
