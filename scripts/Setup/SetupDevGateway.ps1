@@ -10,8 +10,15 @@ if ($downloadDevGateway -eq "y") {
     Write-Host "📥 Downloading DevGateway..."
     if (!(Test-Path $devGatewayDir)) {   
         try {
+            if ($IsWindows) {
+            $tempDir = $env:TEMP
+         } else {
+            $tempDir = $env:TMPDIR
+        }
+        
+            # Example usage:
+            $tempZipPath = Join-Path $tempDir "DevGateway-tmp.zip"
             New-Item -ItemType Directory -Path $devGatewayDir | Out-Null 
-            $tempZipPath = "$env:TEMP\DevGateway-tmp.zip"  # Temporary location for the ZIP file
             # Download the ZIP file
             Invoke-WebRequest -Uri $DEV_GATEWAY_DOWNLOAD_URL -OutFile $tempZipPath
             # Extract the ZIP file

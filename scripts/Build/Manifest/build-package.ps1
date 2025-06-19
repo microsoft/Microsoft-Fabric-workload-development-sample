@@ -27,8 +27,21 @@ $nugetExe = Resolve-Path -Path (Join-Path $repoRoot "node_modules\nuget-bin\nuge
 
 # Build the NuGet package using the temporary nuspec file
 Write-Output "Creating nuget package..."
-& $nugetExe pack $nuspecFile -OutputDirectory $manifestDir -Verbosity detailed 2>&1
-$nugetExitCode = $LASTEXITCODE
+
+
+if ($IsMacOS) {
+       # Install .NET SDK on macOS
+    Write-Output "Installing .NET SDK on macOS ..."
+    /bin/bash -c "brew install nuget"
+    # Use dotnet nuget pack on macOS/Linux or if nuget.exe is not available
+    nuget pack $nuspecFile -OutputDirectory $manifestDir -Verbosity detailed 2>&1    
+    $nugetExitCode = $LASTEXITCODE
+    
+} else {
+    # Use nuget.exe if available on Windows
+    & $nugetExe pack $nuspecFile -OutputDirectory $manifestDir -Verbosity detailed 2>&1
+    $nugetExitCode = $LASTEXITCODE
+}
 
 if ($nugetExitCode -eq 0) {
     Write-Host "NuGet package built successfully ..."  -ForegroundColor Green
