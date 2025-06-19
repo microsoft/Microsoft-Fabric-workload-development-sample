@@ -3,16 +3,11 @@ import { Tab, TabList } from '@fluentui/react-tabs';
 import { Toolbar } from '@fluentui/react-toolbar';
 import {
   SelectTabEvent, SelectTabData, TabValue,
-  Menu, MenuItem, MenuList, MenuPopover, MenuTrigger,
-  ToolbarButton, Button, MenuButton, Tooltip
+  ToolbarButton, Tooltip
 } from '@fluentui/react-components';
 import {
   Save24Regular,
-  Chat24Regular,
-  Edit24Regular,
-  Share24Regular,
 } from "@fluentui/react-icons";
-import { Stack } from '@fluentui/react';
 import { PageProps } from 'src/App';
 import './../styles.scss';
 
@@ -47,27 +42,6 @@ export interface RibbonProps extends PageProps {
   selectedTab: TabValue;
 }
 
-const CollabButtons = (props: RibbonProps) => {
-  return (
-    <div className="collabContainer">
-      <Stack horizontal>
-        <Button size="small" icon={<Chat24Regular />}>Comments</Button>
-        <Menu>
-          <MenuTrigger disableButtonEnhancement>
-            <MenuButton size="small" icon={<Edit24Regular />}>Editing</MenuButton>
-          </MenuTrigger>
-          <MenuPopover>
-            <MenuList>
-              <MenuItem>Editing</MenuItem>
-              <MenuItem>Viewing</MenuItem>
-            </MenuList>
-          </MenuPopover>
-        </Menu>
-        <Button size="small" icon={<Share24Regular />} appearance="primary">Share</Button>
-      </Stack>
-    </div>
-  );
-}
 
 export function Ribbon(props: RibbonProps) {
   const { onTabChange, selectedTab } = props;
@@ -77,7 +51,6 @@ export function Ribbon(props: RibbonProps) {
 
   return (
     <div className="ribbon">
-      <CollabButtons {...props} />
       <TabList
         selectedValue={selectedTab}
         onTabSelect={onTabSelect}>
