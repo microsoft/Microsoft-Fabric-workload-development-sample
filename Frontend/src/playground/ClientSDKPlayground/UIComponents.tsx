@@ -20,8 +20,8 @@ import { useTranslation } from "react-i18next";
 import {
   callLanguageGet,
   callSettingsOnChange,
-} from "../../samples/controller/SampleItemEditorController";
-import { TabContentProps } from '../../samples/models/SampleWorkloadModel';
+} from "../../samples/controller/CalculatorSampleItemEditorController";
+import { TabContentProps } from '../../samples/models/CalculatorSampleWorkloadModel';
 import { RootState } from "../ClientSDKPlaygroundStore/Store";
 import {
   setSampleInput,

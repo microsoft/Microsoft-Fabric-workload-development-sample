@@ -5,20 +5,24 @@ import {
     NotificationType
 } from '@ms-fabric/workload-client';
 
-import * as Controller from './samples/controller/SampleItemEditorController';
-import { ItemCreationFailureData, ItemCreationSuccessData } from './samples/models/SampleWorkloadModel';
+import * as Controller from './samples/controller/CalculatorSampleItemEditorController';
+import { ItemCreationFailureData, ItemCreationSuccessData } from './ItemEditor/ItemEditorModel';
 
 export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();
-    const sampleItemEditorPath = "/sample-workload-editor";
     const sampleWorkloadName = process.env.WORKLOAD_NAME;
 
     workloadClient.action.onAction(async function ({ action, data }) {
         switch (action) {
             case 'item.onCreationSuccess':
                 const { item: createdItem } = data as ItemCreationSuccessData;
-                await Controller.callPageOpen(sampleWorkloadName, `${sampleItemEditorPath}/${createdItem.objectId}`, workloadClient);
-
+                var path = "/item-editor";
+                //TODO: check if calculator and then set correct path
+                if(createdItem.systemItemType.indexOf('calculator') > -1) {
+                    path = "calculator-sample-item-editor"
+                }
+                createdItem.itemType
+                await Controller.callPageOpen(sampleWorkloadName, `${path}/${createdItem.objectId}`, workloadClient);
                 return Promise.resolve({ succeeded: true });
 
             case 'item.onCreationFailure':
@@ -31,16 +35,6 @@ export async function initialize(params: InitParams) {
                     });
                 return;
 
-            /**
-             * This opens the Frontend-only experience, allowing to experiment with the UI without the need for CRUD operations.
-             */
-            case 'open.createSampleWorkloadFrontendOnly':
-                return workloadClient.page.open({
-                    workloadName: sampleWorkloadName,
-                    route: {
-                        path: `/sample-workload-frontend-only`,
-                    },
-                });
 
             case 'sample.Action':
                 return Controller.callNotificationOpen(
@@ -57,7 +51,7 @@ export async function initialize(params: InitParams) {
                         displayName: 'About',
                         workloadSettingLocation: {
                             workloadName: sampleWorkloadName,
-                            route: 'custom-about',
+                            route: 'calculator-sample-item-about-dialog',
                         },
                         workloadIframeHeight: '1000px'
                     },
@@ -69,7 +63,7 @@ export async function initialize(params: InitParams) {
                         },
                         workloadSettingLocation: {
                             workloadName: sampleWorkloadName,
-                            route: 'custom-item-settings',
+                            route: 'calculator-sample-item-settings-dialog',
                         },
                         workloadIframeHeight: '1000px'
                     }

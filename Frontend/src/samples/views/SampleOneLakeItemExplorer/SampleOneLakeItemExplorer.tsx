@@ -11,12 +11,12 @@ import {
   Tooltip,
 } from "@fluentui/react-components";
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular, ArrowSwap20Regular } from "@fluentui/react-icons";
-import { callDatahubOpen } from "../../controller/SampleItemEditorController";
+import { callDatahubOpen } from "../../controller/CalculatorSampleItemEditorController";
 import { TableMetadata, FileMetadata } from "../../models/OneLakeItemExplorerModel";
 import "./../../../styles.scss";
 import { getTables, getFiles } from "../../controller/OneLakeItemExplorerController";
 import { PageProps } from "../../../App";
-import { GenericItem as ItemMetadata } from "src/samples/models/SampleWorkloadModel";
+import { GenericItem as ItemMetadata } from "../../../ItemEditor/ItemEditorModel";
 import { TableTreeWithSchema } from "./TableTreeWithSchema";
 import { TableTreeWithoutSchema } from "./TableTreeWithoutSchema";
 import { FileTree } from "./FileTree";
@@ -65,7 +65,9 @@ export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
 
   async function onDatahubClicked() {
     const result = await callDatahubOpen(
-      ["Lakehouse",  process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME],
+      ["Lakehouse",  
+        process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME, 
+        process.env.WORKLOAD_NAME + ".CalculatorSample"],
       "Select an item to use for Frontend Sample Workload",
       false,
       workloadClient

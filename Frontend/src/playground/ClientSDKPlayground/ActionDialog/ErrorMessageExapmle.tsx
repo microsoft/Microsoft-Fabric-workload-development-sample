@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Field, Input, Button } from '@fluentui/react-components';
 import { PanelRightExpand20Regular } from '@fluentui/react-icons';
-import { TabContentProps } from '../../../samples/models/SampleWorkloadModel';
+import { TabContentProps } from '../../../samples/models/CalculatorSampleWorkloadModel';
 import {
     callErrorHandlingOpenDialog,
     callErrorHandlingRequestFailure,
-} from "../../../samples/controller/SampleItemEditorController";
+} from "../../../samples/controller/CalculatorSampleItemEditorController";
 import "../../../styles.scss";
 
 

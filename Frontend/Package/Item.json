@@ -1,0 +1,19 @@
+{
+    "name": "SampleItem",
+    "displayName": "Item_DisplayName",
+    "displayNamePlural": "Item_DisplayName_Plural",
+    "editor": {
+      "path": "/item-editor"
+    },
+    "icon": {
+      "name": "assets/images/item.jpg"
+    },
+    "activeIcon": {
+      "name": "assets/images/item.jpg"
+    },
+    "supportedInMonitoringHub": true,
+    "supportedInDatahubL1": true,
+    "editorTab": {
+      "onInit": "item.tab.onInit"
+    }
+  }

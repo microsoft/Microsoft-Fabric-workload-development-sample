@@ -4,12 +4,13 @@ import { ClientSDKStore } from "./playground/ClientSDKPlaygroundStore/Store";
 import { Route, Router, Switch } from "react-router-dom";
 import { History } from "history";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { SampleWorkloadEditor } from "./samples/views/SampleItemEditor/SampleItemEditor";
-import CustomItemSettings from "./samples/views/CustomItemSettings/CustomItemSettings";
-import CustomAbout from "./samples/views/CustomItemSettings/CustomAbout";
-import SharedStatePage from "./samples/views/SampleItemEditor/SampleItemEditorSharedStatePage"
+import { SampleItemEditor } from "./samples/views/CalculatorSampleItemEditor/CalculatorSampleItemEditor";
+import CustomItemSettings from "./samples/views/CalculatorSampleItemEditor/CalculatorSampleItemEditorSettingsDialog";
+import CustomAbout from "./samples/views/CalculatorSampleItemEditor/CalculatorSampleItemEditorAboutDialog";
+import SharedStatePage from "./samples/views/CalculatorSampleItemEditor/CalculatorSampleItemEditorSharedStatePage"
 import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlayground/ClientSDKPlayground";
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
+import { ItemEditor } from "./ItemEditor/ItemEditor";
 
 /*
     Add your Item Editor in the Route section of the App function below
@@ -39,41 +40,40 @@ export interface SharedState {
 export function App({ history, workloadClient }: AppProps) {
     return <Router history={history}>
         <Switch>
+            {/* Routing to the Empty Item Editor */}
+            <Route path="/item-editor/:itemObjectId">
+                <ItemEditor
+                    workloadClient={workloadClient} data-testid="item-editor" />
+            </Route>
             {/* This is the routing to the Sample Workload Editor.
                  Add your workload editor path here, and reference it in index.worker.ts  */}
-            <Route path="/sample-workload-editor/:itemObjectId">
-                <SampleWorkloadEditor
-                    workloadClient={workloadClient} data-testid="sample-workload-editor" />
+            <Route path="/calculator-sample-item-editor/:itemObjectId">
+                <SampleItemEditor
+                    workloadClient={workloadClient} data-testid="sample-item-editor" />
             </Route>
-
-            {/* This is the routing to the Sample Workload Frontend-ONLY experience.
-                 Add your workload creator path here, and reference it in index.worker.ts  */}
-            <Route path="/sample-workload-frontend-only">
-                <SampleWorkloadEditor
-                    workloadClient={workloadClient} data-testid="sample-workload-frontend-only" />
-            </Route>
-
-            {/* Routing to Custom Item Settings */}
-            <Route path="/custom-item-settings">
+            <Route path="/calculator-sample-item-settings-dialog">
                 <CustomItemSettings data-testid="custom-about" />
             </Route>
-            <Route path="/custom-about">
+            <Route path="/calculator-sample-item-about-dialog">
                 <CustomAbout />
-            </Route>
-            <Route path="/shared-state-page">
-                <SharedStatePage
-                    workloadClient={workloadClient} />
-            </Route>
+            </Route>     
+
             <Route path="/client-sdk-playground">
                 <Provider store={ClientSDKStore}>
                     <ClientSDKPlayground workloadClient={workloadClient} />
                 </Provider>
             </Route>
-            <Route path="/sample-page">
-                <SamplePage workloadClient={workloadClient} />
-            </Route>
             <Route path="/data-playground">
                 <DataPlayground workloadClient={workloadClient} />
+            </Route>
+
+             {/* -- TODO: Clean up not needed --*/}
+            <Route path="/shared-state-page">
+                <SharedStatePage
+                    workloadClient={workloadClient} />
+            </Route> 
+            <Route path="/sample-page">
+                <SamplePage workloadClient={workloadClient} />
             </Route>
 
         </Switch>

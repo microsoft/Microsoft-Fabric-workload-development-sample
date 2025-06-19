@@ -1,5 +1,5 @@
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { callAuthAcquireFrontendAccessToken } from "./SampleItemEditorController";
+import { callAuthAcquireFrontendAccessToken } from "./../../ItemEditor/ItemEditorController";
 import { EnvironmentConstants } from "../../constants";
 
 export const oneLakeScope = "https://storage.azure.com/user_impersonation";

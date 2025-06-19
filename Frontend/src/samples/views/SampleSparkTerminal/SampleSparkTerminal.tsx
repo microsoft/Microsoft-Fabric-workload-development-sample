@@ -25,8 +25,8 @@ import {
   getStatement,
   cancelSession
 } from '../../controller/SparkLivyController';
-import { callDatahubOpen } from '../../controller/SampleItemEditorController';
-import { GenericItem } from '../../models/SampleWorkloadModel';
+import { callDatahubOpen } from '../../controller/CalculatorSampleItemEditorController';
+import { GenericItem } from '../../../ItemEditor/ItemEditorModel';
 
 // Define interface for component props
 export interface SampleSparkTerminalProps {

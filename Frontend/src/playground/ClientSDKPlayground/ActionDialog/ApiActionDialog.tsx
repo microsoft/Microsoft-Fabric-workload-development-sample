@@ -1,6 +1,6 @@
 import React from 'react';
 import { Divider } from '@fluentui/react-components';
-import { TabContentProps } from '../../../samples/models/SampleWorkloadModel';
+import { TabContentProps } from '../../../samples/models/CalculatorSampleWorkloadModel';
 import { ActionExample } from './ActionExample';
 import { MessageBoxExample } from './MessageBoxExample';
 import { SharedStateExample } from './SharedStateExample';

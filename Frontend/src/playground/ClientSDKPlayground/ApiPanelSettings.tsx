@@ -11,8 +11,8 @@ import {
     callThemeGet,
     settingsToView,
     callSettingsGet,
-} from "../../samples/controller/SampleItemEditorController";
-import { TabContentProps } from '../../samples/models/SampleWorkloadModel';
+} from "../../samples/controller/CalculatorSampleItemEditorController";
+import { TabContentProps } from '../../samples/models/CalculatorSampleWorkloadModel';
 import "./../../styles.scss";
 
 export function ApiPanelSettings(props: TabContentProps) {

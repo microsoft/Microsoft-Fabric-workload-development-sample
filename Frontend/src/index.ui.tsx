@@ -7,9 +7,7 @@ import { createWorkloadClient, InitParams, ItemTabActionContext } from '@ms-fabr
 
 import { fabricLightTheme } from "./theme";
 import { App } from "./App";
-import { convertGetItemResultToWorkloadItem } from "./utils";
-import { callItemGet, callPublicItemGetDefinition } from "./samples/controller/SampleItemEditorController";
-import { ItemPayload } from "./samples/models/SampleWorkloadModel";
+import { callItemGet } from "./ItemEditor/ItemEditorController"
 
 export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();
@@ -17,17 +15,16 @@ export async function initialize(params: InitParams) {
     const history = createBrowserHistory();
     workloadClient.navigation.onNavigate((route) => history.replace(route.targetUrl));
     workloadClient.action.onAction(async function ({ action, data }) {
+        const { id } = data as ItemTabActionContext;
         switch (action) {
-            case 'sample.tab.onInit':
-                const { id } = data as ItemTabActionContext;
+            case 'item.tab.onInit':
+            case 'calculatorSampleItem.tab.onInit':            
                 try{
-                    const getItemResult = await callItemGet(
+                    const itemResult = await callItemGet(
                         id,
                         workloadClient
                     );
-                    const getItemDefinitionResult = await callPublicItemGetDefinition(id, workloadClient);
-                    const item = convertGetItemResultToWorkloadItem<ItemPayload>(getItemResult, getItemDefinitionResult);
-                    return {title: item.displayName};
+                    return {title: itemResult.displayName};
                 } catch (error) {
                     console.error(
                         `Error loading the Item (object ID:${id})`,
@@ -35,15 +32,15 @@ export async function initialize(params: InitParams) {
                     );
                     return {};
                 }
-            case 'sample.tab.canDeactivate':
+            case 'calculatorSampleItem.tab.canDeactivate':
                 return { canDeactivate: true };
-            case 'sample.tab.onDeactivate':
+            case 'calculatorSampleItem.tab.onDeactivate':
                 return {};
-            case 'sample.tab.canDestroy':
+            case 'samplecalculatorSampleItem.tab.canDestroy':
                 return { canDestroy: true };
-            case 'sample.tab.onDestroy':
+            case 'calculatorSampleItem.tab.onDestroy':
                 return {};
-            case 'sample.tab.onDelete':
+            case 'calculatorSampleItem.tab.onDelete':
                 return {};
             default:
                 throw new Error('Unknown action received');

@@ -12,20 +12,20 @@ import {
   Spinner,
   Text
 } from "@fluentui/react-components";
-import { callDatahubOpen } from "../../controller/SampleItemEditorController";
+import { callDatahubOpen } from "../../controller/CalculatorSampleItemEditorController";
 import { createOneLakeShortcut } from "../../controller/OneLakeShortcutController";
 import { OneLakeShortcutCreateRequest, OneLakeShortcutTargetOneLake } from "../../models/OneLakeShortcutModel";
 import { PageProps } from "../../../App";
-import { GenericItem as ItemMetadata } from "../../models/SampleWorkloadModel";
+import { GenericItem } from "../../../ItemEditor/ItemEditorModel";
 
 export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
   // Source and target item states
   const [shortcutName, setShortcutName] = useState<string>("");
 
-  const [sourceItem, setSourceItem] = useState<ItemMetadata>(null);
+  const [sourceItem, setSourceItem] = useState<GenericItem>(null);
   const [sourceShortcutPath, setSourceShortcutPath] = useState<string>("Files");
 
-  const [targetItem, setTargetItem] = useState<ItemMetadata>(null);
+  const [targetItem, setTargetItem] = useState<GenericItem>(null);
   const [targetShortcutPath, setTargetShortcutPath] = useState<string>("Files");
   
   // UI states
@@ -36,7 +36,9 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
   // Select source item using datahub
   const selectSourceItem = async () => {
     const result = await callDatahubOpen(
-      ["Lakehouse", process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME],
+      ["Lakehouse", 
+        process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME,
+        process.env.WORKLOAD_NAME + ".CalculatorSample"],
       "Select source item for shortcut",
       false,
       workloadClient
@@ -51,7 +53,9 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
   // Select target item using datahub
   const selectTargetItem = async () => {
     const result = await callDatahubOpen(
-      ["Lakehouse", process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME],
+      ["Lakehouse", 
+        process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME,
+        process.env.WORKLOAD_NAME + ".CalculatorSample"],
       "Select target item for shortcut",
       false,
       workloadClient

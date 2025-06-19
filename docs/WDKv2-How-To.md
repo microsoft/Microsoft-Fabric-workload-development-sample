@@ -53,16 +53,16 @@ The configuration for the standard item creation experience can be found in the 
     "version": "1.100",
     "displayName": "Workload_Display_Name",
     "createExperience": {
-        "description": "CreateHub_Workload_Description",
+        "description": "Workload_Description",
         "cards": [
             {
               "title": "CreateHub_Card_2_Title",
               "description": "CreateHub_Card_2_Description",
               "icon": {
-                "name": "assets/images/calculator.png"
+                "name": "assets/images/calculator-sample-item.png"
               },
               "icon_small": {
-                "name": "assets/images/calculator.png"
+                "name": "assets/images/calculator-sample-item.png"
               },
               "availableIn": [
                 "home",

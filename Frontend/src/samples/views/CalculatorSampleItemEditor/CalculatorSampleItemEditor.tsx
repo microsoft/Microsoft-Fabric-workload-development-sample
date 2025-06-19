@@ -29,27 +29,24 @@ import {
   callNavigationAfterNavigateAway,
   callThemeOnChange,
   callDatahubOpen,
-  callItemGet,
   callOpenSettings,
-  callPublicItemGetDefinition,
-  callPublicItemUpdateDefinition
-} from "../../controller/SampleItemEditorController";
-import { Ribbon } from "./SampleItemEditorRibbon";
-import { calculateResult, convertGetItemResultToWorkloadItem } from "../../../utils";
+  calculateResult,
+} from "../../controller/CalculatorSampleItemEditorController";
+import { Ribbon } from "./CalculatorSampleItemEditorRibbon";
 import {
-  Item1ClientMetadata,
-  GenericItem,
-  ItemPayload,
-  UpdateItemPayload,
-  WorkloadItem,
+  SampleItemClientMetadata,
+  SampleItemPayload,
+  SampleItemUpdatePayload,
   DefinitionPath,
   Item1Operator,
-} from "../../models/SampleWorkloadModel";
+} from "../../models/CalculatorSampleWorkloadModel";
 import "./../../../styles.scss";
-import { LoadingProgressBar } from "../LoadingIndicator/LoadingProgressBar";
+import { LoadingProgressBar } from "../../../ItemEditor/ItemEditorLoadingProgressBar";
 import { getOneLakeFile, getOneLakeFilePath, writeToOneLakeFile } from "../../controller/OneLakeController";
+import { callItemGet, callPublicItemGetDefinition, callPublicItemUpdateDefinition, convertGetItemResultToWorkloadItem } from "../../../ItemEditor/ItemEditorController";
+import { GenericItem, WorkloadItem } from "../../../ItemEditor/ItemEditorModel";
 
-export function SampleWorkloadEditor(props: PageProps) {
+export function SampleItemEditor(props: PageProps) {
   const { workloadClient } = props;
   const pageContext = useParams<ContextProps>();
   const { pathname } = useLocation();
@@ -63,7 +60,7 @@ export function SampleWorkloadEditor(props: PageProps) {
     useState<string>("");
   const [selectedLakehouse, setSelectedLakehouse] = useState<GenericItem>(undefined);
   const [sampleItem, setSampleItem] =
-    useState<WorkloadItem<ItemPayload>>(undefined);
+    useState<WorkloadItem<SampleItemPayload>>(undefined);
   const [operand1, setOperand1] = useState<number>(0);
   const [operand2, setOperand2] = useState<number>(0);
   const [operator, setOperator] = useState<string | null>(null);
@@ -96,7 +93,7 @@ export function SampleWorkloadEditor(props: PageProps) {
     loadDataFromUrl(pageContext, pathname);
   }, [pageContext, pathname]);
 
-  async function loadCalculationResult(item: WorkloadItem<ItemPayload>): Promise<void> {
+  async function loadCalculationResult(item: WorkloadItem<SampleItemPayload>): Promise<void> {
     if (!item.extendedMetdata?.item1Metadata) {
       console.log("metadata is not defined.");
       return;
@@ -112,8 +109,6 @@ export function SampleWorkloadEditor(props: PageProps) {
     } catch (error) {
       console.error(`Error loading loadCalculationResult: ${error}`);
       if (isDirty) {
-        //TODO: handle error properly
-        //TODO: remove Backend form all places
         //TODO: make sure that the isDirty is used for the save button
       }  
     }
@@ -216,12 +211,12 @@ export function SampleWorkloadEditor(props: PageProps) {
           workloadClient
         );
         const getItemDefinitionResult = await callPublicItemGetDefinition(pageContext.itemObjectId, workloadClient);
-        const item = convertGetItemResultToWorkloadItem<ItemPayload>(getItemResult, getItemDefinitionResult);
+        const item = convertGetItemResultToWorkloadItem<SampleItemPayload>(getItemResult, getItemDefinitionResult);
         setSampleItem(item);
         setSelectedTab("home");
 
         // load extendedMetadata
-        const item1Metadata: Item1ClientMetadata =
+        const item1Metadata: SampleItemClientMetadata =
           item.extendedMetdata?.item1Metadata;
         setSelectedLakehouse(item1Metadata?.lakehouse);
         setOperand1(item1Metadata?.operand1 ?? 0);
@@ -263,7 +258,7 @@ export function SampleWorkloadEditor(props: PageProps) {
   }
 
   async function SaveItem(calculationPerformed?: boolean) {
-    let payload: UpdateItemPayload = {
+    let payload: SampleItemUpdatePayload = {
       item1Metadata: {
         lakehouse: selectedLakehouse,
         operand1: operand1,

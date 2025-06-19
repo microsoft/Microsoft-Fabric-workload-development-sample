@@ -1,7 +1,6 @@
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { callAuthAcquireFrontendAccessToken } from "./SampleItemEditorController";
+import { callAuthAcquireFrontendAccessToken } from "./../../ItemEditor/ItemEditorController";
 import { EnvironmentConstants } from "../../constants";
-
 import {OneLakeShorcutListResponse, OneLakeShortcutCreateRequest, OneLakeShortcutCreateResponse } from "../models/OneLakeShortcutModel";
 
 const oneLakeShortcutScope = "https://api.fabric.microsoft.com/OneLake.ReadWrite.All";

@@ -4,8 +4,8 @@ import { Field, Input, Button } from '@fluentui/react-components';
 import { PanelRightExpand20Regular } from '@fluentui/react-icons';
 import { RootState } from "../../ClientSDKPlaygroundStore/Store";
 import { setLocalSharedStateMessage } from "../../ClientSDKPlaygroundStore/actionDialogSlice";
-import { callDialogOpen } from "../../../samples/controller/SampleItemEditorController";
-import { TabContentProps } from '../../../samples/models/SampleWorkloadModel';
+import { callDialogOpen } from "../../../samples/controller/CalculatorSampleItemEditorController";
+import { TabContentProps } from '../../../samples/models/CalculatorSampleWorkloadModel';
 import { SharedState } from "src/App";
 import "../../../styles.scss";
 

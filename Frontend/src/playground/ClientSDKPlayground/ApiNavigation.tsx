@@ -1,8 +1,8 @@
 import React from "react";
 import { Button, Divider, Label } from "@fluentui/react-components";
 import { PanelRightExpand20Regular } from "@fluentui/react-icons";
-import { callNavigationNavigate, callPageOpen, CallOpenInNewBrowserTab } from "../../samples/controller/SampleItemEditorController";
-import { TabContentProps } from '../../samples/models/SampleWorkloadModel';
+import { callNavigationNavigate, callPageOpen, CallOpenInNewBrowserTab } from "../../samples/controller/CalculatorSampleItemEditorController";
+import { TabContentProps } from '../../samples/models/CalculatorSampleWorkloadModel';
 import "./../../styles.scss";
 
 export function ApiNavigation(props: TabContentProps) {

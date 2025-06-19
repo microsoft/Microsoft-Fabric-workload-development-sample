@@ -1,5 +1,4 @@
 import {
-    AccessToken,
     ActionButton,
     AfterNavigateAwayData,
     ItemLikeV2,
@@ -14,7 +13,6 @@ import {
     WorkloadAction,
     WorkloadClientAPI,
     WorkloadSettings,
-    GetItemResult,
     HandleRequestFailureResult,
     NotificationToastDuration,
     NotificationType,
@@ -28,14 +26,11 @@ import {
     ErrorKind,
     UpdateItemResult,
     OpenBrowserTabParams,
-    GetItemDefinitionResult,
-    UpdateItemDefinitionResult,
-    UpdateItemDefinitionPayload,
 } from "@ms-fabric/workload-client";
 
 import { Dispatch, SetStateAction } from "react";
-import { DefinitionPath, GenericItem } from '../models/SampleWorkloadModel';
-import { buildPublicAPIPayloadWithParts } from "../../utils";
+import { GenericItem } from '../../ItemEditor/ItemEditorModel';
+import { Item1Operator } from "../models/CalculatorSampleWorkloadModel";
 
 /**
  * Calls the 'notification.open' function from the WorkloadClientAPI to display a notification.
@@ -152,17 +147,6 @@ export async function callNavigationNavigate<T extends 'host' | 'workload'>(
     workloadClient: WorkloadClientAPI) {
 
     await workloadClient.navigation.navigate(target, { path });
-}
-
-
-/**
- * Calls acquire frontend access token from the WorkloadClientAPI.
- * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {string} scopes - The scopes for which the access token is requested.
- * @returns {AccessToken}
- */
-export async function callAuthAcquireFrontendAccessToken(workloadClient: WorkloadClientAPI, scopes: string): Promise<AccessToken> {
-    return workloadClient.auth.acquireFrontendAccessToken({ scopes: scopes?.length ? scopes.split(' ') : [] });
 }
 
 /**
@@ -488,26 +472,6 @@ export async function callItemCreate<T>(
     }
 }
 
-/**
- * Calls the 'itemCrud.getItem function from the WorkloadClientAPI
- * The result contains data both from Fabric
- * 
- * @param {string} objectId - The ObjectId of the item to fetch
- * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {boolean} isRetry - Indicates that the call is a retry
- * @returns {GetItemResult} - A wrapper for the item's data
- */
-export async function callItemGet(objectId: string, workloadClient: WorkloadClientAPI, isRetry?: boolean): Promise<GetItemResult> {
-    try {
-        const item: GetItemResult = await workloadClient.itemCrud.getItem({ objectId });
-        console.log(`Successfully fetched item ${objectId}: ${item}`)
-
-        return item;
-    } catch (exception) {
-        console.error(`Failed locating item with ObjectID ${objectId}`, exception);
-        return await handleException(exception, workloadClient, isRetry, callItemGet, objectId);
-    }
-}
 
 /**
  * Calls the 'itemCrud.updateItem function from the WorkloadClientAPI
@@ -540,49 +504,10 @@ export async function callItemUpdate<T>(
         });
     } catch (exception) {
         console.error(`Failed updating Item ${objectId}`, exception);
-        return await handleException(exception, workloadClient, isRetry, callItemUpdate, objectId, payloadData);
+        return await undefined;
     }
 }
 
-export async function callPublicItemUpdateDefinition(
-    itemObjectId: string,
-    parts: { payloadPath: DefinitionPath, payloadData: any }[],
-    workloadClient: WorkloadClientAPI,
-    updateMetadata: boolean = false,
-    isRetry?: boolean): Promise<UpdateItemDefinitionResult> {
-
- 
-    const itemDefinitions: UpdateItemDefinitionPayload = buildPublicAPIPayloadWithParts(parts);
-    try {
-        return await workloadClient.itemCrudPublic.updateItemDefinition({
-            itemId: itemObjectId,
-            payload: itemDefinitions,
-            updateMetadata: updateMetadata
-        });
-    } catch (exception) {
-        console.error(`Failed updating Item definition ${itemObjectId}`, exception);
-        return await handleException(exception, workloadClient, isRetry, callPublicItemUpdateDefinition, itemObjectId, parts, updateMetadata);
-    }
-}
-
-export async function callPublicItemGetDefinition(
-    itemObjectId: string,
-    workloadClient: WorkloadClientAPI,
-    format?: string,
-    isRetry?: boolean): Promise<GetItemDefinitionResult> {
-
-    try {
-        const itemDefinition: GetItemDefinitionResult = await workloadClient.itemCrudPublic.getItemDefinition({
-            itemId: itemObjectId,
-            format: format
-        });
-        console.log(`Successfully fetched item definition for item ${itemObjectId}: ${itemDefinition}`);
-        return itemDefinition;
-    } catch (exception) {
-        console.error(`Failed getting Item definition ${itemObjectId}`, exception);
-        return undefined;
-    }
-}
 
 /**
  * Calls the 'itemCrud.deleteItem function from the WorkloadClientAPI
@@ -715,6 +640,35 @@ export async function callOpenSettings(
     }
 
     return null;
+}
+
+export function calculateResult(op1: number, op2: number, calculationOperator: Item1Operator): number {
+    switch (calculationOperator) {
+        case Item1Operator.Add:
+            return op1 + op2;
+        case Item1Operator.Subtract:
+            return op1 - op2;
+        case Item1Operator.Multiply:
+            return op1 * op2;
+        case Item1Operator.Divide:
+            if (op2 !== 0) {
+                return op1 / op2;
+            } else {
+                throw new Error("Cannot divide by zero.");
+            }
+        case Item1Operator.Random:
+            // Math.random() returns a float between 0 and 1, so we use Math.floor and scale
+            const min = Math.min(op1, op2);
+            const max = Math.max(op1, op2);
+            const rand = Math.floor(Math.random() * (max - min + 1)) + min;
+            return rand;
+        default:
+            throw new Error(`Unsupported operator: ${calculationOperator}`);
+    }
+}
+
+export function formatResult(op1: number, op2: number, calculationOperator: Item1Operator, result: number): string {
+    return `op1 = ${op1}, op2 = ${op2}, operator = ${calculationOperator}, result = ${result}`;
 }
 
 

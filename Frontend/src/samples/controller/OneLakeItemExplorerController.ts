@@ -1,6 +1,6 @@
-import { GenericItem } from "src/samples/models/SampleWorkloadModel";
+import { GenericItem } from "../../ItemEditor/ItemEditorModel";
 import { EnvironmentConstants } from "../../constants";
-import { callAuthAcquireFrontendAccessToken } from "../controller/SampleItemEditorController";
+import { callAuthAcquireFrontendAccessToken } from "./../../ItemEditor/ItemEditorController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FileMetadata, OneLakePathContainer, TableMetadata } from "src/samples/models/OneLakeItemExplorerModel";
 

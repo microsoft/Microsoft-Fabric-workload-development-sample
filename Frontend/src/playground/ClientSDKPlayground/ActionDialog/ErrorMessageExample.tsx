@@ -12,11 +12,11 @@ import {
     updateApiErrorRequestId,
     updateApiErrorStackTrace,
 } from '../../ClientSDKPlaygroundStore/actionDialogSlice';
-import { TabContentProps } from '../../../samples/models/SampleWorkloadModel';
+import { TabContentProps } from '../../../samples/models/CalculatorSampleWorkloadModel';
 import {
     callErrorHandlingOpenDialog,
     callErrorHandlingRequestFailure,
-} from "../../../samples/controller/SampleItemEditorController";
+} from "../../../samples/controller/CalculatorSampleItemEditorController";
 import "../../../styles.scss";
 
 

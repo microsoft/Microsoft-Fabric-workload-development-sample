@@ -19,14 +19,16 @@ import {
     setMultiSelectionEnabled,
     setSelectedLinkedItem,
 } from "../ClientSDKPlaygroundStore/apiDataSlice";
-import { callDatahubOpen } from "../../samples/controller/SampleItemEditorController";
-import { TabContentProps } from "../../samples/models/SampleWorkloadModel";
+import { callDatahubOpen } from "../../samples/controller/CalculatorSampleItemEditorController";
+import { TabContentProps } from "../../samples/models/CalculatorSampleWorkloadModel";
 import "./../../styles.scss";
 
 export function ApiData(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;
     const sampleItemType = sampleWorkloadName + "." + process.env.DEFAULT_ITEM_NAME;
-    const dataHubMsgBoxTypes = ["Lakehouse", sampleItemType];
+    const dataHubMsgBoxTypes = ["Lakehouse", 
+        process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME,
+        process.env.WORKLOAD_NAME + ".CalculatorSample"];
     const dispatch = useDispatch();
 
     const {

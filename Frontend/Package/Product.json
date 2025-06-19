@@ -11,18 +11,18 @@
     "homePage": {
       "learningMaterials": [
         {
-          "title": "Frontend_only_playground_Title",
-          "introduction": "Frontend_only_playground_Introduction",
-          "description": "Frontend_only_playground_Description",
+          "title": "Frontend_playground_Title",
+          "introduction": "Frontend_playground_Introduction",
+          "description": "Frontend_playground_Description",
           "image": "assets/images/playgroundCard.jpeg",
           "onClick": {
                   "action": "open.ClientSDKPlaygroundPage"
                 }
         },
         {
-          "title": "Working_with_data_playground_Title",
-          "introduction": "Working_with_data_playground_Introduction",
-          "description": "Working_with_data_playground_Description",
+          "title": "Data_playground_Title",
+          "introduction": "Data_playground_Introduction",
+          "description": "Data_playground_Description",
           "image": "assets/images/playgroundCard.jpeg",
           "onClick": {
                   "action": "open.DataApiSamplePage"
@@ -45,31 +45,22 @@
       ],
       "newSection": {
         "customActions": [
-            {
-                "title": "NewSection_Custom_Action_Title",
-                "icon": {
-                  "name": "assets/images/calculator.png"
-                },
-                "onClick": {
-                  "action": "open.createSampleWorkloadFrontendOnly"
-                }
-            }
         ]},
         "recommendedItemTypes": [
           "SampleItem"
         ]
     },
     "createExperience": {
-      "description": "CreateHub_Workload_Description",
+      "description": "Workload_Description",
       "cards": [
-        {
-          "title": "CreateHub_Card_Title",
-          "description": "CreateHub_Card_Description",
+                {
+          "title": "Item_DisplayName",
+          "description": "Item_Description",
           "icon": {
-            "name": "assets/images/calculator.png"
+            "name": "assets/images/item.jpg"
           },
           "icon_small": {
-            "name": "assets/images/calculator.png"
+            "name": "assets/images/item.jpg"
           },
           "availableIn": [
             "home",
@@ -78,6 +69,27 @@
             "workspace-plus-new-teams"
           ],
           "itemType": "SampleItem",
+          "createItemDialogConfig": {
+            "onCreationFailure": { "action": "item.onCreationFailure" },
+            "onCreationSuccess": { "action": "item.onCreationSuccess" }
+          }
+        },
+        {
+          "title": "CalculatorSampleItem_DisplayName",
+          "description": "CalculatorSampleItem_Description",
+          "icon": {
+            "name": "assets/images/calculator-sample-item.png"
+          },
+          "icon_small": {
+            "name": "assets/images/calculator-sample-item.png"
+          },
+          "availableIn": [
+            "home",
+            "create-hub",
+            "workspace-plus-new",
+            "workspace-plus-new-teams"
+          ],
+          "itemType": "CalculatorSample",
           "createItemDialogConfig": {
             "onCreationFailure": { "action": "item.onCreationFailure" },
             "onCreationSuccess": { "action": "item.onCreationSuccess" }

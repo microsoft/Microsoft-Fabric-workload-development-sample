@@ -6,7 +6,7 @@ import {
   TabValue,
 } from '@fluentui/react-components';
 import { Stack } from '@fluentui/react';
-import { TabContentProps } from '../../samples/models/SampleWorkloadModel';
+import { TabContentProps } from '../../samples/models/CalculatorSampleWorkloadModel';
 import { OneLakeItemExplorerComponent } from '../../samples/views/SampleOneLakeItemExplorer/SampleOneLakeItemExplorer';
 import { OneLakeShortcutCreator } from '../../samples/views/OneLakeShortcutCreator/OneLakeShortcutCreator';
 import "./../../styles.scss";
