@@ -1,4 +1,4 @@
-import { DefinitionPath, GenericItem, Item1Operator, WorkloadItem } from "./models/SampleWorkloadModel";
+import { DefinitionPath, GenericItem, Item1Operator, WorkloadItem } from "./samples/models/SampleWorkloadModel";
 import { GetItemResult, GetItemDefinitionResult, ItemDefinitionPart, UpdateItemDefinitionPayload, PayloadType } from "@ms-fabric/workload-client";
 
 export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult, itemDefinitionResult: GetItemDefinitionResult): WorkloadItem<T> {

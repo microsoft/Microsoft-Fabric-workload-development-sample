@@ -1,15 +1,15 @@
 import React from "react";
 import { Provider } from "react-redux";
-import { ClientSDKStore } from "./ClientSDKPlaygroundStore/Store";
+import { ClientSDKStore } from "./playground/ClientSDKPlaygroundStore/Store";
 import { Route, Router, Switch } from "react-router-dom";
 import { History } from "history";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { SampleWorkloadEditor } from "./components/SampleItemEditor/SampleItemEditor";
-import CustomItemSettings from "./components/CustomItemSettings/CustomItemSettings";
-import CustomAbout from "./components/CustomItemSettings/CustomAbout";
-import SharedStatePage from "./components/SampleItemEditor/SampleItemEditorSharedStatePage"
-import { SamplePage, ClientSDKPlayground } from "./components/ClientSDKPlayground/ClientSDKPlayground";
-import { DataPlayground } from "./components/DataPlayground/DataPlayground";
+import { SampleWorkloadEditor } from "./samples/views/SampleItemEditor/SampleItemEditor";
+import CustomItemSettings from "./samples/views/CustomItemSettings/CustomItemSettings";
+import CustomAbout from "./samples/views/CustomItemSettings/CustomAbout";
+import SharedStatePage from "./samples/views/SampleItemEditor/SampleItemEditorSharedStatePage"
+import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlayground/ClientSDKPlayground";
+import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
 
 /*
     Add your Item Editor in the Route section of the App function below

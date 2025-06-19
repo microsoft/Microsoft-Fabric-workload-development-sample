@@ -5,8 +5,8 @@ import {
     NotificationType
 } from '@ms-fabric/workload-client';
 
-import * as Controller from './controller/SampleItemEditorController';
-import { ItemCreationFailureData, ItemCreationSuccessData } from './models/SampleWorkloadModel';
+import * as Controller from './samples/controller/SampleItemEditorController';
+import { ItemCreationFailureData, ItemCreationSuccessData } from './samples/models/SampleWorkloadModel';
 
 export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();
