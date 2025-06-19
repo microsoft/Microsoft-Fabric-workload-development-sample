@@ -33,7 +33,6 @@ export async function initialize(params: InitParams) {
 
             /**
              * This opens the Frontend-only experience, allowing to experiment with the UI without the need for CRUD operations.
-             * This experience still allows saving the item, if the Backend is connected and registered
              */
             case 'open.createSampleWorkloadFrontendOnly':
                 return workloadClient.page.open({

@@ -112,7 +112,14 @@ export function SampleWorkloadEditor(props: PageProps) {
       setCalculationResult(result);
     } catch (error) {
       console.error(`Error loading loadCalculationResult: ${error}`);
+      if (isDirty) {
+        //TODO: handle error properly
+        //TODO: remove Backend form all places
+        //TODO: remove the backend authentication calls in the SampleController
+        //TODO: make sure that the isDirty is used for the save button
+      }  
     }
+
   }
 
   async function afterNavigateCallBack(_event: AfterNavigateAwayData): Promise<void> {

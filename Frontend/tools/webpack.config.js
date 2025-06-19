@@ -7,11 +7,7 @@ const fs = require("fs").promises;
 
 console.log('******************** Build: Environment Variables *******************');
 console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
-console.log('process.env.WORKLOAD_BE_URL: ' + process.env.WORKLOAD_BE_URL);
-console.log('process.env.DEV_AAD_CONFIG_BE_AUDIENCE: ' + process.env.DEV_AAD_CONFIG_BE_AUDIENCE);
-console.log('process.env.DEV_AAD_CONFIG_BE_APPID: ' + process.env.DEV_AAD_CONFIG_BE_APPID);
-console.log('process.env.DEV_AAD_CONFIG_BE_REDIRECT_URI: ' + process.env.DEV_AAD_CONFIG_BE_REDIRECT_URI);
-console.log('process.env.DEV_AAD_CONFIG_FE_APPID: ' + process.env.DEV_AAD_CONFIG_FE_APPID);
+console.log('process.env.DEFAULT_ITEM_NAMEL: ' + process.env.DEFAULT_ITEM_NAME);
 console.log('*********************************************************************');
 
 module.exports = {
@@ -27,7 +23,6 @@ module.exports = {
         new CleanWebpackPlugin(),
         new Webpack.DefinePlugin({
             "process.env.WORKLOAD_NAME": JSON.stringify(process.env.WORKLOAD_NAME),
-            "process.env.WORKLOAD_BE_URL": JSON.stringify(process.env.WORKLOAD_BE_URL),
             "process.env.DEFAULT_ITEM_NAME": JSON.stringify(process.env.DEFAULT_ITEM_NAME),
         }),
         new HtmlWebpackPlugin({
