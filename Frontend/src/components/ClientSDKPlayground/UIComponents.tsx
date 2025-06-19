@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import {
   callLanguageGet,
   callSettingsOnChange,
-} from "../../controller/SampleWorkloadController";
+} from "../../controller/SampleItemEditorController";
 import { TabContentProps } from '../../models/SampleWorkloadModel';
 import { RootState } from "../../ClientSDKPlaygroundStore/Store";
 import {

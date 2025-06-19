@@ -5,7 +5,7 @@ import {
     NotificationType
 } from '@ms-fabric/workload-client';
 
-import * as Controller from './controller/SampleWorkloadController';
+import * as Controller from './controller/SampleItemEditorController';
 import { ItemCreationFailureData, ItemCreationSuccessData } from './models/SampleWorkloadModel';
 
 export async function initialize(params: InitParams) {
@@ -63,7 +63,7 @@ export async function initialize(params: InitParams) {
                     },
                     {
                         name: 'itemCustomSettings',
-                        displayName: 'Item custom settings',
+                        displayName: 'Item settings',
                         icon: {
                             name: 'apps_20_regular',
                         },

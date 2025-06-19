@@ -16,7 +16,7 @@ import { TabContentProps } from '../../../models/SampleWorkloadModel';
 import {
     callErrorHandlingOpenDialog,
     callErrorHandlingRequestFailure,
-} from "../../../controller/SampleWorkloadController";
+} from "../../../controller/SampleItemEditorController";
 import "../../../styles.scss";
 
 

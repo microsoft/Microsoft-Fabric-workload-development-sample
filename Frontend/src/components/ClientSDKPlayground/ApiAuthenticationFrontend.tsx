@@ -3,7 +3,7 @@ import { WorkloadAuthError } from "@ms-fabric/workload-client";
 import jwt_decode from "jwt-decode";
 import React, { useState } from "react";
 
-import { callAuthAcquireFrontendAccessToken } from "../../controller/SampleWorkloadController";
+import { callAuthAcquireFrontendAccessToken } from "../../controller/SampleItemEditorController";
 import { PageProps } from 'src/App';
 
 import "./../../styles.scss";

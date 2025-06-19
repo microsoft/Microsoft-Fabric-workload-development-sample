@@ -8,7 +8,7 @@ import { createWorkloadClient, InitParams, ItemTabActionContext } from '@ms-fabr
 import { fabricLightTheme } from "./theme";
 import { App } from "./App";
 import { convertGetItemResultToWorkloadItem } from "./utils";
-import { callItemGet, callPublicItemGetDefinition } from "./controller/SampleWorkloadController";
+import { callItemGet, callPublicItemGetDefinition } from "./controller/SampleItemEditorController";
 import { ItemPayload } from "./models/SampleWorkloadModel";
 
 export async function initialize(params: InitParams) {

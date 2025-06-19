@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Divider, Label } from "@fluentui/react-components";
 import { PanelRightExpand20Regular } from "@fluentui/react-icons";
-import { callNavigationNavigate, callPageOpen, CallOpenInNewBrowserTab } from "../../controller/SampleWorkloadController";
+import { callNavigationNavigate, callPageOpen, CallOpenInNewBrowserTab } from "../../controller/SampleItemEditorController";
 import { TabContentProps } from '../../models/SampleWorkloadModel';
 import "./../../styles.scss";
 

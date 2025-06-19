@@ -17,7 +17,7 @@ import {
 import { EventhouseItemMetadata } from "src/models/EventhouseModel";
 import { CallExecuteQuery, callGetEventhouseItem } from "../../controller/EventHouseController";
 import { GenericItem } from "src/models/SampleWorkloadModel";
-import { callDatahubOpen } from "../../controller/SampleWorkloadController";
+import { callDatahubOpen } from "../../controller/SampleItemEditorController";
 
 export function EventhouseExplorerComponent({ workloadClient }: PageProps) {
     const [selectedEventhouse, setSelectedEventhouse] = useState<GenericItem>(undefined);

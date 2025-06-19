@@ -4,7 +4,7 @@ import { Field, Input, Button } from '@fluentui/react-components';
 import { PanelRightExpand20Regular } from '@fluentui/react-icons';
 import { RootState } from "../../../ClientSDKPlaygroundStore/Store";
 import { setLocalSharedStateMessage } from "../../../ClientSDKPlaygroundStore/actionDialogSlice";
-import { callDialogOpen } from "../../../controller/SampleWorkloadController";
+import { callDialogOpen } from "../../../controller/SampleItemEditorController";
 import { TabContentProps } from '../../../models/SampleWorkloadModel';
 import { SharedState } from "src/App";
 import "../../../styles.scss";

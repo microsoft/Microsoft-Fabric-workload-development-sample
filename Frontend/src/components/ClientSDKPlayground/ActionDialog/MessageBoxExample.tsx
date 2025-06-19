@@ -17,7 +17,7 @@ import {
     updateButtonCount
 } from "../../../ClientSDKPlaygroundStore/actionDialogSlice";
 import { TabContentProps } from '../../../models/SampleWorkloadModel';
-import { callDialogOpenMsgBox } from "../../../controller/SampleWorkloadController";
+import { callDialogOpenMsgBox } from "../../../controller/SampleItemEditorController";
 import "../../../styles.scss";
 
 

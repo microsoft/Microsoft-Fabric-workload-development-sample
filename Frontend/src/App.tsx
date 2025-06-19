@@ -4,11 +4,10 @@ import { ClientSDKStore } from "./ClientSDKPlaygroundStore/Store";
 import { Route, Router, Switch } from "react-router-dom";
 import { History } from "history";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { SampleWorkloadEditor } from "./components/SampleWorkloadEditor/SampleWorkloadEditor";
-import { Panel } from "./components/SampleWorkloadPanel/SampleWorkloadPanel";
+import { SampleWorkloadEditor } from "./components/SampleItemEditor/SampleItemEditor";
 import CustomItemSettings from "./components/CustomItemSettings/CustomItemSettings";
 import CustomAbout from "./components/CustomItemSettings/CustomAbout";
-import SharedStatePage from "./components/SampleWorkloadSharedState/SharedStatePage"
+import SharedStatePage from "./components/SampleItemEditor/SampleItemEditorSharedStatePage"
 import { SamplePage, ClientSDKPlayground } from "./components/ClientSDKPlayground/ClientSDKPlayground";
 import { DataPlayground } from "./components/DataPlayground/DataPlayground";
 
@@ -54,11 +53,6 @@ export function App({ history, workloadClient }: AppProps) {
                     workloadClient={workloadClient} data-testid="sample-workload-frontend-only" />
             </Route>
 
-            {/* Routing to a sample Panel  */}
-            <Route path="/panel">
-                <Panel
-                    workloadClient={workloadClient} data-testid="sample-workload-panel" />
-            </Route>
             {/* Routing to Custom Item Settings */}
             <Route path="/custom-item-settings">
                 <CustomItemSettings data-testid="custom-about" />

@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@fluentui/react-components';
 import { PanelRightExpand20Regular } from '@fluentui/react-icons';
 import { TabContentProps } from '../../../models/SampleWorkloadModel';
-import { callActionExecute } from "../../../controller/SampleWorkloadController";
+import { callActionExecute } from "../../../controller/SampleItemEditorController";
 import "../../../styles.scss";
 
 

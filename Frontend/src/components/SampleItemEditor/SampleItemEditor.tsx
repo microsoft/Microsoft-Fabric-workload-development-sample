@@ -33,8 +33,8 @@ import {
   callOpenSettings,
   callPublicItemGetDefinition,
   callPublicItemUpdateDefinition
-} from "../../controller/SampleWorkloadController";
-import { Ribbon } from "../SampleWorkloadRibbon/SampleWorkloadRibbon";
+} from "../../controller/SampleItemEditorController";
+import { Ribbon } from "./SampleItemEditorRibbon";
 import { calculateResult, convertGetItemResultToWorkloadItem } from "../../utils";
 import {
   Item1ClientMetadata,
@@ -46,7 +46,6 @@ import {
   Item1Operator,
 } from "../../models/SampleWorkloadModel";
 import "./../../styles.scss";
-import { ItemMetadataNotFound } from "../../models/WorkloadExceptionsModel";
 import { LoadingProgressBar } from "../LoadingIndicator/LoadingProgressBar";
 import { getOneLakeFile, getOneLakeFilePath, writeToOneLakeFile } from "../../controller/OneLakeController";
 
@@ -115,7 +114,6 @@ export function SampleWorkloadEditor(props: PageProps) {
       if (isDirty) {
         //TODO: handle error properly
         //TODO: remove Backend form all places
-        //TODO: remove the backend authentication calls in the SampleController
         //TODO: make sure that the isDirty is used for the save button
       }  
     }
@@ -241,7 +239,7 @@ export function SampleWorkloadEditor(props: PageProps) {
         setItemEditorErrorMessage("");
       } catch (error) {
         clearItemData();
-        if (error?.ErrorCode === ItemMetadataNotFound) {
+        if (error?.ErrorCode === "ItemMetadataNotFound") {
           setItemEditorErrorMessage(error?.Message);
           return;
         }

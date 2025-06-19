@@ -37,13 +37,6 @@ import { Dispatch, SetStateAction } from "react";
 import { DefinitionPath, GenericItem } from '../models/SampleWorkloadModel';
 import { buildPublicAPIPayloadWithParts } from "../utils";
 
-import {
-    AuthenticationUIRequiredException,
-    AuthUIRequired,
-    FabricExternalWorkloadError,
-} from "../models/WorkloadExceptionsModel";
-
-
 /**
  * Calls the 'notification.open' function from the WorkloadClientAPI to display a notification.
  *
@@ -161,20 +154,6 @@ export async function callNavigationNavigate<T extends 'host' | 'workload'>(
     await workloadClient.navigation.navigate(target, { path });
 }
 
-/**
- * Calls acquire backend access token from the WorkloadClientAPI.
- * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {string} additionalScopesToConsent - Extra scopes to consent (only provide if you are sure the user is missing a consent)
- * @param {string} claimsForConditionalAccessPolicy - Claims returned from the server indicating that token conversion failed because of some conditional access policy - see https://learn.microsoft.com/en-us/entra/msal/dotnet/acquiring-tokens/web-apps-apis/on-behalf-of-flow#handling-multi-factor-auth-mfa-conditional-access-and-incremental-consent
- * @returns {AccessToken}
- */
-export async function callAuthAcquireAccessToken(workloadClient: WorkloadClientAPI, additionalScopesToConsent?: string, claimsForConditionalAccessPolicy?: string, promptFullConsent?: boolean): Promise<AccessToken> {
-    return workloadClient.auth.acquireAccessToken({
-        additionalScopesToConsent: additionalScopesToConsent?.length > 0 ? additionalScopesToConsent.split(' ') : null,
-        claimsForConditionalAccessPolicy: claimsForConditionalAccessPolicy?.length > 0 ? claimsForConditionalAccessPolicy : null,
-        promptFullConsent
-    });
-}
 
 /**
  * Calls acquire frontend access token from the WorkloadClientAPI.
@@ -447,7 +426,7 @@ export async function callErrorHandlingRequestFailure(
     statusCode: number,
     workloadClient: WorkloadClientAPI) {
 
-    // the handleRequestFailure API handles MFA errors coming from Fabric Backend. 
+    // the handleRequestFailure API handles MFA errors coming from Fabric. 
     // Such errors are identified by the inclusion of the below text inside the 'body'.
     const errorCodeMFA = "AdalMultiFactorAuthRequiredErrorCode";
 
@@ -511,7 +490,7 @@ export async function callItemCreate<T>(
 
 /**
  * Calls the 'itemCrud.getItem function from the WorkloadClientAPI
- * The result contains data both from Fabric and from the ISV's backend, if configured
+ * The result contains data both from Fabric
  * 
  * @param {string} objectId - The ObjectId of the item to fetch
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
@@ -526,7 +505,7 @@ export async function callItemGet(objectId: string, workloadClient: WorkloadClie
         return item;
     } catch (exception) {
         console.error(`Failed locating item with ObjectID ${objectId}`, exception);
-        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callItemGet, objectId);
+        return await handleException(exception, workloadClient, isRetry, callItemGet, objectId);
     }
 }
 
@@ -561,7 +540,7 @@ export async function callItemUpdate<T>(
         });
     } catch (exception) {
         console.error(`Failed updating Item ${objectId}`, exception);
-        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callItemUpdate, objectId, payloadData);
+        return await handleException(exception, workloadClient, isRetry, callItemUpdate, objectId, payloadData);
     }
 }
 
@@ -582,7 +561,7 @@ export async function callPublicItemUpdateDefinition(
         });
     } catch (exception) {
         console.error(`Failed updating Item definition ${itemObjectId}`, exception);
-        return await handleException(exception, workloadClient, isRetry, false , callPublicItemUpdateDefinition, itemObjectId, parts, updateMetadata);
+        return await handleException(exception, workloadClient, isRetry, callPublicItemUpdateDefinition, itemObjectId, parts, updateMetadata);
     }
 }
 
@@ -622,82 +601,10 @@ export async function callItemDelete(
         return result.success;
     } catch (exception) {
         console.error(`Failed deleting Item ${objectId}`, exception);
-        return await handleException(exception, workloadClient, isRetry, false /* isDirectWorkloadCall */, callItemDelete, objectId);
+        return await handleException(exception, workloadClient, isRetry, callItemDelete, objectId);
     }
 }
 
-// --- Workload data plane API
-
-/**
- * Calls workload API GetItem1SupportedOperators
- * 
- * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- */
-export async function callGetItem1SupportedOperators(workloadBEUrl: string, workloadClient: WorkloadClientAPI, isRetry?: boolean): Promise<string[]> {
-    const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
-    const response: Response = await fetch(`${workloadBEUrl}/item1SupportedOperators`, { method: `GET`, headers: { 'Authorization': 'Bearer ' + accessToken.token } });
-    const responseBody: string = await response.text();
-    if (!response.ok) {
-        // Handle non-successful responses here
-        console.error(`Error get item1 supported operators API: ${responseBody}`);
-        return await handleException(
-            responseBody,
-            workloadClient,
-            isRetry,
-            /* isDirectWorkloadCall */ true,
-            callGetItem1SupportedOperators,
-            workloadBEUrl);
-    }
-    const operators: string[] = JSON.parse(responseBody);
-    console.log(`*** Successfully fetched operators supported for Item1: ${operators}`);
-    return operators;
-}
-
-/**
- * Calls the Item1DoubleResult endpoint of the workload API to double the result.
- * 
- * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {string} workspaceObjectId - The workspace object ID.
- * @param {string} itemObjectId - The item object ID.
- * @param {boolean} isRetry - Indicates that the call is a retry
- * @returns {Promise<{ Operand1: number, Operand2: number }>} A Promise that resolves to an object containing the updated operands.
- */
-export async function callItem1DoubleResult(workloadBEUrl: string, workloadClient: WorkloadClientAPI, workspaceObjectId: string, itemObjectId: string, isRetry?: boolean): Promise<{ Operand1: number, Operand2: number }> {
-    try{
-        const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
-        const response: Response = await fetch(`${workloadBEUrl}/${workspaceObjectId}/${itemObjectId}/item1DoubleResult`, {
-            method: `POST`,
-            headers: {
-                'Authorization': 'Bearer ' + accessToken.token,
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok) {
-            // Handle non-successful responses here
-            const errorMessage: string = await response.text();
-            console.error(`Error calling Double API: ${errorMessage}`);
-            return await handleException(
-                errorMessage,
-                workloadClient,
-                isRetry,
-                /* isDirectWorkloadCall */ true,
-                callItem1DoubleResult,
-                workloadBEUrl,
-                workloadClient,
-                workspaceObjectId,
-                itemObjectId);
-        }
-
-        const result: { Operand1: number, Operand2: number } = await response.json();
-
-        console.log('*** Successfully called Double API');
-        return result;
-    } catch (error) {
-        console.error('Error in callItem1DoubleResult:', error);
-        return null;
-    }
-}
 /**
  * Calls the 'theme.get' function from the WorkloadClientAPI to retrieve the current Fabric Theme configuration.
  *
@@ -812,66 +719,11 @@ export async function callOpenSettings(
 
 
 /**
- * Calls workload API GetLastResult
- * 
- * @param {string} workloadBEUrl - The URL of the workload backend.
- * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {string} itemObjectId - the item object id.
- * @param {boolean} isRetry - Indicates that the call is a retry
- */
-export async function getLastResult(workloadBEUrl: string, workloadClient: WorkloadClientAPI, itemObjectId: string, isRetry?: boolean): Promise<string> {
-    const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
-    const response: Response = await fetch(`${workloadBEUrl}/${itemObjectId}/getLastResult`, { method: `GET`, headers: { 'Authorization': 'Bearer ' + accessToken.token } });
-    const responseBody: string = await response.text();
-    if (!response.ok) {
-        // Handle non-successful responses here
-        console.error(`Error get getLastResult API: ${responseBody}`);
-        return await handleException(
-            responseBody,
-            workloadClient,
-            isRetry,
-            /* isDirectWorkloadCall */ true,
-            getLastResult,
-            workloadBEUrl);
-    }
-    console.log(`*** Successfully got getLastResult: ${responseBody}`);
-    return responseBody;
-}
-
-/**
- * Calls workload API isOneLakeSupported
- * 
- * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {string} workspaceObjectId - the workspace object id.
- * @param {string} itemObjectId - the item object id.
- * @param {boolean} isRetry - Indicates that the call is a retry
- */
-export async function isOneLakeSupported(workloadBEUrl: string, workloadClient: WorkloadClientAPI, workspaceObjectId: string, itemObjectId: string, isRetry?: boolean): Promise<boolean> {
-    const accessToken: AccessToken = await callAuthAcquireAccessToken(workloadClient);
-    const response: Response = await fetch(`${workloadBEUrl}/${workspaceObjectId}/${itemObjectId}/isOneLakeSupported`, { method: `GET`, headers: { 'Authorization': 'Bearer ' + accessToken.token } });
-    const responseBody: string = await response.text();
-    if (!response.ok) {
-        // Handle non-successful responses here
-        console.error(`Error get item1 isOneLakeSupported API: ${responseBody}`);
-        return await handleException(
-            responseBody,
-            workloadClient,
-            isRetry,
-            /* isDirectWorkloadCall */ true,
-            isOneLakeSupported,
-            workloadBEUrl);
-    }
-    console.log(`*** Successfully got isOneLakeSupported: ${responseBody}`);
-    return responseBody == 'true';
-}
-
-/**
- * Handles errors propagated from workload backend.
+ * Handles errors propagated.
  *
  * @param {any} exception - The exception that we need to handle
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @param {boolean} isRetry - Indicates that the call is a retry
- * @param {boolean} isDirectWorkloadCall - indicates that the error handling is for a data plane call (from the workload frontend directly to the workload backend)
  * @param {Function} action - The action to retry if the error was handled.
  * @param {...any[]} actionArgs - The arguments to pass to the action.
  * @returns {Promise<any>} - Whether the exception was handled or not.
@@ -880,28 +732,10 @@ async function handleException(
     exception: any,
     workloadClient: any,
     isRetry: boolean = false,
-    isDirectWorkloadCall: boolean = false,
     action: (...args: any[]) => Promise<any>,
     ...actionArgs: any[]
 ): Promise<any> {
-    var parsedException: WorkloadErrorDetails = null;
-    if (isDirectWorkloadCall) {
-        // exception is the json returned fom the call
-        parsedException = JSON.parse(exception);
-    } else {
-        // exception is a JS object that contains the json returned from the workload BE
-        parsedException = parseExceptionErrorResponse(exception);
-    }
-
-    // If the error is a FabricExternalWorkloadError and we could parse it, check if we can handle it.
-    if ((isDirectWorkloadCall /* data plane */ || exception.error?.message?.code === FabricExternalWorkloadError /* control plane */)
-        && parsedException) {
-        const errorHandled = await handleWorkloadError(parsedException, workloadClient);
-        if (!isRetry && errorHandled ) {
-            // error handled, retry the action
-            return await action(...actionArgs, workloadClient, true /*isRetry*/);
-        }
-    }
+    var parsedException: WorkloadErrorDetails = parseExceptionErrorResponse(exception);
     
     // error could not be handled, show the error dialog
     let message = parsedException?.Message || "Unknown error occurred";
@@ -926,32 +760,6 @@ async function handleException(
 
 function getAdditionalParameterValue(parsedException: WorkloadErrorDetails, parameterName: string): string {
     return parsedException?.MoreDetails?.[0]?.AdditionalParameters?.find(ap => ap.Name == parameterName)?.Value;
-}
-
-async function handleWorkloadError(parsedException: WorkloadErrorDetails, workloadClient: WorkloadClientAPI): Promise<boolean> {
-    try {
-        // handle codes from your choice, the codes are returned from the workload backend.
-        switch (parsedException.ErrorCode) {
-            case AuthUIRequired: {
-                let authenticationUIRequiredException: AuthenticationUIRequiredException = {
-                    ClaimsForConditionalAccessPolicy: parsedException.MoreDetails?.[0].AdditionalParameters?.find(ap => ap.Name == "claimsForCondtionalAccessPolicy")?.Value,
-                    ErrorMessage: parsedException.Message,
-                    ScopesToConsent:  parsedException?.MoreDetails?.[0].AdditionalParameters?.find(ap => ap.Name == "additionalScopesToConsent")?.Value?.split(", ")
-                };
-                if (authenticationUIRequiredException?.ErrorMessage?.includes("AADSTS65001")) { // consent
-                    await workloadClient.auth.acquireAccessToken({additionalScopesToConsent: authenticationUIRequiredException.ScopesToConsent});
-                    return true;
-                } else { // conditional access policy
-                    await workloadClient.auth.acquireAccessToken({claimsForConditionalAccessPolicy: authenticationUIRequiredException.ClaimsForConditionalAccessPolicy});
-                    return true;
-                }
-            }
-        }
-    } catch {
-        console.error("Failed to handle workload error", parsedException);
-    }
-
-    return false;
 }
 
 function parseExceptionErrorResponse(exception: any): WorkloadErrorDetails {

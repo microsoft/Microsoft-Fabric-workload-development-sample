@@ -20,7 +20,7 @@ import { ApiAuthenticationFrontend } from './ApiAuthenticationFrontend';
 import { ApiAuthentication } from './ApiAuthentication';
 import { TabContentProps } from '../../models/SampleWorkloadModel';
 import { PageProps } from 'src/App';
-import { callNavigationBeforeNavigateAway, callNavigationNavigate } from "../../controller/SampleWorkloadController";
+import { callNavigationBeforeNavigateAway, callNavigationNavigate } from "../../controller/SampleItemEditorController";
 import "./../../styles.scss";
 import { ApiArtifactCrudPublic } from './ApiArtifactCrudPublic';
 import SampleSparkTerminal from '../SampleSparkTerminal/SampleSparkTerminal';
@@ -56,7 +56,6 @@ export function ClientSDKPlayground(props: TabContentProps) {
         <Tab value="apiNavigation">Navigation</Tab>
         <Tab value="dataHub">Data Hub</Tab>
         <Tab value="uiComponents">UI Components</Tab>
-        <Tab value="authentication">Backend Authentication</Tab>
         <Tab value="authenticationFrontend">Frontend Authentication (Private-Preview)</Tab>
         <Tab value="publicJSCrud">Public Definition JS API</Tab>
         <Tab value="sparkTerminal">Spark Terminal</Tab>

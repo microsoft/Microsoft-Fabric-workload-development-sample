@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from "@fluentui/react-components";
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular, ArrowSwap20Regular } from "@fluentui/react-icons";
-import { callDatahubOpen } from "../../controller/SampleWorkloadController";
+import { callDatahubOpen } from "../../controller/SampleItemEditorController";
 import { TableMetadata, FileMetadata } from "../../models/OneLakeItemExplorerModel";
 import "./../../styles.scss";
 import { getTables, getFiles } from "../../controller/OneLakeItemExplorerController";
@@ -54,7 +54,6 @@ export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
     let tables = await getTables(workloadClient, selectedItem.workspaceId, selectedItem.id);
     let files = await getFiles(workloadClient, selectedItem.workspaceId, selectedItem.id);
 
-    // Valid response from backend
     if (tables && files) {
       setTablesInItem(tables);
       setFilesInItem(files);

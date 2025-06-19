@@ -12,7 +12,7 @@ import {
   Spinner,
   Text
 } from "@fluentui/react-components";
-import { callDatahubOpen } from "../../controller/SampleWorkloadController";
+import { callDatahubOpen } from "../../controller/SampleItemEditorController";
 import { createOneLakeShortcut } from "../../controller/OneLakeShortcutController";
 import { OneLakeShortcutCreateRequest, OneLakeShortcutTargetOneLake } from "../../models/OneLakeShortcutModel";
 import { PageProps } from "../../App";

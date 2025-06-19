@@ -11,7 +11,7 @@ import {
     callThemeGet,
     settingsToView,
     callSettingsGet,
-} from "../../controller/SampleWorkloadController";
+} from "../../controller/SampleItemEditorController";
 import { TabContentProps } from '../../models/SampleWorkloadModel';
 import "./../../styles.scss";
 
