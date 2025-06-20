@@ -16,7 +16,7 @@ import { createOneLakeShortcut } from "../../controller/OneLakeShortcutControlle
 import { OneLakeShortcutCreateRequest, OneLakeShortcutTargetOneLake } from "../../models/OneLakeShortcutModel";
 import { PageProps } from "../../../App";
 import { GenericItem } from "../../../workload/models/ItemCRUDModel";
-import { callDatahubOpen } from "../../../workload/controller/DataHubController";
+import { callDatahubOpen} from "../../../workload/controller/DataHubController";
 
 export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
   // Source and target item states
@@ -35,7 +35,7 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
 
   // Select source item using datahub
   const selectSourceItem = async () => {
-    const result = await callDatahubOpen(
+    const result = await callDatahubOpen( //) callDatahubWizardOpen(
       ["Lakehouse", 
         process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME,
         process.env.WORKLOAD_NAME + ".CalculatorSample"],
@@ -45,14 +45,23 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
     );
     
     if (result) {
-      setSourceItem(result);
+      /*const sourceItem = await getItem(result.id, workloadClient)
+      const sourceGenericItem = {
+        workspaceId: result.workspaceId,
+        id: result.id,
+        displayName: "Unknown Item",
+        description: "",
+        type: undefined
+      } as GenericItem;*/
+      setTargetItem(result);
+      //setSourceShortcutPath(result.selectedPath || "Files");
       setResultMessage("");
     }
   };
 
   // Select target item using datahub
   const selectTargetItem = async () => {
-    const result = await callDatahubOpen(
+    const result = await callDatahubOpen( //callDatahubWizardOpen(
       ["Lakehouse", 
         process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME,
         process.env.WORKLOAD_NAME + ".CalculatorSample"],
@@ -62,7 +71,16 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
     );
     
     if (result) {
+      /*const targetItem: undefined //= await getItem(result.id, workloadClient)
+      const targetGenericItem = {
+        workspaceId: result.workspaceId,
+        id: result.id,
+        displayName: "Unknown Item",
+        description: "",
+        type: undefined
+      } as GenericItem;*/
       setTargetItem(result);
+      //setTargetShortcutPath(result.selectedPath || "Files");
       setResultMessage("");
     }
   };
