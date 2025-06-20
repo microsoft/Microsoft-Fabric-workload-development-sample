@@ -1,14 +1,119 @@
-import { AccessToken, 
-    GetItemDefinitionResult, 
-    GetItemResult, 
-    ItemDefinitionPart, 
-    PayloadType, 
-    UpdateItemDefinitionPayload, 
-    UpdateItemDefinitionResult, 
-    WorkloadClientAPI } 
-from "@ms-fabric/workload-client";
-import { GenericItem, WorkloadItem, ItemPayloadPath } from "./ItemEditorModel";
+import { CreateItemParams, CreateItemResult, GetItemDefinitionResult, GetItemResult, ItemDefinitionPart, PayloadType, UpdateItemDefinitionPayload, UpdateItemDefinitionResult, UpdateItemResult, WorkloadClientAPI } from "@ms-fabric/workload-client";
+import { ItemPayloadPath, WorkloadItem, GenericItem } from "../models/ItemCRUDModel";
+import { handleException } from "./ErrorHandlingController";
 
+// --- Item CRUD Api
+
+/**
+ * Calls the 'itemCrud.createItem function from the WorkloadClientAPI, creating an Item in Fabric
+ *
+ * @param {string} workspaceObjectId - WorkspaceObjectId where the item will be created
+ * @param {string} itemType - Item type, as registered by the BE 
+ * @param {string} displayName - Name of the item
+ * @param {string} description - Description of the item (can be seen in item's Settings in Fabric)
+ * @param {T} workloadPayload - Additional metadata payload for the item (e.g., selected Lakehouse details).
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @returns {GetItemResult} - A wrapper for the item's data, after it has already been saved
+ */
+export async function callItemCreate<T>(
+    workspaceObjectId: string,
+    itemType: string,
+    displayName: string,
+    description: string,
+    workloadPayload: T,
+    workloadClient: WorkloadClientAPI): Promise<GenericItem> {
+    console.log(`passing payloadString: ${workloadPayload}`);
+
+    const params: CreateItemParams = {
+        workspaceObjectId,
+        payload: {
+            itemType,
+            displayName,
+            description,
+            workloadPayload: JSON.stringify(workloadPayload),
+            payloadContentType: "InlineJson",
+        }
+    };
+
+    try {
+        const result: CreateItemResult = await workloadClient.itemCrud.createItem(params);
+        console.log(`Created item id: ${result.objectId} with name: ${displayName} and payload: ${workloadPayload}`);
+        return {
+            id: result.objectId,
+            workspaceId: workspaceObjectId,
+            type: itemType,
+            displayName,
+            description,
+            createdBy: result.createdByUser.name,
+            createdDate: result.createdDate,
+            lastModifiedBy: result.modifiedByUser.name,
+            lastModifiedDate: result.lastUpdatedDate
+        };
+    }
+    catch (exception) {
+        console.error(`Failed to create item: ${exception}`);
+        throw exception;
+    }
+}
+
+
+/**
+ * Calls the 'itemCrud.updateItem function from the WorkloadClientAPI
+ * 
+ * @param {string} objectId - The ObjectId of the item to update
+ * @param {T|undefined} - Additional metadata payload for the item (e.g., selected Lakehouse details).
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {boolean} isRetry - Indicates that the call is a retry
+ * @returns {GetItemResult} - A wrapper for the item's data
+ */
+export async function callItemUpdate<T>(
+    objectId: string,
+    payloadData: T | undefined,
+    workloadClient: WorkloadClientAPI,
+    isRetry?: boolean): Promise<UpdateItemResult> {
+
+    let payloadString: string;
+    if (payloadData) {
+        payloadString = JSON.stringify(payloadData);
+        console.log(`Updating item ${objectId} with payload: ${payloadString}`)
+    } else {
+        console.log(`Sending an update for item ${objectId} without updating the payload`);
+    }
+ 
+    try {
+        return await workloadClient.itemCrud.updateItem({
+            objectId,
+            etag: undefined,
+            payload: { workloadPayload: payloadString, payloadContentType: "InlineJson" }
+        });
+    } catch (exception) {
+        console.error(`Failed updating Item ${objectId}`, exception);
+        return await undefined;
+    }
+}
+
+
+
+/**
+ * Calls the 'itemCrud.deleteItem function from the WorkloadClientAPI
+ * 
+ * @param {string} objectId - The ObjectId of the item to delete
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {boolean} isRetry - Indicates that the call is a retry
+ */
+export async function callItemDelete(
+    objectId: string,
+    workloadClient: WorkloadClientAPI,
+    isRetry?: boolean): Promise<boolean> {
+    try {
+        const result = await workloadClient.itemCrud.deleteItem({ objectId });
+        console.log(`Delete result for item ${objectId}: ${result.success}`);
+        return result.success;
+    } catch (exception) {
+        console.error(`Failed deleting Item ${objectId}`, exception);
+        return await handleException(exception, workloadClient, isRetry, callItemDelete, objectId);
+    }
+}
 
 /**
  * Calls the 'itemCrud.getItem function from the WorkloadClientAPI
@@ -19,7 +124,7 @@ import { GenericItem, WorkloadItem, ItemPayloadPath } from "./ItemEditorModel";
  * @param {boolean} isRetry - Indicates that the call is a retry
  * @returns {GetItemResult} - A wrapper for the item's data
  */
-export async function callItemGet(objectId: string, workloadClient: WorkloadClientAPI, isRetry?: boolean): Promise<GetItemResult> {
+export async function getItem(objectId: string, workloadClient: WorkloadClientAPI, isRetry?: boolean): Promise<GetItemResult> {
     try {
         const item: GetItemResult = await workloadClient.itemCrud.getItem({ objectId });
         console.log(`Successfully fetched item ${objectId}: ${item}`)
@@ -31,15 +136,6 @@ export async function callItemGet(objectId: string, workloadClient: WorkloadClie
     }
 }
 
-/**
- * Calls acquire frontend access token from the WorkloadClientAPI.
- * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {string} scopes - The scopes for which the access token is requested.
- * @returns {AccessToken}
- */
-export async function callAuthAcquireFrontendAccessToken(workloadClient: WorkloadClientAPI, scopes: string): Promise<AccessToken> {
-    return workloadClient.auth.acquireFrontendAccessToken({ scopes: scopes?.length ? scopes.split(' ') : [] });
-}
 
 /** 
  * Saves the item state by updating the item definition with the provided data.
@@ -54,7 +150,7 @@ export async function saveItemState<T>(
     itemId: string, 
     data: T): Promise<UpdateItemDefinitionResult> {
 
-        return callPublicItemUpdateDefinitionPayload(workloadClient, itemId, [
+        return updateItemDefinitionPayload(workloadClient, itemId, [
         { 
             payloadPath: ItemPayloadPath.ItemMetadata, 
             payloadData: data
@@ -88,8 +184,8 @@ export async function getItemState<T>(
 export async function getWorkloadItem<T>(
     workloadClient: WorkloadClientAPI,
     itemObjectId: string): Promise<WorkloadItem<T>> {
-        const getItemResult = await callItemGet(itemObjectId, workloadClient);
-        const getItemDefinitionResult = await callPublicItemGetDefinition(workloadClient, itemObjectId);
+        const getItemResult = await getItem(itemObjectId, workloadClient);
+        const getItemDefinitionResult = await getItemDefinition(workloadClient, itemObjectId);
         const item = convertGetItemResultToWorkloadItem<T>(getItemResult, getItemDefinitionResult);
         return item;
     }
@@ -106,7 +202,7 @@ export async function getWorkloadItem<T>(
  * @param {boolean} isRetry - Indicates that the call is a retry.
  * @returns {Promise<UpdateItemDefinitionResult>} - The result of the item definition update.
  */
-export async function callPublicItemUpdateDefinitionPayload(
+export async function updateItemDefinitionPayload(
     workloadClient: WorkloadClientAPI,
     itemObjectId: string,
     parts: { payloadPath: string, payloadData: any }[],
@@ -136,7 +232,7 @@ export async function callPublicItemUpdateDefinitionPayload(
  * @param {boolean} isRetry - Indicates that the call is a retry.
  * @returns {Promise<GetItemDefinitionResult>} - The item definition result if successful, otherwise undefined.
  */ 
-export async function callPublicItemGetDefinition(
+export async function getItemDefinition(
     workloadClient: WorkloadClientAPI,
     itemObjectId: string,
     format?: string,
@@ -242,5 +338,3 @@ export function convertGetDefinitionResponseToItemDefinition(responseBody: strin
     }
     return itemDefinition;
 }
-
-

@@ -26,11 +26,11 @@
     },
     "editorTab": {
       "maxInstanceCount": "10",
-      "onInit": "calculatorSampleItem.tab.onInit",
-      "onDeactivate": "calculatorSampleItem.tab.onDeactivate",
-      "canDeactivate": "calculatorSampleItem.tab.canDeactivate",
-      "canDestroy": "calculatorSampleItem.tab.canDestroy",
-      "onDestroy": "calculatorSampleItem.tab.onDestroy",
-      "onDelete": "calculatorSampleItem.tab.onDelete"
+      "onInit": "item.tab.onInit",
+      "onDeactivate": "item.tab.onDeactivate",
+      "canDeactivate": "item.tab.canDeactivate",
+      "canDestroy": "item.tab.canDestroy",
+      "onDestroy": "item.tab.onDestroy",
+      "onDelete": "item.tab.onDelete"
     }
   }

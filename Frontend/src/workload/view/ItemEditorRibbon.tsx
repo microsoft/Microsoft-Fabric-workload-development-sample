@@ -9,7 +9,7 @@ import {
   Save24Regular,
 } from "@fluentui/react-icons";
 import { PageProps } from 'src/App';
-import './../styles.scss';
+import './../../styles.scss';
 
 const HomeTabToolbar = (props: RibbonProps) => {
 

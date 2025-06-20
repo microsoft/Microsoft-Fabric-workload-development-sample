@@ -11,16 +11,16 @@ import {
   Tooltip,
 } from "@fluentui/react-components";
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular, ArrowSwap20Regular } from "@fluentui/react-icons";
-import { callDatahubOpen } from "../../controller/CalculatorSampleItemEditorController";
 import { TableMetadata, FileMetadata } from "../../models/OneLakeItemExplorerModel";
 import "./../../../styles.scss";
 import { getTables, getFiles } from "../../controller/OneLakeItemExplorerController";
 import { PageProps } from "../../../App";
-import { GenericItem as ItemMetadata } from "../../../ItemEditor/ItemEditorModel";
+import { GenericItem as ItemMetadata } from "../../../workload/models/ItemCRUDModel";
 import { TableTreeWithSchema } from "./TableTreeWithSchema";
 import { TableTreeWithoutSchema } from "./TableTreeWithoutSchema";
 import { FileTree } from "./FileTree";
 import { readOneLakeFileAsText, getOneLakeFilePath } from "../../controller/OneLakeController";
+import { callDatahubOpen } from "../../../workload/controller/DataHubController";
 
 export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
   const [selectedItem, setSelectedItem] = useState<ItemMetadata>(null);
@@ -120,7 +120,7 @@ export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
         </div>
         {selectedItem == null && isExplorerVisible && (
           <Stack className="main-body" verticalAlign="center" horizontalAlign="center" tokens={{ childrenGap: 5 }}>
-            <Image src="../../../internalAssets/Page.svg" />
+            <Image src="../../../workloadAssets/Page.svg" />
             <span className="add">Add an item</span>
             <Tooltip content={"Open Datahub Explorer"} relationship="label">
               <Button className="add-button" size="small" onClick={() => onDatahubClicked()} appearance="primary">

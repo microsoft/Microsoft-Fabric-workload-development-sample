@@ -17,19 +17,11 @@ import {
 } from "@fluentui/react-components";
 import { Save24Regular } from "@fluentui/react-icons";
 import { useTranslation } from "react-i18next";
-import {
-  callLanguageGet,
-  callSettingsOnChange,
-} from "../../samples/controller/CalculatorSampleItemEditorController";
-import { RootState } from "../ClientSDKPlaygroundStore/Store";
-import {
-  setSampleInput,
-  setCheckboxChecked,
-  setSelectedRadio,
-  setSwitchChecked,
-} from "../ClientSDKPlaygroundStore/uiComponentsSlice";
 import "./../../styles.scss";
 import { TabContentProps } from "./ClientSDKPlaygroundModel";
+import { RootState } from "../ClientSDKPlaygroundStore/Store";
+import { callLanguageGet, callSettingsOnChange } from "../../workload/controller/SettingsController";
+import { setCheckboxChecked, setSampleInput, setSelectedRadio, setSwitchChecked } from "../ClientSDKPlaygroundStore/uiComponentsSlice";
 
 export function UIComponentsExample(props: TabContentProps) {
   const { workloadClient } = props;

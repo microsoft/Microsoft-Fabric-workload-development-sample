@@ -7,7 +7,7 @@ import { createWorkloadClient, InitParams, ItemTabActionContext } from '@ms-fabr
 
 import { fabricLightTheme } from "./theme";
 import { App } from "./App";
-import { callItemGet } from "./ItemEditor/ItemEditorController"
+import { getItem } from "./workload/controller/ItemCRUDController"
 
 export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();
@@ -17,10 +17,9 @@ export async function initialize(params: InitParams) {
     workloadClient.action.onAction(async function ({ action, data }) {
         const { id } = data as ItemTabActionContext;
         switch (action) {
-            case 'item.tab.onInit':
-            case 'calculatorSampleItem.tab.onInit':            
+            case 'item.tab.onInit':            
                 try{
-                    const itemResult = await callItemGet(
+                    const itemResult = await getItem(
                         id,
                         workloadClient
                     );
@@ -32,15 +31,15 @@ export async function initialize(params: InitParams) {
                     );
                     return {};
                 }
-            case 'calculatorSampleItem.tab.canDeactivate':
+            case 'item.tab.canDeactivate':
                 return { canDeactivate: true };
-            case 'calculatorSampleItem.tab.onDeactivate':
+            case 'item.tab.onDeactivate':
                 return {};
-            case 'samplecalculatorSampleItem.tab.canDestroy':
+            case 'item.tab.canDestroy':
                 return { canDestroy: true };
-            case 'calculatorSampleItem.tab.onDestroy':
+            case 'item.tab.onDestroy':
                 return {};
-            case 'calculatorSampleItem.tab.onDelete':
+            case 'item.tab.onDelete':
                 return {};
             default:
                 throw new Error('Unknown action received');

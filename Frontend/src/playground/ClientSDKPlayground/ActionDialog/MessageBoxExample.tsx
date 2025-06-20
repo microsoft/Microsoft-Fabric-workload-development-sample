@@ -16,7 +16,7 @@ import {
     updateMessageBoxLink,
     updateButtonCount
 } from "../../ClientSDKPlaygroundStore/actionDialogSlice";
-import { callDialogOpenMsgBox } from "../../../samples/controller/CalculatorSampleItemEditorController";
+import { callDialogOpenMsgBox } from "../../../workload/controller/DialogController";
 import "../../../styles.scss";
 import { TabContentProps } from '../ClientSDKPlaygroundModel';
 

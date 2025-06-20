@@ -1,6 +1,6 @@
-import { GenericItem } from "../../ItemEditor/ItemEditorModel";
+import { GenericItem } from "../../workload/models/ItemCRUDModel";
 import { EnvironmentConstants } from "../../constants";
-import { callAuthAcquireFrontendAccessToken } from "./../../ItemEditor/ItemEditorController";
+import { acquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FileMetadata, OneLakePathContainer, TableMetadata } from "src/samples/models/OneLakeItemExplorerModel";
 
@@ -109,7 +109,7 @@ export async function getPathList(
     recursive = false
 ): Promise<OneLakePathContainer> {
     const url = `${EnvironmentConstants.OneLakeDFSBaseUrl}/${workspaceId}/?recursive=${recursive}&resource=filesystem&directory=${encodeURIComponent(directory)}&getShortcutMetadata=true`;
-    const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, oneLakeScope);
+    const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, oneLakeScope);
     try {
         const response = await fetch(url, {
             headers: { Authorization: `Bearer ${accessToken.token}` }

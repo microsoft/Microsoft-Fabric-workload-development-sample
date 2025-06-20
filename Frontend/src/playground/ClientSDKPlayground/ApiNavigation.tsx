@@ -1,9 +1,10 @@
 import React from "react";
 import { Button, Divider, Label } from "@fluentui/react-components";
 import { PanelRightExpand20Regular } from "@fluentui/react-icons";
-import { callNavigationNavigate, callPageOpen, CallOpenInNewBrowserTab } from "../../samples/controller/CalculatorSampleItemEditorController";
+import { callNavigationNavigate, CallOpenInNewBrowserTab } from "../../workload/controller/NavigationController";
 import "./../../styles.scss";
 import { TabContentProps } from "./ClientSDKPlaygroundModel";
+import { callPageOpen } from "../../workload/controller/PageController";
 
 export function ApiNavigation(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;

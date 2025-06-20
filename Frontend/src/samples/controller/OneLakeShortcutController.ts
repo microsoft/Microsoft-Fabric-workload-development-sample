@@ -1,5 +1,5 @@
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { callAuthAcquireFrontendAccessToken } from "./../../ItemEditor/ItemEditorController";
+import { acquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
 import { EnvironmentConstants } from "../../constants";
 import {OneLakeShorcutListResponse, OneLakeShortcutCreateRequest, OneLakeShortcutCreateResponse } from "../models/OneLakeShortcutModel";
 
@@ -19,7 +19,7 @@ export async function createOneLakeShortcut(
     shortcut: OneLakeShortcutCreateRequest
 ): Promise<OneLakeShortcutCreateResponse> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, oneLakeShortcutScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, oneLakeShortcutScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/items/${itemId}/shortcuts`;
         
         const response = await fetch(url, {
@@ -57,7 +57,7 @@ export async function listOneLakeShortcuts(
     itemId: string
 ): Promise<OneLakeShorcutListResponse> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, oneLakeShortcutScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, oneLakeShortcutScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/items/${itemId}/shortcuts`;
         
         const response = await fetch(url, {
@@ -98,7 +98,7 @@ export async function getOneLakeShortcut(
     shortcutName: string,
 ): Promise<OneLakeShortcutCreateResponse> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, oneLakeShortcutScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, oneLakeShortcutScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/items/${itemId}/shortcuts/${shortcutPath}/${shortcutName}`;
         
         const response = await fetch(url, {
@@ -138,7 +138,7 @@ export async function deleteOneLakeShortcut(
     shortcutName: string,
 ): Promise<void> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, oneLakeShortcutScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, oneLakeShortcutScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/items/${itemId}/shortcuts/${shortcutPath}/${shortcutName}`;
         
         const response = await fetch(url, {

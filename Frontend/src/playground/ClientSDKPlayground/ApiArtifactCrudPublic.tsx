@@ -5,7 +5,7 @@ import { PageProps } from 'src/App';
  
 import { GetItemDefinitionResult, UpdateItemDefinitionResult } from '@ms-fabric/workload-client';
 import "./../../styles.scss";
-import { callPublicItemGetDefinition, callPublicItemUpdateDefinitionPayload } from '../../ItemEditor/ItemEditorController';
+import { getItemDefinition, updateItemDefinitionPayload } from '../../workload/controller/ItemCRUDController';
  
  
 export function ApiArtifactCrudPublic({ workloadClient }: PageProps) {
@@ -13,7 +13,7 @@ export function ApiArtifactCrudPublic({ workloadClient }: PageProps) {
     const [format, setFormat] = useState<string>(null);
     const [updateMetadata, setUpdateMetadata] = useState<boolean>(null);
     const [payload, setPayload] = useState<string>(null);
-    const [getItemDefinition, setGetItemDefinition] = useState<GetItemDefinitionResult>(null);
+    const [itemDefinition, setItemDefinition] = useState<GetItemDefinitionResult>(null);
     const [updateItemDefinition, setUpdateItemDefinition] = useState<UpdateItemDefinitionResult>(null);
  
     return (
@@ -25,15 +25,15 @@ export function ApiArtifactCrudPublic({ workloadClient }: PageProps) {
             <Field label="Format:" orientation="horizontal" className="field">
                 <Input size="medium" placeholder="Format" onChange={e => setFormat(e.target.value)} />
             </Field>
-            <Field orientation="horizontal" className="description"> {getItemDefinition ? JSON.stringify(getItemDefinition, null, "\t") : "Get Item Definition Error"} </Field>
+            <Field orientation="horizontal" className="description"> {itemDefinition ? JSON.stringify(itemDefinition, null, "\t") : "Get Item Definition Error"} </Field>
             <div className="crudButton">
                 <Button className="crudButton" appearance="primary" onClick={
-                    () => callPublicItemGetDefinition(workloadClient, itemId, format)
+                    () => getItemDefinition(workloadClient, itemId, format)
                         .then(result => {
-                            setGetItemDefinition(result);
+                            setItemDefinition(result);
                         })
                         .catch((error) => {
-                            setGetItemDefinition(error);
+                            setItemDefinition(error);
                         })
                 }>Get Item Definition</Button>
             </div>
@@ -50,7 +50,7 @@ export function ApiArtifactCrudPublic({ workloadClient }: PageProps) {
             </Field>
             <div className="crudButton">
                 <Button className="crudButton" appearance="primary" onClick={
-                    () => callPublicItemUpdateDefinitionPayload(workloadClient, itemId, JSON.parse(payload), updateMetadata)
+                    () => updateItemDefinitionPayload(workloadClient, itemId, JSON.parse(payload), updateMetadata)
                         .then((result) => {
                             setUpdateItemDefinition(result);
                         })

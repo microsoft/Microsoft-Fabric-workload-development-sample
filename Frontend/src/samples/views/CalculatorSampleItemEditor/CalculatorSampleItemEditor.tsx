@@ -19,10 +19,6 @@ import {
 import { AfterNavigateAwayData } from "@ms-fabric/workload-client";
 import { ContextProps, PageProps } from "src/App";
 import {
-  callNavigationBeforeNavigateAway,
-  callNavigationAfterNavigateAway,
-  callThemeOnChange,
-  callOpenSettings,
   calculateResult,
   saveCalculationResult,
   loadCalculationResult,
@@ -34,9 +30,12 @@ import {
   Calculation
 } from "../../models/CalculatorSampleWorkloadModel";
 import "./../../../styles.scss";
-import { LoadingProgressBar } from "../../../ItemEditor/ItemEditorLoadingProgressBar";
-import { callItemGet, getWorkloadItem, saveItemState } from "../../../ItemEditor/ItemEditorController";
-import { WorkloadItem } from "../../../ItemEditor/ItemEditorModel";
+import { LoadingProgressBar } from "../../../workload/view/ItemEditorLoadingProgressBar";
+import { getItem, getWorkloadItem, saveItemState } from "../../../workload/controller/ItemCRUDController";
+import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } from "../../../workload/controller/NavigationController";
+import { callThemeOnChange } from "../../../workload/controller/ThemeController";
+import { callOpenSettings } from "../../../workload/controller/SettingsController";
+import { WorkloadItem } from "src/workload/models/ItemCRUDModel";
 
 export function SampleItemEditor(props: PageProps) {
   const { workloadClient } = props;
@@ -214,7 +213,7 @@ export function SampleItemEditor(props: PageProps) {
 
   async function openSettings() {
     if (editorItem) {
-      const item = await callItemGet(editorItem.id, workloadClient);
+      const item = await getItem(editorItem.id, workloadClient);
       await callOpenSettings(item, workloadClient, 'About');
     }
   }
@@ -241,7 +240,7 @@ export function SampleItemEditor(props: PageProps) {
       <Stack className="main">
         {["home"].includes(selectedTab as string) && (
           <span>
-            <h2>Frontend Sample Item Editor</h2>
+            <h2>Calculator Sample</h2>
             {/* Crud item API usage example */}
             {itemEditorErrorMessage && (
               <MessageBar intent="error">

@@ -19,9 +19,9 @@ import {
     setMultiSelectionEnabled,
     setSelectedLinkedItem,
 } from "../ClientSDKPlaygroundStore/apiDataSlice";
-import { callDatahubOpen } from "../../samples/controller/CalculatorSampleItemEditorController";
 import "./../../styles.scss";
 import { TabContentProps } from "./ClientSDKPlaygroundModel";
+import { callDatahubOpen } from "../../workload/controller/DataHubController";
 
 export function ApiData(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;

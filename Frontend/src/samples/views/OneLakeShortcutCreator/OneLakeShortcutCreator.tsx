@@ -12,11 +12,11 @@ import {
   Spinner,
   Text
 } from "@fluentui/react-components";
-import { callDatahubOpen } from "../../controller/CalculatorSampleItemEditorController";
 import { createOneLakeShortcut } from "../../controller/OneLakeShortcutController";
 import { OneLakeShortcutCreateRequest, OneLakeShortcutTargetOneLake } from "../../models/OneLakeShortcutModel";
 import { PageProps } from "../../../App";
-import { GenericItem } from "../../../ItemEditor/ItemEditorModel";
+import { GenericItem } from "../../../workload/models/ItemCRUDModel";
+import { callDatahubOpen } from "../../../workload/controller/DataHubController";
 
 export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
   // Source and target item states

@@ -5,8 +5,9 @@ import {
     NotificationType
 } from '@ms-fabric/workload-client';
 
-import * as Controller from './samples/controller/CalculatorSampleItemEditorController';
-import { ItemCreationFailureData, ItemCreationSuccessData } from './ItemEditor/ItemEditorModel';
+import { ItemCreationFailureData, ItemCreationSuccessData } from './workload/models/ItemCRUDModel';
+import { callPageOpen } from './workload/controller/PageController';
+import { callNotificationOpen } from './workload/controller/NotificationController';
 
 export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();
@@ -22,7 +23,7 @@ export async function initialize(params: InitParams) {
                     path = "/calculator-sample-item-editor"
                 }
                 createdItem.itemType
-                await Controller.callPageOpen(sampleWorkloadName, `${path}/${createdItem.objectId}`, workloadClient);
+                await callPageOpen(sampleWorkloadName, `${path}/${createdItem.objectId}`, workloadClient);
                 return Promise.resolve({ succeeded: true });
 
             case 'item.onCreationFailure':
@@ -37,7 +38,7 @@ export async function initialize(params: InitParams) {
 
 
             case 'sample.Action':
-                return Controller.callNotificationOpen(
+                return callNotificationOpen(
                     'Action executed',
                     'Action executed via API',
                     NotificationType.Success,

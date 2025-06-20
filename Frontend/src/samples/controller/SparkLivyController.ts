@@ -1,5 +1,5 @@
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { callAuthAcquireFrontendAccessToken } from "./../../ItemEditor/ItemEditorController";
+import { acquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
 import { EnvironmentConstants } from "../../constants";
 import { BatchRequest, BatchResponse, BatchState, ErrorResponse, SessionRequest, SessionResponse, StatementRequest, StatementResponse } from "src/samples/models/SparkLivyModel";
 
@@ -41,7 +41,7 @@ export async function createBatch(
     batchRequest: BatchRequest
 ): Promise<BatchResponse> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches`;
         
         const response = await fetch(url, {
@@ -73,7 +73,7 @@ export async function listBatches(
     lakehouseId: string
 ): Promise<BatchResponse[]> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches`;
         
         const response = await fetch(url, {
@@ -105,7 +105,7 @@ export async function getBatch(
     batchId: string
 ): Promise<BatchResponse> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}`;
         
         const response = await fetch(url, {
@@ -137,7 +137,7 @@ export async function deleteBatch(
     batchId: string
 ): Promise<void> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}`;
         
         const response = await fetch(url, {
@@ -172,7 +172,7 @@ export async function cancelBatch(
     batchId: string
 ): Promise<BatchResponse> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}/state`;
         
         const response = await fetch(url, {
@@ -208,7 +208,7 @@ export async function getBatchLogs(
     size?: number
 ): Promise<{ id: string, log: string[] }> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         let url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}/log`;
         
         // Add optional query parameters if provided
@@ -249,7 +249,7 @@ export async function getBatchState(
     batchId: string
 ): Promise<{ id: string, state: BatchState }> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/batches/${batchId}/state`;
         
         const response = await fetch(url, {
@@ -281,7 +281,7 @@ export async function createSession(
     sessionRequest: SessionRequest
 ): Promise<SessionResponse> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions`;
         
         const response = await fetch(url, {
@@ -313,7 +313,7 @@ export async function listSessions(
     lakehouseId: string
 ): Promise<SessionResponse[]> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions`;
         
         const response = await fetch(url, {
@@ -345,7 +345,7 @@ export async function getSession(
     sessionId: string
 ): Promise<SessionResponse> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}`;
         
         const response = await fetch(url, {
@@ -377,7 +377,7 @@ export async function deleteSession(
     sessionId: string
 ): Promise<void> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}`;
         
         const response = await fetch(url, {
@@ -414,7 +414,7 @@ export async function submitStatement(
     statementRequest: StatementRequest
 ): Promise<StatementResponse> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/statements`;
         
         const response = await fetch(url, {
@@ -450,7 +450,7 @@ export async function getStatement(
     statementId: string
 ): Promise<StatementResponse> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/statements/${statementId}`;
         
         const response = await fetch(url, {
@@ -482,7 +482,7 @@ export async function listStatements(
     sessionId: string
 ): Promise<StatementResponse[]> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/statements`;
         
         const response = await fetch(url, {
@@ -514,7 +514,7 @@ export async function cancelSession(
     sessionId: string
 ): Promise<SessionResponse> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, livyScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, livyScope);
         const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/lakehouses/${lakehouseId}/livyApi/versions/${LIVY_API_VERSION}/sessions/${sessionId}/state`;
         
         const response = await fetch(url, {

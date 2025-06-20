@@ -10,7 +10,7 @@ import CustomAbout from "./samples/views/CalculatorSampleItemEditor/CalculatorSa
 import SharedStatePage from "./samples/views/CalculatorSampleItemEditor/CalculatorSampleItemEditorSharedStatePage"
 import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlayground/ClientSDKPlayground";
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
-import { ItemEditor } from "./ItemEditor/ItemEditor";
+import { ItemEditor } from "./workload/view/ItemEditor";
 
 /*
     Add your Item Editor in the Route section of the App function below

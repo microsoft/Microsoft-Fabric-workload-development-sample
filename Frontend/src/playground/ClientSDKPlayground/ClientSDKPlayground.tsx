@@ -19,7 +19,7 @@ import { UIComponentsExample } from './UIComponents';
 import { ApiAuthenticationFrontend } from './ApiAuthenticationFrontend';
 import { ApiAuthentication } from './ApiAuthentication';
 import { PageProps } from 'src/App';
-import { callNavigationBeforeNavigateAway, callNavigationNavigate } from "../../samples/controller/CalculatorSampleItemEditorController";
+import { callNavigationBeforeNavigateAway, callNavigationNavigate } from "../../workload/controller/NavigationController";
 import "./../../styles.scss";
 import { ApiArtifactCrudPublic } from './ApiArtifactCrudPublic';
 import SampleSparkTerminal from '../../samples/views/SampleSparkTerminal/SampleSparkTerminal';

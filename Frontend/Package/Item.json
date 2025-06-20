@@ -14,6 +14,10 @@
     "supportedInMonitoringHub": true,
     "supportedInDatahubL1": true,
     "editorTab": {
-      "onInit": "item.tab.onInit"
+      "onDeactivate": "item.tab.onDeactivate",
+      "canDeactivate": "item.tab.canDeactivate",
+      "canDestroy": "item.tab.canDestroy",
+      "onDestroy": "item.tab.onDestroy",
+      "onDelete": "item.tab.onDelete"
     }
   }

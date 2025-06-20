@@ -3,21 +3,20 @@ import { Field, Input, TabValue } from "@fluentui/react-components";
 import React, { useEffect, useState } from "react";
 import { ContextProps, PageProps } from "src/App";
 import { Ribbon } from "./ItemEditorRibbon";
-import { getWorkloadItem, saveItemState } from "./ItemEditorController";
-import { WorkloadItem } from "./ItemEditorModel";
+import { getWorkloadItem, saveItemState } from "../controller/ItemCRUDController";
+import { WorkloadItem } from "../models/ItemCRUDModel";
 import LoadingProgressBar from "./ItemEditorLoadingProgressBar";
 import { useLocation, useParams } from "react-router-dom";
-import "./../styles.scss";
+import "./../../styles.scss";
 import { useTranslation } from "react-i18next";
+import { ItemEditorState } from "../models/ItemEditorModel";
 
 // Define the payload structure for the HelloWorld item 
 // This is a simple example where we just have a string payload
 // In a real-world scenario, this could be more complex and structured.
 // The interface was introduced for this editor to demonstrate how to handle item payloads in a type-safe manner.
 // If you use the hello world editor as your starting point make sure you adopt it to your needs
-interface HelloWorldItemState  {
-  message?: string;
-}
+
 
 export function ItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
@@ -27,7 +26,7 @@ export function ItemEditor(props: PageProps) {
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [payload, setPayload] = useState<string>();
   const [isUnsafed, setIsUnsafed] = useState<boolean>(true);
-  const [editorItem, setEditorItem] = useState<WorkloadItem<HelloWorldItemState>>(undefined);
+  const [editorItem, setEditorItem] = useState<WorkloadItem<ItemEditorState>>(undefined);
   const [selectedTab, setSelectedTab] = useState<TabValue>("home");
 
   useEffect(() => {
@@ -36,7 +35,7 @@ export function ItemEditor(props: PageProps) {
 
   async function SaveItem() {
 
-    var successResult = await saveItemState<HelloWorldItemState>(
+    var successResult = await saveItemState<ItemEditorState>(
       workloadClient,
       editorItem.id,
       editorItem.itemState);
@@ -48,7 +47,7 @@ export function ItemEditor(props: PageProps) {
     if (pageContext.itemObjectId) {
       // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
       try {
-        const item = await getWorkloadItem<HelloWorldItemState>(
+        const item = await getWorkloadItem<ItemEditorState>(
           workloadClient,
           pageContext.itemObjectId,          
         );

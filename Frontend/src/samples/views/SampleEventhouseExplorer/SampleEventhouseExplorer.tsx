@@ -14,10 +14,11 @@ import {
     TriangleRight20Regular,
   } from "@fluentui/react-icons";
 
-import { EventhouseItemMetadata } from "src/samples/models/EventhouseModel";
-import { CallExecuteQuery, callGetEventhouseItem } from "../../controller/EventHouseController";
-import { GenericItem } from "../../../ItemEditor/ItemEditorModel";
-import { callDatahubOpen } from "../../controller/CalculatorSampleItemEditorController";
+import { EventhouseItemMetadata } from "../../..//samples/models/EventhouseModel";
+import { executeQuery, getEventhouseItem } from "../../controller/EventHouseController";
+import { GenericItem } from "../../../workload/models/ItemCRUDModel";
+import { callDatahubOpen } from "../../../workload/controller/DataHubController";
+
 
 export function EventhouseExplorerComponent({ workloadClient }: PageProps) {
     const [selectedEventhouse, setSelectedEventhouse] = useState<GenericItem>(undefined);
@@ -49,7 +50,7 @@ export function EventhouseExplorerComponent({ workloadClient }: PageProps) {
     async function loadKqlDatabasesWhenEventhouseSelected() {
       console.log(`loadKqlDatabasesWhenEventhouseSelected: ${selectedEventhouse}`);
       if (selectedEventhouse) {
-          const result = await callGetEventhouseItem(
+          const result = await getEventhouseItem(
               workloadClient,
               selectedEventhouse.workspaceId,
               selectedEventhouse.id,              
@@ -89,7 +90,7 @@ export function EventhouseExplorerComponent({ workloadClient }: PageProps) {
     
     async function onExecuteQueryButtonClick() {
       if (selectedEventhouse) {
-          const result = await CallExecuteQuery(
+          const result = await executeQuery(
               workloadClient,
               selectedEventhouseItemMetadata?.properties.queryServiceUri,
               selectedDatabaseForQuery,
@@ -109,7 +110,7 @@ export function EventhouseExplorerComponent({ workloadClient }: PageProps) {
             console.log(`Cancelling query with requestId: ${queryClientRequestId}`);
             
             const query = `.cancel query '${queryClientRequestId}'`;
-            const result = await CallExecuteQuery(
+            const result = await executeQuery(
               workloadClient,
               selectedEventhouseItemMetadata?.properties.queryServiceUri,
               selectedDatabaseForQuery,

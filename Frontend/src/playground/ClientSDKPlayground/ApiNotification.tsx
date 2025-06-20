@@ -15,7 +15,7 @@ import {
 import {
     callNotificationOpen,
     callNotificationHide,
-} from "../../samples/controller/CalculatorSampleItemEditorController";
+} from "../../workload/controller/NotificationController";
 import "./../../styles.scss";
 import { TabContentProps } from "./ClientSDKPlaygroundModel";
 

@@ -5,15 +5,14 @@ import { PanelRightExpand20Regular } from "@fluentui/react-icons";
 import { RootState } from "../ClientSDKPlaygroundStore/Store";
 import { setApiPanelIsLightDismiss } from "../ClientSDKPlaygroundStore/apiPanelSettingsSlice";
 import {
-    callPanelOpen,
-    callDialogOpenMsgBox,
     themeToView,
     callThemeGet,
-    settingsToView,
-    callSettingsGet,
-} from "../../samples/controller/CalculatorSampleItemEditorController";
+} from "../../workload/controller/ThemeController";
 import "./../../styles.scss";
 import { TabContentProps } from "./ClientSDKPlaygroundModel";
+import { callSettingsGet, settingsToView } from "../../workload/controller/SettingsController";
+import { callDialogOpenMsgBox } from "../../workload/controller/DialogController";
+import { callPanelOpen } from "../../workload/controller/PanelController";
 
 export function ApiPanelSettings(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;

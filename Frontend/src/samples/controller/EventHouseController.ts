@@ -1,6 +1,6 @@
 import { EventhouseItemMetadata } from "../models/EventhouseModel";
 import { EnvironmentConstants } from "../../constants";
-import { callAuthAcquireFrontendAccessToken } from "./../../ItemEditor/ItemEditorController";
+import { acquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import {v4 as uuidv4} from 'uuid';
 
@@ -15,9 +15,9 @@ const kqlScope = "https://api.fabric.microsoft.com/KQLDatabase.ReadWrite.All";
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @returns {Promise<EventhouseItemMetadata>} A Promise that resolves to an object containing the eventhouse metadata.
  */
-export async function callGetEventhouseItem(workloadClient: WorkloadClientAPI, workspaceId: string, eventhouseId: string): Promise<EventhouseItemMetadata> {
+export async function getEventhouseItem(workloadClient: WorkloadClientAPI, workspaceId: string, eventhouseId: string): Promise<EventhouseItemMetadata> {
     try {
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, eventHouseScope);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, eventHouseScope);
         const response: Response = await fetch(EnvironmentConstants.FabricApiBaseUrl + `/v1/workspaces/${workspaceId}/eventhouses/${eventhouseId}`,
         {
             method: `GET`,
@@ -53,13 +53,13 @@ export async function callGetEventhouseItem(workloadClient: WorkloadClientAPI, w
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @returns {Promise<object[]>} A Promise that resolves to an object containing the queries result.
  */
-export async function CallExecuteQuery(workloadClient: WorkloadClientAPI, queryUrl: string, databaseName: string, query: string, 
+export async function executeQuery(workloadClient: WorkloadClientAPI, queryUrl: string, databaseName: string, query: string, 
     setClientRequestId: (id: string) => void) : Promise<object[]> {
     try {
 
         //KqlDatabases/query
         const scopes = kqlScope + " " + queryUrl + "/user_impersonation" 
-        const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, scopes);
+        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, scopes);
         const clientRequestId = 'WS-' + uuidv4();
         setClientRequestId(clientRequestId);
         const response: Response = await fetch(queryUrl + `/v1/rest/mgmt`, 

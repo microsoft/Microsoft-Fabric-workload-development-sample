@@ -4,7 +4,7 @@ import { PanelRightExpand20Regular } from '@fluentui/react-icons';
 import {
     callErrorHandlingOpenDialog,
     callErrorHandlingRequestFailure,
-} from "../../../samples/controller/CalculatorSampleItemEditorController";
+} from "../../../workload/controller/ErrorHandlingController";
 import "../../../styles.scss";
 import { TabContentProps } from '../ClientSDKPlaygroundModel';
 
