@@ -20,8 +20,8 @@ import {
     setSelectedLinkedItem,
 } from "../ClientSDKPlaygroundStore/apiDataSlice";
 import { callDatahubOpen } from "../../samples/controller/CalculatorSampleItemEditorController";
-import { TabContentProps } from "../../samples/models/CalculatorSampleWorkloadModel";
 import "./../../styles.scss";
+import { TabContentProps } from "./ClientSDKPlaygroundModel";
 
 export function ApiData(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;

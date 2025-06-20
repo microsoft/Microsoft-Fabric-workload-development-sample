@@ -12,8 +12,8 @@ import {
     settingsToView,
     callSettingsGet,
 } from "../../samples/controller/CalculatorSampleItemEditorController";
-import { TabContentProps } from '../../samples/models/CalculatorSampleWorkloadModel';
 import "./../../styles.scss";
+import { TabContentProps } from "./ClientSDKPlaygroundModel";
 
 export function ApiPanelSettings(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;

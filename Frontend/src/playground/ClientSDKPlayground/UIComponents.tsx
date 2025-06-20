@@ -21,7 +21,6 @@ import {
   callLanguageGet,
   callSettingsOnChange,
 } from "../../samples/controller/CalculatorSampleItemEditorController";
-import { TabContentProps } from '../../samples/models/CalculatorSampleWorkloadModel';
 import { RootState } from "../ClientSDKPlaygroundStore/Store";
 import {
   setSampleInput,
@@ -30,6 +29,7 @@ import {
   setSwitchChecked,
 } from "../ClientSDKPlaygroundStore/uiComponentsSlice";
 import "./../../styles.scss";
+import { TabContentProps } from "./ClientSDKPlaygroundModel";
 
 export function UIComponentsExample(props: TabContentProps) {
   const { workloadClient } = props;

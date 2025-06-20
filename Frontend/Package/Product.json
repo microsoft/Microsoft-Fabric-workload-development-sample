@@ -57,10 +57,10 @@
           "title": "Item_DisplayName",
           "description": "Item_Description",
           "icon": {
-            "name": "assets/images/item.jpg"
+            "name": "assets/images/item.png"
           },
           "icon_small": {
-            "name": "assets/images/item.jpg"
+            "name": "assets/images/item.png"
           },
           "availableIn": [
             "home",

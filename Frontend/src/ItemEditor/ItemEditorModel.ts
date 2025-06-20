@@ -28,7 +28,7 @@ export interface GenericItem extends ItemReference {
 
 // Represents a workload item with extended metadata.
 export interface WorkloadItem<T> extends GenericItem {
-    extendedMetdata?: T;
+    itemState?: T;
 }
 
 export interface ItemPlatformMetadata {
@@ -44,11 +44,10 @@ export interface ItemCreationSuccessData {
     item: ItemLikeV2;
 }
 
+
+
 export enum ItemPayloadPath {
     ItemMetadata = "Item/metadata.json",
     Platform = ".platform",
 }
 
-export interface ItemPayload {
-
-}

@@ -6,11 +6,11 @@ import {
   TabValue,
 } from '@fluentui/react-components';
 import { Stack } from '@fluentui/react';
-import { TabContentProps } from '../../samples/models/CalculatorSampleWorkloadModel';
 import { OneLakeItemExplorerComponent } from '../../samples/views/SampleOneLakeItemExplorer/SampleOneLakeItemExplorer';
 import { OneLakeShortcutCreator } from '../../samples/views/OneLakeShortcutCreator/OneLakeShortcutCreator';
 import "./../../styles.scss";
 import { EventhouseExplorerComponent } from '../../samples/views/SampleEventhouseExplorer/SampleEventhouseExplorer';
+import { TabContentProps } from '../ClientSDKPlayground/ClientSDKPlaygroundModel';
 
 export function DataPlayground(props: TabContentProps) {
   const { workloadClient } = props;

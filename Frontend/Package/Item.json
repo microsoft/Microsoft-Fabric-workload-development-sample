@@ -6,10 +6,10 @@
       "path": "/item-editor"
     },
     "icon": {
-      "name": "assets/images/item.jpg"
+      "name": "assets/images/item.png"
     },
     "activeIcon": {
-      "name": "assets/images/item.jpg"
+      "name": "assets/images/item.png"
     },
     "supportedInMonitoringHub": true,
     "supportedInDatahubL1": true,

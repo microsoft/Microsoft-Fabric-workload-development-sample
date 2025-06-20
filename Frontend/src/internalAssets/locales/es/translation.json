@@ -1,10 +1,16 @@
 {
     "Language_Changed_Title": "Idioma cambiado",
     "Language_Changed_Message": "El idioma fue cambiado a:",
-    "Item_Details": "Detalles del artículo",
     "Item_Type": "Tipo de artículo",
     "Item_Name": "Nombre del artículo",
     "Item_ID": "ID del artículo",
+    "Item_Description": "Descripción",
+    "Item_LastModifiedBy": "Última modificación por",
+    "Item_LastModifiedDate": "Fecha de última modificación",
+    "Item_CreatedBy": "Creado por",
+    "Item_CreatedDate": "Fecha de creación",
+    "Item_State_Payload": "Estado del artículo",
+    "Item_Editor_Titel": "Editor de artículos Hello World",
     "Workspace_Name": "Nombre del espacio de trabajo",
     "Workspace_ID": "ID del espacio de trabajo"
 }

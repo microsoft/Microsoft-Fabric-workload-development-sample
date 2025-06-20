@@ -20,7 +20,7 @@ import { GenericItem as ItemMetadata } from "../../../ItemEditor/ItemEditorModel
 import { TableTreeWithSchema } from "./TableTreeWithSchema";
 import { TableTreeWithoutSchema } from "./TableTreeWithoutSchema";
 import { FileTree } from "./FileTree";
-import { getOneLakeFile, getOneLakeFilePath } from "../../controller/OneLakeController";
+import { readOneLakeFileAsText, getOneLakeFilePath } from "../../controller/OneLakeController";
 
 export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
   const [selectedItem, setSelectedItem] = useState<ItemMetadata>(null);
@@ -96,7 +96,7 @@ export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
 
   async function fileSelectedCallback(fileSelected: FileMetadata) {
     const fullFilePath = getOneLakeFilePath(selectedItem.workspaceId, selectedItem.id, fileSelected.path);
-    const fileContent = await getOneLakeFile(workloadClient, fullFilePath);
+    const fileContent = await readOneLakeFileAsText(workloadClient, fullFilePath);
     setFileSelected(fileSelected);
     setSelectedFileContent(fileContent);
     // setFilesInItem to rerender the tree

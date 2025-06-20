@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Stack } from "@fluentui/react";
 import {
@@ -7,19 +7,13 @@ import {
   Divider,
   Field,
   Input,
-  Label,
   Option,
-  Radio,
-  RadioGroup,
   TabValue,
-  Tooltip,
   MessageBar,
   MessageBarBody,
   MessageBarTitle,
-  RadioGroupOnChangeData
 } from "@fluentui/react-components";
 import {
-  Database16Regular,
   TriangleRight20Regular,
 } from "@fluentui/react-icons";
 import { AfterNavigateAwayData } from "@ms-fabric/workload-client";
@@ -28,49 +22,40 @@ import {
   callNavigationBeforeNavigateAway,
   callNavigationAfterNavigateAway,
   callThemeOnChange,
-  callDatahubOpen,
   callOpenSettings,
   calculateResult,
+  saveCalculationResult,
+  loadCalculationResult,
 } from "../../controller/CalculatorSampleItemEditorController";
 import { Ribbon } from "./CalculatorSampleItemEditorRibbon";
 import {
-  SampleItemClientMetadata,
-  SampleItemPayload,
-  SampleItemUpdatePayload,
-  DefinitionPath,
-  Item1Operator,
+  CalculatorSampleItemState,
+  CalculationOperator,
+  Calculation
 } from "../../models/CalculatorSampleWorkloadModel";
 import "./../../../styles.scss";
 import { LoadingProgressBar } from "../../../ItemEditor/ItemEditorLoadingProgressBar";
-import { getOneLakeFile, getOneLakeFilePath, writeToOneLakeFile } from "../../controller/OneLakeController";
-import { callItemGet, callPublicItemGetDefinition, callPublicItemUpdateDefinition, convertGetItemResultToWorkloadItem } from "../../../ItemEditor/ItemEditorController";
-import { GenericItem, WorkloadItem } from "../../../ItemEditor/ItemEditorModel";
+import { callItemGet, getWorkloadItem, saveItemState } from "../../../ItemEditor/ItemEditorController";
+import { WorkloadItem } from "../../../ItemEditor/ItemEditorModel";
 
 export function SampleItemEditor(props: PageProps) {
   const { workloadClient } = props;
   const pageContext = useParams<ContextProps>();
   const { pathname } = useLocation();
-  const supportedOperators = ['Undefined', 'Add', 'Subtract', 'Multiply', 'Divide', 'Random'];
-  const calculationFileName = "CalcResult";
 
   // React state for WorkloadClient APIs
-  const [operand1ValidationMessage, setOperand1ValidationMessage] =
-    useState<string>("");
-  const [operand2ValidationMessage, setOperand2ValidationMessage] =
-    useState<string>("");
-  const [selectedLakehouse, setSelectedLakehouse] = useState<GenericItem>(undefined);
-  const [sampleItem, setSampleItem] =
-    useState<WorkloadItem<SampleItemPayload>>(undefined);
+  const [operand1ValidationMessage, setOperand1ValidationMessage] = useState<string>("");
+  const [operand2ValidationMessage, setOperand2ValidationMessage] = useState<string>("");
+  const [editorItem, setEditorItem] =useState<WorkloadItem<CalculatorSampleItemState>>(undefined);
   const [operand1, setOperand1] = useState<number>(0);
   const [operand2, setOperand2] = useState<number>(0);
-  const [operator, setOperator] = useState<string | null>(null);
+  const [operator, setOperator] = useState<CalculationOperator>(null);
   const [isDirty, setDirty] = useState<boolean>(false);
-  const [storageName, setStorageName] = useState<string>("Lakehouse");
   const [calculationResult, setCalculationResult] = useState<string>("");
+  const [calculationTime, setCalculationTime] = useState<Date>(undefined);
+  
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
-  const isLoading = isLoadingData;
   const [itemEditorErrorMessage, setItemEditorErrorMessage] = useState<string>("");
-  const [hasLastResult, setHasLastResult] = useState<boolean>(false);
 
   const INT32_MIN = -2147483648;
   const INT32_MAX = 2147483647;
@@ -93,47 +78,13 @@ export function SampleItemEditor(props: PageProps) {
     loadDataFromUrl(pageContext, pathname);
   }, [pageContext, pathname]);
 
-  async function loadCalculationResult(item: WorkloadItem<SampleItemPayload>): Promise<void> {
-    if (!item.extendedMetdata?.item1Metadata) {
-      console.log("metadata is not defined.");
-      return;
-    }
-    try {
-      const fileName = `CalcResults/${calculationFileName}-${item.id}.txt`;
-      const itemMetadata = item.extendedMetdata.item1Metadata;
-      const filePath = itemMetadata?.useOneLake
-        ? getOneLakeFilePath(item.workspaceId, item.id, fileName)
-        : getOneLakeFilePath(itemMetadata.lakehouse?.workspaceId, itemMetadata?.lakehouse?.id, fileName);
-      const result = await getOneLakeFile(workloadClient, filePath);
-      setCalculationResult(result);
-    } catch (error) {
-      console.error(`Error loading loadCalculationResult: ${error}`);
-      if (isDirty) {
-        //TODO: make sure that the isDirty is used for the save button
-      }  
-    }
-
-  }
 
   async function afterNavigateCallBack(_event: AfterNavigateAwayData): Promise<void> {
     //clears the data after navigation
-    setSelectedLakehouse(undefined);
-    setSampleItem(undefined);
+    setEditorItem(undefined);
     setCalculationResult("");
+    setCalculationTime(undefined);
     return;
-  }
-
-  async function onCallDatahubLakehouse() {
-    const result = await callDatahubOpen(
-      ["Lakehouse"],
-      "Select a Lakehouse to use for Sample Workload",
-      false,
-      workloadClient
-    );
-    if (result) {
-      setSelectedLakehouse(result);
-      setDirty(true);
-    }
   }
 
   function isValidOperand(operand: number) {
@@ -161,7 +112,7 @@ export function SampleItemEditor(props: PageProps) {
   }
 
   function onOperatorInputChanged(value: string | null) {
-    setOperator(value);
+    setOperator(CalculationOperator[value as keyof typeof CalculationOperator] || CalculationOperator.Undefined);
     setDirty(true);
   }
 
@@ -182,18 +133,23 @@ export function SampleItemEditor(props: PageProps) {
       return;
     }
     try {
-      const fileName = `CalcResults/${calculationFileName}-${sampleItem.id}.txt`;
-      const result = calculateResult(operand1, operand2, Item1Operator[operator as keyof typeof Item1Operator]);
-      const filePath = storageName === "OneLake"
-        ? getOneLakeFilePath(sampleItem.workspaceId, sampleItem.id, fileName)
-        : getOneLakeFilePath(selectedLakehouse.workspaceId, selectedLakehouse.id, fileName);
-      await writeToOneLakeFile(workloadClient, filePath, result.toString());
-      setHasLastResult(true);
-      setCalculationResult(result.toString());
-      await SaveItem(true /** calculationPerformed */);
+      var calculation = {
+        operand1: operand1,
+        operand2: operand2,
+        operator: operator, 
+
+      }as Calculation
+
+      const calcResult = calculateResult(calculation);
+      const calcSave = await saveCalculationResult(workloadClient, editorItem, calcResult)
+      editorItem.itemState = calcSave;           
+      setCalculationResult(calcResult.result.toString());
+      setCalculationTime(calcResult.calculationTime);
+      await SaveItem();
     } catch (error: Error | any) {
       console.error(`Error calculating result: ${error.message}`);
       setCalculationResult("Error in calculation");
+      setCalculationTime(undefined);
       return;
     }
   }
@@ -206,31 +162,25 @@ export function SampleItemEditor(props: PageProps) {
     if (pageContext.itemObjectId) {
       // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
       try {
-        const getItemResult = await callItemGet(
-          pageContext.itemObjectId,
-          workloadClient
-        );
-        const getItemDefinitionResult = await callPublicItemGetDefinition(pageContext.itemObjectId, workloadClient);
-        const item = convertGetItemResultToWorkloadItem<SampleItemPayload>(getItemResult, getItemDefinitionResult);
-        setSampleItem(item);
         setSelectedTab("home");
-
-        // load extendedMetadata
-        const item1Metadata: SampleItemClientMetadata =
-          item.extendedMetdata?.item1Metadata;
-        setSelectedLakehouse(item1Metadata?.lakehouse);
-        setOperand1(item1Metadata?.operand1 ?? 0);
-        setOperand2(item1Metadata?.operand2 ?? 0);
-        setHasLastResult(item1Metadata?.hasLastResult ?? false);
+        const item = await getWorkloadItem<CalculatorSampleItemState>(
+                  workloadClient,
+                  pageContext.itemObjectId,          
+                );
+        // set the metadata
+        setOperand1(item?.itemState?.operand1 ?? 0);
+        setOperand2(item?.itemState?.operand2 ?? 0);
         setOperand1ValidationMessage("");
         setOperand2ValidationMessage("");
-        setStorageName(item1Metadata?.useOneLake ? "OneLake" : "Lakehouse");
-        const loadedOperator = item1Metadata?.operator;
-        const isValidOperator = loadedOperator && supportedOperators.includes(loadedOperator);
-        setOperator(isValidOperator ? loadedOperator : null);
-        if (item1Metadata?.hasLastResult) {
-          await loadCalculationResult(item);
+        setOperator(item?.itemState?.operator ?? CalculationOperator.Undefined);
+        if (item?.itemState?.lastResultFile) {
+          const lastResult  = await loadCalculationResult(workloadClient, item);
+          setCalculationResult(lastResult?.result.toString() ?? "");          
+          setCalculationTime(lastResult?.calculationTime ?? undefined);
         }
+        setEditorItem(item);
+        setDirty(false);
+        // clear error message
         setItemEditorErrorMessage("");
       } catch (error) {
         clearItemData();
@@ -254,56 +204,34 @@ export function SampleItemEditor(props: PageProps) {
   }
 
   function clearItemData() {
-    setSampleItem(undefined);
+    setEditorItem(undefined);
   }
 
-  async function SaveItem(calculationPerformed?: boolean) {
-    let payload: SampleItemUpdatePayload = {
-      item1Metadata: {
-        lakehouse: selectedLakehouse,
-        operand1: operand1,
-        operand2: operand2,
-        operator: operator,
-        useOneLake: storageName === "OneLake",
-        hasLastResult: calculationPerformed ?? hasLastResult,
-      },
-    };
-
-    var successResult = await callPublicItemUpdateDefinition(
-      sampleItem.id,
-      [
-        { payloadPath: DefinitionPath.ItemMetadata, payloadData: payload }
-      ],
-      workloadClient
-    )
+  async function SaveItem() {
+    var successResult = await saveItemState(workloadClient, editorItem.id, editorItem.itemState)    
     setDirty(!successResult);
   }
 
   async function openSettings() {
-    if (sampleItem) {
-      const item = await callItemGet(sampleItem.id, workloadClient);
+    if (editorItem) {
+      const item = await callItemGet(editorItem.id, workloadClient);
       await callOpenSettings(item, workloadClient, 'About');
     }
   }
 
   function isDisabledCalculateButton(): boolean {
-    return operator == "0" || sampleItem == undefined;
+    return operator == CalculationOperator.Undefined || editorItem == undefined;
   }
 
-  const selectedStorageChanged = (ev: FormEvent<HTMLDivElement>, data: RadioGroupOnChangeData) => {
-    setStorageName(data.value);
-    setDirty(true);
-  };
-
   // HTML page contents
-  if (isLoading) {
+  if (isLoadingData) {
     return <LoadingProgressBar message="Loading..." />;
   }
   return (
     <Stack className="editor" data-testid="sample-workload-editor-inner">
       <Ribbon
         {...props}        
-        isSaveButtonEnabled={true}
+        isSaveButtonEnabled={isDirty && editorItem !== undefined}
         saveItemCallback={SaveItem}
         openSettingsCallback={openSettings}
         selectedTab={selectedTab}
@@ -326,90 +254,7 @@ export function SampleItemEditor(props: PageProps) {
               </MessageBar>
             )}
             {!itemEditorErrorMessage && (
-              <div>
-                <Divider alignContent="start">
-                  {sampleItem ? "" : "New "}Item Details
-                </Divider>
-                <div className="section" data-testid='item-editor-metadata' >
-                  {sampleItem && (
-                    <Label>WorkspaceId Id: {sampleItem?.workspaceId}</Label>
-                  )}
-                  {sampleItem && <Label>Item Id: {sampleItem?.id}</Label>}
-                  {sampleItem && (
-                    <Label>Item Display Name: {sampleItem?.displayName}</Label>
-                  )}
-                  {sampleItem && (
-                    <Label>Item Description: {sampleItem?.description}</Label>
-                  )}
-                </div>
-                <Divider alignContent="start">Calculation result storage</Divider>
-                <div className="section">
-                  <Label>Store calculation result to {storageName}</Label>
-                  <RadioGroup onChange={selectedStorageChanged} value={storageName}>
-                    <Radio value="Lakehouse" label="Lakehouse" />
-                    {storageName === "Lakehouse" && (
-                      <div style={{ marginLeft: "32px", padding: "4px" }}>
-                        <Stack>
-                          <Field
-                            label="Name"
-                            orientation="horizontal"
-                            className="field"
-                          >
-                            <Stack horizontal>
-                              <Input
-                                size="small"
-                                placeholder="Lakehouse Name"
-                                style={{ marginLeft: "10px" }}
-                                value={
-                                  selectedLakehouse ? selectedLakehouse.displayName : ""
-                                }
-                              />
-                              <Button
-                                style={{ width: "24px", height: "24px" }}
-                                icon={<Database16Regular />}
-                                appearance="primary"
-                                onClick={() => onCallDatahubLakehouse()}
-                                data-testid="item-editor-lakehouse-btn"
-                              />
-                            </Stack>
-                          </Field>
-                          <Field
-                            label="ID"
-                            orientation="horizontal"
-                            className="field"
-                          >
-                            <Input
-                              size="small"
-                              placeholder="Lakehouse ID"
-                              style={{ marginLeft: "10px" }}
-                              value={selectedLakehouse ? selectedLakehouse.id : ""}
-                              data-testid="lakehouse-id-input"
-                            />
-                          </Field>
-                        </Stack>
-                      </div>)}
-                    <Tooltip
-                      content="Item folder in OneLake"
-                      relationship="label">
-                      <Radio
-                        value="OneLake"
-                        label="Item folder in OneLake"
-                        data-testid="onelake-radiobutton-tooltip" />
-                    </Tooltip>
-                  </RadioGroup>
-                  <Field
-                    label="Last result"
-                    orientation="horizontal"
-                    className="field"
-                  >
-                    <Input
-                      size="small"
-                      placeholder="Last calculation result"
-                      data-testid="lastresult-input"
-                      value={calculationResult}
-                    />
-                  </Field>
-                </div>
+              <div>                
                 <Divider alignContent="start">Calculation definition</Divider>
                 <div className="section">
                   <Field
@@ -455,14 +300,16 @@ export function SampleItemEditor(props: PageProps) {
                       key={pageContext.itemObjectId}
                       data-testid="operator-combobox"
                       placeholder="Operator"
-                      value={operator ? (operator == "Undefined" ? "" : operator) : ""}
+                      value={CalculationOperator[operator]}
                       onOptionSelect={(_, opt) =>
                         onOperatorInputChanged(opt.optionValue)
                       }
                     >
-                      {supportedOperators.map((option) => (
-                        <Option key={option} data-testid={option} value={option}>{option}</Option>
-                      ))}
+                      { 
+                        Object.keys(CalculationOperator).filter(key => isNaN(Number(key))).map(
+                          (option) => (
+                            <Option key={option} text={option} value={option}>{option}</Option>
+                          ))}
                     </Combobox>
                   </Field>
                   <Button
@@ -473,6 +320,36 @@ export function SampleItemEditor(props: PageProps) {
                   >
                     Calculate & Save Result
                   </Button>
+                </div>
+                <Divider alignContent="start">Calculation result from storage</Divider>
+                <div className="section">
+                  <Field
+                    label="Last result"
+                    orientation="horizontal"
+                    className="field"
+                  >
+                    <Input
+                      size="small"
+                      readOnly={true}
+                      placeholder="Last calculation result"                      
+                      data-testid="lastresult-input"
+                      value={calculationResult}
+                    />
+                  </Field>
+                  <Field
+                    label="Last run"
+                    orientation="horizontal"
+                    className="field"
+                  >
+                    <Input
+                      size="small"
+                      readOnly={true}
+                      type="text"
+                      placeholder="Calculation Time"
+                      data-testid="lastCalculationTime-input"
+                      value={calculationTime ? calculationTime.toString() : ""}
+                    />
+                  </Field>
                 </div>
               </div>
             )}

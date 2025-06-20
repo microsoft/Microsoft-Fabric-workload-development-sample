@@ -51,7 +51,8 @@ export async function getOneLakeFolderNames(workloadClient: WorkloadClientAPI, w
     }
 }
 
-export async function writeToOneLakeFile(workloadClient: WorkloadClientAPI, filePath: string, content: string): Promise<void> {
+
+export async function writeToOneLakeFileAsText(workloadClient: WorkloadClientAPI, filePath: string, content: string): Promise<void> {
     const url = `${EnvironmentConstants.OneLakeDFSBaseUrl}/${filePath}?resource=file`;
     let accessToken: AccessToken
     try {
@@ -70,7 +71,7 @@ export async function writeToOneLakeFile(workloadClient: WorkloadClientAPI, file
     await appendToOneLakeFile(accessToken.token, filePath, content);
 }
 
-export async function getOneLakeFile(workloadClient: WorkloadClientAPI, filePath: string): Promise<string> {
+export async function readOneLakeFileAsText(workloadClient: WorkloadClientAPI, filePath: string): Promise<string> {
     const url = `${EnvironmentConstants.OneLakeDFSBaseUrl}/${filePath}`;
     try {
         const accessToken: AccessToken = await callAuthAcquireFrontendAccessToken(workloadClient, oneLakeScope);

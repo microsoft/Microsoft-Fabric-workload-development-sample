@@ -2,11 +2,10 @@ import { Button, Divider, Field, Input } from '@fluentui/react-components';
 import React, { useState } from "react";
  
 import { PageProps } from 'src/App';
-//import { ca, callUpdateItemDefinition } from "../../controller/SampleWorkloadController";
  
 import { GetItemDefinitionResult, UpdateItemDefinitionResult } from '@ms-fabric/workload-client';
 import "./../../styles.scss";
-import { callPublicItemGetDefinition, callPublicItemUpdateDefinition } from '../../ItemEditor/ItemEditorController';
+import { callPublicItemGetDefinition, callPublicItemUpdateDefinitionPayload } from '../../ItemEditor/ItemEditorController';
  
  
 export function ApiArtifactCrudPublic({ workloadClient }: PageProps) {
@@ -29,7 +28,7 @@ export function ApiArtifactCrudPublic({ workloadClient }: PageProps) {
             <Field orientation="horizontal" className="description"> {getItemDefinition ? JSON.stringify(getItemDefinition, null, "\t") : "Get Item Definition Error"} </Field>
             <div className="crudButton">
                 <Button className="crudButton" appearance="primary" onClick={
-                    () => callPublicItemGetDefinition(itemId, workloadClient, format)
+                    () => callPublicItemGetDefinition(workloadClient, itemId, format)
                         .then(result => {
                             setGetItemDefinition(result);
                         })
@@ -51,7 +50,7 @@ export function ApiArtifactCrudPublic({ workloadClient }: PageProps) {
             </Field>
             <div className="crudButton">
                 <Button className="crudButton" appearance="primary" onClick={
-                    () => callPublicItemUpdateDefinition(itemId, JSON.parse(payload), workloadClient, updateMetadata)
+                    () => callPublicItemUpdateDefinitionPayload(workloadClient, itemId, JSON.parse(payload), updateMetadata)
                         .then((result) => {
                             setUpdateItemDefinition(result);
                         })

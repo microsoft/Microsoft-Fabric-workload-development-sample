@@ -16,8 +16,8 @@ import {
     callNotificationOpen,
     callNotificationHide,
 } from "../../samples/controller/CalculatorSampleItemEditorController";
-import { TabContentProps } from '../../samples/models/CalculatorSampleWorkloadModel';
 import "./../../styles.scss";
+import { TabContentProps } from "./ClientSDKPlaygroundModel";
 
 export function ApiNotification(props: TabContentProps) {
     const workloadClient = props.workloadClient;

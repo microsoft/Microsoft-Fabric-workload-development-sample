@@ -16,9 +16,9 @@ import {
     updateMessageBoxLink,
     updateButtonCount
 } from "../../ClientSDKPlaygroundStore/actionDialogSlice";
-import { TabContentProps } from '../../../samples/models/CalculatorSampleWorkloadModel';
 import { callDialogOpenMsgBox } from "../../../samples/controller/CalculatorSampleItemEditorController";
 import "../../../styles.scss";
+import { TabContentProps } from '../ClientSDKPlaygroundModel';
 
 
 export function MessageBoxExample(props: TabContentProps) {

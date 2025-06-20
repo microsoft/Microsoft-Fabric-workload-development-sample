@@ -2,10 +2,16 @@
     "Language_Changed_Title": "Language Changed",
     "Language_Changed_Message": "The language is currently:",
     "Default_Language_Title": "Language is default",
-    "Item_Details": "Item Details",
     "Item_Type": "Item Type",
     "Item_Name": "Item Name",
     "Item_ID": "Item Id",
+    "Item_Description": "Description",
+    "Item_LastModifiedBy": "Last Modified By",
+    "Item_LastModifiedDate": "Last Modified Date",
+    "Item_CreatedBy": "Created By",
+    "Item_CreatedDate": "Created Date",
+    "Item_State_Payload": "Item State",
+    "Item_Editor_Titel": "Hello World Item Editor",
     "Workspace_Name": "Workspace Name",
     "Workspace_ID": "Workspace Id"
 }

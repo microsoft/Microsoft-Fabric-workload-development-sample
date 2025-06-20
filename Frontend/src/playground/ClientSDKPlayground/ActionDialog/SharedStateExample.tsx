@@ -5,9 +5,9 @@ import { PanelRightExpand20Regular } from '@fluentui/react-icons';
 import { RootState } from "../../ClientSDKPlaygroundStore/Store";
 import { setLocalSharedStateMessage } from "../../ClientSDKPlaygroundStore/actionDialogSlice";
 import { callDialogOpen } from "../../../samples/controller/CalculatorSampleItemEditorController";
-import { TabContentProps } from '../../../samples/models/CalculatorSampleWorkloadModel';
 import { SharedState } from "src/App";
 import "../../../styles.scss";
+import { TabContentProps } from '../ClientSDKPlaygroundModel';
 
 
 export function SharedStateExample(props: TabContentProps) {

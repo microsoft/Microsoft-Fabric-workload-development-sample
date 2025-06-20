@@ -1,11 +1,11 @@
 import React from 'react';
 import { Divider } from '@fluentui/react-components';
-import { TabContentProps } from '../../../samples/models/CalculatorSampleWorkloadModel';
 import { ActionExample } from './ActionExample';
 import { MessageBoxExample } from './MessageBoxExample';
 import { SharedStateExample } from './SharedStateExample';
 import { ErrorMessageExample } from './ErrorMessageExample';
 import "../../../styles.scss";
+import { TabContentProps } from '../ClientSDKPlaygroundModel';
 
 export function ApiActionDialog(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;

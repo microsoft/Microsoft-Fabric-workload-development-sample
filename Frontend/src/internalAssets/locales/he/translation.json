@@ -2,10 +2,16 @@
     "Language_Changed_Title": "שינוי שפה",
     "Language_Changed_Message": "השפה שונתה ל:",
     "Default_Language_Title": "השפה היא ברירת מחדל",
-    "Item_Details": "פרטי פריט",
     "Item_Type": "סוג פריט",
     "Item_Name": "שם פריט",
     "Item_ID": "מזהה פריט",
+    "Item_Description": "תיאור",
+    "Item_LastModifiedBy": "נערך לאחרונה על ידי",
+    "Item_LastModifiedDate": "תאריך עריכה אחרונה",
+    "Item_CreatedBy": "נוצר על ידי",
+    "Item_CreatedDate": "תאריך יצירה",
+    "Item_State_Payload": "מצב פריט",
+    "Item_Editor_Titel": "עורך פריטים Hello World",
     "Workspace_Name": "שם חלל עבודה",
     "Workspace_ID": "מזהה חלל עבודה"
 }

@@ -41,14 +41,78 @@ export async function callAuthAcquireFrontendAccessToken(workloadClient: Workloa
     return workloadClient.auth.acquireFrontendAccessToken({ scopes: scopes?.length ? scopes.split(' ') : [] });
 }
 
-export async function callPublicItemUpdateDefinition(
+/** 
+ * Saves the item state by updating the item definition with the provided data.
+ * 
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.        
+ * @param {string} itemId - The ID of the item to update.
+ * @param {T} data - The data to save as the item state.
+ * @returns {Promise<UpdateItemDefinitionResult>} - The result of the item definition update.
+ */
+export async function saveItemState<T>(
+    workloadClient: WorkloadClientAPI, 
+    itemId: string, 
+    data: T): Promise<UpdateItemDefinitionResult> {
+
+        return callPublicItemUpdateDefinitionPayload(workloadClient, itemId, [
+        { 
+            payloadPath: ItemPayloadPath.ItemMetadata, 
+            payloadData: data
+        }], false);
+}
+
+/** 
+ * Retrieves the item state from the workload client by fetching the item and its definition.
+ * 
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.    
+ * @param {string} itemObjectId - The ObjectId of the item to retrieve.
+ * @returns {Promise<T>} - The item state if available, otherwise undefined.
+ */ 
+export async function getItemState<T>(
+    workloadClient: WorkloadClientAPI,
+    itemObjectId: string): Promise<T> {
+        const workloadITem = await getWorkloadItem<T>(workloadClient, itemObjectId);
+        if (workloadITem && workloadITem.itemState) {
+            return workloadITem.itemState;
+        }
+        return undefined  
+}
+
+/** 
+ * Retrieves a WorkloadItem by its ObjectId from the WorkloadClientAPI.
+ * 
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.    
+ * @param {string} itemObjectId - The ObjectId of the item to retrieve.
+ * @returns {Promise<WorkloadItem<T>>} - A promise that resolves to the WorkloadItem.
+ */
+export async function getWorkloadItem<T>(
+    workloadClient: WorkloadClientAPI,
+    itemObjectId: string): Promise<WorkloadItem<T>> {
+        const getItemResult = await callItemGet(itemObjectId, workloadClient);
+        const getItemDefinitionResult = await callPublicItemGetDefinition(workloadClient, itemObjectId);
+        const item = convertGetItemResultToWorkloadItem<T>(getItemResult, getItemDefinitionResult);
+        return item;
+    }
+
+
+/** 
+ * Calls the 'itemCrudPublic.updateItemDefinition' function from the WorkloadClientAPI
+ * to update the item definition with the provided payload.
+ * 
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {string} itemObjectId - The ObjectId of the item to update.
+ * @param {Array<{ payloadPath: string, payloadData: any }>} parts - An array of parts to update in the item definition.        
+ * @param {boolean} updateMetadata - Indicates whether to update metadata.
+ * @param {boolean} isRetry - Indicates that the call is a retry.
+ * @returns {Promise<UpdateItemDefinitionResult>} - The result of the item definition update.
+ */
+export async function callPublicItemUpdateDefinitionPayload(
+    workloadClient: WorkloadClientAPI,
     itemObjectId: string,
     parts: { payloadPath: string, payloadData: any }[],
-    workloadClient: WorkloadClientAPI,
     updateMetadata: boolean = false,
     isRetry?: boolean): Promise<UpdateItemDefinitionResult> {
 
- 
     const itemDefinitions: UpdateItemDefinitionPayload = buildPublicAPIPayloadWithParts(parts);
     try {
         return await workloadClient.itemCrudPublic.updateItemDefinition({
@@ -62,9 +126,19 @@ export async function callPublicItemUpdateDefinition(
     }
 }
 
+/**
+ * Calls the 'itemCrudPublic.getItemDefinition' function from the WorkloadClientAPI 
+ * to retrieve the item definition for a given item.
+ * 
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {string} itemObjectId - The ObjectId of the item to retrieve the definition for.
+ * @param {string} format - The format of the item definition to retrieve (optional).
+ * @param {boolean} isRetry - Indicates that the call is a retry.
+ * @returns {Promise<GetItemDefinitionResult>} - The item definition result if successful, otherwise undefined.
+ */ 
 export async function callPublicItemGetDefinition(
-    itemObjectId: string,
     workloadClient: WorkloadClientAPI,
+    itemObjectId: string,
     format?: string,
     isRetry?: boolean): Promise<GetItemDefinitionResult> {
     try {
@@ -80,6 +154,13 @@ export async function callPublicItemGetDefinition(
     }
 }
 
+/** 
+ * Converts a GetItemResult and GetItemDefinitionResult into a WorkloadItem.
+ * 
+ * @param {GetItemResult} item - The item result to convert.
+ * @param {GetItemDefinitionResult} itemDefinitionResult - The item definition result to convert.
+ * @returns {WorkloadItem<T>} - The converted WorkloadItem.
+ */
 export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult, itemDefinitionResult: GetItemDefinitionResult): WorkloadItem<T> {
     let payload: T;
     let itemPlatformMetadata: GenericItem | undefined;
@@ -102,7 +183,7 @@ export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult, itemD
         type: itemPlatformMetadata?.type ?? item.itemType,
         displayName: itemPlatformMetadata?.displayName ?? item.displayName,
         description: itemPlatformMetadata?.description ?? item.description,
-        extendedMetdata: payload,
+        itemState: payload,
         createdBy: item.createdByUser.name,
         createdDate: item.createdDate,
         lastModifiedBy: item.modifiedByUser.name,
@@ -110,6 +191,13 @@ export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult, itemD
     };
 }
 
+
+/*
+* Builds a payload for the public API to update an item definition with multiple parts.
+* Each part is represented by a path and its corresponding payload data.    
+* @param {Array<{ payloadPath: string, payloadData: any }>} parts - An array of parts to include in the payload.
+* @returns {UpdateItemDefinitionPayload} - The constructed payload for the item definition update.
+*/
 export function buildPublicAPIPayloadWithParts(
     parts: { payloadPath: string, payloadData: any }[]
 ): UpdateItemDefinitionPayload {
@@ -126,6 +214,11 @@ export function buildPublicAPIPayloadWithParts(
     };
 }
 
+/**
+ * 
+ * @param responseBody - The response body from the getItemDefinition API call.
+ * @returns 
+ */
 export function convertGetDefinitionResponseToItemDefinition(responseBody: string): GetItemDefinitionResult {
     let itemDefinition: GetItemDefinitionResult;
     try {

@@ -12,12 +12,12 @@ import {
     updateApiErrorRequestId,
     updateApiErrorStackTrace,
 } from '../../ClientSDKPlaygroundStore/actionDialogSlice';
-import { TabContentProps } from '../../../samples/models/CalculatorSampleWorkloadModel';
 import {
     callErrorHandlingOpenDialog,
     callErrorHandlingRequestFailure,
 } from "../../../samples/controller/CalculatorSampleItemEditorController";
 import "../../../styles.scss";
+import { TabContentProps } from '../ClientSDKPlaygroundModel';
 
 
 export function ErrorMessageExample(props: TabContentProps) {
