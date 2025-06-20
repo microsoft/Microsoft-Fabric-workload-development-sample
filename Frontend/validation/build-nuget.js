@@ -5,8 +5,8 @@ const path = require("path");
 
 const execAsync = util.promisify(exec);
 
-const outputDir = path.resolve(__dirname, ""); // Ensure the path is resolved correctly
-const packageName = "ManifestPackageRelease";
+const outputDir = path.resolve(__dirname, "../../config/Manifest"); // Ensure the path is resolved correctly
+const packageName = "ManifestPackage";
 
 async function buildNugetPackage() {
   try
@@ -14,7 +14,7 @@ async function buildNugetPackage() {
     // Ensure output directory exists
     await fs.mkdir(outputDir, { recursive: true });
 
-    const nuspecPath = path.join(outputDir, `${packageName}.nuspec`);
+    const nuspecPath = path.join(outputDir, `../../config/Manifest/${packageName}.nuspec`);
 
     // Use local NuGet CLI
     const nugetPath = path.join(path.resolve(__dirname, "../node_modules/"), ".bin", "nuget");

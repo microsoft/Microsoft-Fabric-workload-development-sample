@@ -11,8 +11,8 @@
   </metadata>
   <files>
     <!-- Include the XML and FE files -->
-    <file src="<BEPath>*.xml" target="BE" />
-    <file src="<FEPath>*.json" target="FE" />
-    <file src="<FEPath>assets\**" target="FE\assets" />
+    <file src="<ManifestFolder>*.xml" target="BE" />
+    <file src="<ManifestFolder>*.json" target="FE" />
+    <file src="<ManifestFolder>assets\**" target="FE\assets" />
   </files>
 </package>

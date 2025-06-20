@@ -1,5 +1,5 @@
 {
-    "name": "SampleItem",
+    "name": "{{ITEM_NAME}}",
     "displayName": "Item_DisplayName",
     "displayNamePlural": "Item_DisplayName_Plural",
     "editor": {

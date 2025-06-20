@@ -47,7 +47,8 @@
         "customActions": [
         ]},
         "recommendedItemTypes": [
-          "SampleItem"
+          "{{ITEM_NAME}}",
+          "CalculatorSample"
         ]
     },
     "createExperience": {
@@ -68,7 +69,7 @@
             "workspace-plus-new",
             "workspace-plus-new-teams"
           ],
-          "itemType": "SampleItem",
+          "itemType": "{{ITEM_NAME}}",
           "createItemDialogConfig": {
             "onCreationFailure": { "action": "item.onCreationFailure" },
             "onCreationSuccess": { "action": "item.onCreationSuccess" }

@@ -100,14 +100,14 @@ module.exports = {
                 });
 
                 devServer.app.get('/manifests_new', async function (req, res) {
-                    const filePath = path.resolve(__dirname, '../validation/ManifestPackageRelease.1.0.0.nupkg');
+                    const filePath = path.resolve(__dirname, '../../config/Manifest/ManifestPackage.1.0.0.nupkg');
                     try {
                         // Check if the file exists
                         await fs.access(filePath);
 
                         res.status(200).set({
                             'Content-Type': 'application/octet-stream',
-                            'Content-Disposition': `attachment; filename="ManifestPackageRelease.1.0.0.nupkg"`,
+                            'Content-Disposition': `attachment; filename="ManifestPackage.1.0.0.nupkg"`,
                             'Access-Control-Allow-Origin': '*',
                             'Access-Control-Allow-Methods': 'GET',
                             'Access-Control-Allow-Headers': 'Content-Type, Authorization'

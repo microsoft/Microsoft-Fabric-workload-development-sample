@@ -16,9 +16,10 @@ if ($HostingType -eq "FERemote" -or $HostingType -eq "Remote") {
 
 # Define source and destination directories
 $srcTemplateDir = Join-Path $PSScriptRoot "..\..\config\templates"
-$srcManifestDir = Join-Path $srcTemplateDir "Manifest\$HostingType"
+$srcManifestDir = Join-Path $srcTemplateDir "Manifest\"
 Write-Output "Using template in $srcManifestDir"
 
+$destDir = Join-Path $PSScriptRoot "..\..\config"
 $destManifestDir = Join-Path $PSScriptRoot "..\..\config\Manifest"
 if (!(Test-Path $destManifestDir)) { New-Item -ItemType Directory -Path $destManifestDir | Out-Null }
 
@@ -39,7 +40,8 @@ $replacements = @{
 
 # Get all files in the source directory
 Write-Output "Writing Manifest files ..."
-Get-ChildItem -Path $srcManifestDir -File | ForEach-Object {
+Copy-Item -Path $srcManifestDir -Destination $destDir -Recurse -Force
+Get-ChildItem -Recurse -Path $destManifestDir -File | ForEach-Object {
     $filePath = $_.FullName
     $content = Get-Content $filePath -Raw
 
@@ -47,8 +49,7 @@ Get-ChildItem -Path $srcManifestDir -File | ForEach-Object {
         $content = $content -replace "\{\{$key\}\}", $replacements[$key]
     }
 
-    $destPath = Join-Path $destManifestDir $_.Name
-    Set-Content -Path $destPath -Value $content -Force
+    Set-Content -Path $filePath -Value $content -Force
     Write-Output "$destPath"
 }
 
@@ -65,8 +66,7 @@ $destNuspecFile = Join-Path $destManifestDir "ManifestPackage.nuspec"
 $nuspecContent = Get-Content $srcNuspecFile -Raw
 # Use the correct directory separator for the current OS
 $sep = [IO.Path]::DirectorySeparatorChar
-$nuspecContent = $nuspecContent -replace '<BEPath>', ($destManifestDir + $sep)
-$nuspecContent = $nuspecContent -replace '<FEPath>', ($destPackageDir + $sep)
+$nuspecContent = $nuspecContent -replace '<ManifestFolder>', ($destManifestDir + $sep)
 
 # Write to the temporary nuspec file
 Set-Content $destNuspecFile -Value $nuspecContent -Force
