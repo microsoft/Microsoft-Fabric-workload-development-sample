@@ -120,7 +120,7 @@ export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
         </div>
         {selectedItem == null && isExplorerVisible && (
           <Stack className="main-body" verticalAlign="center" horizontalAlign="center" tokens={{ childrenGap: 5 }}>
-            <Image src="../../../workloadAssets/Page.svg" />
+            <Image src="/assets/Page.svg" />
             <span className="add">Add an item</span>
             <Tooltip content={"Open Datahub Explorer"} relationship="label">
               <Button className="add-button" size="small" onClick={() => onDatahubClicked()} appearance="primary">

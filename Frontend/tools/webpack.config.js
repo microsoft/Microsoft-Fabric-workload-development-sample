@@ -32,9 +32,9 @@ module.exports = {
         new CopyWebpackPlugin({
             patterns: [
                 {
-                    context: './src/workloadAssets/',
+                    context: './src/assets/',
                     from: '**/*',
-                    to: './workloadAssets',
+                    to: './assets',
                 },
                 {
                     from: './tools/web.config',

@@ -12,7 +12,7 @@ i18n
         debug: false,
         useSuspense: false,
         backend: {
-            loadPath: "/workloadAssets/locales/{{lng}}/translation.json"
+            loadPath: "/assets/locales/{{lng}}/translation.json"
         }
 
     });
