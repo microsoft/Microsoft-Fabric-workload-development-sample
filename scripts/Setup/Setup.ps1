@@ -84,7 +84,7 @@ if (Test-Path $setupWorkloadScript) {
         -WorkloadName $WorkloadName `
         -ItemName $ItemName `
         -AADFrontendAppId $AADFrontendAppId `
-        -AADBackendAppId $AADBackendAppId
+        -AADBackendAppId $AADBackendAppId `
         -Force $Force
 } else {
     Write-Host "SetupWorkload.ps1 not found at $setupWorkloadScript" -ForegroundColor Red

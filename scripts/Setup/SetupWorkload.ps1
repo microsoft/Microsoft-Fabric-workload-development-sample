@@ -52,15 +52,17 @@ if (((Test-Path $destManifestDir) -and (Get-ChildItem -Path $destManifestDir -Re
 }
 if($writeManifestFiles) {
     Copy-Item -Path $srcManifestDir -Destination $destDir -Recurse -Force
-    Get-ChildItem -Recurse -Path $destManifestDir -File | ForEach-Object {
-        $filePath = $_.FullName
-        $content = Get-Content $filePath -Raw
-        foreach ($key in $replacements.Keys) {
-            $content = $content -replace "\{\{$key\}\}", $replacements[$key]
+    Get-ChildItem -Recurse -Path $destManifestDir -File | 
+        Where-Object { $_.Extension -in ".json", ".xml", ".nuspec" } | 
+        ForEach-Object {
+            $filePath = $_.FullName
+            $content = Get-Content $filePath -Raw
+            foreach ($key in $replacements.Keys) {
+                $content = $content -replace "\{\{$key\}\}", $replacements[$key]
+            }
+            Set-Content -Path $filePath -Value $content -Force
+            Write-Output "$filePath"
         }
-        Set-Content -Path $filePath -Value $content -Force
-        Write-Output "$destPath"
-    }
 }
 
 # Use a temporary nuspec file
@@ -100,9 +102,9 @@ Get-ChildItem -Path $srcFrontendDir -Force -File | ForEach-Object {
     $destPath = Join-Path $destFrontendDir $_.Name
 
     $writeFile = $true
-    if (Test-Path $destPath -or !$Force) {
-        $writeFile = Read-Host "File $_.Name aleready exists do you want to override it with the templates? (y/n)" 
-        $writeFile = $writeManifestFiles -eq 'y'
+    if ((Test-Path $destPath) -and !$Force) {         
+        $writeFile = Read-Host "File  $_ exists do you want to override it with the templates? (y/n)" 
+        $writeFile = $writeManifestFiles -eq 'y'        
     }
 
     if($writeFile) {
