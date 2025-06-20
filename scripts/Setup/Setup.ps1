@@ -1,16 +1,30 @@
-param (
+param ( 
+    #Only the FERemote hosting type is supported for now   
     [string]$HostingType = "FERemote",
+    # The name of the workload, used for the Entra App and the workload in the Fabric portal
     [String]$WorkloadName = "Org.MyWorkloadSample",
+    # The name of the item, used for the item in the Fabric portal
+    # Items will be created with the {WorkloadName}.{ItemName} format in Fabric
     [String]$ItemName = "SampleItem",
+    # The Workspace Id to use for development
+    # If not provided, the user will be prompted to enter it.
     [String]$WorkspaceId = "00000000-0000-0000-0000-000000000000",
+    # The Entra Application ID for the frontend
+    # If not provided, the user will be prompted to enter it or create a new one.
     [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
-    [String]$AADBackendAppId
+    # Not used in the current setup, but can be used for future backend app configurations
+    # If not provided, it will default to an empty string.
+    [String]$AADBackendAppId,
+    # Force flag to overwrite existing configurations and don't prompt the user
+    [boolean]$Force = $false
 )
 
 
-Write-Output "Setting up the environment..."
-
+###############################################################################
 # Run SetupDevGateway.ps1
+# This script sets up the development gateway environment for the workload.
+###############################################################################
+Write-Output "Setting up the environment..."
 $setupDevGatewayScript = Join-Path $PSScriptRoot "..\Setup\SetupDevGateway.ps1"
 if (Test-Path $setupDevGatewayScript) {
     if ([string]::IsNullOrWhiteSpace($WorkspaceId) -or $WorkspaceId -eq "00000000-0000-0000-0000-000000000000") {
@@ -21,12 +35,16 @@ if (Test-Path $setupDevGatewayScript) {
         }
     }
     Write-Host "Running SetupDevGateway.ps1..."
-    & $setupDevGatewayScript -WorkspaceGuid $WorkspaceId
+    & $setupDevGatewayScript -WorkspaceGuid $WorkspaceId -Force $Force
 } else {
     Write-Error "SetupDevGateway.ps1 not found at $setupDevGatewayScript"
     exit 1
 }
 
+###############################################################################
+# Configure AAD Frontend App
+# This section checks if the AADFrontendAppId is set and prompts the user if not.
+###############################################################################
 if ([string]::IsNullOrWhiteSpace($AADFrontendAppId) -or $AADFrontendAppId -eq "00000000-0000-0000-0000-000000000000") {
     Write-Warning "AADFrontendAppId is not set or is using the default placeholder value."
     $confirmation = Read-Host "Do you have an Entra Application ID you can use? (y/n)"
@@ -54,7 +72,10 @@ if ([string]::IsNullOrWhiteSpace($AADFrontendAppId) -or $AADFrontendAppId -eq "0
     exit 1
 }
 
+###############################################################################
 # Run SetupWorkload.ps1
+# This script sets up the workload configuration and dependencies.
+###############################################################################
 $setupWorkloadScript = Join-Path $PSScriptRoot "..\Setup\SetupWorkload.ps1"
 if (Test-Path $setupWorkloadScript) {
     Write-Host ""
@@ -64,11 +85,15 @@ if (Test-Path $setupWorkloadScript) {
         -ItemName $ItemName `
         -AADFrontendAppId $AADFrontendAppId `
         -AADBackendAppId $AADBackendAppId
+        -Force $Force
 } else {
     Write-Host "SetupWorkload.ps1 not found at $setupWorkloadScript" -ForegroundColor Red
     exit 1
 }
 
+###############################################################################
+# Download Frontend dependencies to have nuget executables available
+###############################################################################
 Write-Host ""
 Write-Output "Downloading Frontend dependencies..."
 $frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
@@ -86,7 +111,11 @@ if (-not (Test-Path $nugetDir)) {
 } else {
     Write-Host "nuget executable already exists."
 }
-# Ensure we are back in the scripts directory
+
+
+###############################################################################
+# Build the manifest package
+###############################################################################
 Write-Host ""
 Write-Output "Building the manifest..."
 
@@ -102,6 +131,9 @@ if (Test-Path $buildManifestScript) {
     Write-Host "${redColor}build-package.ps1 not found at $buildManifestScript"
 }
 
+###############################################################################
+# Final output and instructions on how to proceed
+###############################################################################
 Write-Host ""
 Write-Host "Setup finished successfully ..." -ForegroundColor Green
 Write-Host ""

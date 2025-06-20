@@ -4,7 +4,8 @@ param (
     [String]$WorkloadName = "Org.MyWorkloadSample",
     [String]$ItemName = "SampleItem",
     [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
-    [String]$AADBackendAppId
+    [String]$AADBackendAppId,
+    [boolean]$Force = $false
 )
 
 if ($HostingType -eq "FERemote" -or $HostingType -eq "Remote") {
@@ -14,7 +15,9 @@ if ($HostingType -eq "FERemote" -or $HostingType -eq "Remote") {
     exit 1
 }
 
-# Define source and destination directories
+###############################################################################
+# Setup Workload
+###############################################################################
 $srcTemplateDir = Join-Path $PSScriptRoot "..\..\config\templates"
 $srcManifestDir = Join-Path $srcTemplateDir "Manifest\"
 Write-Output "Using template in $srcManifestDir"
@@ -23,13 +26,15 @@ $destDir = Join-Path $PSScriptRoot "..\..\config"
 $destManifestDir = Join-Path $PSScriptRoot "..\..\config\Manifest"
 if (!(Test-Path $destManifestDir)) { New-Item -ItemType Directory -Path $destManifestDir | Out-Null }
 
-$destPackageDir = Join-Path $PSScriptRoot "..\..\Frontend\Package"
-
 Write-Output "Workload Name: $WorkloadName"
 Write-Output "Item Name: $ItemName"
 Write-Output "AAD Frontend App ID: $AADFrontendAppId"
 Write-Output "AAD Backend App ID: $AADBackendAppId"
 
+
+###############################################################################
+# Writing the Manifest files
+###############################################################################
 # Define key-value dictionary for replacements
 $replacements = @{
     "WORKLOAD_NAME" = $WorkloadName
@@ -38,21 +43,25 @@ $replacements = @{
     "BACKEND_APP_ID" = $AADBackendAppId
 }
 
-# Get all files in the source directory
+# Copy the template files to the destination directory
 Write-Output "Writing Manifest files ..."
-Copy-Item -Path $srcManifestDir -Destination $destDir -Recurse -Force
-Get-ChildItem -Recurse -Path $destManifestDir -File | ForEach-Object {
-    $filePath = $_.FullName
-    $content = Get-Content $filePath -Raw
-
-    foreach ($key in $replacements.Keys) {
-        $content = $content -replace "\{\{$key\}\}", $replacements[$key]
-    }
-
-    Set-Content -Path $filePath -Value $content -Force
-    Write-Output "$destPath"
+$writeManifestFiles = $true
+if (((Test-Path $destManifestDir) -and (Get-ChildItem -Path $destManifestDir -Recurse | Measure-Object).Count -ne 0) -and !$Force) {
+    $writeManifestFiles = Read-Host "Manifest directory not empty, do you want to override the files with the templates? (y/n)" 
+    $writeManifestFiles = $writeManifestFiles -eq 'y'
 }
-
+if($writeManifestFiles) {
+    Copy-Item -Path $srcManifestDir -Destination $destDir -Recurse -Force
+    Get-ChildItem -Recurse -Path $destManifestDir -File | ForEach-Object {
+        $filePath = $_.FullName
+        $content = Get-Content $filePath -Raw
+        foreach ($key in $replacements.Keys) {
+            $content = $content -replace "\{\{$key\}\}", $replacements[$key]
+        }
+        Set-Content -Path $filePath -Value $content -Force
+        Write-Output "$destPath"
+    }
+}
 
 # Use a temporary nuspec file
 Write-Output "Create nuspec file ..."
@@ -72,26 +81,40 @@ $nuspecContent = $nuspecContent -replace '<ManifestFolder>', ($destManifestDir +
 Set-Content $destNuspecFile -Value $nuspecContent -Force
 Write-Output "$destNuspecFile"
 
+###############################################################################
+# Writing the Frontend config files
+###############################################################################
+
+Write-Output "Writing Frontend files ..."
 $srcFrontendDir = Join-Path $srcTemplateDir "Frontend"
 $destFrontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
 
-Write-Host "THE DESTINATION FRONTEND DIR $destFrontendDir"
-Write-Host "THE src FRONTEND DIR $srcFrontendDir"
+Write-Host "The Frontend destination dir $destFrontendDir"
+Write-Host "The Frontend src dir $srcFrontendDir"
 
 # Get all files in the source directory
-Write-Output "Writing Frontend files ..."
 Get-ChildItem -Path $srcFrontendDir -Force
 Get-ChildItem -Path $srcFrontendDir -Force -File | ForEach-Object {
     $filePath = $_.FullName
     $content = Get-Content $filePath -Raw
-    Write-Host "Processing file: $filePath"
-    foreach ($key in $replacements.Keys) {
-        $content = $content -replace "\{\{$key\}\}", $replacements[$key]
+    $destPath = Join-Path $destFrontendDir $_.Name
+
+    $writeFile = $true
+    if (Test-Path $destPath -or !$Force) {
+        $writeFile = Read-Host "File $_.Name aleready exists do you want to override it with the templates? (y/n)" 
+        $writeFile = $writeManifestFiles -eq 'y'
     }
 
-    $destPath = Join-Path $destFrontendDir $_.Name
-    Set-Content -Path $destPath -Value $content -Force
-    Write-Output "$destPath"
+    if($writeFile) {
+        Write-Host "Processing file: $filePath"
+        foreach ($key in $replacements.Keys) {
+            $content = $content -replace "\{\{$key\}\}", $replacements[$key]
+        }
+        Set-Content -Path $destPath -Value $content -Force
+        Write-Output "$destPath"
+    } else {
+        Write-Host "Skipping file: $filePath"
+    }
 }
 
 Write-Host "Setup Workload finished successfully ..."  -ForegroundColor Green
