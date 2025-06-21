@@ -16,9 +16,10 @@ param (
     # If not provided, it will default to an empty string.
     [String]$AADBackendAppId,
     # Force flag to overwrite existing configurations and don't prompt the user
-    [boolean]$Force = $false
+    [boolean]$Force = $false,
+    # The version of the workload, used for the manifest package
+    [String]$WorkloadVersion = "1.0.0"
 )
-
 
 ###############################################################################
 # Run SetupDevGateway.ps1
@@ -35,7 +36,7 @@ if (Test-Path $setupDevGatewayScript) {
         }
     }
     Write-Host "Running SetupDevGateway.ps1..."
-    & $setupDevGatewayScript -WorkspaceGuid $WorkspaceId -Force $Force
+    & $setupDevGatewayScript -WorkspaceGuid $WorkspaceId -WorkloadVersion $WorkloadVersion -Force $Force 
 } else {
     Write-Error "SetupDevGateway.ps1 not found at $setupDevGatewayScript"
     exit 1
@@ -85,6 +86,7 @@ if (Test-Path $setupWorkloadScript) {
         -ItemName $ItemName `
         -AADFrontendAppId $AADFrontendAppId `
         -AADBackendAppId $AADBackendAppId `
+        -WorkloadVersion $WorkloadVersion `
         -Force $Force
 } else {
     Write-Host "SetupWorkload.ps1 not found at $setupWorkloadScript" -ForegroundColor Red

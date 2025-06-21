@@ -6,7 +6,7 @@
     <version>1.0.0</version>
     <authors>author</authors>
     <owners>owner</owners>
-    <description>A NuGet package that holds the workload and frontend manifests.</description>
+    <description>A NuGet package that holds the manifests for the {{WORKLOAD_NAME}} workload.</description>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
   </metadata>
   <files>

@@ -1,10 +1,22 @@
 param (
+    # Only the FERemote hosting type is supported for now
     [ValidateSet("Remote", "FERemote")]
     [string]$HostingType,
+    # The name of the workload, used for the Entra App and the workload in the Fabric portal
     [String]$WorkloadName = "Org.MyWorkloadSample",
+    # The name of the item, used for the item in the Fabric portal
+    # Items will be created with the {WorkloadName}.{ItemName} format in Fabric
     [String]$ItemName = "SampleItem",
+    # The Entra Application ID for the frontend
+    # If not provided, the user will be prompted to enter it or create a new one.
     [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
+    # The Entra Application ID for the backend
+    # Not used in the current setup, but can be used for future backend app configurations
     [String]$AADBackendAppId,
+    # The version of the workload, used for the manifest package
+    [String]$WorkloadVersion = "1.0.0",
+    # Force flag to overwrite existing configurations and don't prompt the user
+    # If not provided, it will default to false.
     [boolean]$Force = $false
 )
 
@@ -30,6 +42,7 @@ Write-Output "Workload Name: $WorkloadName"
 Write-Output "Item Name: $ItemName"
 Write-Output "AAD Frontend App ID: $AADFrontendAppId"
 Write-Output "AAD Backend App ID: $AADBackendAppId"
+Write-Output "Workload Version: $WorkloadVersion"
 
 
 ###############################################################################
@@ -41,6 +54,7 @@ $replacements = @{
     "ITEM_NAME" = $ItemName
     "FRONTEND_APP_ID" = $AADFrontendAppId
     "BACKEND_APP_ID" = $AADBackendAppId
+    "WORKLOAD_VERSION" = $WorkloadVersion
 }
 
 # Copy the template files to the destination directory

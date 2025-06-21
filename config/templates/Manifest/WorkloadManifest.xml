@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <WorkloadManifestConfiguration SchemaVersion="2.0.0">
   <Workload WorkloadName="{{WORKLOAD_NAME}}" HostingType="FERemote">
-    <Version>2.0.1001</Version>
+    <Version>{{WORKLOAD_VERSION}}</Version>
     <RemoteServiceConfiguration>
       <CloudServiceConfiguration>
         <Cloud>Public</Cloud>
