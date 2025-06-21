@@ -5,7 +5,7 @@ import { PageProps } from 'src/App';
  
 import { GetItemDefinitionResult, UpdateItemDefinitionResult } from '@ms-fabric/workload-client';
 import "./../../styles.scss";
-import { getItemDefinition, updateItemDefinitionPayload } from '../../workload/controller/ItemCRUDController';
+import { callGetItemDefinition, callUpdateItemDefinition } from '../../workload/controller/ItemCRUDController';
  
  
 export function ApiArtifactCrudPublic({ workloadClient }: PageProps) {
@@ -28,7 +28,7 @@ export function ApiArtifactCrudPublic({ workloadClient }: PageProps) {
             <Field orientation="horizontal" className="description"> {itemDefinition ? JSON.stringify(itemDefinition, null, "\t") : "Get Item Definition Error"} </Field>
             <div className="crudButton">
                 <Button className="crudButton" appearance="primary" onClick={
-                    () => getItemDefinition(workloadClient, itemId, format)
+                    () => callGetItemDefinition(workloadClient, itemId, format)
                         .then(result => {
                             setItemDefinition(result);
                         })
@@ -50,7 +50,7 @@ export function ApiArtifactCrudPublic({ workloadClient }: PageProps) {
             </Field>
             <div className="crudButton">
                 <Button className="crudButton" appearance="primary" onClick={
-                    () => updateItemDefinitionPayload(workloadClient, itemId, JSON.parse(payload), updateMetadata)
+                    () => callUpdateItemDefinition(workloadClient, itemId, JSON.parse(payload), updateMetadata)
                         .then((result) => {
                             setUpdateItemDefinition(result);
                         })

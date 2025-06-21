@@ -7,7 +7,7 @@ import { createWorkloadClient, InitParams, ItemTabActionContext } from '@ms-fabr
 
 import { fabricLightTheme } from "./theme";
 import { App } from "./App";
-import { getItem } from "./workload/controller/ItemCRUDController"
+import { callGetItem } from "./workload/controller/ItemCRUDController"
 
 export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();
@@ -19,7 +19,7 @@ export async function initialize(params: InitParams) {
         switch (action) {
             case 'item.tab.onInit':            
                 try{
-                    const itemResult = await getItem(
+                    const itemResult = await callGetItem(
                         workloadClient,
                         id
                     );

@@ -31,7 +31,7 @@ import {
 } from "../../models/CalculatorSampleWorkloadModel";
 import "./../../../styles.scss";
 import { LoadingProgressBar } from "../../../workload/view/ItemEditorLoadingProgressBar";
-import { getItem, getWorkloadItem, saveItemState } from "../../../workload/controller/ItemCRUDController";
+import { callGetItem, getWorkloadItem, saveItemState } from "../../../workload/controller/ItemCRUDController";
 import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } from "../../../workload/controller/NavigationController";
 import { callThemeOnChange } from "../../../workload/controller/ThemeController";
 import { callOpenSettings } from "../../../workload/controller/SettingsController";
@@ -213,7 +213,7 @@ export function SampleItemEditor(props: PageProps) {
 
   async function openSettings() {
     if (editorItem) {
-      const item = await getItem(workloadClient, editorItem.id);
+      const item = await callGetItem(workloadClient, editorItem.id);
       await callOpenSettings(item, workloadClient, 'About');
     }
   }

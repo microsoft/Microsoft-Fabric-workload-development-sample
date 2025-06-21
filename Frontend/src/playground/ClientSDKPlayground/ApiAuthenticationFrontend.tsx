@@ -3,7 +3,7 @@ import { WorkloadAuthError } from "@ms-fabric/workload-client";
 import jwt_decode from "jwt-decode";
 import React, { useState } from "react";
 
-import { acquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
+import { callAcquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
 import { PageProps } from 'src/App';
 
 import "./../../styles.scss";
@@ -31,7 +31,7 @@ export function ApiAuthenticationFrontend({ workloadClient }: PageProps) {
             </Field>
             <div className="authButton">
                 <Button className="authButton" appearance="primary" onClick={
-                    () => acquireFrontendAccessToken(workloadClient, scopes)
+                    () => callAcquireFrontendAccessToken(workloadClient, scopes)
                         .then(result => setToken(result.token))
                         .catch((errorResult) => {
                             setToken(null);

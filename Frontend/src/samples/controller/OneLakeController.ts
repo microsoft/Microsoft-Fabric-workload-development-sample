@@ -1,5 +1,5 @@
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { acquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
+import { callAcquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
 import { EnvironmentConstants } from "../../constants";
 
 export const oneLakeScope = "https://storage.azure.com/user_impersonation";
@@ -8,7 +8,7 @@ export const oneLakeScope = "https://storage.azure.com/user_impersonation";
 export async function checkIfFileExists(workloadClient: WorkloadClientAPI, filePath: string): Promise<boolean> {
     const url = `${EnvironmentConstants.OneLakeDFSBaseUrl}/${filePath}?resource=file`;
     try {
-        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, oneLakeScope);
+        const accessToken: AccessToken = await callAcquireFrontendAccessToken(workloadClient, oneLakeScope);
         const response = await fetch(url, {
             method: "HEAD",
             headers: { Authorization: `Bearer ${accessToken.token}` }
@@ -32,7 +32,7 @@ export async function getOneLakeFolderNames(workloadClient: WorkloadClientAPI, w
     const appendQuery = buildGetOneLakeFoldersQueryParameters(itemId);
     const appendUrl = `${url}?${appendQuery}`;
     try {
-        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, oneLakeScope);
+        const accessToken: AccessToken = await callAcquireFrontendAccessToken(workloadClient, oneLakeScope);
         const response = await fetch(appendUrl, {
             headers: { Authorization: `Bearer ${accessToken.token}` }
         });
@@ -56,7 +56,7 @@ export async function writeToOneLakeFileAsText(workloadClient: WorkloadClientAPI
     const url = `${EnvironmentConstants.OneLakeDFSBaseUrl}/${filePath}?resource=file`;
     let accessToken: AccessToken
     try {
-        accessToken = await acquireFrontendAccessToken(workloadClient, oneLakeScope);
+        accessToken = await callAcquireFrontendAccessToken(workloadClient, oneLakeScope);
         const response = await fetch(url, {
             method: "PUT",
             headers: { Authorization: `Bearer ${accessToken.token}` },
@@ -74,7 +74,7 @@ export async function writeToOneLakeFileAsText(workloadClient: WorkloadClientAPI
 export async function readOneLakeFileAsText(workloadClient: WorkloadClientAPI, filePath: string): Promise<string> {
     const url = `${EnvironmentConstants.OneLakeDFSBaseUrl}/${filePath}`;
     try {
-        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, oneLakeScope);
+        const accessToken: AccessToken = await callAcquireFrontendAccessToken(workloadClient, oneLakeScope);
         const response = await fetch(url, {
             headers: { Authorization: `Bearer ${accessToken.token}` }
         });
@@ -91,7 +91,7 @@ export async function readOneLakeFileAsText(workloadClient: WorkloadClientAPI, f
 export async function deleteOneLakeFile(workloadClient: WorkloadClientAPI, filePath: string): Promise<void> {
     const url = `${EnvironmentConstants.OneLakeDFSBaseUrl}/${filePath}?recursive=true`;
     try {
-        const accessToken: AccessToken = await acquireFrontendAccessToken(workloadClient, oneLakeScope);
+        const accessToken: AccessToken = await callAcquireFrontendAccessToken(workloadClient, oneLakeScope);
         const response = await fetch(url, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${accessToken.token}` }

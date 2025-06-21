@@ -15,7 +15,7 @@ import { handleException } from "./ErrorHandlingController";
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @returns {GetItemResult} - A wrapper for the item's data, after it has already been saved
  */
-export async function callItemCreate<T>(
+export async function callCreateItem<T>(
     workspaceObjectId: string,
     itemType: string,
     displayName: string,
@@ -66,7 +66,7 @@ export async function callItemCreate<T>(
  * @param {boolean} isRetry - Indicates that the call is a retry
  * @returns {GetItemResult} - A wrapper for the item's data
  */
-export async function callItemUpdate<T>(
+export async function callUpdateItem<T>(
     objectId: string,
     payloadData: T | undefined,
     workloadClient: WorkloadClientAPI,
@@ -101,7 +101,7 @@ export async function callItemUpdate<T>(
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @param {boolean} isRetry - Indicates that the call is a retry
  */
-export async function callItemDelete(
+export async function callDeleteItem(
     objectId: string,
     workloadClient: WorkloadClientAPI,
     isRetry?: boolean): Promise<boolean> {
@@ -111,7 +111,7 @@ export async function callItemDelete(
         return result.success;
     } catch (exception) {
         console.error(`Failed deleting Item ${objectId}`, exception);
-        return await handleException(exception, workloadClient, isRetry, callItemDelete, objectId);
+        return await handleException(exception, workloadClient, isRetry, callDeleteItem, objectId);
     }
 }
 
@@ -124,7 +124,7 @@ export async function callItemDelete(
  * @param {boolean} isRetry - Indicates that the call is a retry
  * @returns {GetItemResult} - A wrapper for the item's data
  */
-export async function getItem(workloadClient: WorkloadClientAPI, itemId: string, isRetry?: boolean): Promise<GetItemResult> {
+export async function callGetItem(workloadClient: WorkloadClientAPI, itemId: string, isRetry?: boolean): Promise<GetItemResult> {
     try {
         const item: GetItemResult = await workloadClient.itemCrud.getItem({ objectId: itemId });
         console.log(`Successfully fetched item ${itemId}: ${item}`)
@@ -150,7 +150,7 @@ export async function saveItemState<T>(
     itemId: string, 
     data: T): Promise<UpdateItemDefinitionResult> {
 
-        return updateItemDefinitionPayload(workloadClient, itemId, [
+        return callUpdateItemDefinition(workloadClient, itemId, [
         { 
             payloadPath: ItemPayloadPath.ItemMetadata, 
             payloadData: data
@@ -184,8 +184,8 @@ export async function getItemState<T>(
 export async function getWorkloadItem<T>(
     workloadClient: WorkloadClientAPI,
     itemObjectId: string): Promise<WorkloadItem<T>> {
-        const getItemResult = await getItem(workloadClient, itemObjectId);
-        const getItemDefinitionResult = await getItemDefinition(workloadClient, itemObjectId);
+        const getItemResult = await callGetItem(workloadClient, itemObjectId);
+        const getItemDefinitionResult = await callGetItemDefinition(workloadClient, itemObjectId);
         const item = convertGetItemResultToWorkloadItem<T>(getItemResult, getItemDefinitionResult);
         return item;
     }
@@ -202,7 +202,7 @@ export async function getWorkloadItem<T>(
  * @param {boolean} isRetry - Indicates that the call is a retry.
  * @returns {Promise<UpdateItemDefinitionResult>} - The result of the item definition update.
  */
-export async function updateItemDefinitionPayload(
+export async function callUpdateItemDefinition(
     workloadClient: WorkloadClientAPI,
     itemObjectId: string,
     parts: { payloadPath: string, payloadData: any }[],
@@ -232,7 +232,7 @@ export async function updateItemDefinitionPayload(
  * @param {boolean} isRetry - Indicates that the call is a retry.
  * @returns {Promise<GetItemDefinitionResult>} - The item definition result if successful, otherwise undefined.
  */ 
-export async function getItemDefinition(
+export async function callGetItemDefinition(
     workloadClient: WorkloadClientAPI,
     itemObjectId: string,
     format?: string,

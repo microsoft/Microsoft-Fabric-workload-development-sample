@@ -6,6 +6,6 @@ import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
  * @param {string} scopes - The scopes for which the access token is requested.
  * @returns {AccessToken}
  */
-export async function acquireFrontendAccessToken(workloadClient: WorkloadClientAPI, scopes: string): Promise<AccessToken> {
+export async function callAcquireFrontendAccessToken(workloadClient: WorkloadClientAPI, scopes: string): Promise<AccessToken> {
     return workloadClient.auth.acquireFrontendAccessToken({ scopes: scopes?.length ? scopes.split(' ') : [] });
 }
