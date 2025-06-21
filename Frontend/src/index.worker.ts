@@ -23,7 +23,7 @@ export async function initialize(params: InitParams) {
                     path = "/calculator-sample-item-editor"
                 }
                 createdItem.itemType
-                await callPageOpen(sampleWorkloadName, `${path}/${createdItem.objectId}`, workloadClient);
+                await callPageOpen(workloadClient, sampleWorkloadName, `${path}/${createdItem.objectId}`);
                 return Promise.resolve({ succeeded: true });
 
             case 'item.onCreationFailure':
@@ -39,11 +39,11 @@ export async function initialize(params: InitParams) {
 
             case 'sample.Action':
                 return callNotificationOpen(
+                    workloadClient,
                     'Action executed',
                     'Action executed via API',
                     NotificationType.Success,
-                    NotificationToastDuration.Medium,
-                    workloadClient);
+                    NotificationToastDuration.Medium);
 
             case 'getItemSettings': {
                 return [

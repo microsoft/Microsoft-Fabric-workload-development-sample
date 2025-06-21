@@ -20,12 +20,12 @@ import { ActionButton, CloseMode, DialogType, WorkloadClientAPI } from "@ms-fabr
  * @param {OpenUIResult} result of the dialog
  */
 export async function callDialogOpen(
+    workloadClient: WorkloadClientAPI,
     workloadName: string,
     path: string,
     width: number,
     height: number,
-    hasCloseButton: boolean,
-    workloadClient: WorkloadClientAPI) {
+    hasCloseButton: boolean) {
 
     return await workloadClient.dialog.open({
         dialogType: DialogType.IFrame,
@@ -49,10 +49,10 @@ export async function callDialogOpen(
  * @returns {string} - Name of the clicked button
  */
 export async function callDialogOpenMsgBox(
+    workloadClient: WorkloadClientAPI,
     title: string,
     content: string,
     actionButtonsNames: string[],
-    workloadClient: WorkloadClientAPI,
     link?: string): Promise<string> {
 
     // Create an array of ActionButton objects based on the provided action button names

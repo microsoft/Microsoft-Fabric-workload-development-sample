@@ -10,10 +10,10 @@ export function ApiNavigation(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;
 
     async function onCallOpenPage() {
-        await callPageOpen(sampleWorkloadName, `/sample-page`, workloadClient);
+        await callPageOpen(workloadClient, sampleWorkloadName, `/sample-page`);
     }
     async function onCallNavigate(path: string) {
-        await callNavigationNavigate("workload", path, workloadClient);
+        await callNavigationNavigate(workloadClient, "workload", path);
     }
 
     return (

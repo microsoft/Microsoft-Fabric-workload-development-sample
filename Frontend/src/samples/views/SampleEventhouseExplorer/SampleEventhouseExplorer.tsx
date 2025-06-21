@@ -37,13 +37,13 @@ export function EventhouseExplorerComponent({ workloadClient }: PageProps) {
 
     async function onLoadDatahubForEventhouse() {
         const result = await callDatahubOpen(
-        ["KustoEventHouse"],
-        "Select an Eventhouse to use for Sample Workload",
-        false,
-        workloadClient
-        );
-        if (result) {
-        setSelectedEventhouse(result);
+            workloadClient,
+            ["KustoEventHouse"],
+            "Select an Eventhouse to use for Sample Workload",
+            false,
+            );
+            if (result) {
+            setSelectedEventhouse(result);
         }
     }
 

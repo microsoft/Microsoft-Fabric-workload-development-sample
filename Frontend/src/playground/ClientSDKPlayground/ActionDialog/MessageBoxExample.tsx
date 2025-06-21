@@ -38,10 +38,10 @@ export function MessageBoxExample(props: TabContentProps) {
             buttonNames.push(`Button ${i}`);
         }
         callDialogOpenMsgBox(
+            workloadClient,
             apiDialogMsgboxTitle,
             apiDialogMsgboxContent,
-            buttonNames,
-            workloadClient,
+            buttonNames,            
             apiDialogMsgboxLink
         );
     }

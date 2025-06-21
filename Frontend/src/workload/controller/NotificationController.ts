@@ -12,11 +12,11 @@ import { Dispatch, SetStateAction } from "react";
  * @param {Dispatch<SetStateAction<string>>} setNotificationId - (Optional) A state setter function to update the notification ID.
  */
 export async function callNotificationOpen(
+    workloadClient: WorkloadClientAPI,
     title: string,
     message: string,
     type: NotificationType = NotificationType.Success,
     duration: NotificationToastDuration = NotificationToastDuration.Medium,
-    workloadClient: WorkloadClientAPI,
     setNotificationId?: Dispatch<SetStateAction<string>>) {
 
     const result = await workloadClient.notification.open({
@@ -38,8 +38,8 @@ export async function callNotificationOpen(
  * @param {Dispatch<SetStateAction<string>>} setNotificationId - A state setter function to update the notification ID after hiding.
  */
 export async function callNotificationHide(
-    notificationId: string,
     workloadClient: WorkloadClientAPI,
+    notificationId: string,
     setNotificationId: Dispatch<SetStateAction<string>>) {
 
     await workloadClient.notification.hide({ notificationId });

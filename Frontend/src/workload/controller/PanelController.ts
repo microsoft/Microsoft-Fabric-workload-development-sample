@@ -11,10 +11,10 @@ import { CloseMode, WorkloadClientAPI } from "@ms-fabric/workload-client";
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
 export async function callPanelOpen(
+    workloadClient: WorkloadClientAPI,
     workloadName: string,
     path: string,
-    isLightDismiss: boolean,
-    workloadClient: WorkloadClientAPI) {
+    isLightDismiss: boolean) {
 
     await workloadClient.panel.open({
         workloadName,

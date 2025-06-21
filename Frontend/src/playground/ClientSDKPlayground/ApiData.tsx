@@ -48,10 +48,10 @@ export function ApiData(props: TabContentProps) {
 
     async function onCallDatahubFromPlayground() {
         const result = await callDatahubOpen(
+            workloadClient,
             [dataHubMsgBoxType],
             datahubDialogDescription,
             isMultiSelectionEnabled,
-            workloadClient,
             isWorkspaceExplorerPresented
         );
         if (result) {

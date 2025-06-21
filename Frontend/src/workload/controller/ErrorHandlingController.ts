@@ -23,12 +23,12 @@ import { callDialogOpenMsgBox } from "./DialogController";
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
 export async function callErrorHandlingOpenDialog(
+    workloadClient: WorkloadClientAPI,
     errorMessage: string,
     title: string,
     statusCode: string,
     stackTrace: string,
-    requestId: string,
-    workloadClient: WorkloadClientAPI) {
+    requestId: string) {
 
     await workloadClient.errorHandling.openErrorDialog({
         errorMsg: errorMessage,
@@ -51,16 +51,17 @@ export async function callErrorHandlingOpenDialog(
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
 export async function callErrorHandlingRequestFailure(
+    workloadClient: WorkloadClientAPI,
     errorMessage: string,
     statusCode: number,
-    workloadClient: WorkloadClientAPI) {
+    ) {
 
     // the handleRequestFailure API handles MFA errors coming from Fabric. 
     // Such errors are identified by the inclusion of the below text inside the 'body'.
     const errorCodeMFA = "AdalMultiFactorAuthRequiredErrorCode";
 
     const result: HandleRequestFailureResult = await workloadClient.errorHandling.handleRequestFailure({ status: statusCode, body: errorMessage + errorCodeMFA });
-    callDialogOpenMsgBox("Request Failure handling", `Failure has ${result.handled ? "" : "NOT"} been handled by Fabric`, [], workloadClient);
+    callDialogOpenMsgBox(workloadClient, "Request Failure handling", `Failure has ${result.handled ? "" : "NOT"} been handled by Fabric`, []);
 }
 
 /**
@@ -93,12 +94,12 @@ export async function handleException(
         title = "Power BI Capacity Validation Failed";
     }
     await callErrorHandlingOpenDialog(
+        workloadClient,
         message,
         title,
         exception.error?.statusCode,
         exception.response?.stackTrace,
-        exception.response?.headers?.requestId,
-        workloadClient
+        exception.response?.headers?.requestId
     );
     return null;
 }

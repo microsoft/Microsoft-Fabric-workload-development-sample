@@ -22,12 +22,12 @@ export function SharedStateExample(props: TabContentProps) {
         sharedState.message = localSharedStateMessage;
 
         await callDialogOpen(
+            workloadClient,
             sampleWorkloadName,
             '/shared-state-page',
             360 /* width */,
             165 /* height */,
-            false /* hasCloseButton */,
-            workloadClient);
+            false /* hasCloseButton */);
 
         if (localSharedStateMessage != sharedState.message) {
             dispatch(setLocalSharedStateMessage(localSharedStateMessage));

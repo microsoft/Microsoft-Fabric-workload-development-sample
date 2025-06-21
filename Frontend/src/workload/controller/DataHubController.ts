@@ -11,11 +11,12 @@ import { GenericItem } from "../models/ItemCRUDModel";
 import { SelectedItemAndPath } from "../models/DataHubModel";
 
 
-export async function callDatahubWizardOpen(
-    supportedTypes: ExtendedItemTypeV2[],
-    dialogDescription: string,
-    multiSelectionEnabled: boolean,
+export async function callDatahubWizardOpen(    
     workloadClient: WorkloadClientAPI,
+    supportedTypes: ExtendedItemTypeV2[],
+    dialogSubmittButtonName: string,
+    dialogDescription: string,    
+    multiSelectionEnabled: boolean,
     workspaceNavigationEnabled: boolean = true): Promise<SelectedItemAndPath> {
 
    const datahubWizardConfig: DatahubWizardDialogConfig = {
@@ -36,7 +37,7 @@ export async function callDatahubWizardOpen(
                 showFilesFolder: true,
             } as OnelakeExplorerConfig,
         } as OneLakeExplorerPageConfig,
-        submitButtonName: 'Select',
+        submitButtonName: dialogSubmittButtonName,
     }
  
     const result: DatahubWizardDialogResult = await workloadClient.datahub.openDatahubWizardDialog(datahubWizardConfig);
@@ -63,10 +64,11 @@ export async function callDatahubWizardOpen(
  * @param {boolean} workspaceNavigationEnabled - Whether the datahub dialog supports workspace navigation bar or not.
  */
 export async function callDatahubOpen(
+    workloadClient: WorkloadClientAPI,
     supportedTypes: ExtendedItemTypeV2[],
     dialogDescription: string,
     multiSelectionEnabled: boolean,
-    workloadClient: WorkloadClientAPI,
+    
     workspaceNavigationEnabled: boolean = true): Promise<GenericItem> {
 
     const datahubConfig: DatahubSelectorDialogConfig = {

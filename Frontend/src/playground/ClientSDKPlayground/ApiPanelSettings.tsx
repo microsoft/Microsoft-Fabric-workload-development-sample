@@ -23,20 +23,20 @@ export function ApiPanelSettings(props: TabContentProps) {
 
     async function onCallOpenPanel() {
         callPanelOpen(
+            workloadClient,
             sampleWorkloadName,
             "/panel",
-            apiPanelIsLightDismiss,
-            workloadClient
+            apiPanelIsLightDismiss
         );
     }
 
     async function onCallThemeGet() {
         const themeString: string = themeToView(await callThemeGet(workloadClient));
         callDialogOpenMsgBox(
+            workloadClient,
             "Theme Configuration",
             themeString,
-            ["OK"],
-            workloadClient
+            ["OK"]
         );
     }
 
@@ -45,10 +45,10 @@ export function ApiPanelSettings(props: TabContentProps) {
             await callSettingsGet(workloadClient)
         );
         callDialogOpenMsgBox(
+            workloadClient,
             "Settings Configuration",
             settingsString,
-            ["OK"],
-            workloadClient
+            ["OK"]
         );
     }
 

@@ -20,8 +20,8 @@ export async function initialize(params: InitParams) {
             case 'item.tab.onInit':            
                 try{
                     const itemResult = await getItem(
-                        id,
-                        workloadClient
+                        workloadClient,
+                        id
                     );
                     return {title: itemResult.displayName};
                 } catch (error) {

@@ -10,9 +10,9 @@ import { WorkloadClientAPI, BeforeNavigateAwayData, BeforeNavigateAwayResult, Af
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
 export async function callNavigationNavigate<T extends 'host' | 'workload'>(
+    workloadClient: WorkloadClientAPI,
     target: T,
-    path: string,
-    workloadClient: WorkloadClientAPI) {
+    path: string) {
 
     await workloadClient.navigation.navigate(target, { path });
 }

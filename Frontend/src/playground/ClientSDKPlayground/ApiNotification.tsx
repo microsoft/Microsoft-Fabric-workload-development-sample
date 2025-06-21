@@ -36,17 +36,17 @@ export function ApiNotification(props: TabContentProps) {
         }
         setNotificationValidationMessage("");
         callNotificationOpen(
+            workloadClient,
             apiNotificationTitle,
             apiNotificationMessage,
             undefined,
             undefined,
-            workloadClient,
             setNotificationId
         );
     }
 
     function onCallNotificationHide() {
-        callNotificationHide(notificationId, workloadClient, setNotificationId);
+        callNotificationHide(workloadClient, notificationId, setNotificationId);
     }
 
     return (

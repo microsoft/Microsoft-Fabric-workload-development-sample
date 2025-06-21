@@ -112,7 +112,7 @@ export function SamplePage({ workloadClient, history }: PageProps) {
       <Stack className="main">
         <Button
           onClick={() => {
-            callNavigationNavigate("workload", "/client-sdk-playground/", workloadClient);
+            callNavigationNavigate(workloadClient, "workload", "/client-sdk-playground/");
           }}
         >
           Navigate Back

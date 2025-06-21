@@ -36,19 +36,19 @@ export function ErrorMessageExample(props: TabContentProps) {
 
     async function onCallOpenError() {
         await callErrorHandlingOpenDialog(
+            workloadClient,
             apiErrorMessage,
             apiErrorTitle,
             apiErrorStatusCode,
             apiErrorStackTrace,
-            apiErrorRequestId,
-            workloadClient
+            apiErrorRequestId,            
         );
     }
     async function onCallErrorFailureHandling() {
         await callErrorHandlingRequestFailure(
+            workloadClient,
             apiErrorFailureMessage,
-            apiErrorFailureCode,
-            workloadClient
+            apiErrorFailureCode
         );
     }
 

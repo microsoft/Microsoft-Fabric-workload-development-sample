@@ -119,19 +119,19 @@ export async function callItemDelete(
  * Calls the 'itemCrud.getItem function from the WorkloadClientAPI
  * The result contains data both from Fabric
  * 
- * @param {string} objectId - The ObjectId of the item to fetch
+ * @param {string} itemId - The ItemId of the item to fetch
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @param {boolean} isRetry - Indicates that the call is a retry
  * @returns {GetItemResult} - A wrapper for the item's data
  */
-export async function getItem(objectId: string, workloadClient: WorkloadClientAPI, isRetry?: boolean): Promise<GetItemResult> {
+export async function getItem(workloadClient: WorkloadClientAPI, itemId: string, isRetry?: boolean): Promise<GetItemResult> {
     try {
-        const item: GetItemResult = await workloadClient.itemCrud.getItem({ objectId });
-        console.log(`Successfully fetched item ${objectId}: ${item}`)
+        const item: GetItemResult = await workloadClient.itemCrud.getItem({ objectId: itemId });
+        console.log(`Successfully fetched item ${itemId}: ${item}`)
 
         return item;
     } catch (exception) {
-        console.error(`Failed locating item with ObjectID ${objectId}`, exception);
+        console.error(`Failed locating item with ObjectID ${itemId}`, exception);
         return undefined;
     }
 }
@@ -184,7 +184,7 @@ export async function getItemState<T>(
 export async function getWorkloadItem<T>(
     workloadClient: WorkloadClientAPI,
     itemObjectId: string): Promise<WorkloadItem<T>> {
-        const getItemResult = await getItem(itemObjectId, workloadClient);
+        const getItemResult = await getItem(workloadClient, itemObjectId);
         const getItemDefinitionResult = await getItemDefinition(workloadClient, itemObjectId);
         const item = convertGetItemResultToWorkloadItem<T>(getItemResult, getItemDefinitionResult);
         return item;

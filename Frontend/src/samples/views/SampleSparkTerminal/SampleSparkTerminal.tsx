@@ -175,10 +175,10 @@ export const SampleSparkTerminal: React.FC<SampleSparkTerminalProps> = ({
   // Handle datahub selection
   async function onDatahubClicked() {
     const result = await callDatahubOpen(
+      workloadClient,
       ["Lakehouse"],
       "Select a lakehouse to use for Spark Livy Terminal",
-      false,
-      workloadClient
+      false
     );
 
     if (!result) {

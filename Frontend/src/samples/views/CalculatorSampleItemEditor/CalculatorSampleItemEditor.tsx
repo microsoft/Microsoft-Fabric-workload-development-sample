@@ -213,7 +213,7 @@ export function SampleItemEditor(props: PageProps) {
 
   async function openSettings() {
     if (editorItem) {
-      const item = await getItem(editorItem.id, workloadClient);
+      const item = await getItem(workloadClient, editorItem.id);
       await callOpenSettings(item, workloadClient, 'About');
     }
   }
