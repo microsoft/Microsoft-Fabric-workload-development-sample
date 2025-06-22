@@ -11,9 +11,9 @@ import {
   Tooltip,
 } from "@fluentui/react-components";
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular, ArrowSwap20Regular } from "@fluentui/react-icons";
-import { TableMetadata, FileMetadata } from "../../models/OneLakeItemExplorerModel";
+import { TableMetadata, FileMetadata } from "./SampleOneLakeItemExplorerModel";
 import "./../../../styles.scss";
-import { getTables, getFiles } from "../../controller/OneLakeItemExplorerController";
+import { getTables, getFiles } from "./SampleOneLakeItemExplorerController";
 import { PageProps } from "../../../App";
 import { GenericItem as ItemMetadata } from "../../../workload/models/ItemCRUDModel";
 import { TableTreeWithSchema } from "./TableTreeWithSchema";

@@ -1,7 +1,7 @@
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { callAcquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
-import { EnvironmentConstants } from "../../constants";
-import {OneLakeShorcutListResponse, OneLakeShortcutCreateRequest, OneLakeShortcutCreateResponse } from "../models/OneLakeShortcutModel";
+import { callAcquireFrontendAccessToken } from "../../../workload/controller/AuthenticationController";
+import { EnvironmentConstants } from "../../../constants";
+import {OneLakeShorcutListResponse, OneLakeShortcutCreateRequest, OneLakeShortcutCreateResponse } from "./SampleOneLakeShortcutModel";
 
 const oneLakeShortcutScope = "https://api.fabric.microsoft.com/OneLake.ReadWrite.All";
 

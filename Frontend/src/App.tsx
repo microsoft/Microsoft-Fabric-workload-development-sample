@@ -4,13 +4,13 @@ import { ClientSDKStore } from "./playground/ClientSDKPlaygroundStore/Store";
 import { Route, Router, Switch } from "react-router-dom";
 import { History } from "history";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { SampleItemEditor } from "./samples/views/CalculatorSampleItemEditor/CalculatorSampleItemEditor";
-import CustomItemSettings from "./samples/views/CalculatorSampleItemEditor/CalculatorSampleItemEditorSettingsDialog";
-import CustomAbout from "./samples/views/CalculatorSampleItemEditor/CalculatorSampleItemEditorAboutDialog";
-import SharedStatePage from "./samples/views/CalculatorSampleItemEditor/CalculatorSampleItemEditorSharedStatePage"
+import { SampleItemEditor } from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditor";
+import CustomItemSettings from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorSettingsDialog";
+import CustomAbout from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorAboutDialog";
+import SharedStatePage from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorSharedStatePage"
 import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlayground/ClientSDKPlayground";
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
-import { ItemEditor } from "./workload/view/ItemEditor";
+import { ItemEditor } from "./workload/items/HelloWorld/HelloWorldItemEditor";
 
 /*
     Add your Item Editor in the Route section of the App function below

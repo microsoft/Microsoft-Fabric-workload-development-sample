@@ -21,7 +21,7 @@ import {
 } from "../ClientSDKPlaygroundStore/apiDataSlice";
 import "./../../styles.scss";
 import { TabContentProps } from "./ClientSDKPlaygroundModel";
-import { callDatahubOpen } from "../../workload/controller/DataHubController";
+import { callDatahubOpen, callDatahubWizardOpen } from "../../workload/controller/DataHubController";
 
 export function ApiData(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;
@@ -58,6 +58,20 @@ export function ApiData(props: TabContentProps) {
             dispatch(setSelectedLinkedItem(result));
         }
     }
+
+    async function onCallDatahubWizardFromPlayground() {
+        const result = await callDatahubWizardOpen(
+            workloadClient,
+            [dataHubMsgBoxType],
+            "Select content",
+            datahubDialogDescription,
+            isWorkspaceExplorerPresented
+        );
+        if (result) {
+            dispatch(setSelectedLinkedItem(result));
+        }
+    }
+
 
     return (
         <span>
@@ -104,6 +118,14 @@ export function ApiData(props: TabContentProps) {
                     data-testid="api-playground-open-data-hub-btn"
                 >
                     Open Data Hub
+                </Button>
+                <Button
+                    icon={<Database16Regular />}
+                    appearance="primary"
+                    onClick={onCallDatahubWizardFromPlayground}
+                    data-testid="api-playground-open-data-hub-wizard-btn"
+                >
+                    Open Data Hub Wizard
                 </Button>
             </div>
             <div className="section">

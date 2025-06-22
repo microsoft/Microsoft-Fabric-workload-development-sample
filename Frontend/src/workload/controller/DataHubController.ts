@@ -46,11 +46,17 @@ export async function callDatahubWizardOpen(
     }
 
     const selectedItem = result.onelakeExplorerResult;
+    const { itemObjectId, workspaceObjectId } = selectedItem;
+    //TODO: Update this when the type is available in the result
+    const { displayName, description } = { displayName: "", description: "" };
     return {
-        id: selectedItem.itemObjectId,
-        workspaceId: selectedItem.workspaceObjectId,
+        id: itemObjectId,
+        workspaceId: workspaceObjectId,
+        type: "TODO", // selectedItem.datahubItemUI.itemType, // TODO: Update this when the type is available in the result
+        displayName,
+        description,
         selectedPath: selectedItem.selectedPath
-    }
+    };
 }
 
 

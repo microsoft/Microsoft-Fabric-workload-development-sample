@@ -22,15 +22,15 @@ import {
   calculateResult,
   saveCalculationResult,
   loadCalculationResult,
-} from "../../controller/CalculatorSampleItemEditorController";
+} from "./CalculatorSampleItemEditorController";
 import { Ribbon } from "./CalculatorSampleItemEditorRibbon";
 import {
   CalculatorSampleItemState,
   CalculationOperator,
   Calculation
-} from "../../models/CalculatorSampleItemModel";
+} from "./CalculatorSampleItemModel";
 import "./../../../styles.scss";
-import { LoadingProgressBar } from "../../../workload/view/ItemEditorLoadingProgressBar";
+import { LoadingProgressBar } from "../../../workload/items/HelloWorld/HelloWorldItemEditorLoadingProgressBar";
 import { callGetItem, getWorkloadItem, saveItemState } from "../../../workload/controller/ItemCRUDController";
 import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } from "../../../workload/controller/NavigationController";
 import { callThemeOnChange } from "../../../workload/controller/ThemeController";

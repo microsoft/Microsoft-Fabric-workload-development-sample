@@ -14,10 +14,10 @@ import {
     TriangleRight20Regular,
   } from "@fluentui/react-icons";
 
-import { EventhouseItemMetadata } from "../../..//samples/models/EventhouseModel";
-import { executeQuery, getEventhouseItem } from "../../controller/EventHouseController";
+import { EventhouseItemMetadata } from "./SampleEventhouseModel";
 import { GenericItem } from "../../../workload/models/ItemCRUDModel";
 import { callDatahubOpen } from "../../../workload/controller/DataHubController";
+import { getEventhouseItem, executeQuery } from "./SampleEventhouseController";
 
 
 export function EventhouseExplorerComponent({ workloadClient }: PageProps) {

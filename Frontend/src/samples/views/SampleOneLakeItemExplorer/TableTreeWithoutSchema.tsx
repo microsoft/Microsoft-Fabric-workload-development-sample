@@ -1,5 +1,5 @@
 import React from "react";
-import { OneLakeItemExplorerTablesTreeProps } from "src/samples/models/OneLakeItemExplorerModel";
+import { OneLakeItemExplorerTablesTreeProps } from "src/samples/views/SampleOneLakeItemExplorer/SampleOneLakeItemExplorerModel";
 import { Table20Regular } from "@fluentui/react-icons";
 import { TreeItem, TreeItemLayout, Tooltip } from "@fluentui/react-components";
 

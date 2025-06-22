@@ -1,8 +1,8 @@
-import { GenericItem } from "../../workload/models/ItemCRUDModel";
-import { EnvironmentConstants } from "../../constants";
-import { callAcquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
+import { GenericItem } from "../../../workload/models/ItemCRUDModel";
+import { EnvironmentConstants } from "../../../constants";
+import { callAcquireFrontendAccessToken } from "../../../workload/controller/AuthenticationController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { FileMetadata, OneLakePathContainer, TableMetadata } from "src/samples/models/OneLakeItemExplorerModel";
+import { FileMetadata, OneLakePathContainer, TableMetadata } from "src/samples/views/SampleOneLakeItemExplorer/SampleOneLakeItemExplorerModel";
 
 export const oneLakeScope = "https://storage.azure.com/user_impersonation";
 

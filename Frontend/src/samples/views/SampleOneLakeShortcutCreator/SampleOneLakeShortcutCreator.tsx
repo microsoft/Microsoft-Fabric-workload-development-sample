@@ -12,8 +12,8 @@ import {
   Spinner,
   Text
 } from "@fluentui/react-components";
-import { createOneLakeShortcut } from "../../controller/OneLakeShortcutController";
-import { OneLakeShortcutCreateRequest, OneLakeShortcutTargetOneLake } from "../../models/OneLakeShortcutModel";
+import { createOneLakeShortcut } from "./SampleOneLakeShortcutController";
+import { OneLakeShortcutCreateRequest, OneLakeShortcutTargetOneLake } from "./SampleOneLakeShortcutModel";
 import { PageProps } from "../../../App";
 import { GenericItem } from "../../../workload/models/ItemCRUDModel";
 import { callDatahubOpen} from "../../../workload/controller/DataHubController";

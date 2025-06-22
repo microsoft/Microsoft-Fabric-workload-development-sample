@@ -1,4 +1,4 @@
-import { GenericItem } from "../../workload/models/ItemCRUDModel";
+import { GenericItem } from "../../../workload/models/ItemCRUDModel";
 
 /* 
  * Represents a reference to a fabric item.

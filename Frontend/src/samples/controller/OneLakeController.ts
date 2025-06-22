@@ -27,31 +27,6 @@ export async function checkIfFileExists(workloadClient: WorkloadClientAPI, fileP
     }
 }
 
-export async function getOneLakeFolderNames(workloadClient: WorkloadClientAPI, workspaceId: string, itemId: string): Promise<string[] | null> {
-    const url = `${EnvironmentConstants.OneLakeDFSBaseUrl}/${workspaceId}`;
-    const appendQuery = buildGetOneLakeFoldersQueryParameters(itemId);
-    const appendUrl = `${url}?${appendQuery}`;
-    try {
-        const accessToken: AccessToken = await callAcquireFrontendAccessToken(workloadClient, oneLakeScope);
-        const response = await fetch(appendUrl, {
-            headers: { Authorization: `Bearer ${accessToken.token}` }
-        });
-        if (response.status === 200) {
-            const getFoldersResultObj: GetFoldersResult = await response.json();
-            return getFoldersResultObj.paths?.filter(f => f.isDirectory).map(f => f.name) ?? [];
-        } else if (response.status === 404) {
-            return null;
-        } else {
-            console.warn(`getOneLakeFolderNames received unexpected status code: ${response.status}`);
-            return null;
-        }
-    } catch (ex: any) {
-        console.error(`getOneLakeFolderNames failed for workspaceId: ${workspaceId}, itemId: ${itemId}, Error: ${ex.message}`);
-        return null;
-    }
-}
-
-
 export async function writeToOneLakeFileAsText(workloadClient: WorkloadClientAPI, filePath: string, content: string): Promise<void> {
     const url = `${EnvironmentConstants.OneLakeDFSBaseUrl}/${filePath}?resource=file`;
     let accessToken: AccessToken
@@ -149,8 +124,4 @@ function buildAppendQueryParameters(): string {
 
 function buildFlushQueryParameters(contentLength: number): string {
     return `position=${contentLength}&action=flush`;
-}
-
-function buildGetOneLakeFoldersQueryParameters(itemId: string): string {
-    return `directory=${itemId}&resource=filesystem&recursive=false`;
 }

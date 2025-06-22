@@ -1,6 +1,6 @@
-import { EventhouseItemMetadata } from "../models/EventhouseModel";
-import { EnvironmentConstants } from "../../constants";
-import { callAcquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
+import { EventhouseItemMetadata } from "./SampleEventhouseModel";
+import { EnvironmentConstants } from "../../../constants";
+import { callAcquireFrontendAccessToken } from "../../../workload/controller/AuthenticationController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import {v4 as uuidv4} from 'uuid';
 

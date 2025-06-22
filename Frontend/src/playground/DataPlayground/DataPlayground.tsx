@@ -7,7 +7,7 @@ import {
 } from '@fluentui/react-components';
 import { Stack } from '@fluentui/react';
 import { OneLakeItemExplorerComponent } from '../../samples/views/SampleOneLakeItemExplorer/SampleOneLakeItemExplorer';
-import { OneLakeShortcutCreator } from '../../samples/views/OneLakeShortcutCreator/OneLakeShortcutCreator';
+import { OneLakeShortcutCreator } from '../../samples/views/SampleOneLakeShortcutCreator/SampleOneLakeShortcutCreator';
 import "./../../styles.scss";
 import { EventhouseExplorerComponent } from '../../samples/views/SampleEventhouseExplorer/SampleEventhouseExplorer';
 import { TabContentProps } from '../ClientSDKPlayground/ClientSDKPlaygroundModel';
@@ -26,7 +26,7 @@ export function DataPlayground(props: TabContentProps) {
       >
         <Tab value="onelakeItemExplorer">OneLake Item Explorer</Tab>
         <Tab value="onelakeShortcutCreator">OneLake Shortcut Creator</Tab>
-        <Tab value="eventHouseExplorer">Eventhouse Explorer</Tab>
+        <Tab value="eventhouseExplorer">Eventhouse Explorer</Tab>
       </TabList>
 
       <Stack className="main">
@@ -36,7 +36,7 @@ export function DataPlayground(props: TabContentProps) {
         {selectedTab === 'onelakeShortcutCreator' && (
           <OneLakeShortcutCreator workloadClient={workloadClient} />
         )}
-        {selectedTab === 'eventHouseExplorer' && (
+        {selectedTab === 'eventhouseExplorer' && (
           <EventhouseExplorerComponent workloadClient={workloadClient} />
         )}
       </Stack>

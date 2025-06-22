@@ -1,7 +1,7 @@
 import React from "react";
 import { Document20Regular, FolderRegular } from "@fluentui/react-icons";
 import { Tree, TreeItem, TreeItemLayout, Tooltip } from "@fluentui/react-components";
-import { FileMetadata, OneLakeItemExplorerFilesTreeProps } from "src/samples/models/OneLakeItemExplorerModel";
+import { FileMetadata, OneLakeItemExplorerFilesTreeProps } from "src/samples/views/SampleOneLakeItemExplorer/SampleOneLakeItemExplorerModel";
 
 interface TreeNode {
     metadata: FileMetadata;

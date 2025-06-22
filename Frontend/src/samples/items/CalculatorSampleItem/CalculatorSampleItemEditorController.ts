@@ -2,9 +2,9 @@ import {
     WorkloadClientAPI,
 } from "@ms-fabric/workload-client";
 
-import { Calculation, CalculationOperator, CalculationResult, CalculatorSampleItemState } from "../models/CalculatorSampleItemModel";
-import { readOneLakeFileAsText, getOneLakeFilePath, writeToOneLakeFileAsText } from "./OneLakeController";
-import { WorkloadItem } from "../../workload/models/ItemCRUDModel";
+import { Calculation, CalculationOperator, CalculationResult, CalculatorSampleItemState } from "./CalculatorSampleItemModel";
+import { readOneLakeFileAsText, getOneLakeFilePath, writeToOneLakeFileAsText } from "../../controller/OneLakeController";
+import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
 
 /**
  * Saves the calculation result to OneLake and updates the item state.
