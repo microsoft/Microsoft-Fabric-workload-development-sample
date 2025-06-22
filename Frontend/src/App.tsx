@@ -4,13 +4,13 @@ import { ClientSDKStore } from "./playground/ClientSDKPlaygroundStore/Store";
 import { Route, Router, Switch } from "react-router-dom";
 import { History } from "history";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { SampleItemEditor } from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditor";
+import { CalculatorSampleItemEditor } from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditor";
 import CustomItemSettings from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorSettingsDialog";
 import CustomAbout from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorAboutDialog";
 import SharedStatePage from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorSharedStatePage"
 import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlayground/ClientSDKPlayground";
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
-import { ItemEditor } from "./workload/items/HelloWorld/HelloWorldItemEditor";
+import { HelloWorldItemEditor } from "./workload/items/HelloWorld/HelloWorldItemEditor";
 
 /*
     Add your Item Editor in the Route section of the App function below
@@ -42,13 +42,13 @@ export function App({ history, workloadClient }: AppProps) {
         <Switch>
             {/* Routing to the Empty Item Editor */}
             <Route path="/item-editor/:itemObjectId">
-                <ItemEditor
+                <HelloWorldItemEditor
                     workloadClient={workloadClient} data-testid="item-editor" />
             </Route>
             {/* This is the routing to the Sample Workload Editor.
                  Add your workload editor path here, and reference it in index.worker.ts  */}
             <Route path="/calculator-sample-item-editor/:itemObjectId">
-                <SampleItemEditor
+                <CalculatorSampleItemEditor
                     workloadClient={workloadClient} data-testid="sample-item-editor" />
             </Route>
             <Route path="/calculator-sample-item-settings-dialog">

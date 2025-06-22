@@ -18,7 +18,7 @@ import { HelloWorldItemModelState } from "./HelloWorldItemModel";
 // If you use the hello world editor as your starting point make sure you adopt it to your needs
 
 
-export function ItemEditor(props: PageProps) {
+export function HelloWorldItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
   const { pathname } = useLocation();
   const { t } = useTranslation();

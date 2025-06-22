@@ -37,7 +37,7 @@ import { callThemeOnChange } from "../../../workload/controller/ThemeController"
 import { callOpenSettings } from "../../../workload/controller/SettingsController";
 import { WorkloadItem } from "src/workload/models/ItemCRUDModel";
 
-export function SampleItemEditor(props: PageProps) {
+export function CalculatorSampleItemEditor(props: PageProps) {
   const { workloadClient } = props;
   const pageContext = useParams<ContextProps>();
   const { pathname } = useLocation();
