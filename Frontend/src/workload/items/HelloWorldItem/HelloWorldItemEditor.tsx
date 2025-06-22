@@ -11,13 +11,6 @@ import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
 import { HelloWorldItemModelState } from "./HelloWorldItemModel";
 
-// Define the payload structure for the HelloWorld item 
-// This is a simple example where we just have a string payload
-// In a real-world scenario, this could be more complex and structured.
-// The interface was introduced for this editor to demonstrate how to handle item payloads in a type-safe manner.
-// If you use the hello world editor as your starting point make sure you adopt it to your needs
-
-
 export function HelloWorldItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
   const { pathname } = useLocation();
