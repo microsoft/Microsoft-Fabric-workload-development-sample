@@ -30,7 +30,7 @@ import {
   Calculation
 } from "./CalculatorSampleItemModel";
 import "./../../../styles.scss";
-import { LoadingProgressBar } from "../../../workload/items/HelloWorld/HelloWorldItemEditorLoadingProgressBar";
+import { LoadingProgressBar } from "../../../workload/items/HelloWorldItem/HelloWorldItemEditorLoadingProgressBar";
 import { callGetItem, getWorkloadItem, saveItemState } from "../../../workload/controller/ItemCRUDController";
 import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } from "../../../workload/controller/NavigationController";
 import { callThemeOnChange } from "../../../workload/controller/ThemeController";
