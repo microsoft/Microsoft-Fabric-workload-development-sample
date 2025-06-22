@@ -28,7 +28,7 @@ import {
   CalculatorSampleItemState,
   CalculationOperator,
   Calculation
-} from "../../models/CalculatorSampleWorkloadModel";
+} from "../../models/CalculatorSampleItemModel";
 import "./../../../styles.scss";
 import { LoadingProgressBar } from "../../../workload/view/ItemEditorLoadingProgressBar";
 import { callGetItem, getWorkloadItem, saveItemState } from "../../../workload/controller/ItemCRUDController";

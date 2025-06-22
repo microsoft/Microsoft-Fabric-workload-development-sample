@@ -2,7 +2,7 @@ import {
     WorkloadClientAPI,
 } from "@ms-fabric/workload-client";
 
-import { Calculation, CalculationOperator, CalculationResult, CalculatorSampleItemState } from "../models/CalculatorSampleWorkloadModel";
+import { Calculation, CalculationOperator, CalculationResult, CalculatorSampleItemState } from "../models/CalculatorSampleItemModel";
 import { readOneLakeFileAsText, getOneLakeFilePath, writeToOneLakeFileAsText } from "./OneLakeController";
 import { WorkloadItem } from "../../workload/models/ItemCRUDModel";
 
