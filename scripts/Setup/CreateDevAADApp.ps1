@@ -90,6 +90,8 @@ if ($HostingType -eq "FERemote") {
         spa = @{
             redirectUris = @(
                 $redirectUri
+                "https://app.powerbi.com/workloadSignIn/$TenantId/$WorkloadName"
+                "https://fabric.microsoft.com/workloadSignIn/$TenantId/$WorkloadName"
             )
         }
         identifierUris = @($applicationIdUri)
@@ -320,7 +322,6 @@ $secret = $addPasswordObject.secretText
 if ($null -eq $secret) {
     Write-Host "Failed to add secret, please add it manually..."
 }
-
 
 Write-Host "All set! Here's what you need:"  -ForegroundColor Green
 Write-Host "------------------------------------------------"

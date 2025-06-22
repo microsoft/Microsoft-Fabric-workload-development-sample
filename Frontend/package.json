@@ -14,7 +14,7 @@
     "@fluentui/react": "^8.110.7",
     "@fluentui/react-components": "^9.7.2",
     "@fluentui/react-icons": "2.0.226",
-    "@ms-fabric/workload-client": "^2.2.0",
+    "@ms-fabric/workload-client": "^2.3.0",
     "@reduxjs/toolkit": "^2.6.0",
     "history": "^4.9.0",
     "i18next": "^23.12.3",
