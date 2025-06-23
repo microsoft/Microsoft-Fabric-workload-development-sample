@@ -45,26 +45,26 @@ export function HelloWorldItemEditor(props: PageProps) {
           pageContext.itemObjectId,          
         );
         setEditorItem(item);
-        if(!item.itemState){
+        if(!item.itemState) {
           item.itemState =  {
               message: undefined,
             };
-            setSelectedTab("empty-state");
-        } else {
-          setSelectedTab("home");
         }
         setPayload(item.itemState.message);        
       } catch (error) {
         setEditorItem(undefined);        
-      }
-      finally {
-        setIsLoadingData(false);
       }
     } else {
       console.log(`non-editor context. Current Path: ${pathname}`);
       setIsLoadingData(false);
     }
     setIsUnsafed(false);
+    if(editorItem?.itemState?.message) {
+      setSelectedTab("home");
+    } else {
+      setSelectedTab("empty-state");
+    }
+    setIsLoadingData(false);
   }
 
   function onUpdateItemPayload(newPayload: string) {
