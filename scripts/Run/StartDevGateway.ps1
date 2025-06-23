@@ -3,4 +3,10 @@ $CONFIGURATIONFILE = Resolve-Path -Path (Join-Path $PSScriptRoot "..\..\config\D
 $CONFIGURATIONFILE = $CONFIGURATIONFILE.Path
 Write-Host "DevGateway used: $fileExe"
 Write-Host "Configuration xsfile used: $CONFIGURATIONFILE"
-& $fileExe -DevMode:LocalConfigFilePath $CONFIGURATIONFILE
+
+if($IsWindows) {
+    & $fileExe -DevMode:LocalConfigFilePath $CONFIGURATIONFILE
+} else {
+     # On Linux or MacOS, we need to use the mono runtime to execute the .exe file
+    dotnet $fileExe -DevMode:LocalConfigFilePath $CONFIGURATIONFILE
+}
