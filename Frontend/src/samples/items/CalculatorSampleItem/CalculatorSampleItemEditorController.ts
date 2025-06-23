@@ -3,7 +3,7 @@ import {
 } from "@ms-fabric/workload-client";
 
 import { Calculation, CalculationOperator, CalculationResult, CalculatorSampleItemState } from "./CalculatorSampleItemModel";
-import { readOneLakeFileAsText, getOneLakeFilePath, writeToOneLakeFileAsText } from "../../controller/OneLakeController";
+import { readOneLakeFileAsText, getOneLakeFilePath, writeToOneLakeFileAsText, checkIfFileExists } from "../../controller/OneLakeController";
 import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
 import { GenericItemAndPath } from "../../../workload/models/DataHubModel";
 import { OneLakeShortcutCreateRequest, OneLakeShortcutCreateResponse, OneLakeShortcutTargetOneLake } from "../../views/SampleOneLakeShortcutCreator/SampleOneLakeShortcutModel";
@@ -46,7 +46,7 @@ export async function createCalculationShortcut(workloadClient: WorkloadClientAP
  */
 export async function saveCalculationResult(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemState>, calculation: CalculationResult): Promise<CalculatorSampleItemState> {    
     const result = calculateResult(calculation);
-    const fileName = `CalcResults/Calculation-${result.calculationTime.toUTCString() + ""}.txt`;
+    const fileName = `CalcResults/Calculation-${result.calculationTime.toUTCString() + ""}.json`;
     const filePath = getOneLakeFilePath(item.workspaceId, item.id, fileName)
     await writeToOneLakeFileAsText(workloadClient, filePath, JSON.stringify(result));
     const newItemState: CalculatorSampleItemState = {
@@ -84,7 +84,13 @@ export async function loadCalculationResult(workloadClient: WorkloadClientAPI, i
 export async function saveCalculationToHistory(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemState>, calculationResult: CalculationResult): Promise<void> {
    const fileName = "CalcResults/CalculationHistory.csv";
    const filePath = getOneLakeFilePath(item.workspaceId, item.id, fileName);
-   const data = `${calculationResult.operand1};${calculationResult.operand2};${calculationResult.operator};${calculationResult.result};${calculationResult.calculationTime}\n`;
+   const fileExist = await checkIfFileExists(workloadClient, filePath)
+   var data = "";
+   if (!fileExist) {
+         // If the file does not exist, create it with a header
+         data = "Operand1;Operand2;Operator;Result;CalculationTime\n";
+}
+   data += `${calculationResult.operand1};${calculationResult.operand2};${calculationResult.operator};${calculationResult.result};\"${calculationResult.calculationTime.toUTCString()}\"\n`;
    await writeToOneLakeFileAsText(workloadClient, filePath, data);
 }
 

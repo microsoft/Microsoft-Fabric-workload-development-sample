@@ -38,10 +38,10 @@ export interface CalculationResult extends Calculation {
  * The Undefined operator is used to indicate that no operator has been selected.
  */
 export enum CalculationOperator {
-    Undefined = 0,
-    Add = 1,
-    Subtract = 2,
-    Multiply = 3,
-    Divide = 4,
-    Random = 5,
+    Undefined,
+    Add,
+    Subtract,
+    Multiply,
+    Divide,
+    Random,
 }
