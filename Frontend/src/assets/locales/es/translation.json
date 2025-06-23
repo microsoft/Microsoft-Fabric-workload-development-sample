@@ -11,6 +11,8 @@
     "Item_CreatedDate": "Fecha de creación",
     "Item_State_Payload": "Estado del artículo",
     "Item_Editor_Titel": "Editor de artículos Hello World",
+    "Item_EmptyState_Message": "¡Digamos Hola a {{itemName}}!",
+    "Item_EmptyState_Button": "Guardar artículo",
     "Workspace_Name": "Nombre del espacio de trabajo",
     "Workspace_ID": "ID del espacio de trabajo"
 }

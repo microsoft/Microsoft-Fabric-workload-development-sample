@@ -253,3 +253,19 @@
     font-size: 14px;
     font-weight: normal;
 }
+
+// Empty state styles
+.empty-state-container {
+  padding: 40px 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  
+  img {
+    max-width: 300px;
+    margin-bottom: 24px;
+  }
+}
