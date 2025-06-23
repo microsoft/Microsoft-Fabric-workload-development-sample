@@ -37,7 +37,21 @@ function Copy-HelloWorldFile {
 
     New-Item -Path $DestinationFile -ItemType File -Force | Out-Null
     Set-Content -Path $DestinationFile -Value $content -Force
-    Write-Output "File created: $DestinationFile"
+    Write-Output " $DestinationFile"
+}
+
+function Replace-Content {
+    param (
+        [string]$SourceFile,
+        [hashtable]$Replacments
+    )
+    $content = Get-Content $SourceFile -Raw
+    foreach ($key in $Replacments.Keys) {
+        Write-Output "Replacing '$key' with '$($Replacments[$key])' in $SourceFile"
+        $content = $content -replace $key, $Replacments[$key]
+    }
+
+    Set-Content -Path $SourceFile -Value $content -Force
 }
 
 
@@ -48,7 +62,11 @@ function Copy-HelloWorldFile {
 $srCodeDir = Join-Path $PSScriptRoot "..\..\Frontend\src\workload\items\HelloWorldItem"
 $targetFile = Replace-HelloWorldPath -Path $srcFile
 Write-Output "Using Hello World sample in $srCodeDir as source"
-Write-Output "Write the item code in $targetCodeDir"
+Write-Host ""
+Write-Host "Creating code files..."
+$targetCodeDir = Join-Path $PSScriptRoot "..\..\Frontend\src\workload\items\$ItemName-item-editor"
+Write-Host "Write the item code in:"
+Write-Host " $targetCodeDir"
 
 ###############################################################################
 # Writing code files
@@ -66,25 +84,53 @@ Get-ChildItem -Recurse -Path $srCodeDir -File |
 # Writing manifest files
 # This will create a new item in the Manfiest directory
 ###############################################################################
-
+Write-Host ""
+Write-Host "Creating manifest files..."
 $srcFile = Join-Path $PSScriptRoot "..\..\config\templates\Manifest\Item.xml"
 if (Test-Path $srcFile) {
     $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\$itemName.xml"
     Copy-HelloWorldFile -SourceFile $srcFile -DestinationFile $targetFile
 } else {
-    Write-Host "${redColor}Item.xml not found at $targetFile"
+    Write-Host "Item.xml not found at $targetFile" -ForegroundColor Red
 }
 
 $srcFile = Join-Path $PSScriptRoot "..\..\config\templates\Manifest\Item.json"
 if (Test-Path $srcFile) {
     $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\$itemName.json"
     Copy-HelloWorldFile -SourceFile $srcFile -DestinationFile $targetFile
+
+    $replacements = @{
+        "Item_DisplayName" = $ItemName + "_DisplayName"
+        "Item_DisplayName_Plural" = $ItemName + "_DisplayName_Plural"
+        "item-editor" = "$ItemName-item-editor".toLower()
+    }
+
+    Replace-Content -SourceFile $targetFile -Replacements $replacements
 } else {
-    Write-Host "${redColor}Item.json not found at $targetFile"
+    Write-Host "Item.json not found at $targetFile" -ForegroundColor Red
 }
 
-Write-Output "TODO: Add the configuration Section to the Product.json file"
-Write-Output "TODO: Add the Translations to the Manifest asset files"
-Write-Output "TODO: add the routing to the App.tsx file"
+Write-Host ""
+$targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\Product.json"
+$targetFile = Resolve-Path $targetFile
+Write-Host "TODO: Add the configuration Section to the Product.json file!" -ForegroundColor Blue
+Write-Host "The file you need to change is:"
+Write-Host " $targetFile"
+
+Write-Host ""
+$targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\assets\locales"
+$targetFile = Resolve-Path $targetFile
+Write-Host " Add the Translations to the Manifest asset files!" -ForegroundColor Blue
+Write-Host "The file you need to change are located here:"
+Write-Host " $targetFile"
+
+Write-Host ""
+$targetFile = Join-Path $PSScriptRoot "..\..\Frontend\src\App.tsx"
+$targetFile = Resolve-Path $targetFile
+$routingEntry = "$ItemName-item-editor".toLower()
+Write-Host "TODO: add the routing for '$routingEntry' to the App.tsx file!" -ForegroundColor Blue
+Write-Host "The file you need to change is:"
+Write-Host " $targetFile"
+
 
 
