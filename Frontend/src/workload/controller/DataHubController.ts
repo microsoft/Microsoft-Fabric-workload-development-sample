@@ -16,7 +16,8 @@ export async function callDatahubWizardOpen(
     supportedTypes: ExtendedItemTypeV2[],
     dialogSubmittButtonName: string,
     dialogDescription: string,    
-    multiSelectionEnabled: boolean,
+    multiSelectionEnabled: boolean = false,
+    showFilesFolder: boolean = true,
     workspaceNavigationEnabled: boolean = true): Promise<SelectedItemAndPath> {
 
    const datahubWizardConfig: DatahubWizardDialogConfig = {
@@ -34,7 +35,7 @@ export async function callDatahubWizardOpen(
             } as DatahubHeaderDialogConfig,
             onelakeExplorerConfig: {
                 onelakeExplorerTypes: Object.values(OnelakeExplorerType),
-                showFilesFolder: true,
+                showFilesFolder: showFilesFolder,
             } as OnelakeExplorerConfig,
         } as OneLakeExplorerPageConfig,
         submitButtonName: dialogSubmittButtonName,

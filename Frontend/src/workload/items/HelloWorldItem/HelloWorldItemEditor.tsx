@@ -73,8 +73,10 @@ export function HelloWorldItemEditor(props: PageProps) {
     editorItem.itemState.message = newPayload
   }
 
-  function handleSayHello(message: string) {
-    onUpdateItemPayload(message);
+  function handleFinishEmptyState() {
+    setIsUnsafed(true)
+    setPayload(editorItem.itemState.message)
+    SaveItem()
     setSelectedTab("home");
   }
 
@@ -93,8 +95,10 @@ export function HelloWorldItemEditor(props: PageProps) {
         {["empty-state"].includes(selectedTab as string) && (
           <span>
             <HelloWorldItemEmptyState
-              itemName={editorItem.displayName}
-              onSayHello={handleSayHello}
+              workloadClient={workloadClient}
+              item={editorItem}
+              state={editorItem?.itemState}
+              onFinishEmptyState={handleFinishEmptyState}
             />
           </span>
         )}

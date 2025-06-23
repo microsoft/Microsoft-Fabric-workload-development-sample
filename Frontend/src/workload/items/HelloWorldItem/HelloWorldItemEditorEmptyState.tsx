@@ -3,22 +3,30 @@ import { Stack } from "@fluentui/react";
 import { Text, Button, Input } from "@fluentui/react-components";
 import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
+import { WorkloadClientAPI } from "@ms-fabric/workload-client";
+import { GenericItem } from "src/workload/models/ItemCRUDModel";
+import { HelloWorldItemModelState } from "./HelloWorldItemModel";
 
 
 interface HelloWorldItemEmptyStateProps {
-  itemName?: string;
-  onSayHello: (message: string) => void;
+  workloadClient: WorkloadClientAPI,
+  item: GenericItem;
+  state: HelloWorldItemModelState,
+  onFinishEmptyState: () => void;
 }
 
 export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> = ({
-  itemName,
-  onSayHello
+  workloadClient,
+  item,
+  state,
+  onFinishEmptyState
 }) => {
   const [message, setMessage] = useState<string>("Hello World!");
   const { t } = useTranslation();
   
-  const handleSayHello = () => {
-    onSayHello(message);
+  const saveItem = () => {
+    state.message = message;
+    onFinishEmptyState();
   };
   
   return (
@@ -37,7 +45,7 @@ export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> =
       </Stack.Item>
       <Stack.Item style={{ marginTop: '16px', marginBottom: '24px' }}>
         <Text>
-          {t('Item_EmptyState_Message', {itemName: itemName})}
+          {t('Item_EmptyState_Message', {itemName: item.displayName})}
         </Text>
       </Stack.Item>
       <Stack.Item style={{ width: '300px', marginTop: '16px' }}>
@@ -48,7 +56,7 @@ export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> =
         />
       </Stack.Item>
       <Stack.Item style={{ marginTop: '16px' }}>
-        <Button appearance="primary" onClick={handleSayHello}>
+        <Button appearance="primary" onClick={saveItem}>
           {t('Item_EmptyState_Button')}
         </Button>
       </Stack.Item>
