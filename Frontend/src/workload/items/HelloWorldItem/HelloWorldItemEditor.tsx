@@ -73,9 +73,8 @@ export function HelloWorldItemEditor(props: PageProps) {
     editorItem.itemState.message = newPayload
   }
 
-  function handleSayHello() {
-    const defaultMessage = "Hello World!";
-    onUpdateItemPayload(defaultMessage);
+  function handleSayHello(message: string) {
+    onUpdateItemPayload(message);
     setSelectedTab("home");
   }
 
