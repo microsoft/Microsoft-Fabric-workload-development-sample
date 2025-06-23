@@ -5,22 +5,22 @@ import { ContextProps, PageProps } from "src/App";
 import { Ribbon } from "./HelloWorldItemRibbon";
 import { getWorkloadItem, saveItemState } from "../../controller/ItemCRUDController";
 import { WorkloadItem } from "../../models/ItemCRUDModel";
-import LoadingProgressBar from "./HelloWorldItemEditorLoadingProgressBar";
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
 import { HelloWorldItemModelState } from "./HelloWorldItemModel";
+import { HelloWorldItemEmptyState } from "./HelloWorldItemEditorEmptyState";
 
 export function HelloWorldItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const { workloadClient } = props;
-  const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [payload, setPayload] = useState<string>();
   const [isUnsafed, setIsUnsafed] = useState<boolean>(true);
+  const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [editorItem, setEditorItem] = useState<WorkloadItem<HelloWorldItemModelState>>(undefined);
-  const [selectedTab, setSelectedTab] = useState<TabValue>("home");
+  const [selectedTab, setSelectedTab] = useState<TabValue>("");
 
   useEffect(() => {
       loadDataFromUrl(pageContext, pathname);
@@ -49,18 +49,22 @@ export function HelloWorldItemEditor(props: PageProps) {
           item.itemState =  {
               message: undefined,
             };
+            setSelectedTab("empty-state");
+        } else {
+          setSelectedTab("home");
         }
-        setPayload(item.itemState.message);
-        setSelectedTab("home");
+        setPayload(item.itemState.message);        
       } catch (error) {
         setEditorItem(undefined);        
       }
+      finally {
+        setIsLoadingData(false);
+      }
     } else {
       console.log(`non-editor context. Current Path: ${pathname}`);
-      setEditorItem(undefined);
+      setIsLoadingData(false);
     }
     setIsUnsafed(false);
-    setIsLoadingData(false);
   }
 
   function onUpdateItemPayload(newPayload: string) {
@@ -69,9 +73,13 @@ export function HelloWorldItemEditor(props: PageProps) {
     editorItem.itemState.message = newPayload
   }
 
-  // HTML page contents
+  function handleSayHello() {
+    const defaultMessage = "Hello World!";
+    onUpdateItemPayload(defaultMessage);
+    setSelectedTab("home");
+  }
+
   if (isLoadingData) {
-    return <LoadingProgressBar message="Loading..." />;
   }
   return (
       <Stack className="editor" data-testid="item-editor-inner">
@@ -82,60 +90,65 @@ export function HelloWorldItemEditor(props: PageProps) {
           selectedTab={selectedTab}
           onTabChange={setSelectedTab}
       />
-
       <Stack className="main">
-          {["home"].includes(selectedTab as string) && (
+        {["empty-state"].includes(selectedTab as string) && (
           <span>
-              <h2>{t('Item_Editor_Titel')}</h2>            
-              <div>
-                {editorItem && (
-                  <div className="section" data-testid='item-editor-metadata' >
-                    <Field label={t('Workspace_ID')} orientation="horizontal" className="field">
-                      <Label>{editorItem?.workspaceId} </Label>
-                    </Field>
-                    <Field label={t('Item_ID')} orientation="horizontal" className="field">
-                      <Label>{editorItem?.id} </Label>
-                    </Field>
-                    <Field label={t('Item_Type')} orientation="horizontal" className="field">
-                      <Label>{editorItem?.type} </Label>
-                    </Field>
-
-                    <Field label={t('Item_Name')} orientation="horizontal" className="field">
-                      <Label>{editorItem?.displayName} </Label>
-                    </Field>
-                    <Field label={t('Item_Description')} orientation="horizontal" className="field">
-                      <Label>{editorItem?.description} </Label>
-                    </Field>
-                    
-                    <Field label={t('Item_LastModifiedDate')} orientation="horizontal" className="field">
-                      <Label>{editorItem?.lastModifiedDate + ""} </Label>
-                    </Field>
-                    <Field label={t('Item_LastModifiedBy')} orientation="horizontal" className="field">
-                      <Label>{editorItem?.lastModifiedBy} </Label>
-                    </Field>
-                    
-                    <Field label={t('Item_CreatedDate')} orientation="horizontal" className="field">
-                      <Label>{editorItem?.createdDate + ""} </Label>
-                    </Field>
-                    <Field label={t('Item_CreatedBy')} orientation="horizontal" className="field">
-                      <Label>{editorItem?.createdBy} </Label>
-                    </Field>
-
-                    <Field label={t('Item_State_Payload')} orientation="horizontal" className="field">
-                      <Input
-                        size="small"
-                        type="text"
-                        placeholder="Hello World!"
-                        value={payload}
-                        onChange={(e) => onUpdateItemPayload(e.target.value)}              
-                        data-testid="payload-input"
-                      />
-                    </Field>
-                  </div>
-                )}
-              </div>
+            <HelloWorldItemEmptyState
+              itemName={editorItem.displayName}
+              onSayHello={handleSayHello}
+            />
           </span>
-          )}
+        )}
+        {["home"].includes(selectedTab as string) && (
+        <span>
+            <h2>{t('Item_Editor_Titel')}</h2>            
+            <div> 
+              <div className="section" data-testid='item-editor-metadata' >
+                <Field label={t('Workspace_ID')} orientation="horizontal" className="field">
+                  <Label>{editorItem?.workspaceId} </Label>
+                </Field>
+                <Field label={t('Item_ID')} orientation="horizontal" className="field">
+                  <Label>{editorItem?.id} </Label>
+                </Field>
+                <Field label={t('Item_Type')} orientation="horizontal" className="field">
+                  <Label>{editorItem?.type} </Label>
+                </Field>
+
+                <Field label={t('Item_Name')} orientation="horizontal" className="field">
+                  <Label>{editorItem?.displayName} </Label>
+                </Field>
+                <Field label={t('Item_Description')} orientation="horizontal" className="field">
+                  <Label>{editorItem?.description} </Label>
+                </Field>
+                
+                <Field label={t('Item_LastModifiedDate')} orientation="horizontal" className="field">
+                  <Label>{editorItem?.lastModifiedDate + ""} </Label>
+                </Field>
+                <Field label={t('Item_LastModifiedBy')} orientation="horizontal" className="field">
+                  <Label>{editorItem?.lastModifiedBy} </Label>
+                </Field>
+                
+                <Field label={t('Item_CreatedDate')} orientation="horizontal" className="field">
+                  <Label>{editorItem?.createdDate + ""} </Label>
+                </Field>
+                <Field label={t('Item_CreatedBy')} orientation="horizontal" className="field">
+                  <Label>{editorItem?.createdBy} </Label>
+                </Field>
+
+                <Field label={t('Item_State_Payload')} orientation="horizontal" className="field">
+                  <Input
+                    size="small"
+                    type="text"
+                    placeholder="Hello World!"
+                    value={payload}
+                    onChange={(e) => onUpdateItemPayload(e.target.value)}              
+                    data-testid="payload-input"
+                  />
+                </Field>
+              </div>
+            </div>
+        </span>
+        )}       
       </Stack>
     </Stack>
   );

@@ -12,6 +12,8 @@
     "Item_CreatedDate": "Created Date",
     "Item_State_Payload": "Item State",
     "Item_Editor_Titel": "Hello World Item Editor",
+    "Item_EmptyState_Message": "Let's say Hello to {{itemName}}!",
+    "Item_EmptyState_Button": "Save item",
     "Workspace_Name": "Workspace Name",
     "Workspace_ID": "Workspace Id"
 }
