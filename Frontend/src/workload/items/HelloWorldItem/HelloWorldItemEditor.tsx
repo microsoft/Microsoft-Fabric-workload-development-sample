@@ -37,15 +37,16 @@ export function HelloWorldItemEditor(props: PageProps) {
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
     setIsLoadingData(true);
+    var item: WorkloadItem<HelloWorldItemModelState> = undefined;    
     if (pageContext.itemObjectId) {
       // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
       try {
-        const item = await getWorkloadItem<HelloWorldItemModelState>(
+        item = await getWorkloadItem<HelloWorldItemModelState>(
           workloadClient,
           pageContext.itemObjectId,          
         );
         setEditorItem(item);
-        if(!item.itemState) {
+        if (!item.itemState) {
           item.itemState =  {
               message: undefined,
             };
@@ -56,10 +57,9 @@ export function HelloWorldItemEditor(props: PageProps) {
       }
     } else {
       console.log(`non-editor context. Current Path: ${pathname}`);
-      setIsLoadingData(false);
     }
     setIsUnsafed(false);
-    if(editorItem?.itemState?.message) {
+    if(item?.itemState?.message) {
       setSelectedTab("home");
     } else {
       setSelectedTab("empty-state");

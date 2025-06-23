@@ -21,7 +21,7 @@ export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> =
   state,
   onFinishEmptyState
 }) => {
-  const [message, setMessage] = useState<string>("Hello World!");
+  const [message, setMessage] = useState<string>("Hello {item.displayName}!");
   const { t } = useTranslation();
   
   const saveItem = () => {
