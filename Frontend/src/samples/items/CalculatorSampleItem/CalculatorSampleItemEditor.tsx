@@ -22,6 +22,7 @@ import {
   calculateResult,
   saveCalculationResult,
   loadCalculationResult,
+  createCalculationShortcut,
 } from "./CalculatorSampleItemEditorController";
 import { Ribbon } from "./CalculatorSampleItemEditorRibbon";
 import {
@@ -36,6 +37,8 @@ import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } fro
 import { callThemeOnChange } from "../../../workload/controller/ThemeController";
 import { callOpenSettings } from "../../../workload/controller/SettingsController";
 import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
+import { callDatahubWizardOpen } from "../../../workload/controller/DataHubController";
+import { callDialogOpenMsgBox } from "../../../workload/controller/DialogController";
 
 export function CalculatorSampleItemEditor(props: PageProps) {
   const { workloadClient } = props;
@@ -108,6 +111,31 @@ export function CalculatorSampleItemEditor(props: PageProps) {
       return;
     }
     setOperand2ValidationMessage("");
+  }
+
+  async function createShortcut(){
+    const result = await callDatahubWizardOpen(
+            workloadClient,
+            ["Lakehouse"],
+            "Select",
+            "Select shortcut destination",
+            false, 
+            false, 
+            true
+        );
+    if (result) {
+      const createResult = await createCalculationShortcut(workloadClient, editorItem, result)
+      if( createResult) {
+        console.log(`Shortcut created successfully: ${createResult.name}`);
+        callDialogOpenMsgBox(
+          workloadClient,
+          `Shortcut created successfully!`,
+          `The Shorcut with the name ${createResult.name} was created successfully.`,
+          ["OK"],          
+          undefined 
+        );
+      }
+    }    
   }
 
   function onOperatorInputChanged(value: string | null) {
@@ -235,6 +263,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
         openSettingsCallback={openSettings}
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
+        openCreateShortcutCallback={createShortcut}
       />
 
       <Stack className="main">

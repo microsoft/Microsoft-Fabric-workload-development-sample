@@ -8,7 +8,7 @@ import { DatahubCompactViewConfig, DatahubCompactViewPageConfig, DatahubHeaderDi
     OnelakeExplorerType, 
     WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { GenericItem } from "../models/ItemCRUDModel";
-import { SelectedItemAndPath } from "../models/DataHubModel";
+import { GenericItemAndPath } from "../models/DataHubModel";
 
 
 export async function callDatahubWizardOpen(    
@@ -18,7 +18,7 @@ export async function callDatahubWizardOpen(
     dialogDescription: string,    
     multiSelectionEnabled: boolean = false,
     showFilesFolder: boolean = true,
-    workspaceNavigationEnabled: boolean = true): Promise<SelectedItemAndPath> {
+    workspaceNavigationEnabled: boolean = true): Promise<GenericItemAndPath> {
 
    const datahubWizardConfig: DatahubWizardDialogConfig = {
         datahubCompactViewPageConfig: {
@@ -56,7 +56,7 @@ export async function callDatahubWizardOpen(
         type: "TODO", // selectedItem.datahubItemUI.itemType, // TODO: Update this when the type is available in the result
         displayName,
         description,
-        selectedPath: selectedItem.selectedPath
+        selectedPath: selectedItem.selectedPath.split('/').slice(2).join('/') // Remove the first two segments (workspace and item)
     };
 }
 

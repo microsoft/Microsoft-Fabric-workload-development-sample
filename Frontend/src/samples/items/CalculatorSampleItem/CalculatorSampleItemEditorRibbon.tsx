@@ -1,6 +1,6 @@
 import React from "react";
 import { Tab, TabList } from '@fluentui/react-tabs';
-import { Toolbar } from '@fluentui/react-toolbar';
+import { Toolbar, ToolbarDivider } from '@fluentui/react-toolbar';
 import {
   SelectTabEvent, SelectTabData, TabValue,
   Menu, MenuItem, MenuList, MenuPopover, MenuTrigger,
@@ -12,6 +12,7 @@ import {
   Edit24Regular,
   Share24Regular,
   Settings24Regular,
+  FolderLink24Regular,
 } from "@fluentui/react-icons";
 import { Stack } from '@fluentui/react';
 import { PageProps } from 'src/App';
@@ -21,6 +22,10 @@ const HomeTabToolbar = (props: RibbonProps) => {
 
   async function onSettingsClicked() {
     await props.openSettingsCallback();
+  }
+
+  async function onCreateShortcutClicked() {
+    await props.openCreateShortcutCallback();
   }
 
   async function onSaveAsClicked() {
@@ -50,6 +55,16 @@ const HomeTabToolbar = (props: RibbonProps) => {
           data-testid="item-editor-settings-btn"
           icon={<Settings24Regular />}
           onClick={onSettingsClicked} />
+      </Tooltip>
+      <ToolbarDivider />
+      <Tooltip
+        content="Create a Shortcut to the calcuation results"
+        relationship="label">
+        <ToolbarButton
+          aria-label="Shortcut"
+          data-testid="item-editor-shortcut-btn"
+          icon={<FolderLink24Regular />}
+          onClick={onCreateShortcutClicked} />
       </Tooltip>
     </Toolbar>
   );
@@ -81,6 +96,7 @@ export interface RibbonProps extends PageProps {
   saveItemCallback: () => Promise<void>;
   isSaveButtonEnabled?: boolean;
   openSettingsCallback: () => Promise<void>;
+  openCreateShortcutCallback?: () => Promise<void>;
   onTabChange: (tabValue: TabValue) => void;
   selectedTab: TabValue;
 }

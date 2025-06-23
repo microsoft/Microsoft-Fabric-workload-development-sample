@@ -5,6 +5,36 @@ import {
 import { Calculation, CalculationOperator, CalculationResult, CalculatorSampleItemState } from "./CalculatorSampleItemModel";
 import { readOneLakeFileAsText, getOneLakeFilePath, writeToOneLakeFileAsText } from "../../controller/OneLakeController";
 import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
+import { GenericItemAndPath } from "../../../workload/models/DataHubModel";
+import { OneLakeShortcutCreateRequest, OneLakeShortcutCreateResponse, OneLakeShortcutTargetOneLake } from "../../views/SampleOneLakeShortcutCreator/SampleOneLakeShortcutModel";
+import { createOneLakeShortcut } from "../../views/SampleOneLakeShortcutCreator/SampleOneLakeShortcutController";
+
+
+
+/**
+ * Saves the calculation result to OneLake and updates the item state.
+ *
+ * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
+ * @param {WorkloadItem<CalculatorSampleItemState>} item - The workload item to update.
+ * @param {CalculationResult} calculation - The calculation result to save.
+ * @returns {Promise<CalculatorSampleItemState>} - The updated item state after saving the calculation result.
+ */
+export async function createCalculationShortcut(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemState>, 
+    source: GenericItemAndPath): Promise<OneLakeShortcutCreateResponse> {
+    const target: OneLakeShortcutTargetOneLake = {
+        oneLake: {
+            workspaceId: item.workspaceId,
+            itemId: item.id,
+            path: "Files/CalcResults",
+        }
+    };
+    const shortcutRequest: OneLakeShortcutCreateRequest = {
+        path: source.selectedPath || "Files",
+        name: "CalcResults",
+        target: target
+    };
+    return createOneLakeShortcut(workloadClient, source.workspaceId, source.id, shortcutRequest);
+}
 
 /**
  * Saves the calculation result to OneLake and updates the item state.
@@ -52,7 +82,7 @@ export async function loadCalculationResult(workloadClient: WorkloadClientAPI, i
  * @returns {Promise<void>} - A promise that resolves when the calculation result is saved.
  */
 export async function saveCalculationToHistory(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemState>, calculationResult: CalculationResult): Promise<void> {
-   const fileName = "CalculationHistory.csv";
+   const fileName = "CalcResults/CalculationHistory.csv";
    const filePath = getOneLakeFilePath(item.workspaceId, item.id, fileName);
    const data = `${calculationResult.operand1};${calculationResult.operand2};${calculationResult.operator};${calculationResult.result};${calculationResult.calculationTime}\n`;
    await writeToOneLakeFileAsText(workloadClient, filePath, data);
@@ -67,7 +97,7 @@ export async function saveCalculationToHistory(workloadClient: WorkloadClientAPI
  */
 export async function loadCalculationHistory(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemState>): Promise<CalculationResult[]> {
     var retVal: CalculationResult[];
-    const fileName = "CalculationHistory.csv";
+    const fileName = "CalcResults/CalculationHistory.csv";
     const filePath = getOneLakeFilePath(item.workspaceId, item.id, fileName);
     const result = await readOneLakeFileAsText(workloadClient, filePath);
     const lines = result.split(/\r\n|\n|\r/);

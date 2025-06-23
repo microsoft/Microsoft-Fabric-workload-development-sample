@@ -1,6 +1,6 @@
 import { GenericItem } from "./ItemCRUDModel";
 
 
-export interface SelectedItemAndPath extends GenericItem {
+export interface GenericItemAndPath extends GenericItem {
     selectedPath: string;
 }
