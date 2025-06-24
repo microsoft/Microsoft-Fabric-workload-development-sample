@@ -1,5 +1,6 @@
 {
     "name": "CalculatorSample",
+    "version": "1.100",
     "displayName": "CalculatorSampleItem_DisplayName",
     "displayNamePlural": "CalculatorSampleItem_DisplayName_Plural",
     "editor": {
@@ -32,5 +33,9 @@
       "canDestroy": "item.tab.canDestroy",
       "onDestroy": "item.tab.onDestroy",
       "onDelete": "item.tab.onDelete"
+    },
+    "createItemDialogConfig": {
+      "onCreationFailure": { "action": "item.onCreationFailure" },
+      "onCreationSuccess": { "action": "item.onCreationSuccess" }
     }
   }

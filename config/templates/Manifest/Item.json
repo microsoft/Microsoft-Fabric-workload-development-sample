@@ -1,5 +1,6 @@
 {
     "name": "{{ITEM_NAME}}",
+    "version": "1.100",
     "displayName": "Item_DisplayName",
     "displayNamePlural": "Item_DisplayName_Plural",
     "editor": {
@@ -19,5 +20,9 @@
       "canDestroy": "item.tab.canDestroy",
       "onDestroy": "item.tab.onDestroy",
       "onDelete": "item.tab.onDelete"
+    },
+    "createItemDialogConfig": {
+      "onCreationFailure": { "action": "item.onCreationFailure" },
+      "onCreationSuccess": { "action": "item.onCreationSuccess" }
     }
   }
