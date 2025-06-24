@@ -183,10 +183,11 @@ export async function getItemState<T>(
  */
 export async function getWorkloadItem<T>(
     workloadClient: WorkloadClientAPI,
-    itemObjectId: string): Promise<WorkloadItem<T>> {
+    itemObjectId: string,
+    defaultState?: T): Promise<WorkloadItem<T>> {
         const getItemResult = await callGetItem(workloadClient, itemObjectId);
         const getItemDefinitionResult = await callGetItemDefinition(workloadClient, itemObjectId);
-        const item = convertGetItemResultToWorkloadItem<T>(getItemResult, getItemDefinitionResult);
+        const item = convertGetItemResultToWorkloadItem<T>(getItemResult, getItemDefinitionResult, defaultState);
         return item;
     }
 
@@ -257,7 +258,7 @@ export async function callGetItemDefinition(
  * @param {GetItemDefinitionResult} itemDefinitionResult - The item definition result to convert.
  * @returns {WorkloadItem<T>} - The converted WorkloadItem.
  */
-export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult, itemDefinitionResult: GetItemDefinitionResult): WorkloadItem<T> {
+export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult, itemDefinitionResult: GetItemDefinitionResult, defaultState?: T): WorkloadItem<T> {
     let payload: T;
     let itemPlatformMetadata: GenericItem | undefined;
     if (itemDefinitionResult?.definition?.parts) {
@@ -279,7 +280,7 @@ export function convertGetItemResultToWorkloadItem<T>(item: GetItemResult, itemD
         type: itemPlatformMetadata?.type ?? item.itemType,
         displayName: itemPlatformMetadata?.displayName ?? item.displayName,
         description: itemPlatformMetadata?.description ?? item.description,
-        itemState: payload,
+        itemState: payload ?? defaultState,
         createdBy: item.createdByUser.name,
         createdDate: item.createdDate,
         lastModifiedBy: item.modifiedByUser.name,

@@ -39,6 +39,7 @@ import { callOpenSettings } from "../../../workload/controller/SettingsControlle
 import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
 import { callDatahubWizardOpen } from "../../../workload/controller/DataHubController";
 import { callDialogOpenMsgBox } from "../../../workload/controller/DialogController";
+import { defaultCalculatorSampleItemState } from "../../../constants";
 
 export function CalculatorSampleItemEditor(props: PageProps) {
   const { workloadClient } = props;
@@ -95,6 +96,8 @@ export function CalculatorSampleItemEditor(props: PageProps) {
 
   async function onOperand1InputChanged(value: number) {
     setOperand1(value);
+    editorItem.itemState.operand1 = value;
+    setEditorItem(editorItem);
     setDirty(true);
     if (!isValidOperand(value)) {
       setOperand1ValidationMessage("Operand 1 may lead to overflow");
@@ -105,6 +108,8 @@ export function CalculatorSampleItemEditor(props: PageProps) {
 
   async function onOperand2InputChanged(value: number) {
     setOperand2(value);
+    editorItem.itemState.operand2 = value;
+    setEditorItem(editorItem);
     setDirty(true);
     if (!isValidOperand(value)) {
       setOperand2ValidationMessage("Operand 2 may lead to overflow");
@@ -140,6 +145,8 @@ export function CalculatorSampleItemEditor(props: PageProps) {
 
   function onOperatorInputChanged(value: string | null) {
     setOperator(CalculationOperator[value as keyof typeof CalculationOperator] || CalculationOperator.Undefined);
+    editorItem.itemState.operator = CalculationOperator[value as keyof typeof CalculationOperator] || CalculationOperator.Undefined;
+    setEditorItem(editorItem);
     setDirty(true);
   }
 
@@ -169,7 +176,8 @@ export function CalculatorSampleItemEditor(props: PageProps) {
 
       const calcResult = calculateResult(calculation);
       const calcSave = await saveCalculationResult(workloadClient, editorItem, calcResult)
-      editorItem.itemState = calcSave;           
+      editorItem.itemState = calcSave;
+      setEditorItem(editorItem);           
       setCalculationResult(calcResult.result.toString());
       setCalculationTime(calcResult.calculationTime);
       await SaveItem();
@@ -192,7 +200,8 @@ export function CalculatorSampleItemEditor(props: PageProps) {
         setSelectedTab("home");
         const item = await getWorkloadItem<CalculatorSampleItemState>(
                   workloadClient,
-                  pageContext.itemObjectId,          
+                  pageContext.itemObjectId,
+                  defaultCalculatorSampleItemState          
                 );
         // set the metadata
         setOperand1(item?.itemState?.operand1 ?? 0);
@@ -328,7 +337,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
                       key={pageContext.itemObjectId}
                       data-testid="operator-combobox"
                       placeholder="Operator"
-                      value={CalculationOperator[operator]}
+                      value={operator == CalculationOperator.Undefined ? "" : CalculationOperator[operator]}
                       onOptionSelect={(_, opt) =>
                         onOperatorInputChanged(opt.optionValue)
                       }
