@@ -10,6 +10,7 @@ import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
 import { HelloWorldItemModelState } from "./HelloWorldItemModel";
 import { HelloWorldItemEmptyState } from "./HelloWorldItemEditorEmptyState";
+import { HelloWorldItemEditorLoadingProgressBar } from "./HelloWorldItemEditorLoadingProgressBar";
 
 export function HelloWorldItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
@@ -81,78 +82,83 @@ export function HelloWorldItemEditor(props: PageProps) {
   }
 
   if (isLoadingData) {
+    //making sure we show a loding indicator while the itme is loading
+    return (<HelloWorldItemEditorLoadingProgressBar 
+      message={t("Item_LoadingProgressBar_Text", { itemName: editorItem?.displayName })} />);
   }
-  return (
-      <Stack className="editor" data-testid="item-editor-inner">
-      <Ribbon
-          {...props}        
-          isSaveButtonEnabled={isUnsafed}
-          saveItemCallback={SaveItem}
-          selectedTab={selectedTab}
-          onTabChange={setSelectedTab}
-      />
-      <Stack className="main">
-        {["empty-state"].includes(selectedTab as string) && (
+  else {
+    return (
+        <Stack className="editor" data-testid="item-editor-inner">
+        <Ribbon
+            {...props}        
+            isSaveButtonEnabled={isUnsafed}
+            saveItemCallback={SaveItem}
+            selectedTab={selectedTab}
+            onTabChange={setSelectedTab}
+        />
+        <Stack className="main">
+          {["empty-state"].includes(selectedTab as string) && (
+            <span>
+              <HelloWorldItemEmptyState
+                workloadClient={workloadClient}
+                item={editorItem}
+                state={editorItem?.itemState}
+                onFinishEmptyState={handleFinishEmptyState}
+              />
+            </span>
+          )}
+          {["home"].includes(selectedTab as string) && (
           <span>
-            <HelloWorldItemEmptyState
-              workloadClient={workloadClient}
-              item={editorItem}
-              state={editorItem?.itemState}
-              onFinishEmptyState={handleFinishEmptyState}
-            />
-          </span>
-        )}
-        {["home"].includes(selectedTab as string) && (
-        <span>
-            <h2>{t('Item_Editor_Titel')}</h2>            
-            <div> 
-              <div className="section" data-testid='item-editor-metadata' >
-                <Field label={t('Workspace_ID')} orientation="horizontal" className="field">
-                  <Label>{editorItem?.workspaceId} </Label>
-                </Field>
-                <Field label={t('Item_ID')} orientation="horizontal" className="field">
-                  <Label>{editorItem?.id} </Label>
-                </Field>
-                <Field label={t('Item_Type')} orientation="horizontal" className="field">
-                  <Label>{editorItem?.type} </Label>
-                </Field>
+              <h2>{t('Item_Editor_Titel')}</h2>            
+              <div> 
+                <div className="section" data-testid='item-editor-metadata' >
+                  <Field label={t('Workspace_ID')} orientation="horizontal" className="field">
+                    <Label>{editorItem?.workspaceId} </Label>
+                  </Field>
+                  <Field label={t('Item_ID')} orientation="horizontal" className="field">
+                    <Label>{editorItem?.id} </Label>
+                  </Field>
+                  <Field label={t('Item_Type')} orientation="horizontal" className="field">
+                    <Label>{editorItem?.type} </Label>
+                  </Field>
 
-                <Field label={t('Item_Name')} orientation="horizontal" className="field">
-                  <Label>{editorItem?.displayName} </Label>
-                </Field>
-                <Field label={t('Item_Description')} orientation="horizontal" className="field">
-                  <Label>{editorItem?.description} </Label>
-                </Field>
-                
-                <Field label={t('Item_LastModifiedDate')} orientation="horizontal" className="field">
-                  <Label>{editorItem?.lastModifiedDate + ""} </Label>
-                </Field>
-                <Field label={t('Item_LastModifiedBy')} orientation="horizontal" className="field">
-                  <Label>{editorItem?.lastModifiedBy} </Label>
-                </Field>
-                
-                <Field label={t('Item_CreatedDate')} orientation="horizontal" className="field">
-                  <Label>{editorItem?.createdDate + ""} </Label>
-                </Field>
-                <Field label={t('Item_CreatedBy')} orientation="horizontal" className="field">
-                  <Label>{editorItem?.createdBy} </Label>
-                </Field>
+                  <Field label={t('Item_Name')} orientation="horizontal" className="field">
+                    <Label>{editorItem?.displayName} </Label>
+                  </Field>
+                  <Field label={t('Item_Description')} orientation="horizontal" className="field">
+                    <Label>{editorItem?.description} </Label>
+                  </Field>
+                  
+                  <Field label={t('Item_LastModifiedDate')} orientation="horizontal" className="field">
+                    <Label>{editorItem?.lastModifiedDate + ""} </Label>
+                  </Field>
+                  <Field label={t('Item_LastModifiedBy')} orientation="horizontal" className="field">
+                    <Label>{editorItem?.lastModifiedBy} </Label>
+                  </Field>
+                  
+                  <Field label={t('Item_CreatedDate')} orientation="horizontal" className="field">
+                    <Label>{editorItem?.createdDate + ""} </Label>
+                  </Field>
+                  <Field label={t('Item_CreatedBy')} orientation="horizontal" className="field">
+                    <Label>{editorItem?.createdBy} </Label>
+                  </Field>
 
-                <Field label={t('Item_State_Payload')} orientation="horizontal" className="field">
-                  <Input
-                    size="small"
-                    type="text"
-                    placeholder="Hello World!"
-                    value={payload}
-                    onChange={(e) => onUpdateItemPayload(e.target.value)}              
-                    data-testid="payload-input"
-                  />
-                </Field>
+                  <Field label={t('Item_State_Payload')} orientation="horizontal" className="field">
+                    <Input
+                      size="small"
+                      type="text"
+                      placeholder="Hello World!"
+                      value={payload}
+                      onChange={(e) => onUpdateItemPayload(e.target.value)}              
+                      data-testid="payload-input"
+                    />
+                  </Field>
+                </div>
               </div>
-            </div>
-        </span>
-        )}       
+          </span>
+          )}       
+        </Stack>
       </Stack>
-    </Stack>
-  );
+    );
+  }
 }

@@ -14,6 +14,7 @@
     "Item_Editor_Titel": "Hello World Item Editor",
     "Item_EmptyState_Message": "Let's say hello to {{itemName}}!",
     "Item_EmptyState_Button": "Save item",
+    "Item_LoadingProgressBar_Text": "Loading item {{itemName}} ...",
     "Workspace_Name": "Workspace Name",
     "Workspace_ID": "Workspace Id"
 }

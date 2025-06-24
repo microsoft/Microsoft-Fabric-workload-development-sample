@@ -2,7 +2,7 @@ import React from 'react';
 import { Label, ProgressBar } from '@fluentui/react-components';
 import { Stack } from "@fluentui/react";
 
-export const CalculatorSampleItemEditorLoadingProgressBar = ({ message }: { message: string }) => (
+export const HelloWorldItemEditorLoadingProgressBar = ({ message }: { message: string }) => (
     <Stack 
     verticalAlign="center" 
     horizontalAlign="center" 
@@ -14,4 +14,4 @@ export const CalculatorSampleItemEditorLoadingProgressBar = ({ message }: { mess
     </Stack>
 );
 
-export default CalculatorSampleItemEditorLoadingProgressBar;
+export default HelloWorldItemEditorLoadingProgressBar;

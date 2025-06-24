@@ -31,7 +31,7 @@ import {
   Calculation
 } from "./CalculatorSampleItemModel";
 import "./../../../styles.scss";
-import { LoadingProgressBar } from "./CalculatorSampleItemEditorLoadingProgressBar";
+import { CalculatorSampleItemEditorLoadingProgressBar } from "./CalculatorSampleItemEditorLoadingProgressBar";
 import { callGetItem, getWorkloadItem, saveItemState } from "../../../workload/controller/ItemCRUDController";
 import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } from "../../../workload/controller/NavigationController";
 import { callThemeOnChange } from "../../../workload/controller/ThemeController";
@@ -252,7 +252,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
 
   // HTML page contents
   if (isLoadingData) {
-    return <LoadingProgressBar message="Loading..." />;
+    return <CalculatorSampleItemEditorLoadingProgressBar message="Loading..." />;
   }
   return (
     <Stack className="editor" data-testid="sample-workload-editor-inner">

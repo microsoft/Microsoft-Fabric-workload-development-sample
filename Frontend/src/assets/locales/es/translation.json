@@ -13,6 +13,7 @@
     "Item_Editor_Titel": "Editor de artículos Hello World",
     "Item_EmptyState_Message": "¡Digamos Hola a {{itemName}}!",
     "Item_EmptyState_Button": "Guardar artículo",
+    "Item_LoadingProgressBar_Text": "Cargando artículo {{itemName}} ...",
     "Workspace_Name": "Nombre del espacio de trabajo",
     "Workspace_ID": "ID del espacio de trabajo"
 }

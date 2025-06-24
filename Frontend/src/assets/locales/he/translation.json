@@ -14,6 +14,7 @@
     "Item_Editor_Titel": "עורך פריטים Hello World",
     "Item_EmptyState_Message": "בואו נגיד שלום ל{{itemName}}!",
     "Item_EmptyState_Button": "שמור פריט",
+    "Item_LoadingProgressBar_Text": "טוען פריט {{itemName}}",
     "Workspace_Name": "שם חלל עבודה",
     "Workspace_ID": "מזהה חלל עבודה"
 }
