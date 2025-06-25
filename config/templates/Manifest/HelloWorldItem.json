@@ -4,7 +4,7 @@
     "displayName": "HelloWorldItem_DisplayName",
     "displayNamePlural": "HelloWorldItem_DisplayName_Plural",
     "editor": {
-      "path": "/item-editor"
+      "path": "/HelloWorldItem-editor"
     },
     "icon": {
       "name": "assets/images/HelloWorldItem-icon.png"

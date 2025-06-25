@@ -104,7 +104,7 @@
       "description": "Workload_Hub_Workload_Description",
       "image": {
         "mediaType": 0,
-        "source": "assets/images/BannerMedium.png"
+        "source": "assets/images/WorkloadBanner.png"
       },
       "slideMedia": [
         {
