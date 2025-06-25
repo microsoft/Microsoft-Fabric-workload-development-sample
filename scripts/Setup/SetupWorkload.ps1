@@ -4,6 +4,8 @@ param (
     [string]$HostingType,
     # The name of the workload, used for the Entra App and the workload in the Fabric portal
     [String]$WorkloadName = "Org.MyWorkloadSample",
+    # The display name of the workload, used in the Fabric portal
+    [String]$WorkloadDisplayName = "My Sample Workload",
     # The Entra Application ID for the frontend
     # If not provided, the user will be prompted to enter it or create a new one.
     [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
@@ -52,6 +54,7 @@ $replacements = @{
     "WORKLOAD_VERSION" = $WorkloadVersion
 }
 
+
 # Copy the template files to the destination directory
 Write-Output "Writing Manifest files ..."
 $writeManifestFiles = $true
@@ -73,6 +76,19 @@ if($writeManifestFiles) {
             Write-Output "$filePath"
         }
 }
+
+# Updating the names 
+$srcFile = Join-Path $writeManifestFiles "\assets\locals\en-US\translations.json"
+if (Test-Path $srcFile) {
+    $content = Get-Content $filePath -Raw
+    foreach ($key in $replacements.Keys) {
+        $content = $content -replace "WDKv2 Sample Workload", $WorkloadDisplayName
+    }
+    Set-Content -Path $filePath -Value $content -Force
+} else {
+    Write-Host "${srcItemName}Item.xml not found at $targetFile" -ForegroundColor Red
+}
+
 
 # Use a temporary nuspec file
 Write-Output "Create nuspec file ..."
@@ -127,5 +143,6 @@ Get-ChildItem -Path $srcFrontendDir -Force -File | ForEach-Object {
         Write-Host "Skipping file: $filePath"
     }
 }
+
 
 Write-Host "Setup Workload finished successfully ..."  -ForegroundColor Green
