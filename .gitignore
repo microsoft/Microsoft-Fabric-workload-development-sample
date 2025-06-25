@@ -405,9 +405,9 @@ tools/DevGatewayContainer/.env
 
 # Fabric Script files
 scripts/Build/Manifest/ValidationScripts/ValidationErrors.txt
+scripts/Setup/My*
 
 # Fabric Frontend files
 Frontend/node_modules/*
 Frontend/package-lock.json
 Frontend/.env*
-
