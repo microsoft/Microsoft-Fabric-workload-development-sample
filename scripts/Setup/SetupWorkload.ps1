@@ -56,6 +56,7 @@ $replacements = @{
 
 
 # Copy the template files to the destination directory
+Write-Output ""
 Write-Output "Writing Manifest files ..."
 $writeManifestFiles = $true
 if (((Test-Path $destManifestDir) -and (Get-ChildItem -Path $destManifestDir -Recurse | Measure-Object).Count -ne 0) -and !$Force) {
@@ -78,15 +79,16 @@ if($writeManifestFiles) {
 }
 
 # Updating the names 
-$srcFile = Join-Path $writeManifestFiles "\assets\locals\en-US\translations.json"
+$srcFile = Join-Path $destManifestDir "\assets\locales\en-US\translations.json"
 if (Test-Path $srcFile) {
-    $content = Get-Content $filePath -Raw
+    $content = Get-Content $srcFile -Raw
     foreach ($key in $replacements.Keys) {
         $content = $content -replace "WDKv2 Sample Workload", $WorkloadDisplayName
     }
-    Set-Content -Path $filePath -Value $content -Force
+    Set-Content -Path $srcFile -Value $content -Force
+    Write-Host "Updated translations in $srcFile"
 } else {
-    Write-Host "${srcItemName}Item.xml not found at $targetFile" -ForegroundColor Red
+    Write-Host "$srcFile not found!" -ForegroundColor Red
 }
 
 
