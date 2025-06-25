@@ -101,3 +101,11 @@ With WDKv2, users can create, update, and delete items with content using the st
 ### CI/CD Support
 
 CI/CD support for all items is one of the highest asks from our customers. With this feature, WDKv2 enables CI/CD support for all items out of the box, without the need to implement any specific logic or backend operations. This means you can automate deployment, testing, and updates for your workloads using standard DevOps pipelines and tools. The item format and APIs are designed to be fully compatible with CI/CD processes, ensuring a consistent and reliable experience across environments. For more information on integrating with CI/CD, refer to the [Fabric DevOps documentation](https://learn.microsoft.com/fabric/devops/).
+
+## Limitations
+
+### Hosting type 
+At the moment only FERemote hosting type is supported for Private Preview.
+
+### Private Link: 
+All workloads will be blocked for consumtion and development if the tenant has turned on Private Link on tenant or workspace level
