@@ -16,9 +16,9 @@
     "Fabric_UX_System_Introduction": "Get started with Fabric UX system",
     "Workload_Hub_Workload_Slogan": "The quickest way from a billion points of data to a point of view.",
     "Workload_Hub_Workload_Description": "Contoso workload enables organizations to conduct real-time customer interactions and automate operational business decisions at scale. It supports a wide variety of customer-facing activities such as personalized marketing and next best action, and customer-impacting decisions including credit services and fraud prevention.",
-    "Item_DisplayName": "Hello World",
-    "Item_DisplayName_Plural": "Hello Worlds",
-    "Item_Description": "A Hello World Item to start your Dev Experience",
+    "HelloWorldItem_DisplayName": "Hello World",
+    "HelloWorldItem_DisplayName_Plural": "Hello Worlds",
+    "HelloWorldItem_Description": "A Hello World Item to start your Dev Experience",
     "CalculatorSampleItem_DisplayName": "Calculator Sample",
     "CalculatorSampleItem_DisplayName_Plural": "Calculator Samples",
     "CalculatorSampleItem_Description": "A Simple Calculator Item that stores data in OneLake"

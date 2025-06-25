@@ -4,9 +4,6 @@ param (
     [string]$HostingType,
     # The name of the workload, used for the Entra App and the workload in the Fabric portal
     [String]$WorkloadName = "Org.MyWorkloadSample",
-    # The name of the item, used for the item in the Fabric portal
-    # Items will be created with the {WorkloadName}.{ItemName} format in Fabric
-    [String]$ItemName = "SampleItem",
     # The Entra Application ID for the frontend
     # If not provided, the user will be prompted to enter it or create a new one.
     [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
@@ -39,7 +36,6 @@ $destManifestDir = Join-Path $PSScriptRoot "..\..\config\Manifest"
 if (!(Test-Path $destManifestDir)) { New-Item -ItemType Directory -Path $destManifestDir | Out-Null }
 
 Write-Output "Workload Name: $WorkloadName"
-Write-Output "Item Name: $ItemName"
 Write-Output "AAD Frontend App ID: $AADFrontendAppId"
 Write-Output "AAD Backend App ID: $AADBackendAppId"
 Write-Output "Workload Version: $WorkloadVersion"
@@ -51,7 +47,6 @@ Write-Output "Workload Version: $WorkloadVersion"
 # Define key-value dictionary for replacements
 $replacements = @{
     "WORKLOAD_NAME" = $WorkloadName
-    "ITEM_NAME" = $ItemName
     "FRONTEND_APP_ID" = $AADFrontendAppId
     "BACKEND_APP_ID" = $AADBackendAppId
     "WORKLOAD_VERSION" = $WorkloadVersion

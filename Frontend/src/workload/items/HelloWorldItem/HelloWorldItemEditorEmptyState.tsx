@@ -33,7 +33,7 @@ export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> =
     <Stack className="empty-state-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
       <Stack.Item>
         <img
-          src="/assets/images/hello-world-empty-state.jpg"
+          src="/assets/images/HelloWorldItem-empty-state.jpg"
           alt="Empty state illustration"
           className="empty-state-image"
         />
@@ -57,7 +57,7 @@ export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> =
       </Stack.Item>
       <Stack.Item style={{ marginTop: '16px' }}>
         <Button appearance="primary" onClick={saveItem}>
-          {t('Item_EmptyState_Button')}
+          {t('HelloWorldItem_EmptyState_Button')}
         </Button>
       </Stack.Item>
     </Stack>

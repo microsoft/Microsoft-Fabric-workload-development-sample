@@ -41,20 +41,20 @@ export function App({ history, workloadClient }: AppProps) {
     return <Router history={history}>
         <Switch>
             {/* Routing to the Empty Item Editor */}
-            <Route path="/item-editor/:itemObjectId">
+            <Route path="/HelloWorldItem-editor/:itemObjectId">
                 <HelloWorldItemEditor
-                    workloadClient={workloadClient} data-testid="item-editor" />
+                    workloadClient={workloadClient} data-testid="HelloWorldItem-editor" />
             </Route>
             {/* This is the routing to the Sample Workload Editor.
                  Add your workload editor path here, and reference it in index.worker.ts  */}
-            <Route path="/CalculatorSample-item-editor/:itemObjectId">
+            <Route path="/CalculatorSampleItem-editor/:itemObjectId">
                 <CalculatorSampleItemEditor
-                    workloadClient={workloadClient} data-testid="sample-item-editor" />
+                    workloadClient={workloadClient} data-testid="CalculatorSampleItem-editor" />
             </Route>
-            <Route path="/CalculatorSample-item-settings-dialog">
+            <Route path="/CalculatorSampleItem-settings-dialog">
                 <CustomItemSettings data-testid="custom-about" />
             </Route>
-            <Route path="/CalculatorSample-item-about-dialog">
+            <Route path="/CalculatorSampleItem-about-dialog">
                 <CustomAbout />
             </Route>     
 

@@ -47,7 +47,7 @@
         "customActions": [
         ]},
         "recommendedItemTypes": [
-          "{{ITEM_NAME}}",
+          "HelloWorld",
           "CalculatorSample"
         ]
     },
@@ -55,13 +55,13 @@
       "description": "Workload_Description",
       "cards": [
                 {
-          "title": "Item_DisplayName",
-          "description": "Item_Description",
+          "title": "HelloWorldItem_DisplayName",
+          "description": "HelloWorldItem_Description",
           "icon": {
-            "name": "assets/images/item.png"
+            "name": "assets/images/HelloWorldItem-icon.png"
           },
           "icon_small": {
-            "name": "assets/images/item.png"
+            "name": "assets/images/HelloWorldItem-icon.png"
           },
           "availableIn": [
             "home",
@@ -79,10 +79,10 @@
           "title": "CalculatorSampleItem_DisplayName",
           "description": "CalculatorSampleItem_Description",
           "icon": {
-            "name": "assets/images/CalculatorSample-item.png"
+            "name": "assets/images/CalculatorSampleItem-icon.png"
           },
           "icon_small": {
-            "name": "assets/images/CalculatorSample-item.png"
+            "name": "assets/images/CalculatorSampleItem-icon.png"
           },
           "availableIn": [
             "home",

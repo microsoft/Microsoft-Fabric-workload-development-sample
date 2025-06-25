@@ -3,9 +3,6 @@ param (
     [string]$HostingType = "FERemote",
     # The name of the workload, used for the Entra App and the workload in the Fabric portal
     [String]$WorkloadName = "Org.MyWorkloadSample",
-    # The name of the item, used for the item in the Fabric portal
-    # Items will be created with the {WorkloadName}.{ItemName} format in Fabric
-    [String]$ItemName = "SampleItem",
     # The Workspace Id to use for development
     # If not provided, the user will be prompted to enter it.
     [String]$WorkspaceId = "00000000-0000-0000-0000-000000000000",
@@ -83,7 +80,6 @@ if (Test-Path $setupWorkloadScript) {
     Write-Host "Running SetupWorkload.ps1..."
     & $setupWorkloadScript -HostingType $HostingType `
         -WorkloadName $WorkloadName `
-        -ItemName $ItemName `
         -AADFrontendAppId $AADFrontendAppId `
         -AADBackendAppId $AADBackendAppId `
         -WorkloadVersion $WorkloadVersion `

@@ -16,9 +16,9 @@
   "Fabric_UX_System_Introduction": "Comienza con el sistema de UX de Fabric",
   "Workload_Hub_Workload_Slogan": "La forma más rápida de pasar de mil millones de puntos de datos a un punto de vista.",
   "Workload_Hub_Workload_Description": "La carga de trabajo de Contoso permite a las organizaciones interactuar con los clientes en tiempo real y automatizar las decisiones comerciales operativas a gran escala. Admite una amplia variedad de actividades orientadas al cliente, como marketing personalizado y la siguiente mejor acción, y decisiones que afectan al cliente, incluidos los servicios de crédito y la prevención del fraude.",
-  "Item_DisplayName": "Artículo de Hola Mundo",
-  "Item_DisplayName_Plural": "Artículos de Hola Mundo",
-  "Item_Description": "Un elemento de Hola mundo para comenzar tu experiencia de desarrollo",
+  "HelloWorldItem_DisplayName": "Artículo de Hola Mundo",
+  "HelloWorldItem_DisplayName_Plural": "Artículos de Hola Mundo",
+  "HelloWorldItem_Description": "Un elemento de Hola mundo para comenzar tu experiencia de desarrollo",
   "CalculatorSampleItem_DisplayName": "Ejemplo de calculadora",
   "CalculatorSampleItem_DisplayName_Plural": "Ejemplos de calculadoras",
   "CalculatorSampleItem_Description": "Un elemento de calculadora simple que almacena datos en OneLake"

@@ -64,7 +64,7 @@ $targetFile = Replace-HelloWorldPath -Path $srcFile
 Write-Output "Using Hello World sample in $srCodeDir as source"
 Write-Host ""
 Write-Host "Creating code files..."
-$targetCodeDir = Join-Path $PSScriptRoot "..\..\Frontend\src\workload\items\$ItemName-item-editor"
+$targetCodeDir = Join-Path $PSScriptRoot "..\..\Frontend\src\workload\items\${ItemName}Item-editor"
 Write-Host "Write the item code in:"
 Write-Host " $targetCodeDir"
 
@@ -100,9 +100,7 @@ if (Test-Path $srcFile) {
     Copy-HelloWorldFile -SourceFile $srcFile -DestinationFile $targetFile
 
     $replacements = @{
-        "Item_DisplayName" = $ItemName + "_DisplayName"
-        "Item_DisplayName_Plural" = $ItemName + "_DisplayName_Plural"
-        "item-editor" = "$ItemName-item-editor".toLower()
+        "HelloWorld" = $ItemName
     }
 
     Replace-Content -SourceFile $targetFile -Replacements $replacements
@@ -127,7 +125,7 @@ Write-Host " $targetFile"
 Write-Host ""
 $targetFile = Join-Path $PSScriptRoot "..\..\Frontend\src\App.tsx"
 $targetFile = Resolve-Path $targetFile
-$routingEntry = "$ItemName-item-editor".toLower()
+$routingEntry = "${ItemName}Item-editor"
 Write-Host "TODO: add the routing for '$routingEntry' to the App.tsx file!" -ForegroundColor Blue
 Write-Host "The file you need to change is:"
 Write-Host " $targetFile"

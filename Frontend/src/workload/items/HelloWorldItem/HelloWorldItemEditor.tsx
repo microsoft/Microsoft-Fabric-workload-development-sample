@@ -84,7 +84,7 @@ export function HelloWorldItemEditor(props: PageProps) {
   if (isLoadingData) {
     //making sure we show a loding indicator while the itme is loading
     return (<HelloWorldItemEditorLoadingProgressBar 
-      message={t("Item_LoadingProgressBar_Text", { itemName: editorItem?.displayName })} />);
+      message={t("HelloWorldItem_LoadingProgressBar_Text", { itemName: editorItem?.displayName })} />);
   }
   else {
     return (
@@ -115,35 +115,35 @@ export function HelloWorldItemEditor(props: PageProps) {
                   <Field label={t('Workspace_ID')} orientation="horizontal" className="field">
                     <Label>{editorItem?.workspaceId} </Label>
                   </Field>
-                  <Field label={t('Item_ID')} orientation="horizontal" className="field">
+                  <Field label={t('HelloWorldItem_ID')} orientation="horizontal" className="field">
                     <Label>{editorItem?.id} </Label>
                   </Field>
-                  <Field label={t('Item_Type')} orientation="horizontal" className="field">
+                  <Field label={t('HelloWorldItem_Type')} orientation="horizontal" className="field">
                     <Label>{editorItem?.type} </Label>
                   </Field>
 
-                  <Field label={t('Item_Name')} orientation="horizontal" className="field">
+                  <Field label={t('HelloWorldItem_Name')} orientation="horizontal" className="field">
                     <Label>{editorItem?.displayName} </Label>
                   </Field>
-                  <Field label={t('Item_Description')} orientation="horizontal" className="field">
+                  <Field label={t('HelloWorldItem_Description')} orientation="horizontal" className="field">
                     <Label>{editorItem?.description} </Label>
                   </Field>
-                  
-                  <Field label={t('Item_LastModifiedDate')} orientation="horizontal" className="field">
+
+                  <Field label={t('HelloWorldItem_LastModifiedDate')} orientation="horizontal" className="field">
                     <Label>{editorItem?.lastModifiedDate + ""} </Label>
                   </Field>
-                  <Field label={t('Item_LastModifiedBy')} orientation="horizontal" className="field">
+                  <Field label={t('HelloWorldItem_LastModifiedBy')} orientation="horizontal" className="field">
                     <Label>{editorItem?.lastModifiedBy} </Label>
                   </Field>
-                  
-                  <Field label={t('Item_CreatedDate')} orientation="horizontal" className="field">
+
+                  <Field label={t('HelloWorldItem_CreatedDate')} orientation="horizontal" className="field">
                     <Label>{editorItem?.createdDate + ""} </Label>
                   </Field>
-                  <Field label={t('Item_CreatedBy')} orientation="horizontal" className="field">
+                  <Field label={t('HelloWorldItem_CreatedBy')} orientation="horizontal" className="field">
                     <Label>{editorItem?.createdBy} </Label>
                   </Field>
 
-                  <Field label={t('Item_State_Payload')} orientation="horizontal" className="field">
+                  <Field label={t('HelloWorldItem_State_Payload')} orientation="horizontal" className="field">
                     <Input
                       size="small"
                       type="text"

@@ -18,12 +18,8 @@ export async function initialize(params: InitParams) {
             case 'item.onCreationSuccess':
                 const { item: createdItem } = data as ItemCreationSuccessData;
                 var path = "/item-editor";
-                //TODO: generic routing for item editors
-                //const itemTypeName = createdItem.itemType.substring(createdItem.itemType.indexOf('.') + 1);
-                if(createdItem.itemType.indexOf('Calculator') > -1) {
-                    path = "/CalculatorSample-item-editor"
-                }
-                createdItem.itemType
+                const itemTypeName = createdItem.itemType.substring(createdItem.itemType.indexOf('.') + 1);
+                path = `/${itemTypeName}Item-editor`;
                 await callPageOpen(workloadClient, sampleWorkloadName, `${path}/${createdItem.objectId}`);
                 return Promise.resolve({ succeeded: true });
 
@@ -53,7 +49,7 @@ export async function initialize(params: InitParams) {
                         displayName: 'About',
                         workloadSettingLocation: {
                             workloadName: sampleWorkloadName,
-                            route: 'CalculatorSample-item-about-dialog',
+                            route: 'CalculatorSampleItem-about-dialog',
                         },
                         workloadIframeHeight: '1000px'
                     },
@@ -65,7 +61,7 @@ export async function initialize(params: InitParams) {
                         },
                         workloadSettingLocation: {
                             workloadName: sampleWorkloadName,
-                            route: 'CalculatorSample-item-settings-dialog',
+                            route: 'CalculatorSampleItem-settings-dialog',
                         },
                         workloadIframeHeight: '1000px'
                     }
