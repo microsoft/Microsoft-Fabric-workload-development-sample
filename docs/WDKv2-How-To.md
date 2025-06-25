@@ -59,10 +59,10 @@ The configuration for the standard item creation experience can be found in the 
               "title": "CreateHub_Card_2_Title",
               "description": "CreateHub_Card_2_Description",
               "icon": {
-                "name": "assets/images/calculator-sample-item.png"
+                "name": "assets/images/CalculatorSample-item.png"
               },
               "icon_small": {
-                "name": "assets/images/calculator-sample-item.png"
+                "name": "assets/images/CalculatorSample-item.png"
               },
               "availableIn": [
                 "home",

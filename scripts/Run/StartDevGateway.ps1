@@ -4,9 +4,4 @@ $CONFIGURATIONFILE = $CONFIGURATIONFILE.Path
 Write-Host "DevGateway used: $fileExe"
 Write-Host "Configuration xsfile used: $CONFIGURATIONFILE"
 
-if($IsWindows) {
-    & $fileExe -DevMode:LocalConfigFilePath $CONFIGURATIONFILE
-} else {
-     # On Linux or MacOS, we need to use the mono runtime to execute the .exe file
-    dotnet $fileExe -DevMode:LocalConfigFilePath $CONFIGURATIONFILE
-}
+& $fileExe -DevMode:LocalConfigFilePath $CONFIGURATIONFILE

@@ -79,10 +79,10 @@
           "title": "CalculatorSampleItem_DisplayName",
           "description": "CalculatorSampleItem_Description",
           "icon": {
-            "name": "assets/images/calculator-sample-item.png"
+            "name": "assets/images/CalculatorSample-item.png"
           },
           "icon_small": {
-            "name": "assets/images/calculator-sample-item.png"
+            "name": "assets/images/CalculatorSample-item.png"
           },
           "availableIn": [
             "home",

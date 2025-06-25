@@ -4,13 +4,13 @@
     "displayName": "CalculatorSampleItem_DisplayName",
     "displayNamePlural": "CalculatorSampleItem_DisplayName_Plural",
     "editor": {
-      "path": "/calculator-sample-item-editor"
+      "path": "/CalculatorSample-item-editor"
     },
     "icon": {
-      "name": "assets/images/calculator-sample-item.png"
+      "name": "assets/images/CalculatorSample-item.png"
     },
     "activeIcon": {
-      "name": "assets/images/calculator-sample-item.png"
+      "name": "assets/images/CalculatorSample-item.png"
     },
     "contextMenuItems": [
     ],
