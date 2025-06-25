@@ -3,37 +3,36 @@ param (
     [String]$WorkloadName = "Org.MyWorkloadSample",
     # The name of the item, used for the item in the Fabric portal
     # Items will be created with the {WorkloadName}.{ItemName} format in Fabric
-    [String]$ItemName
+    [String]$ItemName,
+    [String]$srcItemName = "HelloWorld"
 )
 
 ###############################################################################
 # Functions used in the script
 # These functions are used to copy files and replace placeholders in the content
 ###############################################################################
-function Replace-HelloWorldPath {
+function Replace-SourceItemPath {
     param (
         [String]$Path
     )
-    return $Path -replace "HelloWorld", $ItemName 
+    return $Path -replace $srcItemName, $ItemName 
 }
 
-function Replace-HelloWorld {
+function Replace-SourceItemContent {
     param (
         [string]$Content
     )
-    $content = $content -replace "HelloWorld", $ItemName
-    $content = $content -replace "\{\{WORKLOAD_NAME\}\}", $WorkloadName
-    $content = $content -replace "\{\{ITEM_NAME\}\}", $ItemName
+    $content = $content -replace $srcItemName, $ItemName
     return $content
 }
 
-function Copy-HelloWorldFile {
+function Copy-SourceItemFile {
     param (
         [string]$SourceFile,
         [string]$DestinationFile
     )
     $content = Get-Content $SourceFile -Raw
-    $content = Replace-HelloWorld $content
+    $content = Replace-SourceItemContent $content
 
     New-Item -Path $DestinationFile -ItemType File -Force | Out-Null
     Set-Content -Path $DestinationFile -Value $content -Force
@@ -54,14 +53,28 @@ function Replace-Content {
     Set-Content -Path $SourceFile -Value $content -Force
 }
 
+function RecursiveCopy {
+    param (
+        [string]$dir,
+        [string]$srcPlaceholder,
+        [String]$targetValue
+    )
+    Get-ChildItem -Recurse -Path $srCodeDir -File |  -Filter $srcPlaceholder |
+    ForEach-Object {
+        $srcFile = $_.FullName
+        $targetFile = Replace-SourceItemPath -Path $srcFile
+        Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
+    }
+}
+
 
 
 ###############################################################################
 # Configure the item
 ###############################################################################
-$srCodeDir = Join-Path $PSScriptRoot "..\..\Frontend\src\workload\items\HelloWorldItem"
-$targetFile = Replace-HelloWorldPath -Path $srcFile
-Write-Output "Using Hello World sample in $srCodeDir as source"
+$srCodeDir = Join-Path $PSScriptRoot "..\..\Frontend\src\workload\items\${srcItemName}Item"
+$targetFile = Replace-SourceItemPath -Path $srcFile
+Write-Output "Using ${srcItemName} sample in $srCodeDir as source"
 Write-Host ""
 Write-Host "Creating code files..."
 $targetCodeDir = Join-Path $PSScriptRoot "..\..\Frontend\src\workload\items\${ItemName}Item-editor"
@@ -75,9 +88,17 @@ Write-Host " $targetCodeDir"
 Get-ChildItem -Recurse -Path $srCodeDir -File |  
     ForEach-Object {
         $srcFile = $_.FullName
-        $targetFile = Replace-HelloWorldPath -Path $srcFile
-        Copy-HelloWorldFile -SourceFile $srcFile -DestinationFile $targetFile
+        $targetFile = Replace-SourceItemPath -Path $srcFile
+        Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
     }
+# assets
+$srcFile = Join-Path  $PSScriptRoot "..\..\Frontend\src\assets\images\${srcItemName}Item-empty-state.jpg"
+if (Test-Path $srcFile) {
+    $targetFile = Join-Path $PSScriptRoot "..\..\Frontend\src\assets\images\${itemName}Item-empty-state.jpg"
+    Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
+} else {
+    Write-Host "Couldn't find ${srcFile}" -ForegroundColor Red
+}
 
 
 ###############################################################################
@@ -86,27 +107,37 @@ Get-ChildItem -Recurse -Path $srCodeDir -File |
 ###############################################################################
 Write-Host ""
 Write-Host "Creating manifest files..."
-$srcFile = Join-Path $PSScriptRoot "..\..\config\templates\Manifest\Item.xml"
+# Item.xml file
+$srcFile = Join-Path $PSScriptRoot "..\..\config\templates\Manifest\${srcItemName}Item.xml"
 if (Test-Path $srcFile) {
-    $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\$itemName.xml"
-    Copy-HelloWorldFile -SourceFile $srcFile -DestinationFile $targetFile
+    $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\${itemName}Item.xml"
+    Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
 } else {
-    Write-Host "Item.xml not found at $targetFile" -ForegroundColor Red
+    Write-Host "${srcItemName}Item.xml not found at $targetFile" -ForegroundColor Red
 }
-
-$srcFile = Join-Path $PSScriptRoot "..\..\config\templates\Manifest\Item.json"
+# Item.json file
+$srcFile = Join-Path $PSScriptRoot "..\..\config\templates\Manifest\${srcItemName}Item.json"
 if (Test-Path $srcFile) {
-    $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\$itemName.json"
-    Copy-HelloWorldFile -SourceFile $srcFile -DestinationFile $targetFile
-
+    $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\${itemName}Item.json"
+    Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
     $replacements = @{
-        "HelloWorld" = $ItemName
+        $srcItemName = $ItemName
+        #"{{WORKLOAD_NAME}}" = $WorkloadName
     }
-
     Replace-Content -SourceFile $targetFile -Replacements $replacements
 } else {
-    Write-Host "Item.json not found at $targetFile" -ForegroundColor Red
+    Write-Host "Couldn't find ${srcFile}" -ForegroundColor Red
 }
+# assets
+$srcFile = Join-Path $PSScriptRoot "..\..\config\templates\Manifest\assets\images\${srcItemName}Item-icon.png"
+if (Test-Path $srcFile) {
+    $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\assets\images\${itemName}Item-icon.png"
+    Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
+} else {
+   Write-Host "Couldn't find ${srcFile}" -ForegroundColor Red
+}
+
+
 
 Write-Host ""
 $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\Product.json"
