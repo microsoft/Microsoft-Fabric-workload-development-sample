@@ -26,7 +26,6 @@
       }
     },
     "editorTab": {
-      "maxInstanceCount": "10",
       "onInit": "item.tab.onInit",
       "onDeactivate": "item.tab.onDeactivate",
       "canDeactivate": "item.tab.canDeactivate",
