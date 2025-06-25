@@ -59,7 +59,7 @@ This repository provides the basis for you to get started building your customer
 To run the development enviroment locally you need the follwoing components:
 
 * [Node.js](https://nodejs.org/en/download/)
-* [Powershell](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
+* [Powershell 7](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
 * [VSCode](https://code.visualstudio.com/download) or simmilar development enviroment
 * [Fabric Tenant](https://app.fabric.microsoft.com/) that you use for development and publishing the Workload later on
 * [Fabric Workspace](https://learn.microsoft.com/en-us/fabric/fundamentals/workspaces) that you can use to build your workload
@@ -80,6 +80,9 @@ git clone -b wdkv2_preview https://github.com/microsoft/Microsoft-Fabric-workloa
 * Follow the guidance the Script provides to get everyting setup
 
 Alternatively you can use the documentation for a step-by-step guide to getting your environment set up and your first workload up and running: [Getting Started](/docs/WDKv2-Setup.md).
+
+In case you are getting an running the powershell script please take a look to the [WDKv2 Setup](./docs/WDKv2-Setup.md).
+
 
 ## Implement your custom workload
 

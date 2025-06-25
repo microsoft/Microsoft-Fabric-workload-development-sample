@@ -23,6 +23,9 @@ The easiest way to get startet is by running the [Setup.ps1](./scripts/Setup/Set
 
 After that follow the guidance the script is providing you. 
 
+In case you are getting an error similar to the one below please make sure you have the latest Powershell installed and configured in the enviroment you run the script. 
+
+![Powershell setup error](./media/Powershell-setup-error.png)
 
 ## Setup your workload manually
 
