@@ -4,9 +4,9 @@
     "displayName": "Workload_Display_Name",
     "fullDisplayName": "Workload_Full_Display_Name",
     "description": "Workload_Description",
-    "favicon": "assets/images/workload.png",
+    "favicon": "assets/images/Workload-icon.png",
     "icon": {
-      "name": "assets/images/workload.png"
+      "name": "assets/images/Workload-icon.png"
     },
     "homePage": {
       "learningMaterials": [
@@ -14,7 +14,7 @@
           "title": "Frontend_playground_Title",
           "introduction": "Frontend_playground_Introduction",
           "description": "Frontend_playground_Description",
-          "image": "assets/images/playgroundCard.jpeg",
+          "image": "assets/images/LearningMaterial-playground.jpeg",
           "onClick": {
                   "action": "open.ClientSDKPlaygroundPage"
                 }
@@ -23,7 +23,7 @@
           "title": "Data_playground_Title",
           "introduction": "Data_playground_Introduction",
           "description": "Data_playground_Description",
-          "image": "assets/images/playgroundCard.jpeg",
+          "image": "assets/images/LearningMaterial-playground.jpeg",
           "onClick": {
                   "action": "open.DataApiSamplePage"
                 }
@@ -32,14 +32,14 @@
           "title": "Learning_Material_1_Title",
           "introduction": "Learning_Material_1_Introduction",
           "description": "Learning_Material_1_Description",
-          "image": "assets/images/learningMaterial.png",
+          "image": "assets/images/LearningMaterial-generic.png",
           "link": "https://aka.ms/Fabricdeveloperdocumentation"
         },
         {
           "title": "Fabric_UX_System_Title",
           "introduction": "Fabric_UX_System_Introduction",
           "description": "Fabric_UX_System_Description",
-          "image": "assets/images/fabricUX.jpg",
+          "image": "assets/images/LearningMaterial-FabricUX.jpg",
           "link": "https://aka.ms/fabricux"
         }
       ],
@@ -69,7 +69,7 @@
             "workspace-plus-new",
             "workspace-plus-new-teams"
           ],
-          "itemType": "{{ITEM_NAME}}",
+          "itemType": "HelloWorld",
           "createItemDialogConfig": {
             "onCreationFailure": { "action": "item.onCreationFailure" },
             "onCreationSuccess": { "action": "item.onCreationSuccess" }

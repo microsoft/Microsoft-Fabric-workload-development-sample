@@ -18,8 +18,9 @@ export async function initialize(params: InitParams) {
             case 'item.onCreationSuccess':
                 const { item: createdItem } = data as ItemCreationSuccessData;
                 var path = "/item-editor";
-                const itemTypeName = createdItem.itemType.substring(createdItem.itemType.indexOf('.') + 1);
+                const itemTypeName = createdItem.itemType.substring(createdItem.itemType.lastIndexOf('.') + 1);
                 path = `/${itemTypeName}Item-editor`;
+                console.log(`Item created successfully, redirecting to ${path}/${createdItem.objectId}`);
                 await callPageOpen(workloadClient, sampleWorkloadName, `${path}/${createdItem.objectId}`);
                 return Promise.resolve({ succeeded: true });
 
