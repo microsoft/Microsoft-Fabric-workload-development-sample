@@ -13,14 +13,19 @@ Any use of third-party trademarks or logos are subject to those third-party's po
 
 ## Table of contents
 
+- [Microsoft Fabric Software Developer Kit](#microsoft-fabric-software-developer-kit)
+  - [Trademarks](#trademarks)
+  - [Table of contents](#table-of-contents)
 - [Introduction](#introduction)
   - [What is Fabric](#what-is-fabric)
-  - [What are Workloads](#what-are-workloads)
-  - [What the Workload Development Kit Offers](#what-the-workload-development-kit-offers)
+  - [What Are Workloads](#what-are-workloads)
+  - [What is the Workload Development Kit](#what-is-the-workload-development-kit)
 - [Build Your Own Workload](#build-your-own-workload)
   - [Get Started](#get-started)
-  - [Implement Your Custom Workload](#implement-your-custom-workload)
-  - [Publish your workload](#publish-you-workload)
+    - [Prerequisits](#prerequisits)
+    - [Setting things up](#setting-things-up)
+  - [Implement your custom workload](#implement-your-custom-workload)
+  - [Publish your workload](#publish-your-workload)
 - [Resources](#resources)
 
 # Introduction
@@ -70,7 +75,7 @@ To run the development enviroment locally you need the follwoing components:
 
 * Clone or fork this repository
 ```
-git clone -b wdkv2_preview https://github.com/microsoft/Microsoft-Fabric-workload-development-sample.git
+git clone -b dev/preview/wdkv2 https://github.com/microsoft/Microsoft-Fabric-workload-development-sample.git
 ```
 * Run the [Setup.ps1](./scripts/Setup/Setup.ps1) Script in your local repository with your configuration parameters.
 
