@@ -149,7 +149,7 @@ Write-Host " $targetFile"
 Write-Host ""
 $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\assets\locales"
 $targetFile = Resolve-Path $targetFile
-Write-Host " Add the Translations to the Manifest asset files!" -ForegroundColor Blue
+Write-Host "TODO: Add the Translations to the Manifest asset files!" -ForegroundColor Blue
 Write-Host "The file you need to change are located here:"
 Write-Host " $targetFile"
 
