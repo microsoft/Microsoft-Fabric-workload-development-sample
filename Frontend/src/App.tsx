@@ -11,6 +11,7 @@ import SharedStatePage from "./samples/items/CalculatorSampleItem/CalculatorSamp
 import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlayground/ClientSDKPlayground";
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
 import { HelloWorldItemEditor } from "./workload/items/HelloWorldItem/HelloWorldItemEditor";
+import { CognitiveSampleItemEditor } from "./samples/items/CognitiveSampleItem/CognitiveSampleItemEditor";
 
 /*
     Add your Item Editor in the Route section of the App function below
@@ -45,8 +46,7 @@ export function App({ history, workloadClient }: AppProps) {
                 <HelloWorldItemEditor
                     workloadClient={workloadClient} data-testid="HelloWorldItem-editor" />
             </Route>
-            {/* This is the routing to the Sample Workload Editor.
-                 Add your workload editor path here, and reference it in index.worker.ts  */}
+
             <Route path="/CalculatorSampleItem-editor/:itemObjectId">
                 <CalculatorSampleItemEditor
                     workloadClient={workloadClient} data-testid="CalculatorSampleItem-editor" />
@@ -57,6 +57,11 @@ export function App({ history, workloadClient }: AppProps) {
             <Route path="/CalculatorSampleItem-about-dialog">
                 <CustomAbout />
             </Route>     
+
+            <Route path="/CognitiveSampleItem-editor/:itemObjectId">
+                <CognitiveSampleItemEditor
+                    workloadClient={workloadClient} data-testid="CognitiveSampleItem-editor" />
+            </Route>
 
             <Route path="/client-sdk-playground">
                 <Provider store={ClientSDKStore}>

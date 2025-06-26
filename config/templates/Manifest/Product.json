@@ -95,6 +95,27 @@
             "onCreationFailure": { "action": "item.onCreationFailure" },
             "onCreationSuccess": { "action": "item.onCreationSuccess" }
           }
+        },
+        {
+          "title": "CognitiveSampleItem_DisplayName",
+          "description": "CognitiveSampleItem_Description",
+          "icon": {
+            "name": "assets/images/CognitiveSampleItem-icon.png"
+          },
+          "icon_small": {
+            "name": "assets/images/CognitiveSampleItem-icon.png"
+          },
+          "availableIn": [
+            "home",
+            "create-hub",
+            "workspace-plus-new",
+            "workspace-plus-new-teams"
+          ],
+          "itemType": "CognitiveSample",
+          "createItemDialogConfig": {
+            "onCreationFailure": { "action": "item.onCreationFailure" },
+            "onCreationSuccess": { "action": "item.onCreationSuccess" }
+          }
         }
       ]
     },

@@ -21,6 +21,8 @@
   "HelloWorldItem_Description": "Un elemento de Hola mundo para comenzar tu experiencia de desarrollo",
   "CalculatorSampleItem_DisplayName": "Ejemplo de calculadora",
   "CalculatorSampleItem_DisplayName_Plural": "Ejemplos de calculadoras",
-  "CalculatorSampleItem_Description": "Un elemento de calculadora simple que almacena datos en OneLake"
-  }
-  
+  "CalculatorSampleItem_Description": "Un elemento de calculadora simple que almacena datos en OneLake",
+  "CognitiveSampleItem_DisplayName": "Ejemplo Cognitivo",
+  "CognitiveSampleItem_DisplayName_Plural": "Ejemplos Cognitivos",
+  "CognitiveSampleItem_Description": "Un elemento cognitivo simple que utiliza IA para analizar datos"
+}
