@@ -12,7 +12,7 @@ interface HelloWorldItemEmptyStateProps {
   workloadClient: WorkloadClientAPI,
   item: GenericItem;
   state: HelloWorldItemModelState,
-  onFinishEmptyState: () => void;
+  onFinishEmptyState: (message: string) => void;
 }
 
 export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> = ({
@@ -25,8 +25,7 @@ export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> =
   const { t } = useTranslation();
   
   const saveItem = () => {
-    state.message = message;
-    onFinishEmptyState();
+    onFinishEmptyState(message);
   };
   
   return (

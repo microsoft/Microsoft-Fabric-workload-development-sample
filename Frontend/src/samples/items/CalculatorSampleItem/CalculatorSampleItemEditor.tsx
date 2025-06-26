@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { Stack } from "@fluentui/react";
 import {
@@ -49,10 +49,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
   // React state for WorkloadClient APIs
   const [operand1ValidationMessage, setOperand1ValidationMessage] = useState<string>("");
   const [operand2ValidationMessage, setOperand2ValidationMessage] = useState<string>("");
-  const [editorItem, setEditorItem] =useState<WorkloadItem<CalculatorSampleItemState>>(undefined);
-  const [operand1, setOperand1] = useState<number>(0);
-  const [operand2, setOperand2] = useState<number>(0);
-  const [operator, setOperator] = useState<CalculationOperator>(null);
+  const [editorItem, setEditorItem] = useState<WorkloadItem<CalculatorSampleItemState>>(undefined);
   const [isDirty, setDirty] = useState<boolean>(false);
   const [calculationResult, setCalculationResult] = useState<string>("");
   const [calculationTime, setCalculationTime] = useState<Date>(undefined);
@@ -60,8 +57,29 @@ export function CalculatorSampleItemEditor(props: PageProps) {
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [itemEditorErrorMessage, setItemEditorErrorMessage] = useState<string>("");
 
+  // Computed values from editorItem (single source of truth)
+  const operand1 = editorItem?.itemState?.operand1 ?? 0;
+  const operand2 = editorItem?.itemState?.operand2 ?? 0;
+  const operator = editorItem?.itemState?.operator ?? CalculationOperator.Undefined;
+
   const INT32_MIN = -2147483648;
   const INT32_MAX = 2147483647;
+
+  // Helper function to update item state immutably
+  const updateItemState = useCallback((updates: Partial<CalculatorSampleItemState>) => {
+    setEditorItem(prevItem => {
+      if (!prevItem) return prevItem;
+      
+      return {
+        ...prevItem,
+        itemState: {
+          ...prevItem.itemState,
+          ...updates
+        }
+      };
+    });
+    setDirty(true);
+  }, []);
 
   const [selectedTab, setSelectedTab] = useState<TabValue>("home");
 
@@ -95,10 +113,8 @@ export function CalculatorSampleItemEditor(props: PageProps) {
   }
 
   async function onOperand1InputChanged(value: number) {
-    setOperand1(value);
-    editorItem.itemState.operand1 = value;
-    setEditorItem(editorItem);
-    setDirty(true);
+    updateItemState({ operand1: value });
+    
     if (!isValidOperand(value)) {
       setOperand1ValidationMessage("Operand 1 may lead to overflow");
       return;
@@ -107,10 +123,8 @@ export function CalculatorSampleItemEditor(props: PageProps) {
   }
 
   async function onOperand2InputChanged(value: number) {
-    setOperand2(value);
-    editorItem.itemState.operand2 = value;
-    setEditorItem(editorItem);
-    setDirty(true);
+    updateItemState({ operand2: value });
+    
     if (!isValidOperand(value)) {
       setOperand2ValidationMessage("Operand 2 may lead to overflow");
       return;
@@ -144,10 +158,8 @@ export function CalculatorSampleItemEditor(props: PageProps) {
   }
 
   function onOperatorInputChanged(value: string | null) {
-    setOperator(CalculationOperator[value as keyof typeof CalculationOperator] || CalculationOperator.Undefined);
-    editorItem.itemState.operator = CalculationOperator[value as keyof typeof CalculationOperator] || CalculationOperator.Undefined;
-    setEditorItem(editorItem);
-    setDirty(true);
+    const operatorValue = CalculationOperator[value as keyof typeof CalculationOperator] || CalculationOperator.Undefined;
+    updateItemState({ operator: operatorValue });
   }
 
   function canCalculateOperands(operand1: number, operand2: number) {
@@ -176,11 +188,17 @@ export function CalculatorSampleItemEditor(props: PageProps) {
 
       const calcResult = calculateResult(calculation);
       const calcSave = await saveCalculationResult(workloadClient, editorItem, calcResult)
-      editorItem.itemState = calcSave;
-      setEditorItem(editorItem);           
+      
+      setEditorItem({
+        ...editorItem,
+        itemState: calcSave
+      });
+      
       setCalculationResult(calcResult.result.toString());
       setCalculationTime(calcResult.calculationTime);
-      await SaveItem();
+      
+      // Save with the updated state directly to avoid race condition
+      await SaveItem(calcSave);
     } catch (error: Error | any) {
       console.error(`Error calculating result: ${error.message}`);
       setCalculationResult("Error in calculation");
@@ -203,12 +221,9 @@ export function CalculatorSampleItemEditor(props: PageProps) {
                   pageContext.itemObjectId,
                   defaultCalculatorSampleItemState          
                 );
-        // set the metadata
-        setOperand1(item?.itemState?.operand1 ?? 0);
-        setOperand2(item?.itemState?.operand2 ?? 0);
+        // clear validation messages
         setOperand1ValidationMessage("");
         setOperand2ValidationMessage("");
-        setOperator(item?.itemState?.operator ?? CalculationOperator.Undefined);
         if (item?.itemState?.lastResultFile) {
           const lastResult  = await loadCalculationResult(workloadClient, item);
           setCalculationResult(lastResult?.result.toString() ?? "");          
@@ -243,8 +258,8 @@ export function CalculatorSampleItemEditor(props: PageProps) {
     setEditorItem(undefined);
   }
 
-  async function SaveItem() {
-    var successResult = await saveItemState(workloadClient, editorItem.id, editorItem.itemState)    
+  async function SaveItem(itemState?: CalculatorSampleItemState) {
+    var successResult = await saveItemState(workloadClient, editorItem.id, itemState || editorItem.itemState);
     setDirty(!successResult);
   }
 
@@ -396,4 +411,3 @@ export function CalculatorSampleItemEditor(props: PageProps) {
     </Stack>
   );
 }
-

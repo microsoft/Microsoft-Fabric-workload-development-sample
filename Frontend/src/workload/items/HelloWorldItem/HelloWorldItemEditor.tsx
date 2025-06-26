@@ -1,6 +1,6 @@
 import { Label, Stack } from "@fluentui/react";
 import { Field, Input, TabValue } from "@fluentui/react-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { ContextProps, PageProps } from "src/App";
 import { Ribbon } from "./HelloWorldItemRibbon";
 import { getWorkloadItem, saveItemState } from "../../controller/ItemCRUDController";
@@ -17,22 +17,39 @@ export function HelloWorldItemEditor(props: PageProps) {
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const { workloadClient } = props;
-  const [payload, setPayload] = useState<string>();
   const [isUnsafed, setIsUnsafed] = useState<boolean>(true);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [editorItem, setEditorItem] = useState<WorkloadItem<HelloWorldItemModelState>>(undefined);
   const [selectedTab, setSelectedTab] = useState<TabValue>("");
 
+  // Computed value from editorItem (single source of truth)
+  const payload = editorItem?.itemState?.message ?? "";
+
+  // Helper function to update item state immutably
+  const updateItemState = useCallback((updates: Partial<HelloWorldItemModelState>) => {
+    setEditorItem(prevItem => {
+      if (!prevItem) return prevItem;
+      
+      return {
+        ...prevItem,
+        itemState: {
+          ...prevItem.itemState,
+          ...updates
+        }
+      };
+    });
+    setIsUnsafed(true);
+  }, []);
+
   useEffect(() => {
       loadDataFromUrl(pageContext, pathname);
     }, [pageContext, pathname]);
 
-  async function SaveItem() {
-
+  async function SaveItem(itemState?: HelloWorldItemModelState) {
     var successResult = await saveItemState<HelloWorldItemModelState>(
       workloadClient,
       editorItem.id,
-      editorItem.itemState);
+      itemState || editorItem.itemState);
     setIsUnsafed(!successResult);
   }
 
@@ -46,16 +63,20 @@ export function HelloWorldItemEditor(props: PageProps) {
           workloadClient,
           pageContext.itemObjectId,          
         );
-        setEditorItem(item);
+        
+        // Ensure item state is properly initialized without mutation
         if (!item.itemState) {
-          item.itemState =  {
+          item = {
+            ...item,
+            itemState: {
               message: undefined,
-            };
+            }
+          };
         }
-        setPayload(item.itemState.message);        
+        setEditorItem(item);        
       } catch (error) {
         setEditorItem(undefined);        
-      }
+      } 
     } else {
       console.log(`non-editor context. Current Path: ${pathname}`);
     }
@@ -69,15 +90,17 @@ export function HelloWorldItemEditor(props: PageProps) {
   }
 
   function onUpdateItemPayload(newPayload: string) {
-    setIsUnsafed(true)
-    setPayload(newPayload);
-    editorItem.itemState.message = newPayload
+    updateItemState({ message: newPayload });
   }
 
-  function handleFinishEmptyState() {
-    setIsUnsafed(true)
-    setPayload(editorItem.itemState.message)
-    SaveItem()
+  async function handleFinishEmptyState(message: string) {
+    // Update the item state with the new message
+    const newItemState = { message: message };
+    updateItemState(newItemState);
+    
+    // Save with the updated state directly to avoid race condition
+    await SaveItem(newItemState);
+    
     setSelectedTab("home");
   }
 
