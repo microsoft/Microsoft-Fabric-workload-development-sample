@@ -44,7 +44,7 @@ export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> =
       </Stack.Item>
       <Stack.Item style={{ marginTop: '16px', marginBottom: '24px' }}>
         <Text>
-          {t('Item_EmptyState_Message', {itemName: item.displayName})}
+          {t('HelloWorldItem_EmptyState_Message', {itemName: item.displayName})}
         </Text>
       </Stack.Item>
       <Stack.Item style={{ width: '300px', marginTop: '16px' }}>
