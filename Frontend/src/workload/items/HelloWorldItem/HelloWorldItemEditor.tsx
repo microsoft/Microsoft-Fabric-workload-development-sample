@@ -17,7 +17,7 @@ export function HelloWorldItemEditor(props: PageProps) {
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const { workloadClient } = props;
-  const [isUnsafed, setIsUnsafed] = useState<boolean>(true);
+  const [isUnsaved, setIsUnsaved] = useState<boolean>(true);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [editorItem, setEditorItem] = useState<WorkloadItem<HelloWorldItemModelState>>(undefined);
   const [selectedTab, setSelectedTab] = useState<TabValue>("");
@@ -38,7 +38,7 @@ export function HelloWorldItemEditor(props: PageProps) {
         }
       };
     });
-    setIsUnsafed(true);
+    setIsUnsaved(true);
   }, []);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export function HelloWorldItemEditor(props: PageProps) {
       workloadClient,
       editorItem.id,
       itemState || editorItem.itemState);
-    setIsUnsafed(!successResult);
+    setIsUnsaved(!successResult);
   }
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
@@ -80,7 +80,7 @@ export function HelloWorldItemEditor(props: PageProps) {
     } else {
       console.log(`non-editor context. Current Path: ${pathname}`);
     }
-    setIsUnsafed(false);
+    setIsUnsaved(false);
     if(item?.itemState?.message) {
       setSelectedTab("home");
     } else {
@@ -114,7 +114,7 @@ export function HelloWorldItemEditor(props: PageProps) {
         <Stack className="editor" data-testid="item-editor-inner">
         <Ribbon
             {...props}        
-            isSaveButtonEnabled={isUnsafed}
+            isSaveButtonEnabled={isUnsaved}
             saveItemCallback={SaveItem}
             selectedTab={selectedTab}
             onTabChange={setSelectedTab}

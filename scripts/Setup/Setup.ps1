@@ -166,8 +166,8 @@ if (Test-Path $startFrontendScript) {
 }
 
 Write-Host ""
-Write-Host "Make sure you have enabled the Fabcic Develper mode in the Fabric portal." -ForegroundColor Blue
-Write-Host "Open https://msit.fabric.microsoft.com/ and activate it under Settings > Developer settings > Fabric Developer mode."
+Write-Host "Make sure you have enabled the Fabric Developer mode in the Fabric portal." -ForegroundColor Blue
+Write-Host "Open https://app.fabric.microsoft.com/ and activate it under Settings > Developer settings > Fabric Developer mode."
 Write-Host ""
 Write-Host "After following all the instructions above, you will see your workload being available in the Fabric portal."
 Write-Host "It will appear in the Workload Hub and items can be created in the workspace you have configured."
