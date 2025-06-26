@@ -15,6 +15,8 @@
     "HelloWorldItem_EmptyState_Message": "בואו נגיד שלום ל{{itemName}}!",
     "HelloWorldItem_EmptyState_Button": "שמור פריט",
     "HelloWorldItem_LoadingProgressBar_Text": "טוען פריט {{itemName}}",
+    "HelloWorldItem_Saved_Notification_Title": "פריט נשמר",
+    "HelloWorldItem_Saved_Notification_Text": "פריט {{itemName}} נשמר בהצלחה.",
     "Workspace_Name": "שם חלל עבודה",
     "Workspace_ID": "מזהה חלל עבודה"
 }

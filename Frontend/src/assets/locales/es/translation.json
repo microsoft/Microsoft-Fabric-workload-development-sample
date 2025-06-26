@@ -14,6 +14,8 @@
     "HelloWorldItem_EmptyState_Message": "¡Digamos Hola a {{itemName}}!",
     "HelloWorldItem_EmptyState_Button": "Guardar artículo",
     "HelloWorldItem_LoadingProgressBar_Text": "Cargando artículo {{itemName}} ...",
+    "HelloWorldItem_Saved_Notification_Title": "Artículo guardado",
+    "HelloWorldItem_Saved_Notification_Text": "Artículo {{itemName}} guardado con éxito.",
     "Workspace_Name": "Nombre del espacio de trabajo",
     "Workspace_ID": "ID del espacio de trabajo"
 }

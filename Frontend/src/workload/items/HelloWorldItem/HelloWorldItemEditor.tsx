@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import { HelloWorldItemModelState } from "./HelloWorldItemModel";
 import { HelloWorldItemEmptyState } from "./HelloWorldItemEditorEmptyState";
 import { HelloWorldItemEditorLoadingProgressBar } from "./HelloWorldItemEditorLoadingProgressBar";
+import { callNotificationOpen } from "../../controller/NotificationController";
 
 export function HelloWorldItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
@@ -51,6 +52,14 @@ export function HelloWorldItemEditor(props: PageProps) {
       editorItem.id,
       itemState || editorItem.itemState);
     setIsUnsaved(!successResult);
+    callNotificationOpen(
+            workloadClient,
+            t("HelloWorldItem_Saved_Notification_Title"),
+            t("HelloWorldItem_Saved_Notification_Text", { itemName: editorItem.displayName }),
+            undefined,
+            undefined
+        );
+    
   }
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
@@ -132,7 +141,7 @@ export function HelloWorldItemEditor(props: PageProps) {
           )}
           {["home"].includes(selectedTab as string) && (
           <span>
-              <h2>{t('Item_Editor_Titel')}</h2>            
+              <h2>{t('HelloWorldItem_Editor_Titel')}</h2>            
               <div> 
                 <div className="section" data-testid='item-editor-metadata' >
                   <Field label={t('Workspace_ID')} orientation="horizontal" className="field">
