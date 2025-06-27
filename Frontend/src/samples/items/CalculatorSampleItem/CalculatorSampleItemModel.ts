@@ -10,11 +10,11 @@ export interface Calculation {
 }
 
 /**
- * Calculator Sample Item State
+ * Calculator Sample Item definition
  * This interface extends the Calculation interface and includes a property for the last result file.   
- * It is used as the state object for the Calculator Sample Item Editor.
+ * It is used as the definition object for the Calculator Sample Item Editor.
  */
-export interface CalculatorSampleItemState extends Calculation {
+export interface CalculatorSampleItemDefinition extends Calculation {
     lastResultFile: string;
 }
 

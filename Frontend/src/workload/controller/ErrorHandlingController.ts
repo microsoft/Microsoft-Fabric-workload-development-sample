@@ -75,8 +75,8 @@ export async function callErrorHandlingRequestFailure(
  * @returns {Promise<any>} - Whether the exception was handled or not.
  */
 export async function handleException(
+    workloadClient: WorkloadClientAPI,
     exception: any,
-    workloadClient: any,
     isRetry: boolean = false,
     action: (...args: any[]) => Promise<any>,
     ...actionArgs: any[]

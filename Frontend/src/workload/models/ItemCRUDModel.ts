@@ -29,7 +29,7 @@ export interface GenericItem extends ItemReference {
 * This interface extends GenericItem and includes a payload property.
 */
 export interface WorkloadItem<T> extends GenericItem {
-    itemState?: T;
+    definition?: T;
 }
 
 /*
@@ -58,7 +58,7 @@ export interface ItemCreationSuccessData {
 * The item metadata file is used to store metadata about the item and needs to be present in the item payload.
 * The paths are used to read and write files in the item payload.
 */
-export enum ItemPayloadPath {
+export enum ItemDefinitionPath {
     ItemMetadata = "Item/metadata.json",
     Platform = ".platform",
 }

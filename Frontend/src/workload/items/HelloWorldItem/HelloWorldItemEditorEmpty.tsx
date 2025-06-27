@@ -5,36 +5,36 @@ import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { GenericItem } from "src/workload/models/ItemCRUDModel";
-import { HelloWorldItemModelState } from "./HelloWorldItemModel";
+import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 
 
 interface HelloWorldItemEmptyStateProps {
   workloadClient: WorkloadClientAPI,
   item: GenericItem;
-  state: HelloWorldItemModelState,
-  onFinishEmptyState: (message: string) => void;
+  itemDefinition: HelloWorldItemDefinition,
+  onFinishEmpty: (message: string) => void;
 }
 
-export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> = ({
+export const HelloWorldItemEmpty: React.FC<HelloWorldItemEmptyStateProps> = ({
   workloadClient,
   item,
-  state,
-  onFinishEmptyState
+  itemDefinition: definition,
+  onFinishEmpty: onFinishEmpty
 }) => {
   const [message, setMessage] = useState<string>(`Hello ${item.displayName}!`);
   const { t } = useTranslation();
   
   const saveItem = () => {
-    onFinishEmptyState(message);
+    onFinishEmpty(message);
   };
   
   return (
-    <Stack className="empty-state-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
+    <Stack className="empty-definition-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
       <Stack.Item>
         <img
-          src="/assets/images/HelloWorldItem-empty-state.jpg"
-          alt="Empty state illustration"
-          className="empty-state-image"
+          src="/assets/images/HelloWorldItemEditorEmpty.jpg"
+          alt="Empty definition illustration"
+          className="empty-definition-image"
         />
       </Stack.Item>
       <Stack.Item>
@@ -44,7 +44,7 @@ export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> =
       </Stack.Item>
       <Stack.Item style={{ marginTop: '16px', marginBottom: '24px' }}>
         <Text>
-          {t('HelloWorldItem_EmptyState_Message', {itemName: item.displayName})}
+          {t('HelloWorldItemEditorEmpty_Message', {itemName: item.displayName})}
         </Text>
       </Stack.Item>
       <Stack.Item style={{ width: '300px', marginTop: '16px' }}>
@@ -56,7 +56,7 @@ export const HelloWorldItemEmptyState: React.FC<HelloWorldItemEmptyStateProps> =
       </Stack.Item>
       <Stack.Item style={{ marginTop: '16px' }}>
         <Button appearance="primary" onClick={saveItem}>
-          {t('HelloWorldItem_EmptyState_Button')}
+          {t('HelloWorldItemEditorEmpty_Button')}
         </Button>
       </Stack.Item>
     </Stack>

@@ -43,8 +43,9 @@ export async function callNavigationBeforeNavigateAway(workloadClient: WorkloadC
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
 export async function callNavigationAfterNavigateAway(
+    workloadClient: WorkloadClientAPI,
     callback: (event: AfterNavigateAwayData) => Promise<void>,
-    workloadClient: WorkloadClientAPI) {
+    ) {
     // Register the callback using the 'navigation.onAfterNavigateAway' function
     await workloadClient.navigation.onAfterNavigateAway(callback);
 }
@@ -56,8 +57,9 @@ export async function callNavigationAfterNavigateAway(
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
 export async function CallOpenInNewBrowserTab(
+    workloadClient: WorkloadClientAPI,
     path: string,
-    workloadClient: WorkloadClientAPI) {
+    ) {
     try {
         var params: OpenBrowserTabParams = {
             url: path,
