@@ -3,14 +3,14 @@ import { Field, Input, TabValue } from "@fluentui/react-components";
 import React, { useEffect, useState, useCallback } from "react";
 import { ContextProps, PageProps } from "src/App";
 import { Ribbon } from "./HelloWorldItemRibbon";
-import { getWorkloadItem, saveItemState } from "../../controller/ItemCRUDController";
+import { getWorkloadItem, saveItemDefinition } from "../../controller/ItemCRUDController";
 import { WorkloadItem } from "../../models/ItemCRUDModel";
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
-import { HelloWorldItemModelState } from "./HelloWorldItemModel";
-import { HelloWorldItemEmptyState } from "./HelloWorldItemEditorEmptyState";
-import { HelloWorldItemEditorLoadingProgressBar } from "./HelloWorldItemEditorLoadingProgressBar";
+import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
+import { HelloWorldItemEmpty } from "./HelloWorldItemEditorEmpty";
+import { ItemEditorLoadingProgressBar } from "../../controls/ItemEditorLoadingProgressBar";
 import { callNotificationOpen } from "../../controller/NotificationController";
 
 export function HelloWorldItemEditor(props: PageProps) {
@@ -20,21 +20,21 @@ export function HelloWorldItemEditor(props: PageProps) {
   const { workloadClient } = props;
   const [isUnsaved, setIsUnsaved] = useState<boolean>(true);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
-  const [editorItem, setEditorItem] = useState<WorkloadItem<HelloWorldItemModelState>>(undefined);
+  const [editorItem, setEditorItem] = useState<WorkloadItem<HelloWorldItemDefinition>>(undefined);
   const [selectedTab, setSelectedTab] = useState<TabValue>("");
 
   // Computed value from editorItem (single source of truth)
-  const payload = editorItem?.itemState?.message ?? "";
+  const payload = editorItem?.definition?.message ?? "";
 
-  // Helper function to update item state immutably
-  const updateItemState = useCallback((updates: Partial<HelloWorldItemModelState>) => {
+  // Helper function to update item definition immutably
+  const updateItemDefinition = useCallback((updates: Partial<HelloWorldItemDefinition>) => {
     setEditorItem(prevItem => {
       if (!prevItem) return prevItem;
       
       return {
         ...prevItem,
-        itemState: {
-          ...prevItem.itemState,
+        definition: {
+          ...prevItem.definition,
           ...updates
         }
       };
@@ -46,16 +46,16 @@ export function HelloWorldItemEditor(props: PageProps) {
       loadDataFromUrl(pageContext, pathname);
     }, [pageContext, pathname]);
 
-  async function SaveItem(itemState?: HelloWorldItemModelState) {
-    var successResult = await saveItemState<HelloWorldItemModelState>(
+  async function SaveItem(defintion?: HelloWorldItemDefinition) {
+    var successResult = await saveItemDefinition<HelloWorldItemDefinition>(
       workloadClient,
       editorItem.id,
-      itemState || editorItem.itemState);
+      defintion || editorItem.definition);
     setIsUnsaved(!successResult);
     callNotificationOpen(
             workloadClient,
-            t("HelloWorldItem_Saved_Notification_Title"),
-            t("HelloWorldItem_Saved_Notification_Text", { itemName: editorItem.displayName }),
+            t("HelloWorldItemEditor_Saved_Notification_Title"),
+            t("HelloWorldItemEditor_Saved_Notification_Text", { itemName: editorItem.displayName }),
             undefined,
             undefined
         );
@@ -64,20 +64,20 @@ export function HelloWorldItemEditor(props: PageProps) {
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
     setIsLoadingData(true);
-    var item: WorkloadItem<HelloWorldItemModelState> = undefined;    
+    var item: WorkloadItem<HelloWorldItemDefinition> = undefined;    
     if (pageContext.itemObjectId) {
       // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
       try {
-        item = await getWorkloadItem<HelloWorldItemModelState>(
+        item = await getWorkloadItem<HelloWorldItemDefinition>(
           workloadClient,
           pageContext.itemObjectId,          
         );
         
-        // Ensure item state is properly initialized without mutation
-        if (!item.itemState) {
+        // Ensure item defintion is properly initialized without mutation
+        if (!item.definition) {
           item = {
             ...item,
-            itemState: {
+            definition: {
               message: undefined,
             }
           };
@@ -90,37 +90,37 @@ export function HelloWorldItemEditor(props: PageProps) {
       console.log(`non-editor context. Current Path: ${pathname}`);
     }
     setIsUnsaved(false);
-    if(item?.itemState?.message) {
+    if(item?.definition?.message) {
       setSelectedTab("home");
     } else {
-      setSelectedTab("empty-state");
+      setSelectedTab("empty-definition");
     }
     setIsLoadingData(false);
   }
 
-  function onUpdateItemPayload(newPayload: string) {
-    updateItemState({ message: newPayload });
+  function onUpdateItemDefinition(newDefinition: string) {
+    updateItemDefinition({ message: newDefinition });
   }
 
-  async function handleFinishEmptyState(message: string) {
-    // Update the item state with the new message
-    const newItemState = { message: message };
-    updateItemState(newItemState);
+  async function handleFinishEmpty(message: string) {
+    // Update the item defintion with the new message
+    const newItemDefinition = { message: message };
+    updateItemDefinition(newItemDefinition);
     
-    // Save with the updated state directly to avoid race condition
-    await SaveItem(newItemState);
+    // Save with the updated definition directly to avoid race condition
+    await SaveItem(newItemDefinition);
     
     setSelectedTab("home");
   }
 
   if (isLoadingData) {
     //making sure we show a loding indicator while the itme is loading
-    return (<HelloWorldItemEditorLoadingProgressBar 
-      message={t("HelloWorldItem_LoadingProgressBar_Text", { itemName: editorItem?.displayName })} />);
+    return (<ItemEditorLoadingProgressBar 
+      message={t("HelloWorldItemEditor_LoadingProgressBar_Text", { itemName: editorItem?.displayName })} />);
   }
   else {
     return (
-        <Stack className="editor" data-testid="item-editor-inner">
+      <Stack className="editor" data-testid="item-editor-inner">
         <Ribbon
             {...props}        
             isSaveButtonEnabled={isUnsaved}
@@ -129,59 +129,59 @@ export function HelloWorldItemEditor(props: PageProps) {
             onTabChange={setSelectedTab}
         />
         <Stack className="main">
-          {["empty-state"].includes(selectedTab as string) && (
+          {["empty-definition"].includes(selectedTab as string) && (
             <span>
-              <HelloWorldItemEmptyState
+              <HelloWorldItemEmpty
                 workloadClient={workloadClient}
                 item={editorItem}
-                state={editorItem?.itemState}
-                onFinishEmptyState={handleFinishEmptyState}
+                itemDefinition={editorItem?.definition}
+                onFinishEmpty={handleFinishEmpty}
               />
             </span>
           )}
           {["home"].includes(selectedTab as string) && (
           <span>
-              <h2>{t('HelloWorldItem_Editor_Titel')}</h2>            
+              <h2>{t('HelloWorldItemEditor_Title')}</h2>            
               <div> 
                 <div className="section" data-testid='item-editor-metadata' >
-                  <Field label={t('Workspace_ID')} orientation="horizontal" className="field">
-                    <Label>{editorItem?.workspaceId} </Label>
-                  </Field>
-                  <Field label={t('HelloWorldItem_ID')} orientation="horizontal" className="field">
+                  <Field label={t('Item_ID_Label')} orientation="horizontal" className="field">
                     <Label>{editorItem?.id} </Label>
                   </Field>
-                  <Field label={t('HelloWorldItem_Type')} orientation="horizontal" className="field">
+                  <Field label={t('Item_Type_Label')} orientation="horizontal" className="field">
                     <Label>{editorItem?.type} </Label>
                   </Field>
-
-                  <Field label={t('HelloWorldItem_Name')} orientation="horizontal" className="field">
+                  <Field label={t('Item_Name_Label')} orientation="horizontal" className="field">
                     <Label>{editorItem?.displayName} </Label>
                   </Field>
-                  <Field label={t('HelloWorldItem_Description')} orientation="horizontal" className="field">
+                  <Field label={t('Item_Description_Label')} orientation="horizontal" className="field">
                     <Label>{editorItem?.description} </Label>
                   </Field>
 
-                  <Field label={t('HelloWorldItem_LastModifiedDate')} orientation="horizontal" className="field">
+                  <Field label={t('Item_LastModifiedDate_Label')} orientation="horizontal" className="field">
                     <Label>{editorItem?.lastModifiedDate + ""} </Label>
                   </Field>
-                  <Field label={t('HelloWorldItem_LastModifiedBy')} orientation="horizontal" className="field">
+                  <Field label={t('Item_LastModifiedBy_Label')} orientation="horizontal" className="field">
                     <Label>{editorItem?.lastModifiedBy} </Label>
                   </Field>
 
-                  <Field label={t('HelloWorldItem_CreatedDate')} orientation="horizontal" className="field">
+                  <Field label={t('Item_CreatedDate_Label')} orientation="horizontal" className="field">
                     <Label>{editorItem?.createdDate + ""} </Label>
                   </Field>
-                  <Field label={t('HelloWorldItem_CreatedBy')} orientation="horizontal" className="field">
+                  <Field label={t('Item_CreatedBy_Label')} orientation="horizontal" className="field">
                     <Label>{editorItem?.createdBy} </Label>
                   </Field>
+                  
+                  <Field label={t('Workspace_ID_Label')} orientation="horizontal" className="field">
+                    <Label>{editorItem?.workspaceId} </Label>
+                  </Field>
 
-                  <Field label={t('HelloWorldItem_State_Payload')} orientation="horizontal" className="field">
+                  <Field label={t('HelloWorldItemEditor_Definition_Message_Label')} orientation="horizontal" className="field">
                     <Input
                       size="small"
                       type="text"
                       placeholder="Hello World!"
                       value={payload}
-                      onChange={(e) => onUpdateItemPayload(e.target.value)}              
+                      onChange={(e) => onUpdateItemDefinition(e.target.value)}              
                       data-testid="payload-input"
                     />
                   </Field>

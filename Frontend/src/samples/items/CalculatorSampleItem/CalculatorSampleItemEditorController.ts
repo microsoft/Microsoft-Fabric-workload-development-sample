@@ -2,7 +2,7 @@ import {
     WorkloadClientAPI,
 } from "@ms-fabric/workload-client";
 
-import { Calculation, CalculationOperator, CalculationResult, CalculatorSampleItemState } from "./CalculatorSampleItemModel";
+import { Calculation, CalculationOperator, CalculationResult, CalculatorSampleItemDefinition } from "./CalculatorSampleItemModel";
 import { readOneLakeFileAsText, getOneLakeFilePath, writeToOneLakeFileAsText, checkIfFileExists } from "../../controller/OneLakeController";
 import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
 import { GenericItemAndPath } from "../../../workload/models/DataHubModel";
@@ -10,16 +10,15 @@ import { OneLakeShortcutCreateRequest, OneLakeShortcutCreateResponse, OneLakeSho
 import { createOneLakeShortcut } from "../../views/SampleOneLakeShortcutCreator/SampleOneLakeShortcutController";
 
 
-
 /**
- * Saves the calculation result to OneLake and updates the item state.
+ * Saves the calculation result to OneLake and updates the item defintion.
  *
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {WorkloadItem<CalculatorSampleItemState>} item - The workload item to update.
+ * @param {WorkloadItem<CalculatorSampleItemDefinition>} item - The workload item to update.
  * @param {CalculationResult} calculation - The calculation result to save.
- * @returns {Promise<CalculatorSampleItemState>} - The updated item state after saving the calculation result.
+ * @returns {Promise<CalculatorSampleItemDefinition>} - The updated item definiton after saving the calculation result.
  */
-export async function createCalculationShortcut(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemState>, 
+export async function createCalculationShortcut(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemDefinition>, 
     source: GenericItemAndPath): Promise<OneLakeShortcutCreateResponse> {
     const target: OneLakeShortcutTargetOneLake = {
         oneLake: {
@@ -37,37 +36,37 @@ export async function createCalculationShortcut(workloadClient: WorkloadClientAP
 }
 
 /**
- * Saves the calculation result to OneLake and updates the item state.
+ * Saves the calculation result to OneLake and updates the item definition.
  *
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {WorkloadItem<CalculatorSampleItemState>} item - The workload item to update.
+ * @param {WorkloadItem<CalculatorSampleItemDefinition>} item - The workload item to update.
  * @param {CalculationResult} calculation - The calculation result to save.
- * @returns {Promise<CalculatorSampleItemState>} - The updated item state after saving the calculation result.
+ * @returns {Promise<CalculatorSampleItemDefinition>} - The updated item definition after saving the calculation result.
  */
-export async function saveCalculationResult(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemState>, calculation: CalculationResult): Promise<CalculatorSampleItemState> {    
+export async function saveCalculationResult(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemDefinition>, calculation: CalculationResult): Promise<CalculatorSampleItemDefinition> {    
     const result = calculateResult(calculation);
     const fileName = `CalcResults/Calculation-${result.calculationTime.toUTCString() + ""}.json`;
     const filePath = getOneLakeFilePath(item.workspaceId, item.id, fileName)
     await writeToOneLakeFileAsText(workloadClient, filePath, JSON.stringify(result));
-    const newItemState: CalculatorSampleItemState = {
+    const newItemDefinition: CalculatorSampleItemDefinition = {
         operand1: calculation.operand1,
         operand2: calculation.operand2,
         operator: calculation.operator,        
         lastResultFile: fileName,
     }
     saveCalculationToHistory(workloadClient, item, result);
-    return newItemState
+    return newItemDefinition
 }
 
 /**
  * Loads the calculation result from OneLake for a given workload item
  * 
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {WorkloadItem<CalculatorSampleItemState>} item - The workload item from which to load the calculation result.
+ * @param {WorkloadItem<CalculatorSampleItemDefinition>} item - The workload item from which to load the calculation result.
  * @returns {Promise<CalculationResult>} - The loaded calculation result.
  */
-export async function loadCalculationResult(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemState>): Promise<CalculationResult> {
-    const fileName = item.itemState?.lastResultFile;
+export async function loadCalculationResult(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemDefinition>): Promise<CalculationResult> {
+    const fileName = item.definition?.lastResultFile;
     const filePath = getOneLakeFilePath(item.workspaceId, item.id, fileName);
     const result = await readOneLakeFileAsText(workloadClient, filePath);
     return JSON.parse(result)
@@ -77,11 +76,11 @@ export async function loadCalculationResult(workloadClient: WorkloadClientAPI, i
  * Saves the calculation result to the history file in OneLake.
  *
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
- * @param {WorkloadItem<CalculatorSampleItemState>} item - The workload item to update.
+ * @param {WorkloadItem<CalculatorSampleItemDefinition>} item - The workload item to update.
  * @param {CalculationResult} calculationResult - The calculation result to save.
  * @returns {Promise<void>} - A promise that resolves when the calculation result is saved.
  */
-export async function saveCalculationToHistory(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemState>, calculationResult: CalculationResult): Promise<void> {
+export async function saveCalculationToHistory(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemDefinition>, calculationResult: CalculationResult): Promise<void> {
    const fileName = "CalcResults/CalculationHistory.csv";
    const filePath = getOneLakeFilePath(item.workspaceId, item.id, fileName);
    const fileExist = await checkIfFileExists(workloadClient, filePath)
@@ -98,10 +97,10 @@ export async function saveCalculationToHistory(workloadClient: WorkloadClientAPI
  * Loads the calculation history from OneLake for a given workload item.
  *
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.    
- * @param {WorkloadItem<CalculatorSampleItemState>} item - The workload item from which to load the calculation history.
+ * @param {WorkloadItem<CalculatorSampleItemDefinition>} item - The workload item from which to load the calculation history.
  * @returns {Promise<CalculationResult[]>} - A promise that resolves to an array of calculation results.
  */
-export async function loadCalculationHistory(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemState>): Promise<CalculationResult[]> {
+export async function loadCalculationHistory(workloadClient: WorkloadClientAPI, item: WorkloadItem<CalculatorSampleItemDefinition>): Promise<CalculationResult[]> {
     var retVal: CalculationResult[];
     const fileName = "CalcResults/CalculationHistory.csv";
     const filePath = getOneLakeFilePath(item.workspaceId, item.id, fileName);

@@ -28,7 +28,9 @@ export function settingsToView(settings: WorkloadSettings): string {
  *
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
-export async function callSettingsOnChange(workloadClient: WorkloadClientAPI, changeLang: (language: string) => void) {
+export async function callSettingsOnChange(
+    workloadClient: WorkloadClientAPI, 
+    changeLang: (language: string) => void) {
     // Define a callback function to be invoked when workload settings change
     const callback: (settings: WorkloadSettings) => void =
         (ws: WorkloadSettings): void => {

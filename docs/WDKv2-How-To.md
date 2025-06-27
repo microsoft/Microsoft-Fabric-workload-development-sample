@@ -14,33 +14,21 @@ There are two important methods in there that will showcase the new functionalit
  
 ![Call Fronted API Example](./media/Demo-FrontendAPI-2.jpg)
 
-## Storing Item state in Fabric
+## Storing Item Definition in Fabric
 
-You can find the code for storing item state in the `saveItemState` method within the [SampleWorkloadEditor.tsx](./../Frontend/src/components/SampleWorkloadEditor/SampleWorkloadEditor.tsx) file. Here is the method content for reference:
+You can find the code for storing item definition in the `saveItemDefinition` method within the [SampleWorkloadEditor.tsx](./../Frontend/src/workload/items/HelloWorldItem/HelloWorldItemEditor.tsx) file. Here is the method content for reference:
 
 ```typescript
-async function SaveItem() {
-    let payload: UpdateItemPayload = {
-      item1Metadata: {
-        lakehouse: selectedLakehouse,
-        operand1: operand1,
-        operand2: operand2,
-        operator: operator,
-        useOneLake: storageName === "OneLake"
-      },
-    };
-
-    var successResult = await callPublicItemUpdateDefinition(
-      sampleItem.id,
-      [
-        { payloadPath: DefinitionPath.ItemMetadata, payloadData: payload }
-      ],
-      workloadClient
-    )
-}
+  async function SaveItem(defintion?: HelloWorldItemDefinition) {
+    var successResult = await saveItemDefinition<HelloWorldItemDefinition>(
+      workloadClient,
+      editorItem.id,
+      defintion || editorItem.definition);
+    setIsUnsaved(!successResult);
+  }
 ```
 
-This method demonstrates how to persist the state of an item using the SDK.
+This method demonstrates how to persist the definition of an item using the SDK.
 
 ## Standard Item creation experience
 

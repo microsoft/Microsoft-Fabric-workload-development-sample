@@ -26,20 +26,22 @@ import {
 } from "./CalculatorSampleItemEditorController";
 import { Ribbon } from "./CalculatorSampleItemEditorRibbon";
 import {
-  CalculatorSampleItemState,
+  CalculatorSampleItemDefinition,
   CalculationOperator,
   Calculation
 } from "./CalculatorSampleItemModel";
 import "./../../../styles.scss";
-import { CalculatorSampleItemEditorLoadingProgressBar } from "./CalculatorSampleItemEditorLoadingProgressBar";
-import { callGetItem, getWorkloadItem, saveItemState } from "../../../workload/controller/ItemCRUDController";
+import { callGetItem, getWorkloadItem, saveItemDefinition } from "../../../workload/controller/ItemCRUDController";
 import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } from "../../../workload/controller/NavigationController";
 import { callThemeOnChange } from "../../../workload/controller/ThemeController";
 import { callOpenSettings } from "../../../workload/controller/SettingsController";
 import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
 import { callDatahubWizardOpen } from "../../../workload/controller/DataHubController";
 import { callDialogOpenMsgBox } from "../../../workload/controller/DialogController";
-import { defaultCalculatorSampleItemState } from "../../../constants";
+import { defaultCalculatorSampleItemDefinition } from "../../../constants";
+import { CalculatorSampleItemEmpty } from "./CalculatorSampleItemEditorEmpty";
+import { callNotificationOpen } from "../../../workload/controller/NotificationController";
+import { ItemEditorLoadingProgressBar } from "../../../workload/controls/ItemEditorLoadingProgressBar";
 
 export function CalculatorSampleItemEditor(props: PageProps) {
   const { workloadClient } = props;
@@ -49,7 +51,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
   // React state for WorkloadClient APIs
   const [operand1ValidationMessage, setOperand1ValidationMessage] = useState<string>("");
   const [operand2ValidationMessage, setOperand2ValidationMessage] = useState<string>("");
-  const [editorItem, setEditorItem] = useState<WorkloadItem<CalculatorSampleItemState>>(undefined);
+  const [editorItem, setEditorItem] = useState<WorkloadItem<CalculatorSampleItemDefinition>>(undefined);
   const [isDirty, setDirty] = useState<boolean>(false);
   const [calculationResult, setCalculationResult] = useState<string>("");
   const [calculationTime, setCalculationTime] = useState<Date>(undefined);
@@ -58,22 +60,22 @@ export function CalculatorSampleItemEditor(props: PageProps) {
   const [itemEditorErrorMessage, setItemEditorErrorMessage] = useState<string>("");
 
   // Computed values from editorItem (single source of truth)
-  const operand1 = editorItem?.itemState?.operand1 ?? 0;
-  const operand2 = editorItem?.itemState?.operand2 ?? 0;
-  const operator = editorItem?.itemState?.operator ?? CalculationOperator.Undefined;
+  const operand1 = editorItem?.definition?.operand1 ?? 0;
+  const operand2 = editorItem?.definition?.operand2 ?? 0;
+  const operator = editorItem?.definition?.operator ?? CalculationOperator.Undefined;
 
   const INT32_MIN = -2147483648;
   const INT32_MAX = 2147483647;
 
-  // Helper function to update item state immutably
-  const updateItemState = useCallback((updates: Partial<CalculatorSampleItemState>) => {
+  // Helper function to update item defintion immutably
+  const updateItemDefinition = useCallback((updates: Partial<CalculatorSampleItemDefinition>) => {
     setEditorItem(prevItem => {
       if (!prevItem) return prevItem;
       
       return {
         ...prevItem,
-        itemState: {
-          ...prevItem.itemState,
+        definition: {
+          ...prevItem.definition,
           ...updates
         }
       };
@@ -89,7 +91,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
     callNavigationBeforeNavigateAway(workloadClient);
 
     // register a callback in Navigate.AfterNavigateAway
-    callNavigationAfterNavigateAway(afterNavigateCallBack, workloadClient);
+    callNavigationAfterNavigateAway(workloadClient, afterNavigateCallBack);
 
     // register Theme.onChange
     callThemeOnChange(workloadClient);
@@ -106,30 +108,6 @@ export function CalculatorSampleItemEditor(props: PageProps) {
     setCalculationResult("");
     setCalculationTime(undefined);
     return;
-  }
-
-  function isValidOperand(operand: number) {
-    return operand > INT32_MIN && operand < INT32_MAX;
-  }
-
-  async function onOperand1InputChanged(value: number) {
-    updateItemState({ operand1: value });
-    
-    if (!isValidOperand(value)) {
-      setOperand1ValidationMessage("Operand 1 may lead to overflow");
-      return;
-    }
-    setOperand1ValidationMessage("");
-  }
-
-  async function onOperand2InputChanged(value: number) {
-    updateItemState({ operand2: value });
-    
-    if (!isValidOperand(value)) {
-      setOperand2ValidationMessage("Operand 2 may lead to overflow");
-      return;
-    }
-    setOperand2ValidationMessage("");
   }
 
   async function createShortcut(){
@@ -157,9 +135,33 @@ export function CalculatorSampleItemEditor(props: PageProps) {
     }    
   }
 
+  function isValidOperand(operand: number) {
+    return operand > INT32_MIN && operand < INT32_MAX;
+  }
+
+  async function onOperand1InputChanged(value: number) {
+    updateItemDefinition({ operand1: value });
+    
+    if (!isValidOperand(value)) {
+      setOperand1ValidationMessage("Operand 1 may lead to overflow");
+      return;
+    }
+    setOperand1ValidationMessage("");
+  }
+
+  async function onOperand2InputChanged(value: number) {
+    updateItemDefinition({ operand2: value });
+    
+    if (!isValidOperand(value)) {
+      setOperand2ValidationMessage("Operand 2 may lead to overflow");
+      return;
+    }
+    setOperand2ValidationMessage("");
+  }
+
   function onOperatorInputChanged(value: string | null) {
     const operatorValue = CalculationOperator[value as keyof typeof CalculationOperator] || CalculationOperator.Undefined;
-    updateItemState({ operator: operatorValue });
+    updateItemDefinition({ operator: operatorValue });
   }
 
   function canCalculateOperands(operand1: number, operand2: number) {
@@ -191,13 +193,13 @@ export function CalculatorSampleItemEditor(props: PageProps) {
       
       setEditorItem({
         ...editorItem,
-        itemState: calcSave
+        definition: calcSave
       });
       
       setCalculationResult(calcResult.result.toString());
       setCalculationTime(calcResult.calculationTime);
       
-      // Save with the updated state directly to avoid race condition
+      // Save with the updated definition directly to avoid race condition
       await SaveItem(calcSave);
     } catch (error: Error | any) {
       console.error(`Error calculating result: ${error.message}`);
@@ -207,24 +209,34 @@ export function CalculatorSampleItemEditor(props: PageProps) {
     }
   }
 
+  async function handleFinishEmpty(operand1: number, operand2: number, operator: CalculationOperator): Promise<void> {
+    onOperand1InputChanged(operand1);
+    onOperand2InputChanged(operand2);
+    onOperatorInputChanged(CalculationOperator[operator]);
+    setSelectedTab("home");
+    setDirty(true);
+    await onCalculateAndSaveButtonClick();
+  }
+
   async function loadDataFromUrl(
     pageContext: ContextProps,
     pathname: string
   ): Promise<void> {
     setIsLoadingData(true);
+    var item: WorkloadItem<CalculatorSampleItemDefinition> = undefined;    
     if (pageContext.itemObjectId) {
       // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
       try {
         setSelectedTab("home");
-        const item = await getWorkloadItem<CalculatorSampleItemState>(
+        item = await getWorkloadItem<CalculatorSampleItemDefinition>(
                   workloadClient,
                   pageContext.itemObjectId,
-                  defaultCalculatorSampleItemState          
+                  defaultCalculatorSampleItemDefinition          
                 );
         // clear validation messages
         setOperand1ValidationMessage("");
         setOperand2ValidationMessage("");
-        if (item?.itemState?.lastResultFile) {
+        if (item?.definition?.lastResultFile) {
           const lastResult  = await loadCalculationResult(workloadClient, item);
           setCalculationResult(lastResult?.result.toString() ?? "");          
           setCalculationTime(lastResult?.calculationTime ?? undefined);
@@ -252,15 +264,28 @@ export function CalculatorSampleItemEditor(props: PageProps) {
       clearItemData();
       setIsLoadingData(false);
     }
+
+    if(item?.definition?.operand1) {
+      setSelectedTab("home");
+    } else {
+      setSelectedTab("empty-definition");
+    }
   }
 
   function clearItemData() {
     setEditorItem(undefined);
   }
 
-  async function SaveItem(itemState?: CalculatorSampleItemState) {
-    var successResult = await saveItemState(workloadClient, editorItem.id, itemState || editorItem.itemState);
+  async function SaveItem(itemDefintion?: CalculatorSampleItemDefinition) {
+    var successResult = await saveItemDefinition(workloadClient, editorItem.id, itemDefintion || editorItem.definition);
     setDirty(!successResult);
+    callNotificationOpen(
+                workloadClient,
+                "Item saved",
+                "The item " + editorItem.displayName + " has been saved successfully.",
+                undefined,
+                undefined
+            );
   }
 
   async function openSettings() {
@@ -276,7 +301,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
 
   // HTML page contents
   if (isLoadingData) {
-    return <CalculatorSampleItemEditorLoadingProgressBar message="Loading..." />;
+    return <ItemEditorLoadingProgressBar message="Loading..." />;
   }
   return (
     <Stack className="editor" data-testid="sample-workload-editor-inner">
@@ -291,6 +316,16 @@ export function CalculatorSampleItemEditor(props: PageProps) {
       />
 
       <Stack className="main">
+        {["empty-definition"].includes(selectedTab as string) && (
+          <span>
+            <CalculatorSampleItemEmpty
+              workloadClient={workloadClient}
+              item={editorItem}
+              itemDefinition={editorItem?.definition}
+              onFinishEmpty={handleFinishEmpty}
+            />
+          </span>
+        )}
         {["home"].includes(selectedTab as string) && (
           <span>
             <h2>Calculator Sample</h2>

@@ -52,7 +52,7 @@ export function ApiNavigation(props: TabContentProps) {
                     appearance="primary"
                     icon={<PanelRightExpand20Regular />}
                     onClick={() =>
-                      CallOpenInNewBrowserTab("https://example.com/help", workloadClient)
+                      CallOpenInNewBrowserTab(workloadClient, "https://example.com/help")
                     }
                   >
                     Open a link in a new tab

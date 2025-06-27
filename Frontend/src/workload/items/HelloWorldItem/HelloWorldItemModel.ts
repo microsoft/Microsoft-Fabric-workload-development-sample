@@ -1,5 +1,5 @@
 
 
-export interface HelloWorldItemModelState  {
+export interface HelloWorldItemDefinition  {
   message?: string;
 }
