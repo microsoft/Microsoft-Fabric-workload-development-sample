@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Stack } from "@fluentui/react";
-import { Text, Button, Input, Field, Select, Option } from "@fluentui/react-components";
+import { Text, Button, Input, Field, Option, Combobox } from "@fluentui/react-components";
 import "./../../../styles.scss";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { GenericItem } from "src/workload/models/ItemCRUDModel";
@@ -9,18 +9,20 @@ import { callDatahubWizardOpen } from "../../../workload/controller/DataHubContr
 import { Database16Regular } from "@fluentui/react-icons";
 
 
-interface CognitiveSampleItemEmptyStateProps {
+interface CognitiveSampleItemEditorEmptyProps {
   workloadClient: WorkloadClientAPI,
   item: GenericItem;
   state: CognitiveSampleItemDefinition,
-  onFinishEmptyState: () => void;
+  onFinishEmpty: () => void;
+  onCancelEmpty: () => void;
 }
 
-export const CognitiveSampleItemEmptyState: React.FC<CognitiveSampleItemEmptyStateProps> = ({
+export const CognitiveSampleItemEditorEmpty: React.FC<CognitiveSampleItemEditorEmptyProps> = ({
   workloadClient,
   item,
   state,
-  onFinishEmptyState
+  onFinishEmpty,
+  onCancelEmpty
 }) => {
   const [configuration, setConfiguration] = 
     useState<CognitiveSampleAnalysisConfiguration>({
@@ -122,7 +124,7 @@ export const CognitiveSampleItemEmptyState: React.FC<CognitiveSampleItemEmptySta
     state.configurations.push({ ...configuration });
     
     // Call parent's callback to finalize
-    onFinishEmptyState();
+    onFinishEmpty();
   }
   
   return (
@@ -187,22 +189,22 @@ export const CognitiveSampleItemEmptyState: React.FC<CognitiveSampleItemEmptySta
             className="field"
             data-testid="analysis-type-field"
           >
-          <Select
+          <Combobox
               size="small"
               value={configuration?.analysisType || CognitiveSampleAnalysisType.SentimentAnalysis}
-              onChange={(_, data) => {
+              onOptionSelect={(_, data) => {
                 setConfiguration({
                   ...configuration,
-                  analysisType: data.value as CognitiveSampleAnalysisType
+                  analysisType: data.optionValue as CognitiveSampleAnalysisType
                 });
               }}
               data-testid="analysis-type-select"
             >
-              {Object.keys(CognitiveSampleAnalysisType).filter(
-                key => isNaN(Number(key))).map((option) => (
-                <Option key={option} text={option} value={option}>{option}</Option>
-              ))}              
-            </Select>
+              {/* Using Object.values to get enum values directly */}
+              {Object.values(CognitiveSampleAnalysisType).map((value) => (
+                <Option key={value} value={value}>{value}</Option>
+              ))}
+            </Combobox>
           </Field>
           <Field
             label="Source column"
@@ -248,9 +250,17 @@ export const CognitiveSampleItemEmptyState: React.FC<CognitiveSampleItemEmptySta
     </Stack.Item>
 
       <Stack.Item style={{ marginTop: '16px' }}>
-        <Button appearance="primary" onClick={saveItem}>
-          Save
-        </Button>
+        <Stack horizontal tokens={{ childrenGap: 10 }}>
+          <Button appearance="primary" onClick={saveItem}>
+            Save
+          </Button>
+          {/* Show Cancel button only if there are existing configurations */}
+          {state?.configurations?.length > 0 && (
+            <Button appearance="secondary" onClick={onCancelEmpty}>
+              Cancel
+            </Button>
+          )}
+        </Stack>
       </Stack.Item>
     </Stack>
   );

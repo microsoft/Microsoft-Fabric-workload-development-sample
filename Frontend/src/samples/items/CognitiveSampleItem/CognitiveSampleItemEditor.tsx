@@ -9,7 +9,7 @@ import { writeToOneLakeFileAsText, getOneLakeFilePath } from "../../controller/O
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
 import { CognitiveSampleItemDefinition } from "./CognitiveSampleItemModel";
-import { CognitiveSampleItemEmptyState } from "./CognitiveSampleItemEditorEmpty";
+import { CognitiveSampleItemEditorEmpty } from "./CognitiveSampleItemEditorEmpty";
 import { BatchRequest } from "../../models/SparkLivyModel";
 import { createBatch } from "../../controller/SparkLivyController";
 import { Delete24Regular, PlayCircle24Regular } from "@fluentui/react-icons";
@@ -123,7 +123,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
       updateConfigurations[configIndex] = updatedConfig;
 
       // Update item state
-      const updatedState = {
+      const updatedItemDefinition = {
         ...editorItem.definition,
         configurations: updateConfigurations
       };
@@ -131,11 +131,11 @@ export function CognitiveSampleItemEditor(props: PageProps) {
       // Set the updated state
       setEditorItem({
         ...editorItem,
-        definition: updatedState
+        definition: updatedItemDefinition
       });
       
       // Save the updated state
-      await saveItemDefinition(workloadClient, editorItem.id, updatedState);
+      await saveItemDefinition(workloadClient, editorItem.id, updatedItemDefinition);
 
       callNotificationOpen(
             workloadClient,
@@ -176,14 +176,14 @@ export function CognitiveSampleItemEditor(props: PageProps) {
       UpdatedConfigs.splice(index, 1);
       
       // Update the state
-      const updatedState = {
+      const updatedDefinition = {
         ...editorItem.definition,
         configurations: UpdatedConfigs
       };
       
       setEditorItem({
         ...editorItem,
-        definition: updatedState
+        definition: updatedDefinition
       });
       
       setIsUnsaved(true);
@@ -226,9 +226,14 @@ export function CognitiveSampleItemEditor(props: PageProps) {
       setIsLoadingData(false);
     }
 
-  function handleFinishEmptyState() {
+  function handleFinishEmptyDialog() {
     setIsUnsaved(true)
     SaveItem()
+    setSelectedTab("home");
+  }
+
+  function handleCancelEmptyDialog() {
+    // Just switch back to the home tab without saving changes
     setSelectedTab("home");
   }
 
@@ -248,11 +253,12 @@ export function CognitiveSampleItemEditor(props: PageProps) {
       <Stack className="main">
         {["empty-definition"].includes(selectedTab as string) && (
           <span>
-            <CognitiveSampleItemEmptyState
+            <CognitiveSampleItemEditorEmpty
               workloadClient={workloadClient}
               item={editorItem}
               state={editorItem?.definition}
-              onFinishEmptyState={handleFinishEmptyState}
+              onFinishEmpty={handleFinishEmptyDialog}
+              onCancelEmpty={handleCancelEmptyDialog}
             />
           </span>
         )}
