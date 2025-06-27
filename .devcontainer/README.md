@@ -11,9 +11,9 @@ This directory contains configuration for a development container that can be us
 
 ### Tools & Utilities
 - Git
-- PowerShell
+- PowerShell (latest version)
 - Docker-in-Docker
-- Azure CLI
+- Azure CLI (latest version) for `az` command-line operations
 - .NET Entity Framework Core tools
 
 ### VS Code Extensions
@@ -57,6 +57,58 @@ You can further customize the development container by modifying:
 - `.devcontainer/devcontainer.json`: Add extensions, features, and settings
 - `.devcontainer/Dockerfile`: Modify the container setup
 - `.devcontainer/docker-compose.yml`: Adjust container orchestration
+
+## Using Azure CLI
+
+The container comes with Azure CLI pre-installed. Here's how to get started:
+
+1. Authenticate with Azure:
+   ```bash
+   az login
+   ```
+
+2. Select a subscription:
+   ```bash
+   az account set --subscription <subscription-id>
+   ```
+
+3. Run Azure commands:
+   ```bash
+   az group list
+   az resource list
+   az account show
+   ```
+
+For more information, see the [Azure CLI documentation](https://docs.microsoft.com/en-us/cli/azure/).
+
+## Using PowerShell
+
+The container comes with the latest version of PowerShell pre-installed:
+
+1. Start a PowerShell session:
+   ```bash
+   pwsh
+   ```
+
+2. Check your PowerShell version:
+   ```powershell
+   $PSVersionTable
+   ```
+
+3. Run PowerShell commands:
+   ```powershell
+   # Working with files and directories
+   Get-ChildItem
+   
+   # Working with Azure PowerShell modules
+   # Install-Module -Name Az -AllowClobber -Scope CurrentUser
+   # Connect-AzAccount
+   
+   # Working with .NET
+   [System.Environment]::OSVersion
+   ```
+
+For more information, see the [PowerShell documentation](https://docs.microsoft.com/en-us/powershell/).
 
 ## More Resources
 

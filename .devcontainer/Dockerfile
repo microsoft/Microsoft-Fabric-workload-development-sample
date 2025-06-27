@@ -13,6 +13,18 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         nano \
         unzip \
         wget \
+        apt-transport-https \
+        software-properties-common \
+    # Add Microsoft repository for PowerShell 7
+    && curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
+    && echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" > /etc/apt/sources.list.d/microsoft.list \
+    && apt-get update \
+    && apt-get install -y powershell \
+    # Verify PowerShell installation
+    && pwsh -Command '$PSVersionTable.PSVersion' \
+    # Verify Azure CLI is accessible (will be fully installed by the devcontainer feature)
+    && echo "Verifying Azure CLI will be available..." \
+    && which az || echo "Azure CLI will be installed via devcontainer features" \
     && apt-get autoremove -y \
     && apt-get clean -y \
     && rm -rf /var/lib/apt/lists/*
