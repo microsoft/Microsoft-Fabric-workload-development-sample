@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  devcontainer:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ..:/workspace:cached
+    command: sleep infinity
+    network_mode: service:devgateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - DOTNET_ENVIRONMENT=Development
+      - NODE_ENV=development
+
+  # Include the DevGateway service
+  devgateway:
+    build:
+      context: ../tools/DevGatewayContainer
+    volumes:
+      - ../config/templates/DevGateway:/app/config:cached
+    ports:
+      - "6000:6000"  # DevGateway port
+      - "4200:4200"  # Angular port
+      - "5000:5000"  # ASP.NET HTTP port
+      - "5001:5001"  # ASP.NET HTTPS port
+      - "60006:60006"  # Fabric Workload Development Kit Frontend port

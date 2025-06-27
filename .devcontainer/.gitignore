@@ -1,0 +1,17 @@
+# Local devcontainer history
+.bash_history
+.zsh_history
+
+# Local node modules if running npm install in devcontainer directory
+node_modules/
+
+# Local .NET build artifacts if testing in this directory
+bin/
+obj/
+
+# Local VS Code settings that might be created in this directory
+.vscode/
+
+# Any container-specific files that shouldn't be committed
+.env.*
+*.log

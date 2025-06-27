@@ -1,0 +1,81 @@
+{
+    "name": "Microsoft Fabric Workload Development",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "devcontainer",
+    "workspaceFolder": "/workspace",
+
+    // Configure properties specific to VS Code
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash"
+            },
+            "extensions": [
+                // Angular/Node.js development
+                "angular.ng-template",
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "johnpapa.angular-essentials",
+                
+                // ASP.NET development
+                "ms-dotnettools.csharp",
+                "ms-dotnettools.vscode-dotnet-runtime",
+                "kreativ-software.csharpextensions",
+                "formulahendry.dotnet-test-explorer",
+                
+                // General development tools
+                "github.vscode-pull-request-github",
+                "github.copilot",
+                "ms-azuretools.vscode-docker",
+                "streetsidesoftware.code-spell-checker",
+                "eamodio.gitlens",
+                "ms-vscode.powershell"
+            ]
+        }
+    },
+
+    // Features to add to the container
+    "features": {
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "lts"
+        },
+        "ghcr.io/devcontainers/features/dotnet:1": {
+            "version": "6.0"
+        },
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/azure-cli:1": {},
+        "ghcr.io/devcontainers/features/powershell:1": {}
+    },
+
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    "forwardPorts": [6000, 4200, 5000, 5001, 60006],
+    
+    "portsAttributes": {
+        "6000": {
+            "label": "Fabric Workload Development Kit",
+            "onAutoForward": "notify"
+        },
+        "4200": {
+            "label": "Angular App",
+            "onAutoForward": "notify"
+        },
+        "5000": {
+            "label": "ASP.NET HTTP",
+            "onAutoForward": "notify"
+        },
+        "5001": {
+            "label": "ASP.NET HTTPS",
+            "onAutoForward": "notify"
+        },
+        "60006": {
+            "label": "Fabric Workload Development Kit Frontend",
+            "onAutoForward": "notify"
+        }
+    },
+
+    // Use 'postCreateCommand' to run commands after the container is created.
+    "postCreateCommand": "npm install -g @angular/cli && cd Frontend && npm install",
+    
+    // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+    "remoteUser": "vscode"
+}
