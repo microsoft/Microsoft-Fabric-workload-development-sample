@@ -4,7 +4,7 @@ import { Text, Button, Input, Field, Select, Option } from "@fluentui/react-comp
 import "./../../../styles.scss";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { GenericItem } from "src/workload/models/ItemCRUDModel";
-import { CognitiveSampleAnalysisType, CognitiveSampleItemModelState, CognitiveSampleAnalysisConfiguration } from "./CognitiveSampleItemModel";
+import { CognitiveSampleAnalysisType, CognitiveSampleItemDefinition, CognitiveSampleAnalysisConfiguration } from "./CognitiveSampleItemModel";
 import { callDatahubWizardOpen } from "../../../workload/controller/DataHubController";
 import { Database16Regular } from "@fluentui/react-icons";
 
@@ -12,7 +12,7 @@ import { Database16Regular } from "@fluentui/react-icons";
 interface CognitiveSampleItemEmptyStateProps {
   workloadClient: WorkloadClientAPI,
   item: GenericItem;
-  state: CognitiveSampleItemModelState,
+  state: CognitiveSampleItemDefinition,
   onFinishEmptyState: () => void;
 }
 
@@ -126,7 +126,7 @@ export const CognitiveSampleItemEmptyState: React.FC<CognitiveSampleItemEmptySta
   }
   
   return (
-    <Stack className="empty-state-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
+    <Stack className="empty-definition-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
       <Stack.Item>
         <img
           src="/assets/images/CognitiveSampleItem-empty-state.jpg"
@@ -198,7 +198,7 @@ export const CognitiveSampleItemEmptyState: React.FC<CognitiveSampleItemEmptySta
               }}
               data-testid="analysis-type-select"
             >
-              {Object.values(CognitiveSampleAnalysisType).filter(
+              {Object.keys(CognitiveSampleAnalysisType).filter(
                 key => isNaN(Number(key))).map((option) => (
                 <Option key={option} text={option} value={option}>{option}</Option>
               ))}              

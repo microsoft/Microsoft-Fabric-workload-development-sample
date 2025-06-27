@@ -1,7 +1,7 @@
 import { ItemReference } from "src/workload/models/ItemCRUDModel";
 
 
-export interface CognitiveSampleItemModelState  {
+export interface CognitiveSampleItemDefinition  {
   configurations: CognitiveSampleAnalysisConfiguration[];
 }
 

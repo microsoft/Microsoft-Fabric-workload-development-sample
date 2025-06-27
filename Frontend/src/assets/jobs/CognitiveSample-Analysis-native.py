@@ -2,7 +2,6 @@
 # CognitiveSample-Analysis.py - Sentiment Analysis Script
 # This script performs sentiment analysis on text data in a Lakehouse table
 # and writes the results back to the same table with all original columns preserved.
-# Welcome to your new notebook
 import synapse.ml.services
 from synapse.ml.services.language import AnalyzeText
 from pyspark.sql.functions import col
@@ -45,8 +44,10 @@ print(f"  - Result column: {item_table_result_column_name}")
 #######################################################
 # Load the Lakehouse table into a DataFrame
 #######################################################
+deltaTablePath = f"abfss://{item_workspace_id}@onelake.dfs.fabric.microsoft.com/{item_id}/Tables/{item_table_name}/"
+
 print(f"Loading data from table: {item_table_name}")
-df = spark_session.read.format("delta").load("Tables/" + item_table_name)
+df = spark_session.read.format("delta").load(deltaTablePath)
 
 print(f"Loaded {df.count()} rows")
 print(f"Available columns: {', '.join(df.columns)}")
@@ -76,7 +77,7 @@ model = (AnalyzeText()
 print("Transforming data with sentiment model...")
 result = model.transform(df)
 
-result.show(5, truncate=False)
+#result.show(5, truncate=False)
 
 print("Finished transformation and obtained sentiment scores.")
 print(f"Available columns in result: {', '.join(result.columns)}")
@@ -110,9 +111,8 @@ else:
 )
 
 # Writing the data back
-deltaTablePath = f"abfss://{item_workspace_id}@onelake.dfs.fabric.microsoft.com/{item_id}/Tables/{item_table_name}/"
 print(f"Writing results to: {deltaTablePath}")
 output_df.write.mode("overwrite").format("delta").save(deltaTablePath)
 
 print(f"Output saved to table: {item_table_name}")
-output_df.show(5)
+#output_df.show(5)

@@ -3,30 +3,29 @@ import { TabValue, Button, Table, TableBody, TableCell, TableRow, TableHeader, T
 import React, { useEffect, useState } from "react";
 import { ContextProps, PageProps } from "src/App";
 import { Ribbon } from "./CognitiveSampleItemRibbon";
-import { getWorkloadItem, saveItemState } from "../../../workload/controller/ItemCRUDController";
+import { getWorkloadItem, saveItemDefinition } from "../../../workload/controller/ItemCRUDController";
 import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
 import { writeToOneLakeFileAsText, getOneLakeFilePath } from "../../controller/OneLakeController";
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
-import { CognitiveSampleItemModelState, CognitiveSampleAnalysisConfiguration } from "./CognitiveSampleItemModel";
-import { CognitiveSampleItemEmptyState } from "./CognitiveSampleItemEditorEmptyState";
-import CognitiveSampleItemEditorLoadingProgressBar from "./CognitiveSampleItemEditorLoadingProgressBar";
+import { CognitiveSampleItemDefinition } from "./CognitiveSampleItemModel";
+import { CognitiveSampleItemEmptyState } from "./CognitiveSampleItemEditorEmpty";
 import { BatchRequest } from "../../models/SparkLivyModel";
 import { createBatch } from "../../controller/SparkLivyController";
 import { Delete24Regular, PlayCircle24Regular } from "@fluentui/react-icons";
 import { EnvironmentConstants } from "../../../constants";
 import { callNotificationOpen } from "../../../workload/controller/NotificationController";
 import { NotificationToastDuration, NotificationType } from "@ms-fabric/workload-client";
+import ItemEditorLoadingProgressBar from "../../../workload/controls/ItemEditorLoadingProgressBar";
 
 export function CognitiveSampleItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
   const { pathname } = useLocation();
   const { workloadClient } = props;
-  const [payload, setPayload] = useState<CognitiveSampleAnalysisConfiguration[]>([]);
   const [selectedConfig, setSelectedConfig] = useState<number>(-1);
-  const [isUnsafed, setIsUnsafed] = useState<boolean>(true);
+  const [isUnsaved, setIsUnsaved] = useState<boolean>(true);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
-  const [editorItem, setEditorItem] = useState<WorkloadItem<CognitiveSampleItemModelState>>(undefined);
+  const [editorItem, setEditorItem] = useState<WorkloadItem<CognitiveSampleItemDefinition>>(undefined);
   const [selectedTab, setSelectedTab] = useState<TabValue>("");
 
   useEffect(() => {
@@ -34,11 +33,11 @@ export function CognitiveSampleItemEditor(props: PageProps) {
     }, [pageContext, pathname]);
 
   async function SaveItem() {
-    var successResult = await saveItemState<CognitiveSampleItemModelState>(
+    var successResult = await saveItemDefinition<CognitiveSampleItemDefinition>(
       workloadClient,
       editorItem.id,
-      editorItem.itemState);
-    setIsUnsafed(!successResult);
+      editorItem.definition);
+    setIsUnsaved(!successResult);
   }
 
   /**
@@ -47,9 +46,9 @@ export function CognitiveSampleItemEditor(props: PageProps) {
   /**
    * Fetches the content of the CognitiveSample-Analysis.py script from the assets folder
    */
-  async function getAnalysisScriptContent(): Promise<string> {
+  async function getAnalysisScriptContent(file: string): Promise<string> {
     try {
-      const response = await fetch('/assets/jobs/CognitiveSample-Analysis.py');
+      const response = await fetch(`/assets/jobs/${file}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch script: ${response.status} ${response.statusText}`);
       }
@@ -62,32 +61,25 @@ export function CognitiveSampleItemEditor(props: PageProps) {
 
   async function startAnalysis(configIndex: number = selectedConfig) {
     try {
+
       // Check if we have configurations
-      if (!payload || payload.length === 0 || configIndex < 0 || configIndex >= payload.length) {
+      if (editorItem?.definition?.configurations?.length < configIndex) {
         throw new Error("No configuration selected");
       }
-      
-      const config = payload[configIndex];
 
-      
+      const analysisFileName = "CognitiveSample-Analysis-textblob.py";
+      const config = editorItem.definition.configurations[configIndex];
+
       // Upload the CognitiveSample-Analysis.py file to OneLake
-      console.log("Fetching and uploading CognitiveSample-Analysis.py to OneLake...");
-      
-      // Get the script content from assets folder
-      const scriptContent = await getAnalysisScriptContent();
-      
-      const filePath = "CognitiveSample-Analysis.py"
-
-      // Define the path for the script file in OneLake
-      const scriptFilePath = getOneLakeFilePath(config.workspaceId, config.id, filePath);
-      
-      // Upload the script to OneLake
+      console.log(`Fetching and uploading ${analysisFileName} to OneLake...`);
+      const scriptContent = await getAnalysisScriptContent(analysisFileName);
+      const scriptFilePath = getOneLakeFilePath(config.workspaceId, config.id, analysisFileName);
       await writeToOneLakeFileAsText(workloadClient, scriptFilePath, scriptContent);
       console.log(`Successfully uploaded script to OneLake path: ${scriptFilePath}`);
       
       // Create the OneLake file path URL for the batch job
       const adfssBaseURL = EnvironmentConstants.OneLakeDFSBaseUrl.replace("https://", `abfss://${config.workspaceId}@`);
-      const oneLakeScriptUrl = `${adfssBaseURL}/${config.id}/Files/${filePath}`;
+      const oneLakeScriptUrl = `${adfssBaseURL}/${config.id}/Files/${analysisFileName}`;
       console.log("OneLake script URL:", oneLakeScriptUrl);
 
       // Construct batch request with proper parameters
@@ -102,6 +94,8 @@ export function CognitiveSampleItemEditor(props: PageProps) {
           "spark.itemTableSourceColumnName": config.sourceColumnName,
           "spark.itemTableResultColumnName": config.resultColumnName,
           "spark.analysisType": config.analysisType,
+          // Using the default environment with added librar textblob
+          //"spark.fabric.environmentDetails" : "{\"id\" : \"<ID>\"}"
         },
         tags: {
           source: "Cognitive Sample Item",
@@ -125,26 +119,24 @@ export function CognitiveSampleItemEditor(props: PageProps) {
         lastBatchId: batchResponse.id
       };
       
-      // Update the payload array with the updated configuration
-      const updatedPayload = [...payload];
-      updatedPayload[configIndex] = updatedConfig;
-      setPayload(updatedPayload);
-      
+      const updateConfigurations = [...editorItem.definition.configurations];
+      updateConfigurations[configIndex] = updatedConfig;
+
       // Update item state
       const updatedState = {
-        ...editorItem.itemState,
-        configurations: updatedPayload
+        ...editorItem.definition,
+        configurations: updateConfigurations
       };
       
       // Set the updated state
       setEditorItem({
         ...editorItem,
-        itemState: updatedState
+        definition: updatedState
       });
       
       // Save the updated state
-      await saveItemState(workloadClient, editorItem.id, updatedState);
-      
+      await saveItemDefinition(workloadClient, editorItem.id, updatedState);
+
       callNotificationOpen(
             workloadClient,
             "Analysis started",
@@ -171,96 +163,95 @@ export function CognitiveSampleItemEditor(props: PageProps) {
    * Add a new configuration to the list
    */
   function addConfiguration() {
-    setSelectedTab("add-config");
+    setSelectedTab("empty-definition");
   }
   
   /**
    * Delete a configuration from the list
    */
   function deleteConfiguration(index: number) {
-    if (index >= 0 && index < payload.length) {
-      const updatedPayload = [...payload];
-      updatedPayload.splice(index, 1);
-      setPayload(updatedPayload);
+    if (editorItem?.definition?.configurations?.length > index) {
+      
+      const UpdatedConfigs = [...editorItem.definition.configurations];
+      UpdatedConfigs.splice(index, 1);
       
       // Update the state
       const updatedState = {
-        ...editorItem.itemState,
-        configurations: updatedPayload
+        ...editorItem.definition,
+        configurations: UpdatedConfigs
       };
       
       setEditorItem({
         ...editorItem,
-        itemState: updatedState
+        definition: updatedState
       });
       
-      setIsUnsafed(true);
+      setIsUnsaved(true);
     }
   }
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
-    setIsLoadingData(true);
-    if (pageContext.itemObjectId) {
-      // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
-      try {
-        const item = await getWorkloadItem<CognitiveSampleItemModelState>(
-          workloadClient,
-          pageContext.itemObjectId,          
-        );
-        setEditorItem(item);
-        if(!item.itemState) {
-          item.itemState = {
-            configurations: []
-          };
+      setIsLoadingData(true);
+      var item: WorkloadItem<CognitiveSampleItemDefinition> = undefined;    
+      if (pageContext.itemObjectId) {
+        // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
+        try {
+          item = await getWorkloadItem<CognitiveSampleItemDefinition>(
+            workloadClient,
+            pageContext.itemObjectId,          
+          );
+          
+          // Ensure item defintion is properly initialized without mutation
+          if (!item.definition) {
+            item = {
+              ...item,
+              definition: {
+                configurations: [],
+              }
+            };
+          }
+          setEditorItem(item);        
+        } catch (error) {
+          setEditorItem(undefined);        
         } 
-        setPayload(item.itemState.configurations || []);        
-      } catch (error) {
-        setEditorItem(undefined);        
+      } else {
+        console.log(`non-editor context. Current Path: ${pathname}`);
       }
-    } else {
-      console.log(`non-editor context. Current Path: ${pathname}`);
+      setIsUnsaved(false);
+      if(item?.definition?.configurations?.length > 0) {
+        setSelectedTab("home");
+      } else {
+        setSelectedTab("empty-definition");
+      }
       setIsLoadingData(false);
     }
-    setIsUnsafed(false);
-    if(payload && payload.length > 0) {
-      setSelectedTab("home");
-    } else {
-      setSelectedTab("add-config");
-    }
-    setIsLoadingData(false);
-  }
 
   function handleFinishEmptyState() {
-    setIsUnsafed(true)
-    // If we're coming from the empty state, we need to add the configuration
-    // to our array of configurations
-    if (editorItem.itemState.configurations) {
-      setPayload([...editorItem.itemState.configurations]);
-    }
+    setIsUnsaved(true)
     SaveItem()
     setSelectedTab("home");
   }
 
   if (isLoadingData) {
-    return <CognitiveSampleItemEditorLoadingProgressBar message="Loading ...." />;
+    return <ItemEditorLoadingProgressBar message="Loading ...." />;
   }
   return (
     <Stack className="editor" data-testid="item-editor-inner">
       <Ribbon
         {...props}
-        isSaveButtonEnabled={isUnsafed}
+        isSaveButtonEnabled={isUnsaved}
         saveItemCallback={SaveItem}
         addConfigurationCallback={addConfiguration}
         selectedTab={selectedTab}
         onTabChange={setSelectedTab}
       />
       <Stack className="main">
-        {["add-config"].includes(selectedTab as string) && (
+        {["empty-definition"].includes(selectedTab as string) && (
           <span>
             <CognitiveSampleItemEmptyState
               workloadClient={workloadClient}
               item={editorItem}
-              state={editorItem?.itemState}
+              state={editorItem?.definition}
               onFinishEmptyState={handleFinishEmptyState}
             />
           </span>
@@ -271,7 +262,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
             <h2>Analysis Configurations</h2>
           </Stack>
           
-          {payload && payload.length > 0 ? (
+          {editorItem?.definition?.configurations?.length > 0 ? (
             <Table aria-label="Analysis Configurations Table">
               <TableHeader>
                 <TableRow>
@@ -285,7 +276,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {payload.map((config, index) => (
+                {editorItem?.definition?.configurations?.map((config, index) => (
                   <TableRow 
                     key={index}
                     onClick={() => setSelectedConfig(index)}
