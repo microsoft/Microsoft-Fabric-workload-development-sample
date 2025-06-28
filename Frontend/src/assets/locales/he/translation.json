@@ -12,6 +12,8 @@
     "Language_Changed_Title": "שינוי שפה",
     "Language_Changed_Message": "השפה שונתה ל:",
     "Default_Language_Title": "שפה ברירת מחדל",
+    "ItemEditor_Ribbon_Home_Label": "בית",
+    "ItemEditor_Ribbon_Save_Label": "שמור",
     "HelloWorldItemEditor_Title": "עורך פריטי Hello World",
     "HelloWorldItemEditor_Definition_Message_Label": "מצב פריט",
     "HelloWorldItemEditor_LoadingProgressBar_Text": "טוען פריט {{itemName}} ...",

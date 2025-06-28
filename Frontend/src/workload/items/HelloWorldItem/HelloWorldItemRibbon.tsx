@@ -10,6 +10,7 @@ import {
 } from "@fluentui/react-icons";
 import { PageProps } from 'src/App';
 import './../../../styles.scss';
+import { t } from "i18next";
 
 const HomeTabToolbar = (props: RibbonProps) => {
 
@@ -22,11 +23,11 @@ const HomeTabToolbar = (props: RibbonProps) => {
   return (
     <Toolbar>
       <Tooltip
-        content="Save"
+        content={t("ItemEditor_Ribbon_Save_Label")}
         relationship="label">
         <ToolbarButton
           disabled={!props.isSaveButtonEnabled}
-          aria-label="Save"
+          aria-label={t("ItemEditor_Ribbon_Save_Label")}
           data-testid="item-editor-save-btn"
           icon={<Save24Regular />}
           onClick={onSaveAsClicked} />
@@ -52,15 +53,15 @@ export function Ribbon(props: RibbonProps) {
   return (
     <div className="ribbon">
       <TabList
+        disabled={selectedTab === "empty"}
         selectedValue={selectedTab}
         onTabSelect={onTabSelect}>
-        <Tab value="home" data-testid="home-tab-btn">Home</Tab>
+        <Tab value="home" data-testid="home-tab-btn">
+          {t("ItemEditor_Ribbon_Home_Label")}</Tab>
       </TabList>
-
       <div className="toolbarContainer">
-        {selectedTab === "home" && <HomeTabToolbar {...props} />}
+        <HomeTabToolbar {...props} />
       </div>
-
     </div>
   );
 };
