@@ -52,15 +52,14 @@ export function Ribbon(props: RibbonProps) {
   return (
     <div className="ribbon">
       <TabList
+        disabled={props.selectedTab === "empty"}
         selectedValue={selectedTab}
         onTabSelect={onTabSelect}>
         <Tab value="home" data-testid="home-tab-btn">Home</Tab>
       </TabList>
-
       <div className="toolbarContainer">
-        {selectedTab === "home" && <HomeTabToolbar {...props} />}
+        <HomeTabToolbar {...props} />
       </div>
-
     </div>
   );
 };

@@ -33,6 +33,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
     await props.saveItemCallback();
     return;
   }
+  
 
   return (
     <Toolbar>
@@ -51,6 +52,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
         content="Settings"
         relationship="label">
         <ToolbarButton
+          disabled={!props.isSaveButtonEnabled}
           aria-label="Settings"
           data-testid="item-editor-settings-btn"
           icon={<Settings24Regular />}
@@ -61,6 +63,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
         content="Create a Shortcut to the calcuation results"
         relationship="label">
         <ToolbarButton
+          disabled={!props.isSaveButtonEnabled}
           aria-label="Shortcut"
           data-testid="item-editor-shortcut-btn"
           icon={<FolderLink24Regular />}
@@ -111,6 +114,7 @@ export function Ribbon(props: RibbonProps) {
     <div className="ribbon">
       <CollabButtons {...props} />
       <TabList
+        disabled={props.selectedTab === "empty"}
         selectedValue={selectedTab}
         onTabSelect={onTabSelect}>
         <Tab value="home" data-testid="home-tab-btn">Home</Tab>

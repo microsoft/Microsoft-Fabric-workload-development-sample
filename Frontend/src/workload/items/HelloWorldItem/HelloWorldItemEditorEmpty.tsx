@@ -29,12 +29,12 @@ export const HelloWorldItemEmpty: React.FC<HelloWorldItemEmptyStateProps> = ({
   };
   
   return (
-    <Stack className="empty-definition-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
+    <Stack className="empty-item-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
       <Stack.Item>
         <img
           src="/assets/images/HelloWorldItemEditorEmpty.jpg"
-          alt="Empty definition illustration"
-          className="empty-definition-image"
+          alt="Empty item illustration"
+          className="empty-item-image"
         />
       </Stack.Item>
       <Stack.Item>
