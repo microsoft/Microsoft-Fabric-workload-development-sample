@@ -17,6 +17,7 @@ import {
 import { Stack } from '@fluentui/react';
 import { PageProps } from 'src/App';
 import './../../../styles.scss';
+import { t } from "i18next";
 
 const HomeTabToolbar = (props: RibbonProps) => {
 
@@ -33,15 +34,16 @@ const HomeTabToolbar = (props: RibbonProps) => {
     await props.saveItemCallback();
     return;
   }
+  
 
   return (
     <Toolbar>
       <Tooltip
-        content="Save"
+        content={t("ItemEditor_Ribbon_Save_Label")}
         relationship="label">
         <ToolbarButton
           disabled={!props.isSaveButtonEnabled}
-          aria-label="Save"
+          aria-label={t("ItemEditor_Ribbon_Save_Label")}
           data-testid="item-editor-save-btn"
           icon={<Save24Regular />}
           onClick={onSaveAsClicked} />
@@ -51,6 +53,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
         content="Settings"
         relationship="label">
         <ToolbarButton
+          disabled={!props.isSaveButtonEnabled}
           aria-label="Settings"
           data-testid="item-editor-settings-btn"
           icon={<Settings24Regular />}
@@ -61,6 +64,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
         content="Create a Shortcut to the calcuation results"
         relationship="label">
         <ToolbarButton
+          disabled={!props.isSaveButtonEnabled}
           aria-label="Shortcut"
           data-testid="item-editor-shortcut-btn"
           icon={<FolderLink24Regular />}
@@ -111,13 +115,16 @@ export function Ribbon(props: RibbonProps) {
     <div className="ribbon">
       <CollabButtons {...props} />
       <TabList
+        disabled={selectedTab === "empty"}
         selectedValue={selectedTab}
         onTabSelect={onTabSelect}>
-        <Tab value="home" data-testid="home-tab-btn">Home</Tab>
+        <Tab value="home" data-testid="home-tab-btn">
+          {t("ItemEditor_Ribbon_Home_Label")}
+        </Tab>
       </TabList>
 
       <div className="toolbarContainer">
-        {selectedTab === "home" && <HomeTabToolbar {...props} />}
+        <HomeTabToolbar {...props} />
       </div>
 
     </div>

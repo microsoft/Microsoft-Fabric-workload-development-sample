@@ -93,7 +93,7 @@ export function HelloWorldItemEditor(props: PageProps) {
     if(item?.definition?.message) {
       setSelectedTab("home");
     } else {
-      setSelectedTab("empty-definition");
+      setSelectedTab("empty");
     }
     setIsLoadingData(false);
   }
@@ -129,7 +129,7 @@ export function HelloWorldItemEditor(props: PageProps) {
             onTabChange={setSelectedTab}
         />
         <Stack className="main">
-          {["empty-definition"].includes(selectedTab as string) && (
+          {["empty"].includes(selectedTab as string) && (
             <span>
               <HelloWorldItemEmpty
                 workloadClient={workloadClient}

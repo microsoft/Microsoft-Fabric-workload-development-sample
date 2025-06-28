@@ -268,7 +268,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
     if(item?.definition?.operand1) {
       setSelectedTab("home");
     } else {
-      setSelectedTab("empty-definition");
+      setSelectedTab("empty");
     }
   }
 
@@ -316,7 +316,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
       />
 
       <Stack className="main">
-        {["empty-definition"].includes(selectedTab as string) && (
+        {["empty"].includes(selectedTab as string) && (
           <span>
             <CalculatorSampleItemEmpty
               workloadClient={workloadClient}
