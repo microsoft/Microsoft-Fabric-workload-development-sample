@@ -12,6 +12,8 @@
     "Language_Changed_Title": "Idioma cambiado",
     "Language_Changed_Message": "El idioma fue cambiado a:",
     "Default_Language_Title": "Idioma predeterminado",
+    "ItemEditor_Ribbon_Home_Label": "Inicio",
+    "ItemEditor_Ribbon_Save_Label": "Guardar",
     "HelloWorldItemEditor_Title": "Editor de artículos Hello World",
     "HelloWorldItemEditor_Definition_Message_Label": "Definición del artículo",
     "HelloWorldItemEditor_LoadingProgressBar_Text": "Cargando artículo {{itemName}} ...",
