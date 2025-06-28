@@ -52,7 +52,7 @@ export function Ribbon(props: RibbonProps) {
   return (
     <div className="ribbon">
       <TabList
-        disabled={props.selectedTab === "empty"}
+        disabled={selectedTab === "empty"}
         selectedValue={selectedTab}
         onTabSelect={onTabSelect}>
         <Tab value="home" data-testid="home-tab-btn">Home</Tab>

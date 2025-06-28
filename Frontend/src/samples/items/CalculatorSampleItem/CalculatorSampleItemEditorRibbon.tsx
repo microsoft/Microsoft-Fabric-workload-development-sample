@@ -114,7 +114,7 @@ export function Ribbon(props: RibbonProps) {
     <div className="ribbon">
       <CollabButtons {...props} />
       <TabList
-        disabled={props.selectedTab === "empty"}
+        disabled={selectedTab === "empty"}
         selectedValue={selectedTab}
         onTabSelect={onTabSelect}>
         <Tab value="home" data-testid="home-tab-btn">Home</Tab>
