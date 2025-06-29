@@ -59,7 +59,6 @@ export function HelloWorldItemEditor(props: PageProps) {
             undefined,
             undefined
         );
-    
   }
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
