@@ -14,11 +14,11 @@
     "Default_Language_Title": "Idioma predeterminado",
     "ItemEditor_Ribbon_Home_Label": "Inicio",
     "ItemEditor_Ribbon_Save_Label": "Guardar",
+    "ItemEditor_Saved_Notification_Title": "Artículo guardado",
+    "ItemEditor_Saved_Notification_Text": "{{itemName}} guardado con éxito.",
     "HelloWorldItemEditor_Title": "Editor de artículos Hello World",
     "HelloWorldItemEditor_Definition_Message_Label": "Definición del artículo",
     "HelloWorldItemEditor_LoadingProgressBar_Text": "Cargando artículo {{itemName}} ...",
-    "HelloWorldItemEditor_Saved_Notification_Title": "Artículo guardado",
-    "HelloWorldItemEditor_Saved_Notification_Text": "{{itemName}} guardado con éxito.",
     "HelloWorldItemEditorEmpty_Message": "¡Digamos hola a {{itemName}}!",
     "HelloWorldItemEditorEmpty_Button": "Guardar artículo"
 }
