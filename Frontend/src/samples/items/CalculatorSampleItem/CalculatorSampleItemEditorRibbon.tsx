@@ -19,7 +19,7 @@ import { PageProps } from 'src/App';
 import './../../../styles.scss';
 import { t } from "i18next";
 
-const HomeTabToolbar = (props: RibbonProps) => {
+const CalculatorSampleItemEditorRibbonHomeTabToolbar = (props: CalculatorSampleItemEditorRibbonProps) => {
 
   async function onSettingsClicked() {
     await props.openSettingsCallback();
@@ -74,7 +74,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
   );
 };
 
-const CollabButtons = (props: RibbonProps) => {
+const CalculatorSampleItemEditorCollaborationButtons = (props: CalculatorSampleItemEditorRibbonProps) => {
   return (
     <div className="collabContainer">
       <Stack horizontal>
@@ -96,7 +96,7 @@ const CollabButtons = (props: RibbonProps) => {
   );
 }
 
-export interface RibbonProps extends PageProps {
+export interface CalculatorSampleItemEditorRibbonProps extends PageProps {
   saveItemCallback: () => Promise<void>;
   isSaveButtonEnabled?: boolean;
   openSettingsCallback: () => Promise<void>;
@@ -105,7 +105,7 @@ export interface RibbonProps extends PageProps {
   selectedTab: TabValue;
 }
 
-export function Ribbon(props: RibbonProps) {
+export function CalculatorSampleItemEditorRibbon(props: CalculatorSampleItemEditorRibbonProps) {
   const { onTabChange, selectedTab } = props;
   const onTabSelect = (_: SelectTabEvent, data: SelectTabData) => {
     onTabChange(data.value);
@@ -113,7 +113,7 @@ export function Ribbon(props: RibbonProps) {
 
   return (
     <div className="ribbon">
-      <CollabButtons {...props} />
+      <CalculatorSampleItemEditorCollaborationButtons {...props} />
       <TabList
         disabled={selectedTab === "empty"}
         selectedValue={selectedTab}
@@ -124,7 +124,7 @@ export function Ribbon(props: RibbonProps) {
       </TabList>
 
       <div className="toolbarContainer">
-        <HomeTabToolbar {...props} />
+        <CalculatorSampleItemEditorRibbonHomeTabToolbar {...props} />
       </div>
 
     </div>
