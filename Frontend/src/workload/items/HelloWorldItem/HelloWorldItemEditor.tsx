@@ -54,8 +54,8 @@ export function HelloWorldItemEditor(props: PageProps) {
     setIsUnsaved(!successResult);
     callNotificationOpen(
             workloadClient,
-            t("HelloWorldItemEditor_Saved_Notification_Title"),
-            t("HelloWorldItemEditor_Saved_Notification_Text", { itemName: editorItem.displayName }),
+            t("ItemEditor_Saved_Notification_Title"),
+            t("ItemEditor_Saved_Notification_Text", { itemName: editorItem.displayName }),
             undefined,
             undefined
         );

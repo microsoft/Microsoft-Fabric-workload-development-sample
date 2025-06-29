@@ -14,11 +14,11 @@
     "Default_Language_Title": "Language is default",
     "ItemEditor_Ribbon_Home_Label": "Home",
     "ItemEditor_Ribbon_Save_Label": "Save",
+    "ItemEditor_Saved_Notification_Title": "Item saved",
+    "ItemEditor_Saved_Notification_Text": "{{itemName}} saved successfully.",
     "HelloWorldItemEditor_Title": "Hello World Item Editor",
     "HelloWorldItemEditor_Definition_Message_Label": "Item Definition",
     "HelloWorldItemEditor_LoadingProgressBar_Text": "Loading item {{itemName}} ...",
-    "HelloWorldItemEditor_Saved_Notification_Title": "Item saved",
-    "HelloWorldItemEditor_Saved_Notification_Text": "{{itemName}} saved successfully.",
     "HelloWorldItemEditorEmpty_Message": "Let's say hello to {{itemName}}!",
     "HelloWorldItemEditorEmpty_Button": "Save item"
 }

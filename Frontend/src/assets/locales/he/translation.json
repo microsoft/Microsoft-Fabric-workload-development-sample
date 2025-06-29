@@ -14,11 +14,11 @@
     "Default_Language_Title": "שפה ברירת מחדל",
     "ItemEditor_Ribbon_Home_Label": "בית",
     "ItemEditor_Ribbon_Save_Label": "שמור",
+    "ItemEditor_Saved_Notification_Title": "פריט נשמר",
+    "ItemEditor_Saved_Notification_Text": "{{itemName}} נשמר בהצלחה.",
     "HelloWorldItemEditor_Title": "עורך פריטי Hello World",
     "HelloWorldItemEditor_Definition_Message_Label": "מצב פריט",
     "HelloWorldItemEditor_LoadingProgressBar_Text": "טוען פריט {{itemName}} ...",
-    "HelloWorldItemEditor_Saved_Notification_Title": "פריט נשמר",
-    "HelloWorldItemEditor_Saved_Notification_Text": "{{itemName}} נשמר בהצלחה.",
     "HelloWorldItemEditorEmpty_Message": "בואו נגיד שלום ל{{itemName}}!",
     "HelloWorldItemEditorEmpty_Button": "שמור פריט"
 
