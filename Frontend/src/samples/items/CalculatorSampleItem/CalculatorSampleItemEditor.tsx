@@ -42,6 +42,7 @@ import { defaultCalculatorSampleItemDefinition } from "../../../constants";
 import { CalculatorSampleItemEmpty } from "./CalculatorSampleItemEditorEmpty";
 import { callNotificationOpen } from "../../../workload/controller/NotificationController";
 import { ItemEditorLoadingProgressBar } from "../../../workload/controls/ItemEditorLoadingProgressBar";
+import { t } from "i18next";
 
 export function CalculatorSampleItemEditor(props: PageProps) {
   const { workloadClient } = props;
@@ -280,12 +281,12 @@ export function CalculatorSampleItemEditor(props: PageProps) {
     var successResult = await saveItemDefinition(workloadClient, editorItem.id, itemDefintion || editorItem.definition);
     setDirty(!successResult);
     callNotificationOpen(
-                workloadClient,
-                "Item saved",
-                "The item " + editorItem.displayName + " has been saved successfully.",
-                undefined,
-                undefined
-            );
+            workloadClient,
+            t("ItemEditor_Saved_Notification_Title"),
+            t("ItemEditor_Saved_Notification_Text", { itemName: editorItem.displayName }),
+            undefined,
+            undefined
+        );
   }
 
   async function openSettings() {
