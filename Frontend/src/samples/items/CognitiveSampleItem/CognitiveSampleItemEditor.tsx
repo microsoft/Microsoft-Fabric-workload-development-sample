@@ -48,7 +48,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
    */
   async function getAnalysisScriptContent(file: string): Promise<string> {
     try {
-      const response = await fetch(`/assets/jobs/${file}`);
+      const response = await fetch(`/assets/samples/items/CognitiveSampleItem/jobs/${file}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch script: ${response.status} ${response.statusText}`);
       }
