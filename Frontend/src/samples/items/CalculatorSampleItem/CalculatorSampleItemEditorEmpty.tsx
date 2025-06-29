@@ -51,7 +51,7 @@ export const CalculatorSampleItemEmpty: React.FC<CalculatorSampleItemEmptyStateP
     <Stack className="empty-item-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
       <Stack.Item>
         <img
-          src="/assets/images/CalculatorSampleItemEditorEmpty.png"
+          src="/assets/samples/items/CalculatorSampleItem/EditorEmpty.png"
           alt="Empty definition illustration"
           className="empty-item-image"
         />
