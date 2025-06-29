@@ -131,7 +131,7 @@ export const CognitiveSampleItemEditorEmpty: React.FC<CognitiveSampleItemEditorE
     <Stack className="empty-definition-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
       <Stack.Item>
         <img
-          src="/assets/images/CognitiveSampleItem-empty-state.jpg"
+          src="/assets/samples/items/CognitiveSampleItem/EditorEmpty.jpg"
           alt="Empty state illustration"
           className="empty-state-image"
         />
