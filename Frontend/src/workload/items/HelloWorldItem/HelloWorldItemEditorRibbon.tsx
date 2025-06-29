@@ -12,7 +12,7 @@ import { PageProps } from 'src/App';
 import './../../../styles.scss';
 import { t } from "i18next";
 
-const HomeTabToolbar = (props: RibbonProps) => {
+const HelloWorldItemEditorRibbonHomeTabToolbar = (props: HelloWorldItemEditorRibbonProps) => {
 
   async function onSaveAsClicked() {
     // your code to save as here
@@ -36,7 +36,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
   );
 };
 
-export interface RibbonProps extends PageProps {
+export interface HelloWorldItemEditorRibbonProps extends PageProps {
   saveItemCallback: () => Promise<void>;
   isSaveButtonEnabled?: boolean;
   onTabChange: (tabValue: TabValue) => void;
@@ -44,7 +44,7 @@ export interface RibbonProps extends PageProps {
 }
 
 
-export function Ribbon(props: RibbonProps) {
+export function HelloWorldItemEditorRibbon(props: HelloWorldItemEditorRibbonProps) {
   const { onTabChange, selectedTab } = props;
   const onTabSelect = (_: SelectTabEvent, data: SelectTabData) => {
     onTabChange(data.value);
@@ -60,7 +60,7 @@ export function Ribbon(props: RibbonProps) {
           {t("ItemEditor_Ribbon_Home_Label")}</Tab>
       </TabList>
       <div className="toolbarContainer">
-        <HomeTabToolbar {...props} />
+        <HelloWorldItemEditorRibbonHomeTabToolbar {...props} />
       </div>
     </div>
   );

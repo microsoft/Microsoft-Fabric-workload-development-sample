@@ -24,7 +24,7 @@ import {
   loadCalculationResult,
   createCalculationShortcut,
 } from "./CalculatorSampleItemEditorController";
-import { Ribbon } from "./CalculatorSampleItemEditorRibbon";
+import { CalculatorSampleItemEditorRibbon } from "./CalculatorSampleItemEditorRibbon";
 import {
   CalculatorSampleItemDefinition,
   CalculationOperator,
@@ -306,7 +306,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
   }
   return (
     <Stack className="editor" data-testid="sample-workload-editor-inner">
-      <Ribbon
+      <CalculatorSampleItemEditorRibbon
         {...props}        
         isSaveButtonEnabled={isDirty && editorItem !== undefined}
         saveItemCallback={SaveItem}

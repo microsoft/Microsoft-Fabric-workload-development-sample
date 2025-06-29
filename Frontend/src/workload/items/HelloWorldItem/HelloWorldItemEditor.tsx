@@ -2,7 +2,7 @@ import { Label, Stack } from "@fluentui/react";
 import { Field, Input, TabValue } from "@fluentui/react-components";
 import React, { useEffect, useState, useCallback } from "react";
 import { ContextProps, PageProps } from "src/App";
-import { Ribbon } from "./HelloWorldItemRibbon";
+import { HelloWorldItemEditorRibbon } from "./HelloWorldItemEditorRibbon";
 import { getWorkloadItem, saveItemDefinition } from "../../controller/ItemCRUDController";
 import { WorkloadItem } from "../../models/ItemCRUDModel";
 import { useLocation, useParams } from "react-router-dom";
@@ -120,7 +120,7 @@ export function HelloWorldItemEditor(props: PageProps) {
   else {
     return (
       <Stack className="editor" data-testid="item-editor-inner">
-        <Ribbon
+        <HelloWorldItemEditorRibbon
             {...props}        
             isSaveButtonEnabled={isUnsaved}
             saveItemCallback={SaveItem}
