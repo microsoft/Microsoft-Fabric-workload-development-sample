@@ -12,6 +12,7 @@ import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlaygroun
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
 import { HelloWorldItemEditor } from "./workload/items/HelloWorldItem/HelloWorldItemEditor";
 import { CognitiveSampleItemEditor } from "./samples/items/CognitiveSampleItem/CognitiveSampleItemEditor";
+import { SolutionSampleItemEditor } from "./samples/items/SolutionSampleItem/SolutionSampleItemEditor";
 
 /*
     Add your Item Editor in the Route section of the App function below
@@ -61,6 +62,11 @@ export function App({ history, workloadClient }: AppProps) {
             <Route path="/CognitiveSampleItem-editor/:itemObjectId">
                 <CognitiveSampleItemEditor
                     workloadClient={workloadClient} data-testid="CognitiveSampleItem-editor" />
+            </Route>
+
+            <Route path="/SolutionSampleItem-editor/:itemObjectId">
+                <SolutionSampleItemEditor
+                    workloadClient={workloadClient} data-testid="SolutionSampleItem-editor" />
             </Route>
 
             <Route path="/client-sdk-playground">

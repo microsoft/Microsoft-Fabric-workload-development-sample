@@ -24,5 +24,8 @@
   "CalculatorSampleItem_Description": "Un elemento de calculadora simple que almacena datos en OneLake",
   "CognitiveSampleItem_DisplayName": "Ejemplo Cognitivo",
   "CognitiveSampleItem_DisplayName_Plural": "Ejemplos Cognitivos",
-  "CognitiveSampleItem_Description": "Un elemento cognitivo simple que utiliza IA para analizar datos"
+  "CognitiveSampleItem_Description": "Un elemento cognitivo simple que utiliza IA para analizar datos",
+  "SolutionSampleItem_DisplayName": "Ejemplo de solución",
+  "SolutionSampleItem_DisplayName_Plural": "Ejemplos de soluciones",
+  "SolutionSampleItem_Description": "Un elemento de solución simple que los usuarios pueden utilizar para crear capacidades en Fabric"
 }

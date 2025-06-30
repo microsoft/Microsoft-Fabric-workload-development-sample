@@ -1,0 +1,30 @@
+{
+    "name": "SolutionSample",
+    "version": "1.100",
+    "displayName": "SolutionSampleItem_DisplayName",
+    "displayNamePlural": "SolutionSampleItem_DisplayName_Plural",
+    "editor": {
+      "path": "/SolutionSampleItem-editor"
+    },
+    "icon": {
+      "name": "assets/images/SolutionSampleItem-icon.png"
+    },
+    "activeIcon": {
+      "name": "assets/images/SolutionSampleItem-icon.png"
+    },
+    "supportedInMonitoringHub": true,
+    "supportedInDatahubL1": true,
+    "editorTab": {
+      "onDeactivate": "item.tab.onDeactivate",
+      "canDeactivate": "item.tab.canDeactivate",
+      "canDestroy": "item.tab.canDestroy",
+      "onDestroy": "item.tab.onDestroy",
+      "onDelete": "item.tab.onDelete"
+    },
+    "createItemDialogConfig": {
+      "onCreationFailure": { "action": "item.onCreationFailure" },
+      "onCreationSuccess": { "action": "item.onCreationSuccess" }
+    }
+  }
+
+

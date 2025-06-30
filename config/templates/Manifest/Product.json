@@ -116,6 +116,27 @@
             "onCreationFailure": { "action": "item.onCreationFailure" },
             "onCreationSuccess": { "action": "item.onCreationSuccess" }
           }
+        },
+        {
+          "title": "SolutionSampleItem_DisplayName",
+          "description": "SolutionSampleItem_Description",
+          "icon": {
+            "name": "assets/images/SolutionSampleItem-icon.png"
+          },
+          "icon_small": {
+            "name": "assets/images/SolutionSampleItem-icon.png"
+          },
+          "availableIn": [
+            "home",
+            "create-hub",
+            "workspace-plus-new",
+            "workspace-plus-new-teams"
+          ],
+          "itemType": "SolutionSample",
+          "createItemDialogConfig": {
+            "onCreationFailure": { "action": "item.onCreationFailure" },
+            "onCreationSuccess": { "action": "item.onCreationSuccess" }
+          }
         }
       ]
     },

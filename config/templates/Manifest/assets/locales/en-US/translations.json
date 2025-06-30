@@ -24,5 +24,8 @@
     "CalculatorSampleItem_Description": "A Simple Calculator Item that stores data in OneLake",
     "CognitiveSampleItem_DisplayName": "Cognitive Sample",
     "CognitiveSampleItem_DisplayName_Plural": "Cognitive Samples",
-    "CognitiveSampleItem_Description": "A Simple Cognitive Item that uses AI to analyze data"
+    "CognitiveSampleItem_Description": "A Simple Cognitive Item that uses AI to analyze data",
+    "SolutionSampleItem_DisplayName": "Solution Sample",
+    "SolutionSampleItem_DisplayName_Plural": "Solution Samples",
+    "SolutionSampleItem_Description": "A Simple Solution Item that users can use to create capabilities in Fabric"
 }
