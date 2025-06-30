@@ -13,7 +13,7 @@ import { PageProps } from 'src/App';
 import './../../../styles.scss';
 import { t } from "i18next";
 
-const HomeTabToolbar = (props: RibbonProps) => {
+const CognitiveSampleItemEditorRibbonHomeTabToolbar = (props: CognitiveSampleItemEditorRibbonProps) => {
 
   async function onSaveClicked() {
     // your code to save as here
@@ -44,6 +44,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
         content="Add Configuration"
         relationship="label">
         <ToolbarButton
+          
           aria-label="Add Configuration"
           data-testid="item-editor-add-config-btn"
           icon={<Add24Regular />}
@@ -53,7 +54,7 @@ const HomeTabToolbar = (props: RibbonProps) => {
   );
 };
 
-export interface RibbonProps extends PageProps {
+export interface CognitiveSampleItemEditorRibbonProps extends PageProps {
   onTabChange: (tabValue: TabValue) => void;
   isSaveButtonEnabled?: boolean;
   saveItemCallback: () => Promise<void>;
@@ -62,7 +63,7 @@ export interface RibbonProps extends PageProps {
 }
 
 
-export function Ribbon(props: RibbonProps) {
+export function CognitiveSampleItemEditorRibbon(props: CognitiveSampleItemEditorRibbonProps) {
   const { onTabChange, selectedTab } = props;
   const onTabSelect = (_: SelectTabEvent, data: SelectTabData) => {
     onTabChange(data.value);
@@ -80,7 +81,7 @@ export function Ribbon(props: RibbonProps) {
       </TabList>
 
       <div className="toolbarContainer">
-        <HomeTabToolbar {...props} />
+        <CognitiveSampleItemEditorRibbonHomeTabToolbar {...props} />
       </div>
 
     </div>

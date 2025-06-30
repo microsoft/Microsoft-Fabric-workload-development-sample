@@ -2,7 +2,7 @@ import { Stack } from "@fluentui/react";
 import { TabValue, Button, Table, TableBody, TableCell, TableRow, TableHeader, TableHeaderCell } from "@fluentui/react-components";
 import React, { useEffect, useState } from "react";
 import { ContextProps, PageProps } from "src/App";
-import { Ribbon } from "./CognitiveSampleItemRibbon";
+import { CognitiveSampleItemEditorRibbon } from "./CognitiveSampleItemEditorRibbon";
 import { getWorkloadItem, saveItemDefinition } from "../../../workload/controller/ItemCRUDController";
 import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
 import { writeToOneLakeFileAsText, getOneLakeFilePath } from "../../controller/OneLakeController";
@@ -17,6 +17,7 @@ import { EnvironmentConstants } from "../../../constants";
 import { callNotificationOpen } from "../../../workload/controller/NotificationController";
 import { NotificationToastDuration, NotificationType } from "@ms-fabric/workload-client";
 import ItemEditorLoadingProgressBar from "../../../workload/controls/ItemEditorLoadingProgressBar";
+import { t } from "i18next";
 
 export function CognitiveSampleItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
@@ -38,6 +39,13 @@ export function CognitiveSampleItemEditor(props: PageProps) {
       editorItem.id,
       editorItem.definition);
     setIsUnsaved(!successResult);
+    callNotificationOpen(
+            workloadClient,
+            t("ItemEditor_Saved_Notification_Title"),
+            t("ItemEditor_Saved_Notification_Text", { itemName: editorItem.displayName }),
+            undefined,
+            undefined
+        );
   }
 
   /**
@@ -163,7 +171,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
    * Add a new configuration to the list
    */
   function addConfiguration() {
-    setSelectedTab("empty-definition");
+    setSelectedTab("empty");
   }
   
   /**
@@ -221,7 +229,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
       if(item?.definition?.configurations?.length > 0) {
         setSelectedTab("home");
       } else {
-        setSelectedTab("empty-definition");
+        setSelectedTab("empty");
       }
       setIsLoadingData(false);
     }
@@ -242,7 +250,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
   }
   return (
     <Stack className="editor" data-testid="item-editor-inner">
-      <Ribbon
+      <CognitiveSampleItemEditorRibbon
         {...props}
         isSaveButtonEnabled={isUnsaved}
         saveItemCallback={SaveItem}
@@ -251,7 +259,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
         onTabChange={setSelectedTab}
       />
       <Stack className="main">
-        {["empty-definition"].includes(selectedTab as string) && (
+        {["empty"].includes(selectedTab as string) && (
           <span>
             <CognitiveSampleItemEditorEmpty
               workloadClient={workloadClient}
@@ -267,6 +275,17 @@ export function CognitiveSampleItemEditor(props: PageProps) {
           <Stack horizontal horizontalAlign="space-between" style={{ marginBottom: '16px' }}>
             <h2>Analysis Configurations</h2>
           </Stack>
+          
+          <div style={{
+            padding: '10px 15px',
+            marginBottom: '16px',
+            backgroundColor: '#FFF4CE',
+            border: '1px solid #FFB900',
+            borderRadius: '4px'
+          }}>
+            <strong>Important:</strong> You need to add the <code>textblob</code> library to your default Spark runtime environment for this Workspace
+            in order to make the text analysis work properly. Without this library, the analysis job will fail.
+          </div>
           
           {editorItem?.definition?.configurations?.length > 0 ? (
             <Table aria-label="Analysis Configurations Table">
