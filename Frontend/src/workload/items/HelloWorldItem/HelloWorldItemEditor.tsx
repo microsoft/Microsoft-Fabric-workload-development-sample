@@ -115,7 +115,7 @@ export function HelloWorldItemEditor(props: PageProps) {
   if (isLoadingData) {
     //making sure we show a loding indicator while the itme is loading
     return (<ItemEditorLoadingProgressBar 
-      message={t("HelloWorldItemEditor_LoadingProgressBar_Text", { itemName: editorItem?.displayName })} />);
+      message={t("HelloWorldItemEditor_LoadingProgressBar_Text")} />);
   }
   else {
     return (
