@@ -11,17 +11,18 @@ import {
   Caption1
 } from "@fluentui/react-components";
 import { useTranslation } from "react-i18next";
-import { AvailableSolutionConfigurations, Solution, SolutionConfiguration, SolutionDeploymentStatus, SolutionType } from "./SolutionSampleItemModel";
+import { AvailableSolutionConfigurations, Solution, SolutionDeploymentStatus } from "./SolutionSampleItemModel";
 import { GenericItem } from "../../../workload/models/ItemCRUDModel";
 import { NotificationType, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { callNotificationOpen } from "../../../workload/controller/NotificationController";
-import { getOneLakeFilePath, writeToOneLakeFileAsText } from "src/samples/controller/OneLakeController";
+import { deploySolution } from "./SolutionDeploymentController";
 
 // Props for the SolutionDetailCard component
 export interface SolutionDetailCardProps {
   workloadClient: WorkloadClientAPI;
   solution: Solution;
   item: GenericItem;
+  lakehouseId: string; // The lakehouse id that is used for the solution deployment
   onBackToHome: () => void;
 }
 
@@ -33,64 +34,11 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
   workloadClient,
   solution,
   item,
+  lakehouseId,
   onBackToHome
 }) => {
   const { t } = useTranslation();
   const solutionConfiguration = AvailableSolutionConfigurations[solution.type];
-
-  async function getSolutionContent(soltuionType: SolutionType, fileReference: string): Promise<string> {
-  try {
-    const response = await fetch(`/assets/samples/items/SolutionSampleItem/SolutionDefinitions/${soltuionType}/${fileReference}`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch script: ${response.status} ${response.statusText}`);
-    }
-    return await response.text();
-  } catch (error) {
-    console.error('Error fetching analysis script:', error);
-    throw error;
-  }
-}
-
-
-async function copySolutionContentToItem(
-  workloadClient: WorkloadClientAPI,
-  item: GenericItem,
-  solutionConfig: SolutionConfiguration,
-  solution: Solution) : Promise<void>{
-
-
-    solution.deploymentStatus = SolutionDeploymentStatus.InProgress;
-    solutionConfig.items.forEach((configItem) => {
-      configItem.itemDefinition.forEach(async (itemDefinition) => {
-        try {
-          //writing all the metadata files to the item in OneLake
-          const definitionContent = await getSolutionContent(solutionConfig.type, itemDefinition.fileReference);
-          const definitionDestPath = getOneLakeFilePath(item.workspaceId, item.id, 
-            `SolutionDefinitions/${solutionConfig.type}/${itemDefinition.fileReference}`);
-          await writeToOneLakeFileAsText(workloadClient, definitionDestPath, definitionContent);
-          console.log(`Successfully uploaded script to OneLake path: ${definitionContent}`);
-        }
-        catch (error) {
-          console.error(`Error uploading script to OneLake: ${error}`);
-          callNotificationOpen(
-            workloadClient,
-            "Error",
-            `Failed to upload script: ${error.message}`,
-            NotificationType.Error,
-            undefined
-          );
-          solution.deploymentStatus = SolutionDeploymentStatus.Failed;
-          return;
-        }
-      })
-    })
-
-
-    //TODO: Start a spark session that uses the uplaoded definitions to create the items
-    //Check a lakehouse reference is provided to run the spark job later
-
-    solution.deploymentStatus = SolutionDeploymentStatus.Succeeded;
-  }
 
  async function onStartDeployment() {
     // Placeholder for deployment logic
@@ -99,18 +47,34 @@ async function copySolutionContentToItem(
     // TODO needs to be implemented
     console.log(`Starting deployment for solution: ${solution.id}`);
 
-    await copySolutionContentToItem(
+    try {
+      const soltuion = await deploySolution(
                 workloadClient,
                 item,
                 solutionConfiguration,
-                solution);
+                solution,
+                lakehouseId);
 
-    callNotificationOpen(
+      callNotificationOpen(
                 workloadClient,
-                "Not implemented",
-                "Deployment logic is not implemented yet.",),
-                NotificationType.Error,
+                "Deplyment Started",
+                `Deployment job has successfully started ${soltuion.deplyomentJobId}.`,),
                 undefined
+      //TODO the soltuion object needs to be updated in the editor with deplyoment status
+      
+    }
+    catch (error) {
+      console.error(`Error on Deployment: ${error}`);
+      callNotificationOpen(
+        workloadClient,
+        "Error",
+        `Failed to upload script: ${error.message}`,
+        NotificationType.Error,
+        undefined
+      );
+      solution.deploymentStatus = SolutionDeploymentStatus.Failed;
+      return;
+    }
 
   }
 
@@ -167,7 +131,10 @@ async function copySolutionContentToItem(
           <Caption1>{t("Workspace ID")}:</Caption1>
           <Body1>{solution.workspaceId || t("N/A")}</Body1>
         </div>
-
+        <div className="folder-detail-row">
+          <Caption1>{t("Folder ID")}:</Caption1>
+          <Body1>{solution.subfolderId || t("N/A")}</Body1>
+        </div>
         <div className="solution-detail-row">
           <Caption1>{t("Solution Type")}:</Caption1>
           <Body1>{AvailableSolutionConfigurations[solution.type]?.name}</Body1>
@@ -224,7 +191,8 @@ async function copySolutionContentToItem(
           >
             {t("Back to Home")}
           </Button>
-          {solution.deploymentStatus === SolutionDeploymentStatus.Pending && (
+          {(solution.deploymentStatus === SolutionDeploymentStatus.Pending  || 
+            solution.deploymentStatus === SolutionDeploymentStatus.Failed ) && (
             <Button 
               appearance="primary"
               onClick={() => onStartDeployment()}

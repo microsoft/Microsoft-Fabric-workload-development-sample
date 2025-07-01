@@ -24,6 +24,7 @@ import { SolutionSampleItemEmpty } from "./SolutionSampleItemEditorEmpty";
 import { ItemEditorLoadingProgressBar } from "../../../workload/controls/ItemEditorLoadingProgressBar";
 import { callNotificationOpen } from "../../../workload/controller/NotificationController";
 import { SolutionDetailView } from "./SolutionDetailView";
+import { callDatahubOpen } from "../../../workload/controller/DataHubController";
 
 export function SolutionSampleItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
@@ -57,6 +58,7 @@ export function SolutionSampleItemEditor(props: PageProps) {
     }, [pageContext, pathname]);
 
   async function SaveItem(defintion?: SolutionSampleItemDefinition) {
+
     var successResult = await saveItemDefinition<SolutionSampleItemDefinition>(
       workloadClient,
       editorItem.id,
@@ -110,8 +112,24 @@ export function SolutionSampleItemEditor(props: PageProps) {
   /**
    * Add a new configuration to the list
    */
-  function addSoltuion() {
+  function addSolution() {
     setSelectedTab("empty");
+  }
+
+  async function connectLakehouse(){
+    const lakehouse = await callDatahubOpen(workloadClient,
+        ["Lakehouse"],
+        "Select a lakehouse",
+        false,
+        true);
+    if( lakehouse) {
+      const newItemDefinition: SolutionSampleItemDefinition = {
+        ...editorItem?.definition,
+        lakehouseId: lakehouse.id,
+      };
+      updateItemDefinition(newItemDefinition);
+      SaveItem(newItemDefinition);
+    }
   }
   
 
@@ -134,6 +152,9 @@ export function SolutionSampleItemEditor(props: PageProps) {
       deploymentStatus: SolutionDeploymentStatus.Pending,
       itemsCreated: [],
       type: solutionType,
+      workspaceId: editorItem?.workspaceId,
+      //TODO: subfolderId need to be set once avilable in the item definition
+      //subfolderId: editorItem?.subfolderObjectId,
     };
 
     const newItemDefinition: SolutionSampleItemDefinition = {
@@ -154,14 +175,16 @@ export function SolutionSampleItemEditor(props: PageProps) {
   if (isLoadingData) {
     //making sure we show a loding indicator while the itme is loading
     return (<ItemEditorLoadingProgressBar 
-      message={`Loading item ${editorItem?.displayName} ...`} />);
+      message={`Loading Solution Sample item ...`} />);
   }
   else {
     return (
       <Stack className="editor" data-testid="item-editor-inner">
         <SolutionSampleItemEditorRibbon
-            {...props}        
-            addSolutionCallback={addSoltuion}
+            {...props}      
+            isLakehouseConnectEnabled={!editorItem?.definition?.lakehouseId}
+            connectLakehouseCallback={connectLakehouse}  
+            addSolutionCallback={addSolution}
             isSaveButtonEnabled={isUnsaved}
             saveItemCallback={SaveItem}
             selectedTab={selectedTab}
@@ -184,6 +207,7 @@ export function SolutionSampleItemEditor(props: PageProps) {
                 workloadClient={workloadClient}
                 solution={selectedSolution}
                 item={editorItem}
+                lakehouseId={editorItem?.definition?.lakehouseId}
                 onBackToHome={() => setSelectedTab("home")}
               />
             </span>
@@ -201,7 +225,9 @@ export function SolutionSampleItemEditor(props: PageProps) {
                         <TableHeaderCell>{t('Solution Type')}</TableHeaderCell>
                         <TableHeaderCell>{t('Deployment Status')}</TableHeaderCell>
                         <TableHeaderCell>{t('Workspace ID')}</TableHeaderCell>
+                        <TableHeaderCell>{t('Folder ID')}</TableHeaderCell>
                         <TableHeaderCell>{t('Actions')}</TableHeaderCell>
+
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -214,6 +240,7 @@ export function SolutionSampleItemEditor(props: PageProps) {
                           <TableCell>{AvailableSolutionConfigurations[solution.type]?.name}</TableCell>
                           <TableCell>{SolutionDeploymentStatus[solution.deploymentStatus]}</TableCell>
                           <TableCell>{solution.workspaceId}</TableCell>
+                          <TableCell>{solution.subfolderId}</TableCell>
                           <TableCell>
                             <Button
                               icon={<DeleteRegular />}

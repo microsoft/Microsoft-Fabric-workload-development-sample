@@ -246,7 +246,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
   }
 
   if (isLoadingData) {
-    return <ItemEditorLoadingProgressBar message="Loading ...." />;
+    return <ItemEditorLoadingProgressBar message="Loading Cognitive Sample item ...." />;
   }
   return (
     <Stack className="editor" data-testid="item-editor-inner">

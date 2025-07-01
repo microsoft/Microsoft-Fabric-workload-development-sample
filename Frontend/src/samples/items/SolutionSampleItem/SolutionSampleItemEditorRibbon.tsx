@@ -7,6 +7,7 @@ import {
 } from '@fluentui/react-components';
 import {
   Add24Regular,
+  Connector24Regular,
   Save24Regular,
 } from "@fluentui/react-icons";
 import { PageProps } from 'src/App';
@@ -21,9 +22,14 @@ const SolutionSampleItemEditorRibbonHomeTabToolbar = (props: SolutionSampleItemE
     return;
   }
 
-    function onAddSolutionClicked() {
+  async function onAddSolutionClicked() {
     if (props.addSolutionCallback) {
       props.addSolutionCallback();
+    }
+  }
+  async function onConnectLakehouseClicked() {
+    if (props.connectLakehouseCallback) {
+      props.connectLakehouseCallback();
     }
   }
 
@@ -47,13 +53,25 @@ const SolutionSampleItemEditorRibbonHomeTabToolbar = (props: SolutionSampleItemE
           aria-label="Add Configuration"
           data-testid="item-editor-add-config-btn"
           icon={<Add24Regular />}
-          onClick={onAddSolutionClicked} />
+          onClick={ onAddSolutionClicked } />
+      </Tooltip>
+      <Tooltip
+        content="Select Lakehous Configuration"
+        relationship="label">
+        <ToolbarButton
+          disabled={!props.isLakehouseConnectEnabled}
+          aria-label="Select Lakehouse"
+          data-testid="item-editor-add-config-btn"
+          icon={<Connector24Regular />}
+          onClick={ onConnectLakehouseClicked } />
       </Tooltip>
     </Toolbar>
   );
 };
 
 export interface SolutionSampleItemEditorRibbonProps extends PageProps {
+  isLakehouseConnectEnabled: boolean;
+  connectLakehouseCallback: () => void;
   addSolutionCallback: () => void;
   saveItemCallback: () => Promise<void>;
   isSaveButtonEnabled?: boolean;
