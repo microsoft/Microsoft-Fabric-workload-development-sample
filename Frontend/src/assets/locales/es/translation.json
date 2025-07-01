@@ -18,7 +18,7 @@
     "ItemEditor_Saved_Notification_Text": "{{itemName}} guardado con éxito.",
     "HelloWorldItemEditor_Title": "Editor de artículos Hello World",
     "HelloWorldItemEditor_Definition_Message_Label": "Definición del artículo",
-    "HelloWorldItemEditor_LoadingProgressBar_Text": "Cargando artículo {{itemName}} ...",
+    "HelloWorldItemEditor_LoadingProgressBar_Text": "Cargando Hello World artículo ...",
     "HelloWorldItemEditorEmpty_Message": "¡Digamos hola a {{itemName}}!",
     "HelloWorldItemEditorEmpty_Button": "Guardar artículo"
 }
