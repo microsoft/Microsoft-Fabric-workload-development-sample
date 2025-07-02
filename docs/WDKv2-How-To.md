@@ -1,5 +1,5 @@
 
-# How-To use new functionallity
+# How-To use new functionality
 
 ## Frontend API access
 
@@ -8,22 +8,22 @@ The code containing the Frontend Authentication can be found in your repo under 
 There are two important methods in there that will showcase the new functionality: 
 1)	 callAuthAcquireFrontendAccessToken  - which provides you with the ability to get a Entra Token for your FE application
  
-  ![Call Fronted API Example](./media/Demo-FrontendAPI-1.jpg)
+  ![Call Frontend API Example](./media/Demo-FrontendAPI-1.jpg)
 
 2)	sendWorkloadServerRequest  - which demos how to use the token to access an Entra secured API.
  
-![Call Fronted API Example](./media/Demo-FrontendAPI-2.jpg)
+![Call Frontend API Example](./media/Demo-FrontendAPI-2.jpg)
 
 ## Storing Item Definition in Fabric
 
 You can find the code for storing item definition in the `saveItemDefinition` method within the [SampleWorkloadEditor.tsx](./../Frontend/src/workload/items/HelloWorldItem/HelloWorldItemEditor.tsx) file. Here is the method content for reference:
 
 ```typescript
-  async function SaveItem(defintion?: HelloWorldItemDefinition) {
+  async function SaveItem(definition?: HelloWorldItemDefinition) {
     var successResult = await saveItemDefinition<HelloWorldItemDefinition>(
       workloadClient,
       editorItem.id,
-      defintion || editorItem.definition);
+      definition || editorItem.definition);
     setIsUnsaved(!successResult);
   }
 ```
@@ -33,7 +33,7 @@ This method demonstrates how to persist the definition of an item using the SDK.
 ## Standard Item creation experience
 
 
-The configuration for the standard item creation experience can be found in the [Product.json](../Frontend/Package/Product.json) file, specifically within the `create` section under `createItemDialogConfig`. it allows to define event handlers for failur and success. Here is a snippet for reference:
+The configuration for the standard item creation experience can be found in the [Product.json](../Frontend/Package/Product.json) file, specifically within the `create` section under `createItemDialogConfig`. it allows to define event handlers for failure and success. Here is a snippet for reference:
 
 ```json
 {
@@ -74,7 +74,7 @@ This configuration defines the dialog used for creating new items, including the
 
 ## IFrame Relaxation
 
-### Prereuisite
+### Prerequisite
 Sandbox relaxation currently works only when `AADFEApp` is defined in the manifest.
 
 ### How It Works
@@ -129,11 +129,11 @@ const devParameters = {
 **Note**: The line **`devSandboxRelaxation: true`** enables sandbox relaxation in development mode without requiring user consent.
 ## Public API Support
 
-An example of how to aquire a Token with the the right scope and make a call to the API can be found in the [ApiAuthenticationFrontend.tsx](../Frontend/src/components/ClientSDKPlayground/ApiAuthenticationFrontend.tsx) file. The mthod `callAuthAcquireFrontendAcces` implements how to get a token with a specific scope where the `sendWorkloadServerRequest`shows a generic method to parse the token for Fabric API calls. 
+An example of how to acquire a Token with the right scope and make a call to the API can be found in the [ApiAuthenticationFrontend.tsx](../Frontend/src/components/ClientSDKPlayground/ApiAuthenticationFrontend.tsx) file. The method `callAuthAcquireFrontendAccess` implements how to get a token with a specific scope where the `sendWorkloadServerRequest`shows a generic method to parse the token for Fabric API calls.
 
 ```typescript
 
-function callAuthAcquireFrontendAcces(workloadClient, scopes) {
+function callAuthAcquireFrontendAccess(workloadClient, scopes) {
     callAuthAcquireFrontendAccessToken(workloadClient, scopes)
       .then(result => setToken(result.token))
       .catch((errorResult) => {

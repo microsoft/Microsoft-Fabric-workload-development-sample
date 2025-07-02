@@ -68,7 +68,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
   const INT32_MIN = -2147483648;
   const INT32_MAX = 2147483647;
 
-  // Helper function to update item defintion immutably
+  // Helper function to update item definition immutably
   const updateItemDefinition = useCallback((updates: Partial<CalculatorSampleItemDefinition>) => {
     setEditorItem(prevItem => {
       if (!prevItem) return prevItem;
@@ -277,8 +277,8 @@ export function CalculatorSampleItemEditor(props: PageProps) {
     setEditorItem(undefined);
   }
 
-  async function SaveItem(itemDefintion?: CalculatorSampleItemDefinition) {
-    var successResult = await saveItemDefinition(workloadClient, editorItem.id, itemDefintion || editorItem.definition);
+  async function SaveItem(itemDefinition?: CalculatorSampleItemDefinition) {
+    var successResult = await saveItemDefinition(workloadClient, editorItem.id, itemDefinition || editorItem.definition);
     setDirty(!successResult);
     callNotificationOpen(
             workloadClient,
