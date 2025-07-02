@@ -11,7 +11,7 @@ import { createOneLakeShortcut } from "../../views/SampleOneLakeShortcutCreator/
 
 
 /**
- * Saves the calculation result to OneLake and updates the item defintion.
+ * Saves the calculation result to OneLake and updates the item definition.
  *
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  * @param {WorkloadItem<CalculatorSampleItemDefinition>} item - The workload item to update.

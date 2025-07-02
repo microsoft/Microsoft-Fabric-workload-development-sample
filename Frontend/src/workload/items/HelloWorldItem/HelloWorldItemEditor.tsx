@@ -46,11 +46,11 @@ export function HelloWorldItemEditor(props: PageProps) {
       loadDataFromUrl(pageContext, pathname);
     }, [pageContext, pathname]);
 
-  async function SaveItem(defintion?: HelloWorldItemDefinition) {
+  async function SaveItem(definition?: HelloWorldItemDefinition) {
     var successResult = await saveItemDefinition<HelloWorldItemDefinition>(
       workloadClient,
       editorItem.id,
-      defintion || editorItem.definition);
+      definition || editorItem.definition);
     setIsUnsaved(!successResult);
     callNotificationOpen(
             workloadClient,
@@ -72,7 +72,7 @@ export function HelloWorldItemEditor(props: PageProps) {
           pageContext.itemObjectId,          
         );
         
-        // Ensure item defintion is properly initialized without mutation
+        // Ensure item definition is properly initialized without mutation
         if (!item.definition) {
           item = {
             ...item,
@@ -102,7 +102,7 @@ export function HelloWorldItemEditor(props: PageProps) {
   }
 
   async function handleFinishEmpty(message: string) {
-    // Update the item defintion with the new message
+    // Update the item definition with the new message
     const newItemDefinition = { message: message };
     updateItemDefinition(newItemDefinition);
     
