@@ -24,6 +24,7 @@ export interface SolutionDetailCardProps {
   item: GenericItem;
   lakehouseId: string; // The lakehouse id that is used for the solution deployment
   onBackToHome: () => void;
+  onSolutionUpdate?: (updatedSolution: Solution) => void; // Callback when solution is updated
 }
 
 /**
@@ -35,7 +36,8 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
   solution,
   item,
   lakehouseId,
-  onBackToHome
+  onBackToHome,
+  onSolutionUpdate
 }) => {
   const { t } = useTranslation();
   const solutionConfiguration = AvailableSolutionConfigurations[solution.typeId];
@@ -54,6 +56,11 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
                 solutionConfiguration,
                 solution,
                 lakehouseId);
+      
+      // Call the onSolutionUpdate callback with the updated solution
+      if (onSolutionUpdate) {
+        onSolutionUpdate(updatedSolution);
+      }
 
       callNotificationOpen(
                 workloadClient,
@@ -62,8 +69,6 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
                 undefined,
                 undefined
       );
-      //TODO the solution object needs to be updated in the editor with deployment status
-      
     }
     catch (error) {
       console.error(`Error on Deployment: ${error}`);
@@ -74,7 +79,16 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
         NotificationType.Error,
         undefined
       );
-      solution.deploymentStatus = SolutionDeploymentStatus.Failed;
+      
+      // Create a failed solution copy and update via callback
+      const failedSolution = {
+        ...solution,
+        deploymentStatus: SolutionDeploymentStatus.Failed
+      };
+      
+      if (onSolutionUpdate) {
+        onSolutionUpdate(failedSolution);
+      }
       return;
     }
 

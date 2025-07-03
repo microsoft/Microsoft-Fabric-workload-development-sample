@@ -172,6 +172,31 @@ export function SolutionSampleItemEditor(props: PageProps) {
     setSelectedTab("solution");
   }
 
+  /**
+   * Handle solution update from the SolutionDetailView component
+   * Updates the solution in the editor item and saves the changes
+   */
+  async function handleSolutionUpdate(updatedSolution: Solution) {
+    // Update the selectedSolution state
+    setSelectedSolution(updatedSolution);
+
+    // Update the solution in the editorItem.definition.solutions array
+    if (editorItem?.definition?.solutions) {
+      const updatedSolutions = editorItem.definition.solutions.map(solution =>
+        solution.id === updatedSolution.id ? updatedSolution : solution
+      );
+      
+      const newItemDefinition: SolutionSampleItemDefinition = {
+        ...editorItem.definition,
+        solutions: updatedSolutions
+      };
+      
+      // Update the item definition and save changes
+      updateItemDefinition(newItemDefinition);
+      await SaveItem(newItemDefinition);
+    }
+  }
+
   if (isLoadingData) {
     //making sure we show a loding indicator while the itme is loading
     return (<ItemEditorLoadingProgressBar 
@@ -209,6 +234,7 @@ export function SolutionSampleItemEditor(props: PageProps) {
                 item={editorItem}
                 lakehouseId={editorItem?.definition?.lakehouseId}
                 onBackToHome={() => setSelectedTab("home")}
+                onSolutionUpdate={handleSolutionUpdate}
               />
             </span>
           )}
