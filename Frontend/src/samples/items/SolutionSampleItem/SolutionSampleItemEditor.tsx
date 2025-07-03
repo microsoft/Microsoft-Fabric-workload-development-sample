@@ -19,7 +19,7 @@ import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
-import { Solution, SolutionSampleItemDefinition, SolutionDeploymentStatus, AvailableSolutionConfigurations, SolutionType } from "./SolutionSampleItemModel";
+import { Solution, SolutionSampleItemDefinition, SolutionDeploymentStatus } from "./SolutionSampleItemModel";
 import { SolutionSampleItemEmpty } from "./SolutionSampleItemEditorEmpty";
 import { ItemEditorLoadingProgressBar } from "../../../workload/controls/ItemEditorLoadingProgressBar";
 import { callNotificationOpen } from "../../../workload/controller/NotificationController";
@@ -57,12 +57,12 @@ export function SolutionSampleItemEditor(props: PageProps) {
       loadDataFromUrl(pageContext, pathname);
     }, [pageContext, pathname]);
 
-  async function SaveItem(defintion?: SolutionSampleItemDefinition) {
+  async function SaveItem(definition?: SolutionSampleItemDefinition) {
 
     var successResult = await saveItemDefinition<SolutionSampleItemDefinition>(
       workloadClient,
       editorItem.id,
-      defintion || editorItem.definition);
+      definition || editorItem.definition);
     setIsUnsaved(!successResult);
     callNotificationOpen(
             workloadClient,
@@ -84,7 +84,7 @@ export function SolutionSampleItemEditor(props: PageProps) {
           pageContext.itemObjectId,          
         );
         
-        // Ensure item defintion is properly initialized without mutation
+        // Ensure item definition is properly initialized without mutation
         if (!item.definition) {
           item = {
             ...item,
@@ -146,12 +146,12 @@ export function SolutionSampleItemEditor(props: PageProps) {
     }
   }
 
-  async function handleFinishEmpty(solutionType: SolutionType) {
+  async function handleFinishEmpty(solutionTypeId: string) {
     const createdSolution: Solution = {
       id: generateUniqueId(),
       deploymentStatus: SolutionDeploymentStatus.Pending,
       itemsCreated: [],
-      type: solutionType,
+      typeId: solutionTypeId,
       workspaceId: editorItem?.workspaceId,
       //TODO: subfolderId need to be set once avilable in the item definition
       //subfolderId: editorItem?.subfolderObjectId,
@@ -237,7 +237,7 @@ export function SolutionSampleItemEditor(props: PageProps) {
                           setSelectedTab("solution");
                         }}>
                           <TableCell>{solution.id}</TableCell>
-                          <TableCell>{AvailableSolutionConfigurations[solution.type]?.name}</TableCell>
+                          <TableCell>{solution.typeId}</TableCell>
                           <TableCell>{SolutionDeploymentStatus[solution.deploymentStatus]}</TableCell>
                           <TableCell>{solution.workspaceId}</TableCell>
                           <TableCell>{solution.subfolderId}</TableCell>

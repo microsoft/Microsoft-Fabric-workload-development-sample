@@ -38,7 +38,7 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
   onBackToHome
 }) => {
   const { t } = useTranslation();
-  const solutionConfiguration = AvailableSolutionConfigurations[solution.type];
+  const solutionConfiguration = AvailableSolutionConfigurations[solution.typeId];
 
  async function onStartDeployment() {
     // Placeholder for deployment logic
@@ -48,7 +48,7 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
     console.log(`Starting deployment for solution: ${solution.id}`);
 
     try {
-      const soltuion = await deploySolution(
+      const updatedSolution = await deploySolution(
                 workloadClient,
                 item,
                 solutionConfiguration,
@@ -57,10 +57,12 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
 
       callNotificationOpen(
                 workloadClient,
-                "Deplyment Started",
-                `Deployment job has successfully started ${soltuion.deplyomentJobId}.`,),
+                "Deployment Started",
+                `Deployment job has successfully started ${updatedSolution.deploymentJobId}.`,
+                undefined,
                 undefined
-      //TODO the soltuion object needs to be updated in the editor with deplyoment status
+      );
+      //TODO the solution object needs to be updated in the editor with deployment status
       
     }
     catch (error) {
@@ -68,7 +70,7 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
       callNotificationOpen(
         workloadClient,
         "Error",
-        `Failed to upload script: ${error.message}`,
+        `Failed to upload script: ${error.message || error}`,
         NotificationType.Error,
         undefined
       );
@@ -129,22 +131,22 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
 
         <div className="solution-detail-row">
           <Caption1>{t("Workspace ID")}:</Caption1>
-          <Body1>{solution.workspaceId || t("N/A")}</Body1>
+          <Body1>{solution.workspaceId || item.workspaceId || t("N/A")}</Body1>
         </div>
-        <div className="folder-detail-row">
+        <div className="solution-detail-row">
           <Caption1>{t("Folder ID")}:</Caption1>
           <Body1>{solution.subfolderId || t("N/A")}</Body1>
         </div>
         <div className="solution-detail-row">
           <Caption1>{t("Solution Type")}:</Caption1>
-          <Body1>{AvailableSolutionConfigurations[solution.type]?.name}</Body1>
+          <Body1>{AvailableSolutionConfigurations[solution.typeId]?.name}</Body1>
         </div>       
   
         <Divider style={{ margin: "12px 0" }} />
         
         <div className="solution-items">
           <h2>{t("Solution Items")}:</h2>
-          <Caption1>{t("Shows a list of all items that this soltuion will create as part of the deplyoment.")}</Caption1>
+          <Caption1>{t("Shows a list of all items that this solution will create as part of the deployment.")}</Caption1>
           {solutionConfiguration?.items && solutionConfiguration.items.length > 0 ? (
             <ul className="items-list" style={{ margin: "8px 0", paddingLeft: "20px" }}>
               {solutionConfiguration.items.map((item, index) => (
@@ -185,9 +187,9 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
       </div>
         <CardFooter>
           <Button 
-            appearance="primary"
+            appearance="secondary"
             onClick={() => onBackToHome()}
-            style={{ width: "100%" }}
+            style={{ marginRight: "8px" }}
           >
             {t("Back to Home")}
           </Button>
@@ -196,7 +198,7 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
             <Button 
               appearance="primary"
               onClick={() => onStartDeployment()}
-              style={{ width: "100%" }}
+              style={{ marginLeft: "8px" }}
             >
               {t("Start Deployment")}
             </Button>

@@ -7,10 +7,7 @@ import sys
 from datetime import datetime
 
 import sempy.fabric as fabric
-#import synapse.ml.services
-#from synapse.ml.services.language import AnalyzeText
-#from pyspark.sql.functions import col
-#from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession
 #from pyspark.conf import SparkConf
 
 from azure.identity import DefaultAzureCredential
@@ -27,7 +24,7 @@ import requests
 # Spark session builder
 spark_session = (SparkSession
     .builder
-    .appName("Spark Cognitive Sample Analysis")
+    .appName("Spark Solution Deployment")
     .getOrCreate())
 #Instantiate the client
 fabricClient = fabric.FabricRestClient()
@@ -37,8 +34,8 @@ spark_context.setLogLevel("DEBUG")
 
 item_id = spark_context.getConf().get("spark.deploymentConfig")
 item_workspace_id = spark_context.getConf().get("spark.workspaceId")
-soltuion_type = spark_context.getConf().get("spark.soltuionType")
-soltuion_deployment_Configuration = spark_context.getConf().get("spark.deploymentConfiguration")
+solution_type = spark_context.getConf().get("spark.solutionType")
+solution_deployment_Configuration = spark_context.getConf().get("spark.deploymentConfiguration")
 
 #######################################################
 # Configuration
@@ -46,15 +43,15 @@ soltuion_deployment_Configuration = spark_context.getConf().get("spark.deploymen
 print(f"Configuration:")
 print(f"  - Item id: {item_id}")
 print(f"  - Workspace id: {item_workspace_id}")
-print(f"  - Solution type: {soltuion_type}")
+print(f"  - Solution type: {solution_type}")
 
 print(f"Solution deployment started:")
 
-deployment_config = json.loads(soltuion_deployment_Configuration)
+deployment_config = json.loads(solution_deployment_Configuration)
 print(f"Deployment config: {deployment_config}")
 
-soltuion_id = deployment_config['soltuionId']
-print(f"Soltuion Id: {soltuion_id}")
+solution_id = deployment_config['solutionId']
+print(f"solution Id: {solution_id}")
 
 tartetWorkspaceId = deployment_config['targetWorkspaceId']
 print(f"Target workspace Id: {tartetWorkspaceId}")
@@ -78,8 +75,8 @@ for item in deployment_config["items"]:
     print(f"  Item Type: {item_type}")
 
     itemParts = []
-    # getting all defintionParts that are needed for the creation
-    for definitionPart in item["defintionParts"]:
+    # getting all definitionParts that are needed for the creation
+    for definitionPart in item["definitionParts"]:
         path = definitionPart["path"]
         payload = definitionPart["payload"]
         payloadType = definitionPart["payloadType"]
@@ -91,9 +88,10 @@ for item in deployment_config["items"]:
         newPayload = ""
         match payloadType:
             case "OneLake":
-                account_url = "https://onelake.dfs.fabric.microsoft.com"
-                file_system_name = "d93a1ddb-3f94-4a2f-9b43-0afe4cdb9f17"
-                file_path = "89e7075b-599f-47f2-951b-b8de03fe2e88/Files/Solutions/HelloWorld/definitions/HelloWorldItem.json"
+                raise ValueError('Payload Type {payloadType} is not supported')
+                account_url = ""
+                file_system_name = ""
+                file_path = ""
  
                 credential = DefaultAzureCredential()
                 service_client = DataLakeServiceClient(account_url=account_url,credential=credential)
@@ -122,7 +120,7 @@ for item in deployment_config["items"]:
                 "payloadType": "InlineBase64"
             })
 
-    itemDefintion = {
+    itemdefinition = {
 
         "parts": itemParts
     }
@@ -132,7 +130,7 @@ for item in deployment_config["items"]:
         "description": item_description, 
         "type": item_type, 
         "folderId": targetSubfolderId,
-        "definition": itemDefintion
+        "definition": itemdefinition
     }
 
     print("Items created request:")

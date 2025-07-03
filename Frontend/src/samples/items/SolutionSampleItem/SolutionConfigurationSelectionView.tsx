@@ -1,10 +1,10 @@
 import React from "react";
 import { Card, CardHeader, CardPreview, Text, Body1, Button } from "@fluentui/react-components";
 import { Stack } from "@fluentui/react";
-import { AvailableSolutionConfigurations, SolutionConfiguration, SolutionType,  } from "./SolutionSampleItemModel";
+import { SolutionConfigurationsArray, SolutionConfiguration, } from "./SolutionSampleItemModel";
 
 export interface SolutionTilesProps {
-  onSolutionSelected: (solutionType: SolutionType) => void;
+  onSolutionSelected: (solutionTypeId: string) => void;
 }
 export const SolutionConfigurationSelectionView: React.FC<SolutionTilesProps> = (
   { onSolutionSelected }) => {
@@ -17,11 +17,11 @@ export const SolutionConfigurationSelectionView: React.FC<SolutionTilesProps> = 
         gap: "20px", 
         padding: "20px" 
       }}>
-        {AvailableSolutionConfigurations.map((solution: SolutionConfiguration) => (
+        {SolutionConfigurationsArray.map((solution: SolutionConfiguration) => (
           <Card
-            key={solution.type}
+            key={solution.typeId}
             style={{ cursor: "pointer", height: "100%" }}
-            onClick={() => onSolutionSelected(solution.type)}
+            onClick={() => onSolutionSelected(solution.typeId)}
           >
             <CardPreview>
               <img
@@ -43,7 +43,7 @@ export const SolutionConfigurationSelectionView: React.FC<SolutionTilesProps> = 
             <div style={{ padding: "0 16px 16px", marginTop: "auto" }}>
               <Button appearance="primary" onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
-                onSolutionSelected(solution.type);
+                onSolutionSelected(solution.typeId);
               }}>
                 Select
               </Button>

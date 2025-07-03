@@ -1,19 +1,19 @@
-import { GenericItem, ItemDefinitionPath } from "../../../workload/models/ItemCRUDModel";
+import { GenericItem } from "../../../workload/models/ItemCRUDModel";
 
 
 export interface SolutionSampleItemDefinition  {
   solutions?: Solution[];
-  lakehouseId?: string; // The lakehouse id that is used for the soltuion deplyoment
+  lakehouseId?: string; // The lakehouse id that is used for the solution deployment
 }
 
 export interface Solution {
   id: string;
   deploymentStatus: SolutionDeploymentStatus;
-  type: SolutionType;
+  typeId: string;
   itemsCreated: GenericItem[];
   workspaceId?: string;
   subfolderId?: string; // The UX folder in the Workspace where the solution is deployed
-  deplyomentJobId?: string; // The spark job id that is used to deploy the solution
+  deploymentJobId?: string; // The spark job id that is used to deploy the solution
 }
 
 export enum SolutionDeploymentStatus {
@@ -29,15 +29,9 @@ export enum SolutionDeploymentType {
 }
 
 
-// Configuration information for Solutions
-export enum SolutionType {
-  // Add more solution types as needed
-  HelloWorld,
-  DataAnalytics
-}
 
 export interface SolutionConfiguration {
-  type: SolutionType;
+  typeId: string;
   deploymentType: SolutionDeploymentType; // Optional deployment type, default is UX
   name: string;
   icon?: string;
@@ -50,7 +44,7 @@ export interface SolutionConfigurationItemDefinition {
   name: string;
   itemType: string;
   itemTypeName?: string;
-  itemDefinitions: ItemDefinition[];
+  itemDefinitions?: ItemDefinition[];
   description: string;
   icon?: string;
 }
@@ -68,19 +62,20 @@ export interface ItemDefinition {
 }
 
 export type SolutionConfigurations = {
-  [key in SolutionType]: SolutionConfiguration;
+  [key: string]: SolutionConfiguration;
 };
 
-export const AvailableSolutionConfigurations: SolutionConfiguration[] = [
+// Array of available solution configurations
+const solutionConfigList: SolutionConfiguration[] = [
   {
-    type: SolutionType.HelloWorld,
+    typeId: "HelloWorld",
     deploymentType: SolutionDeploymentType.SparkLivy,
     name: "Hello World Solution",
     description: "Set up a new workspace with a hello world item.",
     icon: "/assets/samples/items/SolutionSampleItem/HelloWorld/HelloWorldSolution.png",
     deploymentFile: "/assets/samples/items/SolutionSampleItem/jobs/DefaultSolution-Deployment.py",
     items: [
-      {
+      /*{
         name: "Solution HW Item",
         itemType: process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME,
         itemTypeName: "Hello World Item",
@@ -91,24 +86,56 @@ export const AvailableSolutionConfigurations: SolutionConfiguration[] = [
           payload: "/assets/samples/items/SolutionSampleItem/HelloWorld/definitions/HelloWorldItem.json",
           payloadType: ItemDefinitionPayloadType.Asset
         }],
-      }
+      }*/
+     {
+        name: "SOL - Lakehouse",
+        itemType: "Lakehouse",
+        description: "A lakehouse for the solution.",
+        icon: "/assets/workload/items/HelloWorldItemIcon.png",
+        itemDefinitions: []
+      },
     ]
   },
   {
-    type: SolutionType.DataAnalytics,
+    typeId: "DataAnalytics",
     deploymentType: SolutionDeploymentType.SparkLivy,
     name: "Data Analytics Solution",
     icon: "/assets/samples/items/SolutionSampleItem/DataAnalyticsSolution.png",
     description: "Set up a new workspace with a analytics solution.", 
-    items: [],
+    items: [
+      {
+        name: "SA - Lakehouse",
+        itemType: "Lakehouse",
+        description: "A lakehouse for the solution.",
+        icon: "/assets/workload/items/HelloWorldItemIcon.png",
+        itemDefinitions: []
+      },
+      {
+        name: "SA - Notebook",
+        itemType: "Notebook",
+        description: "A Notebook for the solution.",
+        icon: "/assets/workload/items/HelloWorldItemIcon.png",
+        itemDefinitions: []
+      },
+    ],
   }
 ];
 
+// Create a registry object from the array for easy access by typeId
+export const AvailableSolutionConfigurations: SolutionConfigurations =
+  solutionConfigList.reduce((registry, config) => {
+    registry[config.typeId] = config;
+    return registry;
+  }, {} as SolutionConfigurations);
+
+// Export the array version as well if needed for iteration
+export const SolutionConfigurationsArray = solutionConfigList;
+
 export interface SparkDeployConfig {
-  deplyomentScript: string;
+  deploymentScript: string;
   targetWorkspaceId: string; // The workspace id where the solution is deployed
   targetSubfolderId: string; // The UX folder in the Workspace where the solution is deployed
-  soltuionId?: string; // The solution id that is used to deploy the solution
+  solutionId?: string; // The solution id that is used to deploy the solution
   items: SparkDeployConfigItem[]
 }
 
@@ -116,7 +143,7 @@ export interface SparkDeployConfigItem {
   name: string;
   description: string;
   itemType: string;
-  defintionParts?: SparkDeployConfigItemDefinition[]; // Optional parts of the item definition
+  definitionParts?: SparkDeployConfigItemDefinition[]; // Optional parts of the item definition
 }
 
 export enum SparkDeployConfigItemDefinitionType {

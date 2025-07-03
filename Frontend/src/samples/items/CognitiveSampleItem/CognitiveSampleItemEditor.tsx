@@ -209,7 +209,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
             pageContext.itemObjectId,          
           );
           
-          // Ensure item defintion is properly initialized without mutation
+          // Ensure item definition is properly initialized without mutation
           if (!item.definition) {
             item = {
               ...item,

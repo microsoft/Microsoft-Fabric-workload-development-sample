@@ -4,14 +4,14 @@ import { Text } from "@fluentui/react-components";
 import "./../../../styles.scss";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { GenericItem } from "../../../workload/models/ItemCRUDModel";
-import { SolutionSampleItemDefinition, SolutionType } from "./SolutionSampleItemModel";
+import { SolutionSampleItemDefinition } from "./SolutionSampleItemModel";
 import { SolutionConfigurationSelectionView } from "./SolutionConfigurationSelectionView";
 
 interface SolutionSampleItemEmptyStateProps {
   workloadClient: WorkloadClientAPI,
   item: GenericItem;
   itemDefinition: SolutionSampleItemDefinition,
-  onFinishEmpty: (type: SolutionType) => void;
+  onFinishEmpty: (solutionTypeId: string) => void;
 }
 
 export const SolutionSampleItemEmpty: React.FC<SolutionSampleItemEmptyStateProps> = ({
@@ -22,9 +22,9 @@ export const SolutionSampleItemEmpty: React.FC<SolutionSampleItemEmptyStateProps
 }) => {
 
   // Handle solution selection
-  const handleSolutionSelected = (solutionType: SolutionType) => {
-    console.log(`Selected solution: ${solutionType}`);
-    onFinishEmpty(solutionType);
+  const handleSolutionSelected = (solutionTypeId: string) => {
+    console.log(`Selected solution: ${solutionTypeId}`);
+    onFinishEmpty(solutionTypeId);
   };
 
   
