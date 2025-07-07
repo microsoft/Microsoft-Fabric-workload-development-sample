@@ -1,13 +1,13 @@
 import React from "react";
 import { Card, CardHeader, CardPreview, Text, Body1, Button } from "@fluentui/react-components";
 import { Stack } from "@fluentui/react";
-import { SolutionConfigurationsArray, SolutionConfiguration, } from "./SolutionSampleItemModel";
+import { SolutionConfigurationsArray, Package, } from "./PackageInstallerItemModel";
 
-export interface SolutionTilesProps {
-  onSolutionSelected: (solutionTypeId: string) => void;
+export interface PackageInstallerSelectionViewProps {
+  onPackageSelected: (packageId: string) => void;
 }
-export const SolutionConfigurationSelectionView: React.FC<SolutionTilesProps> = (
-  { onSolutionSelected }) => {
+export const PackageSelectionView: React.FC<PackageInstallerSelectionViewProps> = (
+  { onPackageSelected: onPackageSelected }) => {
 
   return (
     <Stack>
@@ -17,33 +17,33 @@ export const SolutionConfigurationSelectionView: React.FC<SolutionTilesProps> = 
         gap: "20px", 
         padding: "20px" 
       }}>
-        {SolutionConfigurationsArray.map((solution: SolutionConfiguration) => (
+        {SolutionConfigurationsArray.map((pack: Package) => (
           <Card
-            key={solution.typeId}
+            key={pack.typeId}
             style={{ cursor: "pointer", height: "100%" }}
-            onClick={() => onSolutionSelected(solution.typeId)}
+            onClick={() => onPackageSelected(pack.typeId)}
           >
             <CardPreview>
               <img
-                src={solution.icon}
-                alt={solution.name}
+                src={pack.icon}
+                alt={pack.name}
                 style={{ width: "100%", height: "160px", objectFit: "cover" }}
               />
             </CardPreview>
             <CardHeader
               header={
                 <Text weight="semibold" size={500}>
-                  {solution.name}
+                  {pack.name}
                 </Text>
               }
               description={
-                <Body1>{solution.description}</Body1>
+                <Body1>{pack.description}</Body1>
               }
             />
             <div style={{ padding: "0 16px 16px", marginTop: "auto" }}>
               <Button appearance="primary" onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
-                onSolutionSelected(solution.typeId);
+                onPackageSelected(pack.typeId);
               }}>
                 Select
               </Button>

@@ -70,7 +70,7 @@ export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
         process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME, 
         process.env.WORKLOAD_NAME + ".CalculatorSample",
         process.env.WORKLOAD_NAME + ".CognitiveSample",
-        process.env.WORKLOAD_NAME + ".SolutionSample"],
+        process.env.WORKLOAD_NAME + ".PackageInstaller"],
       "Select an item to use for Frontend Sample Workload",
       false
     );

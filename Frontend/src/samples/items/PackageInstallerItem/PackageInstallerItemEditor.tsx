@@ -13,32 +13,32 @@ import {
 import { DeleteRegular } from "@fluentui/react-icons";
 import React, { useEffect, useState, useCallback } from "react";
 import { ContextProps, PageProps } from "src/App";
-import { SolutionSampleItemEditorRibbon } from "./SolutionSampleItemEditorRibbon";
+import { PackageInstallerItemEditorRibbon } from "./PackageInstallerItemEditorRibbon";
 import { getWorkloadItem, saveItemDefinition } from "../../../workload/controller/ItemCRUDController";
 import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
-import { Solution, SolutionSampleItemDefinition, SolutionDeploymentStatus } from "./SolutionSampleItemModel";
-import { SolutionSampleItemEmpty } from "./SolutionSampleItemEditorEmpty";
+import { Deployment, PackageInstallerItemDefinition, DeploymentStatus } from "./PackageInstallerItemModel";
+import { PackageInstallerItemEditorEmpty } from "./PackageInstallerItemEditorEmpty";
 import { ItemEditorLoadingProgressBar } from "../../../workload/controls/ItemEditorLoadingProgressBar";
 import { callNotificationOpen } from "../../../workload/controller/NotificationController";
-import { SolutionDetailView } from "./SolutionDetailView";
+import { DeploymentDetailView } from "./DeploymentDetailView";
 import { callDatahubOpen } from "../../../workload/controller/DataHubController";
 
-export function SolutionSampleItemEditor(props: PageProps) {
+export function PackageInstallerItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const { workloadClient } = props;
   const [isUnsaved, setIsUnsaved] = useState<boolean>(true);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
-  const [editorItem, setEditorItem] = useState<WorkloadItem<SolutionSampleItemDefinition>>(undefined);
+  const [editorItem, setEditorItem] = useState<WorkloadItem<PackageInstallerItemDefinition>>(undefined);
   const [selectedTab, setSelectedTab] = useState<TabValue>("");
-  const [selectedSolution, setSelectedSolution] = useState<Solution | undefined>(undefined);
+  const [selectedSolution, setSelectedDeployment] = useState<Deployment | undefined>(undefined);
 
   // Helper function to update item definition immutably
-  const updateItemDefinition = useCallback((updates: Partial<SolutionSampleItemDefinition>) => {
+  const updateItemDefinition = useCallback((updates: Partial<PackageInstallerItemDefinition>) => {
     setEditorItem(prevItem => {
       if (!prevItem) return prevItem;
       
@@ -57,9 +57,9 @@ export function SolutionSampleItemEditor(props: PageProps) {
       loadDataFromUrl(pageContext, pathname);
     }, [pageContext, pathname]);
 
-  async function SaveItem(definition?: SolutionSampleItemDefinition) {
+  async function SaveItem(definition?: PackageInstallerItemDefinition) {
 
-    var successResult = await saveItemDefinition<SolutionSampleItemDefinition>(
+    var successResult = await saveItemDefinition<PackageInstallerItemDefinition>(
       workloadClient,
       editorItem.id,
       definition || editorItem.definition);
@@ -75,11 +75,11 @@ export function SolutionSampleItemEditor(props: PageProps) {
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
     setIsLoadingData(true);
-    var item: WorkloadItem<SolutionSampleItemDefinition> = undefined;    
+    var item: WorkloadItem<PackageInstallerItemDefinition> = undefined;    
     if (pageContext.itemObjectId) {
       // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
       try {
-        item = await getWorkloadItem<SolutionSampleItemDefinition>(
+        item = await getWorkloadItem<PackageInstallerItemDefinition>(
           workloadClient,
           pageContext.itemObjectId,          
         );
@@ -89,7 +89,7 @@ export function SolutionSampleItemEditor(props: PageProps) {
           item = {
             ...item,
             definition: {
-              solutions: []
+              deployments: []
             }
           };
         }
@@ -101,7 +101,7 @@ export function SolutionSampleItemEditor(props: PageProps) {
       console.log(`non-editor context. Current Path: ${pathname}`);
     }
     setIsUnsaved(false);
-    if(item?.definition?.solutions?.length > 0) {
+    if(item?.definition?.deployments?.length > 0) {
       setSelectedTab("home");
     } else {
       setSelectedTab("empty");
@@ -123,7 +123,7 @@ export function SolutionSampleItemEditor(props: PageProps) {
         false,
         true);
     if( lakehouse) {
-      const newItemDefinition: SolutionSampleItemDefinition = {
+      const newItemDefinition: PackageInstallerItemDefinition = {
         ...editorItem?.definition,
         lakehouseId: lakehouse.id,
       };
@@ -134,33 +134,33 @@ export function SolutionSampleItemEditor(props: PageProps) {
   
 
   /**
-   * Remove a solution from the list
+   * Remove a deployment from the list
    */
-  function handleRemoveSolution(solutionId: string) {
-    if (editorItem?.definition?.solutions) {
-      const filteredSolutions = editorItem.definition.solutions.filter(
-        (solution) => solution.id !== solutionId
+  function handleRemoveDeployment(deploymentId: string) {
+    if (editorItem?.definition?.deployments) {
+      const filteredDeployments = editorItem.definition.deployments.filter(
+        (deployment) => deployment.id !== deploymentId
       );
       
-      updateItemDefinition({ solutions: filteredSolutions });
+      updateItemDefinition({ deployments: filteredDeployments });
     }
   }
 
-  async function handleFinishEmpty(solutionTypeId: string) {
-    const createdSolution: Solution = {
+  async function handleFinishEmpty(packageId: string) {
+    const createdSolution: Deployment = {
       id: generateUniqueId(),
-      deploymentStatus: SolutionDeploymentStatus.Pending,
+      status: DeploymentStatus.Pending,
       itemsCreated: [],
-      typeId: solutionTypeId,
+      packageId: packageId,
       workspaceId: editorItem?.workspaceId,
       //TODO: subfolderId need to be set once avilable in the item definition
       //subfolderId: editorItem?.subfolderObjectId,
     };
 
-    const newItemDefinition: SolutionSampleItemDefinition = {
+    const newItemDefinition: PackageInstallerItemDefinition = {
       ...editorItem?.definition,
-        solutions: Array.isArray(editorItem?.definition?.solutions) 
-          ? [...editorItem.definition.solutions, createdSolution]
+        deployments: Array.isArray(editorItem?.definition?.deployments) 
+          ? [...editorItem.definition.deployments, createdSolution]
           : [createdSolution]
     };
     updateItemDefinition(newItemDefinition);
@@ -168,27 +168,27 @@ export function SolutionSampleItemEditor(props: PageProps) {
     // Save with the updated definition directly to avoid race condition
     await SaveItem(newItemDefinition);
     
-    setSelectedSolution(createdSolution);
-    setSelectedTab("solution");
+    setSelectedDeployment(createdSolution);
+    setSelectedTab("deployment");
   }
 
   /**
-   * Handle solution update from the SolutionDetailView component
-   * Updates the solution in the editor item and saves the changes
+   * Handle deployment update from the DeploymentDetailView component
+   * Updates the deployment in the editor item and saves the changes
    */
-  async function handleSolutionUpdate(updatedSolution: Solution) {
+  async function handleDeploymentUpdate(updatedDeployment: Deployment) {
     // Update the selectedSolution state
-    setSelectedSolution(updatedSolution);
+    setSelectedDeployment(updatedDeployment);
 
-    // Update the solution in the editorItem.definition.solutions array
-    if (editorItem?.definition?.solutions) {
-      const updatedSolutions = editorItem.definition.solutions.map(solution =>
-        solution.id === updatedSolution.id ? updatedSolution : solution
+    // Update the deplyoments in the editorItem.definition.deployments array
+    if (editorItem?.definition?.deployments) {
+      const updatedSolutions = editorItem.definition.deployments.map(deployment =>
+        deployment.id === updatedDeployment.id ? updatedDeployment : deployment
       );
       
-      const newItemDefinition: SolutionSampleItemDefinition = {
+      const newItemDefinition: PackageInstallerItemDefinition = {
         ...editorItem.definition,
-        solutions: updatedSolutions
+        deployments: updatedSolutions
       };
       
       // Update the item definition and save changes
@@ -205,7 +205,7 @@ export function SolutionSampleItemEditor(props: PageProps) {
   else {
     return (
       <Stack className="editor" data-testid="item-editor-inner">
-        <SolutionSampleItemEditorRibbon
+        <PackageInstallerItemEditorRibbon
             {...props}      
             isLakehouseConnectEnabled={!editorItem?.definition?.lakehouseId}
             connectLakehouseCallback={connectLakehouse}  
@@ -218,37 +218,37 @@ export function SolutionSampleItemEditor(props: PageProps) {
         <Stack className="main">
           {["empty"].includes(selectedTab as string) && (
             <span>
-              <SolutionSampleItemEmpty
+              <PackageInstallerItemEditorEmpty
                 workloadClient={workloadClient}
                 item={editorItem}
                 itemDefinition={editorItem?.definition}
-                onFinishEmpty={handleFinishEmpty}
+                onPackageSelected={handleFinishEmpty}
               />
             </span>
           )}
-          {["solution"].includes(selectedTab as string) && (
+          {["deployment"].includes(selectedTab as string) && (
             <span>
-              <SolutionDetailView
+              <DeploymentDetailView
                 workloadClient={workloadClient}
-                solution={selectedSolution}
+                deployment={selectedSolution}
                 item={editorItem}
                 lakehouseId={editorItem?.definition?.lakehouseId}
                 onBackToHome={() => setSelectedTab("home")}
-                onSolutionUpdate={handleSolutionUpdate}
+                onDeploymentUpdate={handleDeploymentUpdate}
               />
             </span>
           )}
 
           {["home"].includes(selectedTab as string) && (
           <span>
-              <h2>{t('Deployed solutions')}</h2>
-              {editorItem?.definition?.solutions?.length > 0 ? (
-                <div className="solutions-container">
+              <h2>{t('Deployed packages')}</h2>
+              {editorItem?.definition?.deployments?.length > 0 ? (
+                <div className="deployment-container">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHeaderCell>{t('Solution Id')}</TableHeaderCell>
-                        <TableHeaderCell>{t('Solution Type')}</TableHeaderCell>
+                        <TableHeaderCell>{t('Deployment Id')}</TableHeaderCell>
+                        <TableHeaderCell>{t('Package Type')}</TableHeaderCell>
                         <TableHeaderCell>{t('Deployment Status')}</TableHeaderCell>
                         <TableHeaderCell>{t('Workspace ID')}</TableHeaderCell>
                         <TableHeaderCell>{t('Folder ID')}</TableHeaderCell>
@@ -257,26 +257,26 @@ export function SolutionSampleItemEditor(props: PageProps) {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {editorItem.definition.solutions.map((solution: Solution) => (
-                        <TableRow key={solution.id} onClick={() => {
-                          setSelectedSolution(solution);
-                          setSelectedTab("solution");
+                      {editorItem.definition.deployments.map((deployment: Deployment) => (
+                        <TableRow key={deployment.id} onClick={() => {
+                          setSelectedDeployment(deployment);
+                          setSelectedTab("deployments");
                         }}>
-                          <TableCell>{solution.id}</TableCell>
-                          <TableCell>{solution.typeId}</TableCell>
-                          <TableCell>{SolutionDeploymentStatus[solution.deploymentStatus]}</TableCell>
-                          <TableCell>{solution.workspaceId}</TableCell>
-                          <TableCell>{solution.subfolderId}</TableCell>
+                          <TableCell>{deployment.id}</TableCell>
+                          <TableCell>{deployment.packageId}</TableCell>
+                          <TableCell>{DeploymentStatus[deployment.status]}</TableCell>
+                          <TableCell>{deployment.workspaceId}</TableCell>
+                          <TableCell>{deployment.folderId}</TableCell>
                           <TableCell>
                             <Button
                               icon={<DeleteRegular />}
                               appearance="subtle"
-                              disabled={solution.deploymentStatus !== SolutionDeploymentStatus.Pending}
+                              disabled={deployment.status !== DeploymentStatus.Pending}
                               onClick={(e: any) => {
                                 e.stopPropagation(); // Prevent row click from triggering
-                                handleRemoveSolution(solution.id);
+                                handleRemoveDeployment(deployment.id);
                               }}
-                              aria-label={t('Remove solution')}
+                              aria-label={t('Remove deployment')}
                             />
                           </TableCell>
                         </TableRow>
@@ -285,9 +285,9 @@ export function SolutionSampleItemEditor(props: PageProps) {
                   </Table>
                 </div>
               ) : (
-                <div className="no-solutions">
+                <div className="no-deployments">
                   <Text size={300} italic>
-                    {t('No solutions have been deployed yet')}
+                    {t('No Packages have been deployed yet')}
                   </Text>
                 </div>
               )}
@@ -300,7 +300,7 @@ export function SolutionSampleItemEditor(props: PageProps) {
 }
 
 function generateUniqueId(): string {
-  // Generate a random unique ID for solutions
-  return 'sol_' + Math.random().toString(36).substring(2, 9);
+  // Generate a random unique ID for deployment
+  return 'deploy_' + Math.random().toString(36).substring(2, 9);
 }
 

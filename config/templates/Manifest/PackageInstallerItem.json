@@ -1,16 +1,16 @@
 {
-    "name": "SolutionSample",
+    "name": "PackageInstaller",
     "version": "1.100",
-    "displayName": "SolutionSampleItem_DisplayName",
-    "displayNamePlural": "SolutionSampleItem_DisplayName_Plural",
+    "displayName": "PackageInstallerItem_DisplayName",
+    "displayNamePlural": "PackageInstallerItem_DisplayName_Plural",
     "editor": {
-      "path": "/SolutionSampleItem-editor"
+      "path": "/PackageInstallerItem-editor"
     },
     "icon": {
-      "name": "assets/images/SolutionSampleItem-icon.png"
+      "name": "assets/images/PackageInstallerItem-icon.png"
     },
     "activeIcon": {
-      "name": "assets/images/SolutionSampleItem-icon.png"
+      "name": "assets/images/PackageInstallerItem-icon.png"
     },
     "supportedInMonitoringHub": true,
     "supportedInDatahubL1": true,

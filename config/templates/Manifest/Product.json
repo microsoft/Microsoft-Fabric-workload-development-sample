@@ -118,13 +118,13 @@
           }
         },
         {
-          "title": "SolutionSampleItem_DisplayName",
-          "description": "SolutionSampleItem_Description",
+          "title": "PackageInstallerItem_DisplayName",
+          "description": "PackageInstallerItem_Description",
           "icon": {
-            "name": "assets/images/SolutionSampleItem-icon.png"
+            "name": "assets/images/PackageInstallerItem-icon.png"
           },
           "icon_small": {
-            "name": "assets/images/SolutionSampleItem-icon.png"
+            "name": "assets/images/PackageInstallerItem-icon.png"
           },
           "availableIn": [
             "home",
@@ -132,7 +132,7 @@
             "workspace-plus-new",
             "workspace-plus-new-teams"
           ],
-          "itemType": "SolutionSample",
+          "itemType": "PackageInstaller",
           "createItemDialogConfig": {
             "onCreationFailure": { "action": "item.onCreationFailure" },
             "onCreationSuccess": { "action": "item.onCreationSuccess" }

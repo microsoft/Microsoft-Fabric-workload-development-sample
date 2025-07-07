@@ -11,61 +11,61 @@ import {
   Caption1
 } from "@fluentui/react-components";
 import { useTranslation } from "react-i18next";
-import { AvailableSolutionConfigurations, Solution, SolutionDeploymentStatus } from "./SolutionSampleItemModel";
+import { AvailablePackages, Deployment, DeploymentStatus } from "./PackageInstallerItemModel";
 import { GenericItem } from "../../../workload/models/ItemCRUDModel";
 import { NotificationType, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { callNotificationOpen } from "../../../workload/controller/NotificationController";
-import { deploySolution } from "./SolutionDeploymentController";
+import { deployPackage } from "./PackageInstallerController";
 
-// Props for the SolutionDetailCard component
-export interface SolutionDetailCardProps {
+// Props for the PackageDetailCard component
+export interface DeploymentDetailViewProps {
   workloadClient: WorkloadClientAPI;
-  solution: Solution;
+  deployment: Deployment;
   item: GenericItem;
-  lakehouseId: string; // The lakehouse id that is used for the solution deployment
+  lakehouseId: string; // The lakehouse id that is used for the package deployment
   onBackToHome: () => void;
-  onSolutionUpdate?: (updatedSolution: Solution) => void; // Callback when solution is updated
+  onDeploymentUpdate?: (updatedPackage: Deployment) => void; // Callback when package is updated
 }
 
 /**
- * Component that displays details of a solution and provides 
- * a button to start deployment if the solution is in Pending status.
+ * Component that displays details of a package and provides 
+ * a button to start deployment if the package is in Pending status.
  */
-export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({ 
+export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({ 
   workloadClient,
-  solution,
+  deployment: deployment,
   item,
   lakehouseId,
   onBackToHome,
-  onSolutionUpdate
+  onDeploymentUpdate: onDeploymentUpdate
 }) => {
   const { t } = useTranslation();
-  const solutionConfiguration = AvailableSolutionConfigurations[solution.typeId];
+  const pack = AvailablePackages[deployment.packageId];
 
  async function onStartDeployment() {
     // Placeholder for deployment logic
     // Here you would typically call an API to start the deployment
-    // For example: workloadClient.startSolutionDeployment(solution.id);
+    // For example: workloadClient.deploy(package.id);
     // TODO needs to be implemented
-    console.log(`Starting deployment for solution: ${solution.id}`);
+    console.log(`Starting deployment for package: ${deployment.id}`);
 
     try {
-      const updatedSolution = await deploySolution(
+      const updatedSolution = await deployPackage(
                 workloadClient,
                 item,
-                solutionConfiguration,
-                solution,
+                pack,
+                deployment,
                 lakehouseId);
       
-      // Call the onSolutionUpdate callback with the updated solution
-      if (onSolutionUpdate) {
-        onSolutionUpdate(updatedSolution);
+      // Call the onDeploymentUpdate callback with the updated deployment
+      if (onDeploymentUpdate) {
+        onDeploymentUpdate(updatedSolution);
       }
 
       callNotificationOpen(
                 workloadClient,
                 "Deployment Started",
-                `Deployment job has successfully started ${updatedSolution.deploymentJobId}.`,
+                `Deployment has successfully started ${updatedSolution.jobId}.`,
                 undefined,
                 undefined
       );
@@ -80,14 +80,14 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
         undefined
       );
       
-      // Create a failed solution copy and update via callback
-      const failedSolution = {
-        ...solution,
-        deploymentStatus: SolutionDeploymentStatus.Failed
+      // Create a failed deployment copy and update via callback
+      const failedDeployment = {
+        ...deployment,
+        deploymentStatus: DeploymentStatus.Failed
       };
       
-      if (onSolutionUpdate) {
-        onSolutionUpdate(failedSolution);
+      if (onDeploymentUpdate) {
+        onDeploymentUpdate(failedDeployment);
       }
       return;
     }
@@ -95,75 +95,75 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
   }
 
   // Function to get status badge color based on deployment status
-  const getStatusBadgeColor = (status: SolutionDeploymentStatus) => {
+  const getStatusBadgeColor = (status: DeploymentStatus) => {
     switch (status) {
-      case SolutionDeploymentStatus.Succeeded:
+      case DeploymentStatus.Succeeded:
         return "success";
-      case SolutionDeploymentStatus.Failed:
+      case DeploymentStatus.Failed:
         return "danger";
-      case SolutionDeploymentStatus.InProgress:
+      case DeploymentStatus.InProgress:
         return "informative";
-      case SolutionDeploymentStatus.Pending:
+      case DeploymentStatus.Pending:
       default:
         return "subtle";
     }
   };
 
   return (
-    <Card className="solution-detail-card">
+    <Card className="package-detail-card">
       <CardHeader
         image={
-          solutionConfiguration?.icon && (
+          pack?.icon && (
             <img 
-              src={solutionConfiguration?.icon} 
-              alt={solutionConfiguration?.name}
+              src={pack?.icon} 
+              alt={pack?.name}
               style={{ width: "32px", height: "32px", objectFit: "contain" }}
             />
           )
         }
         header={
           <Text weight="semibold" size={500}>
-            {solutionConfiguration?.name}
+            {pack?.name}
           </Text>
         }
         description={
           <Badge 
             appearance="filled"
-            color={getStatusBadgeColor(solution.deploymentStatus)}
+            color={getStatusBadgeColor(deployment.status)}
             style={{ marginTop: "4px" }}
           >
-            {SolutionDeploymentStatus[solution.deploymentStatus]}
+            {DeploymentStatus[deployment.status]}
           </Badge>
         }
       />
 
-      <div className="solution-info" style={{ padding: "0 16px" }}>
-        <div className="solution-detail-row">
-          <Caption1>{t("Solution ID")}:</Caption1>
-          <Body1>{solution.id}</Body1>
+      <div className="deployment-info" style={{ padding: "0 16px" }}>
+        <div className="deployment-detail-row">
+          <Caption1>{t("Deployment ID")}:</Caption1>
+          <Body1>{deployment.id}</Body1>
         </div>
 
-        <div className="solution-detail-row">
+        <div className="deployment-detail-row">
           <Caption1>{t("Workspace ID")}:</Caption1>
-          <Body1>{solution.workspaceId || item.workspaceId || t("N/A")}</Body1>
+          <Body1>{deployment.workspaceId || item.workspaceId || t("N/A")}</Body1>
         </div>
-        <div className="solution-detail-row">
+        <div className="deployment-detail-row">
           <Caption1>{t("Folder ID")}:</Caption1>
-          <Body1>{solution.subfolderId || t("N/A")}</Body1>
+          <Body1>{deployment.folderId || t("N/A")}</Body1>
         </div>
-        <div className="solution-detail-row">
-          <Caption1>{t("Solution Type")}:</Caption1>
-          <Body1>{AvailableSolutionConfigurations[solution.typeId]?.name}</Body1>
+        <div className="deployment-detail-row">
+          <Caption1>{t("Package Type")}:</Caption1>
+          <Body1>{AvailablePackages[deployment.packageId]?.name}</Body1>
         </div>       
   
         <Divider style={{ margin: "12px 0" }} />
         
-        <div className="solution-items">
-          <h2>{t("Solution Items")}:</h2>
-          <Caption1>{t("Shows a list of all items that this solution will create as part of the deployment.")}</Caption1>
-          {solutionConfiguration?.items && solutionConfiguration.items.length > 0 ? (
+        <div className="deployment-items">
+          <h2>{t("Deployment Items")}:</h2>
+          <Caption1>{t("Shows a list of all items that will be create as part of the deployment.")}</Caption1>
+          {pack?.items && pack.items.length > 0 ? (
             <ul className="items-list" style={{ margin: "8px 0", paddingLeft: "20px" }}>
-              {solutionConfiguration.items.map((item, index) => (
+              {pack.items.map((item, index) => (
                 <li key={index}>
                   <Body1>{item.name}</Body1>
                   <div style={{ marginLeft: "8px" }}>
@@ -174,7 +174,7 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
             </ul>
           ) : (
             <div style={{ marginLeft: "8px" }}>
-              <Body1 italic>{t("No items defined for this solution")}</Body1>
+              <Body1 italic>{t("No items defined for this deployment")}</Body1>
             </div>
           )}
         </div>
@@ -183,10 +183,10 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
         
         <div className="created-items">
           <h2>{t("Created Items")}:</h2>
-          <Caption1>{t("Shows a list of all items that have been created by this solution.")}</Caption1>
-          {solution.itemsCreated && solution.itemsCreated.length > 0 ? (
+          <Caption1>{t("Shows a list of all items that have been created by this deployment.")}</Caption1>
+          {deployment.itemsCreated && deployment.itemsCreated.length > 0 ? (
             <ul className="items-list" style={{ margin: "8px 0", paddingLeft: "20px" }}>
-              {solution.itemsCreated.map((item: GenericItem) => (
+              {deployment.itemsCreated.map((item: GenericItem) => (
                 <li key={item.id}>
                   <Body1>{item.displayName || item.id}</Body1>
                 </li>
@@ -207,8 +207,8 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
           >
             {t("Back to Home")}
           </Button>
-          {(solution.deploymentStatus === SolutionDeploymentStatus.Pending  || 
-            solution.deploymentStatus === SolutionDeploymentStatus.Failed ) && (
+          {(deployment.status === DeploymentStatus.Pending  || 
+            deployment.status === DeploymentStatus.Failed ) && (
             <Button 
               appearance="primary"
               onClick={() => onStartDeployment()}
@@ -226,17 +226,17 @@ export const SolutionDetailView: React.FC<SolutionDetailCardProps> = ({
 
 // Add some basic styles to improve the component's appearance
 export const styles = `
-.solution-detail-card {
+.deplyoment-detail-card {
   margin-bottom: 16px;
   width: 100%;
   max-width: 600px;
 }
 
-.solution-info {
+.deplyoment-info {
   padding: 0 16px 16px;
 }
 
-.solution-detail-row {
+.deplyoment-detail-row {
   display: flex;
   justify-content: space-between;
   margin: 6px 0;

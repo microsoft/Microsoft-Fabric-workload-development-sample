@@ -24,7 +24,7 @@ import requests
 # Spark session builder
 spark_session = (SparkSession
     .builder
-    .appName("Spark Solution Deployment")
+    .appName("Spark Package Installer")
     .getOrCreate())
 #Instantiate the client
 fabricClient = fabric.FabricRestClient()
@@ -34,8 +34,8 @@ spark_context.setLogLevel("DEBUG")
 
 item_id = spark_context.getConf().get("spark.deploymentConfig")
 item_workspace_id = spark_context.getConf().get("spark.workspaceId")
-solution_type = spark_context.getConf().get("spark.solutionType")
-solution_deployment_Configuration = spark_context.getConf().get("spark.deploymentConfiguration")
+package_type = spark_context.getConf().get("spark.spackageType")
+deployment = spark_context.getConf().get("spark.deployment")
 
 #######################################################
 # Configuration
@@ -43,21 +43,21 @@ solution_deployment_Configuration = spark_context.getConf().get("spark.deploymen
 print(f"Configuration:")
 print(f"  - Item id: {item_id}")
 print(f"  - Workspace id: {item_workspace_id}")
-print(f"  - Solution type: {solution_type}")
+print(f"  - Package type: {package_type}")
 
-print(f"Solution deployment started:")
+print(f"Package deployment started:")
 
-deployment_config = json.loads(solution_deployment_Configuration)
+deployment_config = json.loads(deployment)
 print(f"Deployment config: {deployment_config}")
 
-solution_id = deployment_config['solutionId']
-print(f"solution Id: {solution_id}")
+package_id = deployment_config['packageId']
+print(f"Package Id: {package_id}")
 
 tartetWorkspaceId = deployment_config['targetWorkspaceId']
 print(f"Target workspace Id: {tartetWorkspaceId}")
 
-targetSubfolderId = deployment_config.get('targetSubfolderId', "")  
-print(f"Target subfolder Id: {targetSubfolderId}")
+targetFolderId = deployment_config.get('targetFolderId', "")  
+print(f"Target folcer Id: {targetFolderId}")
 
 #######################################################
 # Creating the items
@@ -143,6 +143,6 @@ for item in deployment_config["items"]:
 print("Items created successfully")
 print(createdItems)
 
-print(f"Solution deployment finished:")
+print(f"Package deployment finished:")
 
 

@@ -25,7 +25,7 @@
   "CognitiveSampleItem_DisplayName": "Ejemplo Cognitivo",
   "CognitiveSampleItem_DisplayName_Plural": "Ejemplos Cognitivos",
   "CognitiveSampleItem_Description": "Un elemento cognitivo simple que utiliza IA para analizar datos",
-  "SolutionSampleItem_DisplayName": "Ejemplo de solución",
-  "SolutionSampleItem_DisplayName_Plural": "Ejemplos de soluciones",
-  "SolutionSampleItem_Description": "Un elemento de solución simple que los usuarios pueden utilizar para crear capacidades en Fabric"
+  "PackageInstallerItem_DisplayName": "Instalador de paquetes",
+  "PackageInstallerItem_DisplayName_Plural": "Instaladores de paquetes",
+  "PackageInstallerItem_Description": "Un elemento que puede implementar diferentes configuraciones de paquetes en los espacios de trabajo de Fabric"
 }

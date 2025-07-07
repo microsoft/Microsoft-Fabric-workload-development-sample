@@ -4,27 +4,27 @@ import { Text } from "@fluentui/react-components";
 import "./../../../styles.scss";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { GenericItem } from "../../../workload/models/ItemCRUDModel";
-import { SolutionSampleItemDefinition } from "./SolutionSampleItemModel";
-import { SolutionConfigurationSelectionView } from "./SolutionConfigurationSelectionView";
+import { PackageInstallerItemDefinition } from "./PackageInstallerItemModel";
+import { PackageSelectionView } from "./PackageSelectionView";
 
-interface SolutionSampleItemEmptyStateProps {
+interface PackageInstallerItemEmptyStateProps {
   workloadClient: WorkloadClientAPI,
   item: GenericItem;
-  itemDefinition: SolutionSampleItemDefinition,
-  onFinishEmpty: (solutionTypeId: string) => void;
+  itemDefinition: PackageInstallerItemDefinition,
+  onPackageSelected: (packageId: string) => void;
 }
 
-export const SolutionSampleItemEmpty: React.FC<SolutionSampleItemEmptyStateProps> = ({
+export const PackageInstallerItemEditorEmpty: React.FC<PackageInstallerItemEmptyStateProps> = ({
   workloadClient,
   item,
   itemDefinition: definition,
-  onFinishEmpty
+  onPackageSelected: onPackageSelected
 }) => {
 
-  // Handle solution selection
-  const handleSolutionSelected = (solutionTypeId: string) => {
-    console.log(`Selected solution: ${solutionTypeId}`);
-    onFinishEmpty(solutionTypeId);
+  // Handle deployment selection
+  const handlePackageSelected = (packageId: string) => {
+    console.log(`Selected a package: ${packageId}`);
+    onPackageSelected(packageId);
   };
 
   
@@ -32,18 +32,18 @@ export const SolutionSampleItemEmpty: React.FC<SolutionSampleItemEmptyStateProps
     <Stack className="empty-item-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
       <Stack.Item>
         <img
-          src="/assets/samples/items/SolutionSampleItem/EditorEmpty.png"
+          src="/assets/samples/items/PackageInstallerItem/EditorEmpty.png"
           alt="Empty item illustration"
           className="empty-item-image"
         />
       </Stack.Item>
       <Stack.Item>
         <Text as="h2" size={800} weight="semibold">
-          Select a Solution that should be created
+          Select a package that should be deploymed
         </Text>
       </Stack.Item>
       <Stack.Item style={{ width: '100%' }}>
-        <SolutionConfigurationSelectionView onSolutionSelected={handleSolutionSelected} />
+        <PackageSelectionView onPackageSelected={handlePackageSelected} />
       </Stack.Item>
     </Stack>
   );

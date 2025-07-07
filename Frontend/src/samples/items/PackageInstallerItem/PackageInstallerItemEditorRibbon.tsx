@@ -14,7 +14,7 @@ import { PageProps } from 'src/App';
 import './../../../styles.scss';
 import { t } from "i18next";
 
-const SolutionSampleItemEditorRibbonHomeTabToolbar = (props: SolutionSampleItemEditorRibbonProps) => {
+const PackageInstallerItemEditorRibbonHome = (props: PackageInstallerItemEditorRibbonProps) => {
 
   async function onSaveAsClicked() {
     // your code to save as here
@@ -69,7 +69,7 @@ const SolutionSampleItemEditorRibbonHomeTabToolbar = (props: SolutionSampleItemE
   );
 };
 
-export interface SolutionSampleItemEditorRibbonProps extends PageProps {
+export interface PackageInstallerItemEditorRibbonProps extends PageProps {
   isLakehouseConnectEnabled: boolean;
   connectLakehouseCallback: () => void;
   addSolutionCallback: () => void;
@@ -80,7 +80,7 @@ export interface SolutionSampleItemEditorRibbonProps extends PageProps {
 }
 
 
-export function SolutionSampleItemEditorRibbon(props: SolutionSampleItemEditorRibbonProps) {
+export function PackageInstallerItemEditorRibbon(props: PackageInstallerItemEditorRibbonProps) {
   const { onTabChange, selectedTab } = props;
   const onTabSelect = (_: SelectTabEvent, data: SelectTabData) => {
     onTabChange(data.value);
@@ -96,7 +96,7 @@ export function SolutionSampleItemEditorRibbon(props: SolutionSampleItemEditorRi
           {t("ItemEditor_Ribbon_Home_Label")}</Tab>
       </TabList>
       <div className="toolbarContainer">
-        <SolutionSampleItemEditorRibbonHomeTabToolbar {...props} />
+        <PackageInstallerItemEditorRibbonHome {...props} />
       </div>
     </div>
   );

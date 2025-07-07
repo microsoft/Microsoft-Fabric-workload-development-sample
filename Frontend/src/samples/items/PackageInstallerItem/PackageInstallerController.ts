@@ -1,5 +1,5 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { Solution, SolutionConfiguration, SparkDeployConfig, SparkDeployConfigItem, SparkDeployConfigItemDefinition, SolutionDeploymentStatus, SolutionDeploymentType, ItemDefinitionPayloadType, SparkDeployConfigItemDefinitionType } from "./SolutionSampleItemModel";
+import { Deployment, Package, SparkDeployment, SparkDeploymentItem, SparkDeploymentItemDefinition, DeploymentStatus, PackageDeploymentType, PackageItemDefinitionPayloadType, SparkDeploymentItemDefinitionType } from "./PackageInstallerItemModel";
 import { GenericItem } from "../../../workload/models/ItemCRUDModel";
 import { getOneLakeFilePath, writeToOneLakeFileAsText } from "../../controller/OneLakeController";
 import { BatchRequest } from "../../models/SparkLivyModel";
@@ -8,36 +8,36 @@ import { EnvironmentConstants } from "../../../constants";
 import { callCreateItem, callUpdateItemDefinition } from "../../../workload/controller/ItemCRUDController";
 
 
-export async function deploySolution(
+export async function deployPackage(
   workloadClient: WorkloadClientAPI,
   item: GenericItem,
-  solutionConfig: SolutionConfiguration,
-  solution: Solution,
-  lakehouseId: string): Promise<Solution> {
-    switch (solutionConfig.deploymentType) {
-        case SolutionDeploymentType.UX:
-            // For UX deployment, we just copy the solution content to the item
-            return await deploySolutionUX(workloadClient, item, solutionConfig, solution);
-        case SolutionDeploymentType.SparkLivy:
+  pack: Package,
+  deployment: Deployment,
+  lakehouseId: string): Promise<Deployment> {
+    switch (pack.deploymentType) {
+        case PackageDeploymentType.UX:
+            // For UX deployment, we just copy the package content to the item
+            return await deployPackageUX(workloadClient, item, pack, deployment);
+        case PackageDeploymentType.SparkLivy:
             // For Spark Livy deployment, we need to start a batch job
-            return await deploySolutionSparkLivy(workloadClient, item, solutionConfig, solution, lakehouseId);
+            return await deployPackageSparkLivy(workloadClient, item, pack, deployment, lakehouseId);
         default:
-            throw new Error(`Unsupported deployment type: ${solutionConfig.deploymentType}`);
+            throw new Error(`Unsupported deployment type: ${pack.deploymentType}`);
     }
 }
 
-async function deploySolutionUX(
+async function deployPackageUX(
   workloadClient: WorkloadClientAPI,
   item: GenericItem,
-  solutionConfig: SolutionConfiguration,
-  solution: Solution): Promise<Solution> {
-    console.log(`Deploying solution UX for item: ${item.id} with type: ${solutionConfig.typeId}`);
+  pack: Package,
+  deployment: Deployment): Promise<Deployment> {
+    console.log(`Deploying package via UX for item: ${item.id}. Deployment: ${deployment.id} with type: ${pack.typeId}`);
     
-    // Check if items are defined in the solution configuration
-    if (!solutionConfig.items || solutionConfig.items.length === 0) {
-      console.log("No items defined in solution configuration");
-      solution.deploymentStatus = SolutionDeploymentStatus.Succeeded;
-      return solution;
+    // Check if items are defined in the package
+    if (!pack.items || pack.items.length === 0) {
+      console.log("No items defined in package");
+      deployment.status = DeploymentStatus.Succeeded;
+      return deployment;
     }
 
     // Initialize array to store created items
@@ -45,10 +45,10 @@ async function deploySolutionUX(
     
     try {
       // Get target workspace ID, default to the current item's workspace if not specified
-      const targetWorkspaceId = solution.workspaceId ? solution.workspaceId : item.workspaceId;
+      const targetWorkspaceId = deployment.workspaceId ? deployment.workspaceId : item.workspaceId;
       
-      // Create each item defined in the solution configuration
-      for (const itemDef of solutionConfig.items) {
+      // Create each item defined in the package
+      for (const itemDef of pack.items) {
         console.log(`Creating item: ${itemDef.name} of type: ${itemDef.itemType}`);
         
         // Create the item using ItemCRUDController
@@ -72,12 +72,12 @@ async function deploySolutionUX(
             
             // Handle different payload types
             switch (defPart.payloadType) {
-              case ItemDefinitionPayloadType.Asset:
+              case PackageItemDefinitionPayloadType.Asset:
                 // Fetch content from the asset and encode as base64
                 const assetContent = await getAssetContent(defPart.payload);
                 payloadData = btoa(assetContent); // Convert to base64 string
                 break;
-              case ItemDefinitionPayloadType.Link:
+              case PackageItemDefinitionPayloadType.Link:
                 // Download content from the link via HTTP and encode as base64
                 try {
                   const response = await fetch(defPart.payload);
@@ -91,7 +91,7 @@ async function deploySolutionUX(
                   throw new Error(`Failed to process link: ${error.message}`);
                 }
                 break;
-              case ItemDefinitionPayloadType.InlineBase64:
+              case PackageItemDefinitionPayloadType.InlineBase64:
                 // Use base64 payload directly
                 payloadData = defPart.payload;
                 break;
@@ -122,45 +122,45 @@ async function deploySolutionUX(
         createdItems.push(newItem);
       }
       
-      // Create a copy of the solution with updated status and created items
-      const updatedSolution: Solution = {
-        ...solution,
+      // Create a copy of the deployment with updated status and created items
+      const updatedDeployment: Deployment = {
+        ...deployment,
         itemsCreated: createdItems,
-        deploymentStatus: SolutionDeploymentStatus.Succeeded
+        status: DeploymentStatus.Succeeded
       };
       
-      return updatedSolution;
+      return updatedDeployment;
       
     } catch (error) {
       console.error(`Error in UX deployment: ${error}`);
       
-      // Return a copy of the solution with failed status
-      const failedSolution: Solution = {
-        ...solution,
-        deploymentStatus: SolutionDeploymentStatus.Failed
+      // Return a copy of the deployment with failed status
+      const failedDeployment: Deployment = {
+        ...deployment,
+        status: DeploymentStatus.Failed
       };
       
-      return failedSolution;
+      return failedDeployment;
     }
 }
 
 
-async function deploySolutionSparkLivy(
+async function deployPackageSparkLivy(
   workloadClient: WorkloadClientAPI,
   item: GenericItem,
-  solutionConfig: SolutionConfiguration,
-  solution: Solution,
-  lakehouseId: string): Promise<Solution> {
-    console.log(`Deploying solution Spark Livy for item: ${item.id} with type: ${solutionConfig.typeId}`);
-    const sparkDeploymentConf = await copySolutionContentToItem(workloadClient, item, solutionConfig, solution);
-    const retVal = await startDeploymentJob(workloadClient, item, solution, sparkDeploymentConf, lakehouseId);
+  pack: Package,
+  deployment: Deployment,
+  lakehouseId: string): Promise<Deployment> {
+    console.log(`Deploying package via Spark Livy for item: ${item.id}. Deployment: ${deployment.id} with type: ${pack.typeId}`);
+    const sparkDeploymentConf = await copyPackageContentToItem(workloadClient, item, pack, deployment);
+    const retVal = await startDeploymentJob(workloadClient, item, deployment, sparkDeploymentConf, lakehouseId);
     return retVal;
 }
 
 
-function getContentSubPath(typeName: string, path: string): string {
+function getContentSubPath(packageType: string, path: string): string {
   const fileReference = path.substring(path.lastIndexOf("/") + 1)
-  const contentSubPath = `${typeName}/${fileReference}`
+  const contentSubPath = `${packageType}/${fileReference}`
   return contentSubPath;
 }
 
@@ -183,10 +183,10 @@ async function getAssetContent(path: string): Promise<string> {
 async function copyAssetToOneLake(
   workloadClient: WorkloadClientAPI,
   item: GenericItem,
-  solutionType: string,
+  packageType: string,
   path: string): Promise<string> {
     const assetContent = await getAssetContent(path);
-    const destinationSubPath = `Solutions/${getContentSubPath(solutionType, path)}`;
+    const destinationSubPath = `Packages/${getContentSubPath(packageType, path)}`;
     const destionationPath = getOneLakeFilePath(item.workspaceId, item.id, destinationSubPath);
     await writeToOneLakeFileAsText(workloadClient, destionationPath, assetContent);
     const fullPath = EnvironmentConstants.OneLakeDFSBaseUrl + "/"+ destionationPath;
@@ -194,28 +194,28 @@ async function copyAssetToOneLake(
 }
 
 
-async function copySolutionContentToItem(
+async function copyPackageContentToItem(
   workloadClient: WorkloadClientAPI,
   item: GenericItem,
-  solutionConfig: SolutionConfiguration,
-  solution: Solution) : Promise<SparkDeployConfig>{
+  pack: Package,
+  deployment: Deployment) : Promise<SparkDeployment>{
  
-    console.log(`Copying solution content for item: ${item.id} with type: ${solutionConfig.typeId}`);
-    const sparkDeploymentConf: SparkDeployConfig = {
-      targetWorkspaceId: solution.workspaceId ? solution.workspaceId : item.workspaceId,
-      targetSubfolderId: solution.subfolderId,
-      solutionId: solution.id,
+    console.log(`Copying package content for item: ${item.id} and package type: ${pack.typeId}`);
+    const sparkDeploymentConf: SparkDeployment = {
+      targetWorkspaceId: deployment.workspaceId ? deployment.workspaceId : item.workspaceId,
+      targetFolderId: deployment.folderId,
+      deploymentId: deployment.id,
       items: [],
       deploymentScript: ""
     }
 
-    //copying all the solution item definitions to the a onelake folder in the item
-    solution.itemsCreated = [];
-    solution.deploymentStatus = SolutionDeploymentStatus.InProgress;
+    //copying all the package item definitions to the a onelake folder in the item
+    deployment.itemsCreated = [];
+    deployment.status = DeploymentStatus.InProgress;
     
     // Use Promise.all to wait for all async operations to complete
-    const itemPromises = solutionConfig.items.map(async (configItem) => {
-      const itemConfig: SparkDeployConfigItem = {
+    const itemPromises = pack.items.map(async (configItem) => {
+      const itemConfig: SparkDeploymentItem = {
           name: configItem.name,
           description: configItem.description,
           itemType: configItem.itemType,
@@ -224,31 +224,31 @@ async function copySolutionContentToItem(
       
       // Process all item definitions in parallel and wait for them all to complete
       await Promise.all(configItem.itemDefinitions.map(async (itemDefinitionReference) => {
-          const definitionPart: SparkDeployConfigItemDefinition = {
+          const definitionPart: SparkDeploymentItemDefinition = {
             path: itemDefinitionReference.path,
             payload: undefined,
             payloadType: undefined
           }
           switch (itemDefinitionReference.payloadType) {
-            case ItemDefinitionPayloadType.Asset:
+            case PackageItemDefinitionPayloadType.Asset:
             //writing all the metadata files to the item in OneLake
               definitionPart.payload = await copyAssetToOneLake(
                   workloadClient,
                   item,
-                  solutionConfig.typeId,
+                  pack.typeId,
                   itemDefinitionReference.payload
               );
               //var itemAbfssReference = convertOneLakeLinktoABFSSLink(definitionDestPath, item.workspaceId);
-              definitionPart.payloadType = SparkDeployConfigItemDefinitionType.OneLake;
+              definitionPart.payloadType = SparkDeploymentItemDefinitionType.OneLake;
               break;
-            case ItemDefinitionPayloadType.Link:
+            case PackageItemDefinitionPayloadType.Link:
               // If the reference is a link, we just use the fileReference as the path
               definitionPart.payload = itemDefinitionReference.payload;
-              definitionPart.payloadType = SparkDeployConfigItemDefinitionType.Link;
+              definitionPart.payloadType = SparkDeploymentItemDefinitionType.Link;
               break;
-            case ItemDefinitionPayloadType.InlineBase64:
+            case PackageItemDefinitionPayloadType.InlineBase64:
               definitionPart.payload = itemDefinitionReference.payload;
-              definitionPart.payloadType = SparkDeployConfigItemDefinitionType.InlineBase64;
+              definitionPart.payloadType = SparkDeploymentItemDefinitionType.InlineBase64;
               break;
             default:
               throw new Error(`Unsupported item definition reference type: ${itemDefinitionReference.payloadType}`);  
@@ -266,8 +266,8 @@ async function copySolutionContentToItem(
     const deploymentFileDestPath = await copyAssetToOneLake(
                   workloadClient,
                   item,
-                  solutionConfig.typeId,
-                  solutionConfig.deploymentFile
+                  pack.typeId,
+                  pack.deploymentFile
               );
     console.log(`Successfully uploaded deployment script to OneLake: ${deploymentFileDestPath}`);
     // Create the OneLake file path URL for the batch job
@@ -286,31 +286,31 @@ async function copySolutionContentToItem(
 export async function startDeploymentJob(
   workloadClient: WorkloadClientAPI,
   item: GenericItem,
-  solution: Solution,
-  sparkDeploymentConf: SparkDeployConfig,
-  lakehouseId: string) : Promise<Solution>{
+  deployment: Deployment,
+  sparkDeployment: SparkDeployment,
+  lakehouseId: string) : Promise<Deployment>{
 
     if(lakehouseId === undefined || lakehouseId === null || lakehouseId === "") {
-        throw new Error("Lakehouse ID is not defined for the solution deployment.");
+        throw new Error("Lakehouse ID is not defined for the package deployment.");
     }
   
      // Construct batch request with proper parameters
     const batchRequest: BatchRequest = {
-        name: `${item.displayName} - Deployment - ${solution.typeId} - ${solution.id}`,
-        file: sparkDeploymentConf.deploymentScript,
+        name: `${item.displayName} - Deployment - ${deployment.packageId} - ${deployment.id}`,
+        file: sparkDeployment.deploymentScript,
         args: [],
         conf: {          
         "spark.itemId": item.id,
         "spark.itemWorkspaceId": item.workspaceId,
-        "spark.solutionType": solution.typeId,
-        "spark.deploymentConfiguration": JSON.stringify(sparkDeploymentConf),
+        "spark.packageType": deployment.packageId,
+        "spark.deployment": JSON.stringify(sparkDeployment),
         //TODO: add the deployment configuration
         // Using the default environment with added librar textblob
         //"spark.fabric.environmentDetails" : "{\"id\" : \"<ID>\"}"
         },
         tags: {
             source: "Solution Deployment",
-            analysisType: solution.typeId
+            analysisType: deployment.packageId
         }
     };
     
@@ -326,9 +326,9 @@ export async function startDeploymentJob(
     
     // Update the configuration with batch information
     const retVal  = {
-        ...solution,
+        ...deployment,
         deploymentJobId: batchResponse.id,
-        deploymentStatus: SolutionDeploymentStatus.InProgress,
+        deploymentStatus: DeploymentStatus.InProgress,
     };
 
     return retVal;
