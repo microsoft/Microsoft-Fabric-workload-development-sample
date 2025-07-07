@@ -159,7 +159,7 @@ export async function saveItemDefinition<T>(
 
         return callUpdateItemDefinition(workloadClient, itemId, [
         { 
-            payloadPath: ItemDefinitionPath.ItemMetadata, 
+            payloadPath: ItemDefinitionPath.Default, 
             payloadData: definition
         }], false);
 }
@@ -290,7 +290,7 @@ export function convertGetItemResultToWorkloadItem<T>(
     let itemPlatformMetadata: GenericItem | undefined;
     if (itemDefinitionResult?.definition?.parts) {
         try {
-            const itemMetadata = itemDefinitionResult.definition.parts.find((part) => part.path === ItemDefinitionPath.ItemMetadata);
+            const itemMetadata = itemDefinitionResult.definition.parts.find((part) => part.path === ItemDefinitionPath.Default);
             payload = itemMetadata ? JSON.parse(atob(itemMetadata?.payload)) : undefined;
 
             const platformDefinition = itemDefinitionResult.definition.parts.find((part) => part.path === ItemDefinitionPath.Platform);

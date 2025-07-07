@@ -59,7 +59,7 @@ export interface ItemCreationSuccessData {
 * The paths are used to read and write files in the item payload.
 */
 export enum ItemDefinitionPath {
-    ItemMetadata = "Item/metadata.json",
+    Default = "definition.json",
     Platform = ".platform",
 }
 
