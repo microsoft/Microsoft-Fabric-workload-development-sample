@@ -15,7 +15,7 @@ import { AvailablePackages, Deployment, DeploymentStatus } from "./PackageInstal
 import { GenericItem } from "../../../workload/models/ItemCRUDModel";
 import { NotificationType, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { callNotificationOpen } from "../../../workload/controller/NotificationController";
-import { deployPackage } from "./PackageInstallerController";
+import { deployPackage } from "./DeploymentController";
 
 // Props for the PackageDetailCard component
 export interface DeploymentDetailViewProps {
