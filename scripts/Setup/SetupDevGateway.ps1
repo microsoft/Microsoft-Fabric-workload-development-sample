@@ -20,30 +20,30 @@ if((Test-Path $devGatewayDir) -and !$Force) {
 }
 if ($downloadDevGateway -eq "y") {
     $DEV_GATEWAY_DOWNLOAD_URL = "https://download.microsoft.com/download/c/4/a/c4a0a569-87cd-4633-a81e-26ef3d4266df/DevGateway.zip"
-    Write-Host "📥 Downloading DevGateway..."
-    if (!(Test-Path $devGatewayDir)) {   
-        try {
-            if ($IsWindows) {
-            $tempDir = $env:TEMP
-         } else {
-            $tempDir = $env:TMPDIR
-        }
-        
-            # Example usage:
-            $tempZipPath = Join-Path $tempDir "DevGateway-tmp.zip"
+    Write-Host "📥 Downloading DevGateway..."       
+    try {
+        if ($IsWindows) {
+        $tempDir = $env:TEMP
+        } else {
+        $tempDir = $env:TMPDIR
+    }
+    
+        # Example usage:
+        $tempZipPath = Join-Path $tempDir "DevGateway-tmp.zip"
+        if (!(Test-Path $devGatewayDir)) {
             New-Item -ItemType Directory -Path $devGatewayDir | Out-Null 
-            # Download the ZIP file
-            Invoke-WebRequest -Uri $DEV_GATEWAY_DOWNLOAD_URL -OutFile $tempZipPath
-            # Extract the ZIP file
-            Expand-Archive -Path $tempZipPath -DestinationPath $devGatewayDir -Force
-            # Remove the temporary ZIP file
-            Remove-Item $tempZipPath
-            Write-Host "✅ DevGateway downloaded and extracted to $devGatewayDir"
         }
-        catch {
-            Write-Host "❌ Failed to download or extract DevGateway: $_"
-            exit 1
-        }
+        # Download the ZIP file
+        Invoke-WebRequest -Uri $DEV_GATEWAY_DOWNLOAD_URL -OutFile $tempZipPath
+        # Extract the ZIP file
+        Expand-Archive -Path $tempZipPath -DestinationPath $devGatewayDir -Force
+        # Remove the temporary ZIP file
+        Remove-Item $tempZipPath
+        Write-Host "✅ DevGateway downloaded and extracted to $devGatewayDir"
+    }
+    catch {
+        Write-Host "❌ Failed to download or extract DevGateway: $_"
+        exit 1
     }
 }
 else {
