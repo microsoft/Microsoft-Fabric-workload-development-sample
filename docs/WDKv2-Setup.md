@@ -43,15 +43,15 @@ You can leverage the [CreateDevAADApp.ps1](./../scripts/Setup/CreateDevAADApp.ps
     ![Setup Step 1](./media/Setup-EntraApp-Registration.jpg)
 4. Add the following SPA redirectURIs to the application manifest:
 
-a. https://app.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
+a. https://app.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadName}
 
-b. https://app.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
+b. https://app.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadName}
 
-c. https://msit.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
+c. https://msit.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadName}
 
-d. https://msit.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
+d. https://msit.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadName}
 
-You can find your Workload ID in the `WorkloadManifest.xml` as the value `WorkloadName`.
+You can find your Workload name in the `WorkloadManifest.xml` as the value `WorkloadName`.
 
 Looking for your Tenant ID? Follow these steps:
 

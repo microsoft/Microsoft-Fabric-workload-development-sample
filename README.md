@@ -82,6 +82,7 @@ git clone -b dev/preview/wdkv2 https://github.com/microsoft/Microsoft-Fabric-wor
 ```
 .\Setup.ps1 -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -AADFrontendAppId "00000000-0000-0000-0000-000000000000" -WorkspaceId "00000000-0000-0000-0000-000000000000"
 ```
+* If you want to use an existing Entra application, make sure to configure the SPA redirect URIs in the application's manifest as described in this [section](docs/WDKv2-Setup.md#register-a-frontend-entra-application).
 * Follow the guidance the Script provides to get everyting setup
 
 Alternatively you can use the documentation for a step-by-step guide to getting your environment set up and your first workload up and running: [Getting Started](/docs/WDKv2-Setup.md).
