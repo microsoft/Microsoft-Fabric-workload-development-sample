@@ -92,9 +92,9 @@ Get-ChildItem -Recurse -Path $srCodeDir -File |
         Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
     }
 # assets
-$srcFile = Join-Path  $PSScriptRoot "..\..\Frontend\src\assets\workload\items\${srcItemName}\ItemEditorEmpty.jpg"
+$srcFile = Join-Path  $PSScriptRoot "..\..\Frontend\src\assets\workload\items\${srcItemName}\EditorEmpty.jpg"
 if (Test-Path $srcFile) {
-    $targetFile = Join-Path $PSScriptRoot "..\..\Frontend\src\assets\workload\items\${itemName}\ItemEditorEmpty.jpg"
+    $targetFile = Join-Path $PSScriptRoot "..\..\Frontend\src\assets\workload\items\${itemName}\EditorEmpty.jpg"
     Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
 } else {
     Write-Host "Couldn't find ${srcFile}" -ForegroundColor Red
