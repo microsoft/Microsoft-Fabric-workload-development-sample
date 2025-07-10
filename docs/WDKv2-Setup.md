@@ -11,23 +11,21 @@ We look forward to hearing your feedback and good luck!
 
 ## Setup your workload
 
-First things first, let's make sure you have a workload setup. 
-
-For this we have provided scripts that will help you set everything up in the [Scripts/Setup](./scripts/Setup/) folder of this repository. 
-
-The easiest way to get startet is by running the [Setup.ps1](./scripts/Setup/Setup.ps1) Script in your local repository with your configuration parameters.
+To make it easy as possible we have created a [Setup.ps1](./scripts/Setup/Setup.ps1) script that will do all the work for you. This will replace all the manual steps that we are discribing in the next section. The setup script can e run without any parameters. While running it will ask you about the parameters that it nees to configure everything. You can specify certain parameters (see example below) in case you alreay have an existing Entra App or you want to change the default values like the Workload or item name.
 
 ```
 .\Setup.ps1 -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -AADFrontendAppId "00000000-0000-0000-0000-000000000000" -WorkspaceId "00000000-0000-0000-0000-000000000000"
 ```
 
-After that follow the guidance the script is providing you. 
+After the script finished successfully your enviroment is configured and ready to go. The Script will provide you with addtional information on the next steps to see your Workload light up in Fabric.
+
+### Error handling
 
 In case you are getting an error similar to the one below please make sure you have the latest Powershell installed and configured in the enviroment you run the script. 
 
 ![Powershell setup error](./media/Powershell-setup-error.png)
 
-## Setup your workload manually
+## Manual workload setup
 
 If you are new to the Workload Development Kit, follow our [setup instructions](https://learn.microsoft.com/en-us/fabric/workload-development-kit/environment-setup) before you proceed to ensure you have the prerequisites that you need to continue. Then, clone this version of the WDK.
 
@@ -85,15 +83,16 @@ The next step is to configure your workload to make use of the new Frontend App.
 ## Test your workload
 
 ### Run your workload:
-After you have completed all of the above steps, you are ready to test the workload. 
-Start the workload in development mode: 
-1.	Run `npm start` from within the Frontend folder
-1.	Navigate to the Fabric portal. Head to the Admin Portal settings and enable the following tenant settings:
+After you have completed all of the above steps, you are ready to test the workload.
+Start the workload in development mode:
+1.Run [StartFrontend.ps1](../scripts/Run/StartFrontend.ps1) to start the Frontend
+2.Run [StartDevGateway.ps1](../scripts/Run/StartDevGateway.ps1) to register your local development instance with Fabric
+3.Navigate to the Fabric portal. Head to the Admin Portal settings and enable the following tenant settings:
   ![Setup Test](./media/Setup-Test-1.jpg)
-2.	Navigate to the Fabric Developer Settings and enable the Fabric Developer Mode:
+4.Navigate to the Fabric Developer Settings and enable the Fabric Developer Mode:
    ![Setup Test](./media/Setup-Test-2.jpg)
-4. Find the [`config/DevGateway/workload-dev-mode.json`](../config/DevGateway/workload-dev-mode.json) file. Fill in `ManifestPackageFilePath` with the path to your project directory and the `WorkspaceGuid`.	
-5. Start the Development Gateway:
+
+You are ready to go to create your first Hello World Item in Fabric.
 
 [!NOTE]
 >If you're not using Windows, you might find it easier to run the DevGateway in a Docker container as described in [DevGateway Container](https://github.com/microsoft/Microsoft-Fabric-workload-development-sample/blob/main/tools/DevGatewayContainer/README.md).
