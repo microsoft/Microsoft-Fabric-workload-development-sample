@@ -1,25 +1,24 @@
 # Manual workload setup
 
-If you are starting we recommend to use the [Setup.ps1](./scripts/Setup/Setup.ps1) script that will do all the work for you. In case you are interested in the details or try to skip some steps below is the information on how to configure the repository manualy.
+If you are starting we recommend to use the [Setup.ps1](../scripts/Setup/Setup.ps1) script that will do all the work for you. In case you are interested in the details or try to skip some steps below is the information on how to configure the repository manualy.
 
-## Register a Frontend Entra Application:
+## Register a Frontend Entra Application
 
-You can leverage the [CreateDevAADApp.ps1](./../scripts/Setup/CreateDevAADApp.ps1) to create a new Entra app or you can follow the steps below.
-
+You can leverage the [CreateDevAADApp.ps1](../scripts/Setup/CreateDevAADApp.ps1) to create a new Entra app or you can follow the steps below.
 
 1. Navigate to App registrations in the [Azure Admin Portal](https://entra.microsoft.com/?culture=en-us&country=us#view/Microsoft_AAD_IAM/StartboardApplicationsMenuBlade/~/AppAppsPreview).
 2. Create a new Multitenant application.
 
     ![Setup Step 1](./media/Setup-EntraApp-Registration.jpg)
-4. Add the following SPA redirectURIs to the application manifest:
+3. Add the following SPA redirectURIs to the application manifest:
 
-a. https://app.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
+    a. https://app.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
 
-b. https://app.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
+    b. https://app.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
 
-c. https://msit.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
+    c. https://msit.fabric.microsoft.com/workloadSignIn/{publisherTenantId}/{workloadId}
 
-d. https://msit.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
+    d. https://msit.powerbi.com/workloadSignIn/{publisherTenantId}/{workloadId}
 
 You can find your Workload ID in the `WorkloadManifest.xml` as the value `WorkloadName`.
 
@@ -36,17 +35,17 @@ Looking for your Tenant ID? Follow these steps:
 ![Get Tenant Info Step 2](./media/Get-tenant-info-2.jpg)
 
 *Figure: Locating Tenant ID and Tenant Region in the About dialog.*
- 
-## Configure your Workload to use the Frontend App: 
 
-The next step is to configure your workload to make use of the new Frontend App. 
+## Configure your Workload to use the Frontend App
 
-1.	Open the “Frontend/.env.dev” file and insert your workload name in the “WORKLOAD_NAME” configuration property and your frontend application client id in the “DEV_AAD_FE_CONFIG_APPID” configuration property.
-2.	Run `npm install`
+The next step is to configure your workload to make use of the new Frontend App.
 
-## Change the Workload Manifest:
+1. Open the “Frontend/.env.dev” file and insert your workload name in the “WORKLOAD_NAME” configuration property and your frontend application client id in the “DEV_AAD_FE_CONFIG_APPID” configuration property.
+2. Run `npm install`
 
-1.	Open the “WorkloadManifest.xml”
-2.	Make sure the  workload manifest “schemaVersion” is “2.000.0”.
-3.	Make sure the HostingType is “FERemote”
-4.	Under the “CloudServiceConfiguration”, add an “AADFEApp” element with an “AppId” of the workload frontend Entra application.
+## Change the Workload Manifest
+
+1. Open the “WorkloadManifest.xml”
+2. Make sure the  workload manifest “schemaVersion” is “2.000.0”.
+3. Make sure the HostingType is “FERemote”
+4. Under the “CloudServiceConfiguration”, add an “AADFEApp” element with an “AppId” of the workload frontend Entra application.
