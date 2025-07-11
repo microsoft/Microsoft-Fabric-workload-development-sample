@@ -23,8 +23,7 @@
         "ms-vscode.powershell",
         "ms-vscode.azurecli",
         "GitHub.copilot",
-        "ms-dotnettools.vscode-dotnet-runtime",
-        "ms-vscode.vscode-typescript-tslint-plugin"
+        "ms-dotnettools.vscode-dotnet-runtime"
       ],
       "settings": {
         "terminal.integrated.defaultProfile.linux": "pwsh",
