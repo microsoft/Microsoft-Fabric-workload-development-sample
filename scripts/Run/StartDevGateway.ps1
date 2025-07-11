@@ -39,6 +39,5 @@ $logLevel = "Information"
 if($IsWindows) { 
     & $fileExe -DevMode:LocalConfigFilePath $CONFIGURATIONFILE
 } else {   
-    Write-Host "dotnet $fileExe -DevMode:UserAuthorizationToken $token -DevMode:ManifestPackageFilePath $manifestPackageFilePath -DevMode:WorkspaceGuid $workspaceGuid -DevMode:WorkloadEndpointUrl $workloadEndpointURL"  
     & dotnet $fileExe -LogLevel $logLevel -DevMode:UserAuthorizationToken $token -DevMode:ManifestPackageFilePath $manifestPackageFilePath -DevMode:WorkspaceGuid $workspaceGuid -DevMode:WorkloadEndpointUrl $workloadEndpointURL
 }
