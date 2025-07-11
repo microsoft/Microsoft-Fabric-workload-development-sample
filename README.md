@@ -65,10 +65,12 @@ To run the development enviroment locally you need the follwoing components:
 
 * [Node.js](https://nodejs.org/en/download/)
 * [Powershell 7](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
+* [Dotnet](https://dotnet.microsoft.com/en-us/download)
 * [VSCode](https://code.visualstudio.com/download) or simmilar development enviroment
 * [Fabric Tenant](https://app.fabric.microsoft.com/) that you use for development and publishing the Workload later on
 * [Fabric Workspace](https://learn.microsoft.com/en-us/fabric/fundamentals/workspaces) that you can use to build your workload
 * [Fabric Capacity](https://learn.microsoft.com/en-us/fabric/enterprise/licenses) that is assigned to the workspace you are planning to use
+* [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest) (only used for Entra App creation)
 * [Entra App](https://entra.microsoft.com/) You either need an existing Entra App you can use that is [configured](./docs/WDKv2-How-To.md) corectly or you need permission to create a new Entra App.
 
 #### Setting things up
