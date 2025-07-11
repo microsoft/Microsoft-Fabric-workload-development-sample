@@ -24,6 +24,12 @@ To make it easy as possible we have created a [Setup.ps1](../scripts/Setup/Setup
 * If you want to use an existing Entra application, make sure to configure the SPA redirect URIs in the application's manifest as described in this [section](./WDKv2-Setup-Manual.md#register-a-frontend-entra-application).
 * Follow the guidance the Script provides to get everyting setup
 
+For Mac and Linux use pwsh to start the powershell Scripts:
+
+```bash
+pwsh .\Setup.ps1 -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -AADFrontendAppId "00000000-0000-0000-0000-000000000000" -WorkspaceId "00000000-0000-0000-0000-000000000000"
+```
+
 After the script finished successfully your enviroment is configured and ready to go. The Script will provide you with addtional information on the next steps to see your Workload light up in Fabric.
 
 ### Error handling
@@ -45,16 +51,6 @@ Start the workload in development mode:
    ![Setup Test](./media/Setup-Test-2.jpg)
 
 You are ready to create your first Hello World Item in Fabric.
-
-[!NOTE]
->If you're not using Windows, you might find it easier to run the DevGateway in a Docker container as described in [DevGateway Container](../tools/DevGatewayContainer/README.md).
-
-1.Open **PowerShell** and navigate to the **DevGateway** folder.
-2.Run the command:
-.\Microsoft.Fabric.Workload.DevGateway.exe -DevMode:<absolute_path_to_workload-dev-mode.json>
-When the output shows the message *info: DevGateway started*. the workload is running successfully.
-
-After this step you are all set to start creating your own item in Fabric.
 
 ## Test the sample workload
 
