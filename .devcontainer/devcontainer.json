@@ -39,5 +39,8 @@
   "forwardPorts": [3000, 60006],
   "postCreateCommand": "npm install -g typescript && cd Frontend && npm install",
   "remoteUser": "vscode",
-  "runArgs": ["--init"]
+  "runArgs": ["--init", "--memory=4g", "--memory-swap=4g"],
+  "containerEnv": {
+    "NODE_OPTIONS": "--max-old-space-size=4096"
+  }
 }
