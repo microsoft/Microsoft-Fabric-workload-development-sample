@@ -1,0 +1,31 @@
+{
+  "name": "Microsoft Fabric Workload Development",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-dotnettools.csharp",
+        "ms-vscode.powershell",
+        "ms-azuretools.vscode-azurefunctions",
+        "ms-azuretools.vscode-azureresourcegroups",
+        "ms-vscode.azure-account",
+        "ms-vscode.azurecli",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "GitHub.copilot",
+        "ms-dotnettools.vscode-dotnet-runtime",
+        "ms-vscode.vscode-typescript-tslint-plugin"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "pwsh"
+      }
+    }
+  },
+  "forwardPorts": [3000, 60006],
+  "postCreateCommand": "npm install -g typescript && cd Frontend && npm install && npm install -g azure-functions-core-tools@4 --unsafe-perm true",
+  "remoteUser": "root",
+  "runArgs": ["--init"]
+}
