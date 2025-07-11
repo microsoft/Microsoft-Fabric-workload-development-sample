@@ -1,3 +1,3 @@
 # Migration from WDKv1
 
-If you already have a workload from WDKv1, you can either move on to the next step and migrate your existing workload or you can opt to clone this latest version of our sample which also contains code to demonstrate how to call the public APIs - either option will work fine.
+We are working on a detailed documenation for existing WDKv1 partners. If you have any questions already please reach out over e-mail to the [Fabric Workload Submission Team](mailto:fabric_wdt_submission@service.microsoft.com>) or book some time with us in the [Workload Development Kit Office hours](https://emea.mail.microsoft.com/book/WorkloadDevelopmentKitPartnerofficehours@bookings.microsoft.com/?ismsaljsauthenabled=true)

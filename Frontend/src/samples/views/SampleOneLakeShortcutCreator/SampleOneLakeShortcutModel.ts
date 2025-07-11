@@ -19,6 +19,28 @@ export interface OneLakeShortcutCreateRequest {
     path: string;
     name: string;
     target: OneLakeShortcutTarget;
+    transform?: CsvToDeltaTransform;
+}
+
+/**
+ * CsvToDeltaTransform
+ * This interface defines a transformation that converts CSV files to Delta format.
+ * It includes properties for the delimiter, whether to skip files with errors, and whether to use the first row as a header.
+ */
+export interface CsvToDeltaTransform {
+    type: "csvToDelta";
+    parameters: CsvToDeltaTransformProperties;
+}
+
+/**
+ * CsvToDeltaTransformProperties
+ * This interface defines the properties for the CSV to Delta transformation.
+ * It includes the delimiter, whether to skip files with errors, and whether to use the first row as a header.
+ */
+export interface CsvToDeltaTransformProperties {
+    delimiter: string;
+    skipFilesWithErrors: boolean;
+    useFirstRowAsHeader: boolean;
 }
 
 /**

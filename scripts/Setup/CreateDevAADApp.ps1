@@ -91,7 +91,9 @@ if ($HostingType -eq "FERemote") {
             redirectUris = @(
                 $redirectUri
                 "https://app.powerbi.com/workloadSignIn/$TenantId/$WorkloadName"
-                "https://fabric.microsoft.com/workloadSignIn/$TenantId/$WorkloadName"
+                "https://app.fabric.microsoft.com/workloadSignIn/$TenantId/$WorkloadName"
+                "https://msit.powerbi.com/workloadSignIn/$TenantId/$WorkloadName"
+                "https://msit.fabric.microsoft.com/workloadSignIn/$TenantId/$WorkloadName"
             )
         }
         identifierUris = @($applicationIdUri)
