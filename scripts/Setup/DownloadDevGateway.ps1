@@ -26,6 +26,9 @@ if ($downloadDevGateway -eq "y") {
             # On macOS, TMPDIR is usually set to /tmp
             # but we can also use $env:TMPDIR
             $tempDir = $env:TMPDIR
+        } else {        
+            Write-Host "❌ Unsupported operating system. Exiting."
+            exit 1
         }
         # Example usage:
         $tempZipPath = Join-Path $tempDir "DevGateway-tmp.zip"
