@@ -3,16 +3,26 @@ Write-Host "Building Nuget Package ..."
 ################################################
 # Build the current nuget package
 ################################################
-$nugetPath = Join-Path $PSScriptRoot "..\..\Frontend\node_modules\.bin\nuget.ps1"
+$nugetPath = Join-Path $PSScriptRoot "..\..\Frontend\node_modules\nuget-bin\nuget.exe"
 $nuspecPath = Join-Path $PSScriptRoot "..\..\config\Manifest\ManifestPackage.nuspec"
 $outputDir = Join-Path $PSScriptRoot "..\..\config\Manifest\"
+
+if (-not (Test-Path $nugetPath)) {
+    Write-Host "Nuget executable not found at $nugetPath will run npm install to get it."
+    $frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
+    try {
+        Push-Location $frontendDir
+        npm install
+    } finally {
+        Pop-Location
+    }
+}
 
 if($IsWindows){
     & $nugetPath pack $nuspecPath -OutputDirectory $outputDir -Verbosity detailed
 } else {
-    # On Mac and Linux, we need to use pwsh to run the script
-    $pwshPath = "pwsh"
-    & $pwshPath $nugetPath pack $nuspecPath -OutputDirectory $outputDir -Verbosity detailed
+    # On Mac and Linux, we need to use mono to run the script
+    & mono $nugetPath pack $nuspecPath -OutputDirectory $outputDir -Verbosity detailed
 }
 
 Write-Host "Nuget package built successfully and saved to $outputDir"
@@ -22,9 +32,9 @@ Write-Host "Nuget package built successfully and saved to $outputDir"
 ################################################
 Write-Host ""
 Write-Host "Starting the Frontend ..."
+$frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
+Push-Location $frontendDir
 try {
-    $frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
-    Push-Location $frontendDir
     npm start
 } finally {
     Pop-Location
