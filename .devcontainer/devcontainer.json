@@ -1,6 +1,9 @@
 {
   "name": "Microsoft Fabric Workload Development",
-  "image": "mcr.microsoft.com/dotnet/aspnet:8.0",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
   "features": {
     "ghcr.io/devcontainers/features/node:1": {
       "version": "lts"
@@ -35,7 +38,7 @@
     }
   },
   "forwardPorts": [3000, 60006],
-  "postCreateCommand": "apt-get update && apt-get install -y mono-complete && npm install -g typescript && cd Frontend && npm install",
+  "postCreateCommand": "npm install -g typescript && cd Frontend && npm install",
   "remoteUser": "vscode",
   "runArgs": ["--init"]
 }

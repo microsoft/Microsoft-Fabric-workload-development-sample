@@ -16,16 +16,18 @@ This directory contains the configuration for GitHub Codespaces and Visual Studi
 The following ports are forwarded from the container to your local machine:
 
 - **3000**: For frontend development
-- **60006**: For DevGateway communication
+- **60006**: This is where the Fabric frontend is hosted
 
 ## Getting Started
 
 1. Open this repository in GitHub Codespaces or using VS Code Remote Containers
 2. Wait for the container to build and initialize
 3. Run the setup script to configure your development environment:
+
    ```powershell
    .\scripts\Setup\Setup.ps1
    ```
+
 4. Follow the instructions in the main [README.md](../README.md) to start developing
 
 ## Customizing the Configuration
