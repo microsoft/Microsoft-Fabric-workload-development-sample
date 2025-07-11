@@ -3,17 +3,13 @@ Write-Host "Building Nuget Package ..."
 ################################################
 # If its a codespace we need to update the URL in the manifest
 ################################################
-
 if ($env:CODESPACES -eq "true") {
     Write-Host "Running in Codespace, updating the URL in the manifest..."
     $manifestFilePath = Join-Path $PSScriptRoot "..\..\config\Manifest\WorkloadManifest.xml"
     [xml]$manifest = Get-Content -Path $manifestFilePath
-    $manifest.WorkloadManifestConfiguration.Workload.RemoteServiceConfiguration.CloudServiceConfiguration.Endpoints.ServiceEndpoint.Url = "https://$($env:CODESPACE_NAME).github.dev:60006/"
+    $manifest.WorkloadManifestConfiguration.Workload.RemoteServiceConfiguration.CloudServiceConfiguration.Endpoints.ServiceEndpoint.Url = "https://$($env:CODESPACE_NAME)-60006.app.github.dev/"
     $manifest.Save($manifestFilePath)
-} else {
-    Write-Host "Not running in Codespace, using default URL."
-}
-
+} 
 
 ################################################
 # Build the current nuget package
@@ -37,7 +33,7 @@ if($IsWindows){
     & $nugetPath pack $nuspecPath -OutputDirectory $outputDir -Verbosity detailed
 } else {
     # On Mac and Linux, we need to use mono to run the script
-    & mono $nugetPath pack $nuspecPath -OutputDirectory $outputDir -Verbosity detailed
+    mono $nugetPath pack $nuspecPath -OutputDirectory $outputDir -Verbosity detailed
 }
 
 Write-Host "Nuget package built successfully and saved to $outputDir"
