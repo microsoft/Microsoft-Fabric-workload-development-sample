@@ -35,7 +35,7 @@
     }
   },
   "forwardPorts": [3000, 60006],
-  "postCreateCommand": "npm install -g typescript && cd Frontend && npm install",
+  "postCreateCommand": "apt-get update && apt-get install -y mono-complete && npm install -g typescript && cd Frontend && npm install",
   "remoteUser": "vscode",
   "runArgs": ["--init"]
 }
