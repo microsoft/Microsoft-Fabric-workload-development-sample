@@ -35,7 +35,7 @@
     }
   },
   "forwardPorts": [3000, 60006],
-  "postCreateCommand": "npm install -g typescript && cd Frontend && npm install && npm install -g azure-functions-core-tools@4 --unsafe-perm true",
+  "postCreateCommand": "npm install -g typescript && cd Frontend && npm install",
   "remoteUser": "vscode",
   "runArgs": ["--init"]
 }
