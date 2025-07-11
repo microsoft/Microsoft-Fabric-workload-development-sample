@@ -19,11 +19,14 @@ if ($downloadDevGateway -eq "y") {
     Write-Host "📥 Downloading DevGateway..."       
     try {
         if ($IsWindows) {
-        $tempDir = $env:TEMP
-        } else {
-        $tempDir = $env:TMPDIR
-    }
-    
+            $tempDir = $env:TEMP
+        } elseif($IsLinux) {
+            $tempDir = "/tmp"
+        } elseif($IsMacOS) {
+            # On macOS, TMPDIR is usually set to /tmp
+            # but we can also use $env:TMPDIR
+            $tempDir = $env:TMPDIR
+        }
         # Example usage:
         $tempZipPath = Join-Path $tempDir "DevGateway-tmp.zip"
         if (!(Test-Path $devGatewayDir)) {
