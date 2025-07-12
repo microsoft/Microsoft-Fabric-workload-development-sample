@@ -37,7 +37,7 @@
     }
   },
   "forwardPorts": [3000, 60006],
-  "postCreateCommand": "npm install -g typescript && cd Frontend && npm install",
+  "postCreateCommand": "",
   "remoteUser": "vscode",
   "runArgs": ["--init", "--memory=4g", "--memory-swap=4g"],
   "containerEnv": {
