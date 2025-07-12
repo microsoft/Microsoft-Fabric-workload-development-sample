@@ -39,8 +39,5 @@
   "forwardPorts": [3000, 60006],
   "postCreateCommand": "",
   "remoteUser": "vscode",
-  "runArgs": ["--init", "--memory=4g", "--memory-swap=4g"],
-  "containerEnv": {
-    "NODE_OPTIONS": "--max-old-space-size=4096"
-  }
+  "runArgs": ["--init"]
 }
