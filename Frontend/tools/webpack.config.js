@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const Webpack = require("webpack");
 const path = require("path");
 const fs = require("fs").promises;
+const { buildManifestPackage } = require('./build-manifest'); // Import the buildManifestPackage function
 
 console.log('******************** Build: Environment Variables *******************');
 console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
@@ -100,8 +101,9 @@ module.exports = {
                 });
 
                 devServer.app.get('/manifests_new', async function (req, res) {
-                    const filePath = path.resolve(__dirname, '../../config/Manifest/ManifestPackage.1.0.0.nupkg');
                     try {
+                        await buildManifestPackage(); // Wait for the build to complete before accessing the file
+                        const filePath = path.resolve(__dirname, '../../config/Manifest/ManifestPackage.1.0.0.nupkg');
                         // Check if the file exists
                         await fs.access(filePath);
 
@@ -115,8 +117,11 @@ module.exports = {
 
                         res.sendFile(filePath);
                     } catch (err) {
-                        console.error(`❌ File not found: ${err.message}`);
-                        res.status(404).json({ error: "File not found" });
+                        console.error(`❌ Error: ${err.message}`);
+                        res.status(500).json({
+                            error: "Failed to serve manifest package",
+                            details: err.message
+                        });
                     }
                 });
                 return middlewares;

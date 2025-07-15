@@ -8,7 +8,8 @@ const execAsync = util.promisify(exec);
 
 const buildManifestPackageScript = path.resolve(__dirname, "../../scripts/Build/BuildManifestPackage.ps1"); // Ensure the path is resolved correctly
 
-export async function buildManifestPackage() {
+// Convert to CommonJS module format for compatibility
+async function buildManifestPackage() {
   try
   {
     var buildManifestPackageCmd = "";
@@ -33,4 +34,10 @@ export async function buildManifestPackage() {
   }
 }
 
+// Export the function for use in other modules
+module.exports = {
+  buildManifestPackage
+};
+
+// Still call it directly when this file is run directly
 buildManifestPackage();
