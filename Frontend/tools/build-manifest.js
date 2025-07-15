@@ -8,7 +8,7 @@ const execAsync = util.promisify(exec);
 
 const buildManifestPackageScript = path.resolve(__dirname, "../../scripts/Build/BuildManifestPackage.ps1"); // Ensure the path is resolved correctly
 
-async function buildManifestPackage() {
+export async function buildManifestPackage() {
   try
   {
     var buildManifestPackageCmd = "";
@@ -23,8 +23,10 @@ async function buildManifestPackage() {
     const { stdout, stderr } = await execAsync(`pwsh ${buildManifestPackageScript}`);
     if (stderr) {
         console.error(`⚠️ BuildManifestPackage error: ${stderr}`);
+    } else  {
+        console.log(`✅ BuildManifestPackage completed successfully.`);
+        console.log(`📦BuildManifestPackage: ${stdout}`);
     }
-    console.log(`📦BuildManifestPackage: ${stdout}`);
   }
   catch (error) {
     console.error(`❌ Error building the Package Manifest: ${error.message}`);
