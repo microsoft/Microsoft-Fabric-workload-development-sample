@@ -407,6 +407,11 @@ tools/DevGatewayContainer/.env
 scripts/Build/Manifest/ValidationScripts/ValidationErrors.txt
 scripts/Setup/My*
 
+# Fabric DevServer files
+DevServer/node_modules/*
+DevServer/package-lock.json
+DevServer/.env*
+
 # Fabric Frontend files
 Frontend/node_modules/*
 Frontend/package-lock.json

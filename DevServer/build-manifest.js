@@ -6,9 +6,9 @@ const path = require("path");
 
 const execAsync = util.promisify(exec);
 
-const buildManifestPackageScript = path.resolve(__dirname, "../../scripts/Build/BuildManifestPackage.ps1"); // Ensure the path is resolved correctly
+// Update path to point to scripts from project root
+const buildManifestPackageScript = path.resolve(__dirname, "../scripts/Build/BuildManifestPackage.ps1");
 
-// Convert to CommonJS module format for compatibility
 async function buildManifestPackage() {
   try
   {
@@ -39,5 +39,7 @@ module.exports = {
   buildManifestPackage
 };
 
-// Still call it directly when this file is run directly
-buildManifestPackage();
+// Optional: Execute when run directly
+if (require.main === module) {
+  buildManifestPackage();
+}

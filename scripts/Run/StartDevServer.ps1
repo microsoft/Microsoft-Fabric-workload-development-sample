@@ -4,12 +4,12 @@
 # Not needed any more as this is now build as part of the nmp start commands 
 
 ################################################
-# Starting the Frontend
+# Starting the DevServer
 ################################################
 Write-Host ""
-Write-Host "Starting the Frontend ..."
-$frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
-Push-Location $frontendDir
+Write-Host "Starting the DevServer ..."
+$devServerdDir = Join-Path $PSScriptRoot "..\..\DevServer"
+Push-Location $devServerdDir
 try {
     # If running in Codespaces, use the low memory version by default to prevent OOM errors
     if ($env:CODESPACES -eq "true") {

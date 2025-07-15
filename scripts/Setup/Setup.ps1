@@ -92,6 +92,27 @@ if (Test-Path $setupWorkloadScript) {
     exit 1
 }
 
+
+###############################################################################
+# Run SetupDevServer.ps1
+# This script sets up the dev server configuration and dependencies.
+###############################################################################
+$setupDevServerScript = Join-Path $PSScriptRoot "..\Setup\SetupDevServer.ps1"
+if (Test-Path $setupDevServerScript) {
+    Write-Host ""
+    Write-Host "Running DevServer.ps1..."
+    & $setupDevServerScript -HostingType $HostingType `
+        -WorkloadName $WorkloadName `
+        -WorkloadDisplayName $WorkloadDisplayName `
+        -AADFrontendAppId $AADFrontendAppId `
+        -AADBackendAppId $AADBackendAppId `
+        -WorkloadVersion $WorkloadVersion `
+        -Force $Force
+} else {
+    Write-Host "SetupWorkload.ps1 not found at $setupWorkloadScript" -ForegroundColor Red
+    exit 1
+}
+
 ###############################################################################
 # Download Frontend dependencies to have nuget executables available
 ###############################################################################
@@ -113,23 +134,6 @@ if (-not (Test-Path $nugetDir)) {
     Write-Host "nuget executable already exists."
 }
 
-
-###############################################################################
-# Build the manifest package
-###############################################################################
-Write-Host ""
-Write-Output "Building the manifest..."
-
-# Prompt user to build the manifest package
-$buildManifestScript = Join-Path $PSScriptRoot "..\Build\Manifest\build-package.ps1"
-if (Test-Path $buildManifestScript) {
-    $buildManifestScriptFull = (Resolve-Path $buildManifestScript).Path & $buildManifestScriptFull
-    Write-Host ""
-    Write-Host "Manifest has been built. If you change configuration, please run the following script again:" -ForegroundColor Blue
-    Write-Host "`"$buildManifestScriptFull`""
-} else {
-    Write-Host "${redColor}build-package.ps1 not found at $buildManifestScript"
-}
 
 ###############################################################################
 # Final output and instructions on how to proceed

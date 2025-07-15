@@ -25,8 +25,12 @@
         "useUnknownInCatchVariables": false,
         "lib": [
             "ES2017",
-            "DOM"
+            "DOM",
+            "DOM.Iterable",
+            "ScriptHost"
         ],
+        "types": ["node"],
+        "baseUrl": ".",
         "paths": {
             "src/*": [
                 "./src/*"
