@@ -2,6 +2,22 @@ param (
     [boolean]$InteractiveLogin = $true
 )
 
+################################################
+# Make sure Manifest is built
+################################################
+# Run BuildManifestPackage.ps1 with absolute path
+$buildManifestPackageScript = Join-Path $PSScriptRoot "..\Build\BuildManifestPackage.ps1"
+if (Test-Path $buildManifestPackageScript) {
+    $buildManifestPackageScript = (Resolve-Path $buildManifestPackageScript).Path
+    & $buildManifestPackageScript 
+} else {
+    Write-Host "BuildManifestPackage.ps1 not found at $buildManifestPackageScript"
+    exit 1
+}
+
+################################################
+# Starting the Frontend
+################################################
 $fileExe = ""
 if($IsWindows) { 
     $fileExe = Join-Path $PSScriptRoot "..\..\tools\DevGateway\Microsoft.Fabric.Workload.DevGateway.exe"

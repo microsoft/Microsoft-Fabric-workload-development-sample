@@ -65,7 +65,7 @@ To run the development enviroment locally you need the follwoing components:
 
 * [Node.js](https://nodejs.org/en/download/)
 * [Powershell 7](https://learn.microsoft.com/en-us/powershell/scripting/install/installing-powershell)
-* [Dotnet](https://dotnet.microsoft.com/en-us/download)
+* [Dotnet](https://dotnet.microsoft.com/en-us/download) for MacOS please make sure to install the x64 version 
 * [VSCode](https://code.visualstudio.com/download) or simmilar development enviroment
 * [Fabric Tenant](https://app.fabric.microsoft.com/) that you use for development and publishing the Workload later on
 * [Fabric Workspace](https://learn.microsoft.com/en-us/fabric/fundamentals/workspaces) that you can use to build your workload

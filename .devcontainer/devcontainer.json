@@ -1,5 +1,5 @@
 {
-  "name": "Microsoft Fabric Workload Development",
+  "name": "Microsoft Fabric Workload Development Container",
   "build": {
     "dockerfile": "Dockerfile",
     "context": "."

@@ -1,31 +1,15 @@
-Write-Host "Building Nuget Package ..."
-
 ################################################
-# Build the current nuget package
+# Make sure Manifest is built
 ################################################
-$nugetPath = Join-Path $PSScriptRoot "..\..\Frontend\node_modules\nuget-bin\nuget.exe"
-$nuspecPath = Join-Path $PSScriptRoot "..\..\config\Manifest\ManifestPackage.nuspec"
-$outputDir = Join-Path $PSScriptRoot "..\..\config\Manifest\"
-
-if (-not (Test-Path $nugetPath)) {
-    Write-Host "Nuget executable not found at $nugetPath will run npm install to get it."
-    $frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
-    try {
-        Push-Location $frontendDir
-        npm install
-    } finally {
-        Pop-Location
-    }
-}
-
-if($IsWindows){
-    & $nugetPath pack $nuspecPath -OutputDirectory $outputDir -Verbosity detailed
+# Run BuildManifestPackage.ps1 with absolute path
+$buildManifestPackageScript = Join-Path $PSScriptRoot "..\Build\BuildManifestPackage.ps1"
+if (Test-Path $buildManifestPackageScript) {
+    $buildManifestPackageScript = (Resolve-Path $buildManifestPackageScript).Path
+    & $buildManifestPackageScript 
 } else {
-    # On Mac and Linux, we need to use mono to run the script
-    mono $nugetPath pack $nuspecPath -OutputDirectory $outputDir -Verbosity detailed
+    Write-Host "BuildManifestPackage.ps1 not found at $buildManifestPackageScript"
+    exit 1
 }
-
-Write-Host "Nuget package built successfully and saved to $outputDir"
 
 ################################################
 # Starting the Frontend
