@@ -1,15 +1,7 @@
 ################################################
 # Make sure Manifest is built
 ################################################
-# Run BuildManifestPackage.ps1 with absolute path
-$buildManifestPackageScript = Join-Path $PSScriptRoot "..\Build\BuildManifestPackage.ps1"
-if (Test-Path $buildManifestPackageScript) {
-    $buildManifestPackageScript = (Resolve-Path $buildManifestPackageScript).Path
-    & $buildManifestPackageScript 
-} else {
-    Write-Host "BuildManifestPackage.ps1 not found at $buildManifestPackageScript"
-    exit 1
-}
+# Not needed any more as this is now build as part of the nmp start commands 
 
 ################################################
 # Starting the Frontend
