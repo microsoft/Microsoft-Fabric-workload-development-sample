@@ -4,8 +4,8 @@
   "description": "Microsoft Fabric - Frontend Developer Sample App",
   "main": "index.js",
   "scripts": {
-    "start": "node tools/build-manifest.js && env-cmd -f .env.dev webpack serve --open --config ./tools/webpack.config.js",
-    "start:codespace": "node tools/build-manifest.js && node --max-old-space-size=4096 ./node_modules/.bin/env-cmd -f .env.dev webpack serve --open --config ./tools/webpack.config.js --no-hot",
+    "start": "env-cmd -f .env.dev webpack serve --open --config ./tools/webpack.config.js",
+    "start:codespace": "node --max-old-space-size=4096 ./node_modules/.bin/env-cmd -f .env.dev webpack serve --open --config ./tools/webpack.config.js --no-hot",
     "build:test": "env-cmd -f .env.test webpack --config ./tools/webpack.config.js",
     "build:prod": "env-cmd -f .env.prod webpack --config ./tools/webpack.config.js"
   },
