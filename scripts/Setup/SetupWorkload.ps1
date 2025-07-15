@@ -105,6 +105,9 @@ $nuspecContent = Get-Content $srcNuspecFile -Raw
 # Use the correct directory separator for the current OS
 $sep = [IO.Path]::DirectorySeparatorChar
 $nuspecContent = $nuspecContent -replace '<ManifestFolder>', ($destManifestDir + $sep)
+foreach ($key in $replacements.Keys) {
+    $nuspecContent = $nuspecContent -replace "\{\{$key\}\}", $replacements[$key]
+}
 
 # Write to the temporary nuspec file
 Set-Content $destNuspecFile -Value $nuspecContent -Force

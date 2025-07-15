@@ -12,14 +12,6 @@ const buildManifestPackageScript = path.resolve(__dirname, "../../scripts/Build/
 async function buildManifestPackage() {
   try
   {
-    var buildManifestPackageCmd = "";
-    const operatingSystem = os.platform();
-    if (operatingSystem === 'win32') {
-      buildManifestPackageCmd = buildManifestPackageScript;
-    } else {
-      buildManifestPackageCmd = `pwsh ${buildManifestPackageScript}`;
-    }
-
     //run the PowerShell script to build the package manifest
     const { stdout, stderr } = await execAsync(`pwsh ${buildManifestPackageScript}`);
     if (stderr) {
