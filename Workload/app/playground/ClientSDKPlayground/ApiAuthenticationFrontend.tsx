@@ -4,7 +4,7 @@ import jwt_decode from "jwt-decode";
 import React, { useState } from "react";
 
 import { callAcquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
-import { PageProps } from 'app/App';
+import { PageProps } from '../../App';
 
 import "../../styles.scss";
 

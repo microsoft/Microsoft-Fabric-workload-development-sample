@@ -5,7 +5,7 @@ import { PanelRightExpand20Regular } from '@fluentui/react-icons';
 import { RootState } from "../../ClientSDKPlaygroundStore/Store";
 import { setLocalSharedStateMessage } from "../../ClientSDKPlaygroundStore/actionDialogSlice";
 import { callDialogOpen } from "../../../workload/controller/DialogController";
-import { SharedState } from "app/App";
+import { SharedState } from "../../../App";
 import "../../../styles.scss";
 import { TabContentProps } from '../ClientSDKPlaygroundModel';
 

@@ -393,6 +393,7 @@ FodyWeavers.xsd
 *.sln.iml
 
 # Fabric files
+/dist/*
 /package-lock.json
 
 # Fabric Config files
@@ -411,3 +412,4 @@ scripts/Setup/My*
 Workload/node_modules/*
 Workload/package-lock.json
 Workload/.env*
+Workload/dist/*

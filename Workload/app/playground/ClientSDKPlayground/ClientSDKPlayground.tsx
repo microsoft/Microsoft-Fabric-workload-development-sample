@@ -18,7 +18,7 @@ import { ApiData } from './ApiData';
 import { UIComponentsExample } from './UIComponents';
 import { ApiAuthenticationFrontend } from './ApiAuthenticationFrontend';
 import { ApiAuthentication } from './ApiAuthentication';
-import { PageProps } from 'app/App';
+import { PageProps } from '../../App';
 import { callNavigationBeforeNavigateAway, callNavigationNavigate } from "../../workload/controller/NavigationController";
 import "../../styles.scss";
 import { ApiArtifactCrudPublic } from './ApiArtifactCrudPublic';

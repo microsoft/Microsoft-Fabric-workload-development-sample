@@ -15,7 +15,7 @@ import {
   FolderLink24Regular,
 } from "@fluentui/react-icons";
 import { Stack } from '@fluentui/react';
-import { PageProps } from 'app/App';
+import { PageProps } from '../../../App';
 import '../../../styles.scss';
 import { t } from "i18next";
 

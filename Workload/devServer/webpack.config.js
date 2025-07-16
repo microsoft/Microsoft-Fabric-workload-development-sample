@@ -6,18 +6,14 @@ const path = require("path");
 const fs = require("fs").promises;
 const { buildManifestPackage } = require('./build-manifest'); // Import the buildManifestPackage function
 
-console.log('*********************** Environment Variables **********************');
+console.log('******************** Build: Environment Variables *******************');
 console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
 console.log('process.env.DEFAULT_ITEM_NAMEL: ' + process.env.DEFAULT_ITEM_NAME);
-console.log('process.env.DEV_AAD_CONFIG_FE_APPID: ' + process.env.DEV_AAD_CONFIG_FE_APPID);
-console.log('********************************************************************');
-
-// Path to the Frontend project
-const FRONTEND_PATH = path.resolve(__dirname, '../app');
+console.log('*********************************************************************');
 
 module.exports = {
     mode: "development",
-    entry: path.join(FRONTEND_PATH, "app/index.ts"),
+    entry: "./app/index.ts",
     output: {
         filename: "bundle.[fullhash].js",
         path: path.resolve(__dirname, "dist"),
@@ -27,33 +23,31 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin(),
         new Webpack.DefinePlugin({
-            "process.env": {
-                "WORKLOAD_NAME": JSON.stringify(process.env.WORKLOAD_NAME),
-                "DEFAULT_ITEM_NAME": JSON.stringify(process.env.DEFAULT_ITEM_NAME),
-                "NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development")
-            }
+            "process.env.WORKLOAD_NAME": JSON.stringify(process.env.WORKLOAD_NAME),
+            "process.env.DEFAULT_ITEM_NAME": JSON.stringify(process.env.DEFAULT_ITEM_NAME),
+            "NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development")
         }),
         new HtmlWebpackPlugin({
-            template: path.join(FRONTEND_PATH, "app/index.html"),
+            template: "./app/index.html",
         }),
         // -- uncomment when static are required to be copied during build --
         new CopyWebpackPlugin({
             patterns: [
                 {
-                    context: path.join(FRONTEND_PATH, 'app/assets/'),
+                    context: './app/assets/',
                     from: '**/*',
                     to: './assets',
                 },
                 {
-                    from: path.join(__dirname, '../web.config'),
+                    from: './app/web.config',
                     to: './web.config',
                 },
             ]
         }),
     ],
     resolve: {
-        modules: [FRONTEND_PATH, path.join(FRONTEND_PATH, "src"), "node_modules"],
-        extensions: [".*", ".js", ".jsx", ".tsx", ".ts"],
+        modules: [__dirname, "node_modules"],
+        extensions: ["*", ".js", ".jsx", ".tsx", ".ts"],
     },
     module: {
         rules: [
@@ -61,9 +55,6 @@ module.exports = {
                 test: /\.tsx?$/,
                 exclude: /node_modules/,
                 loader: "ts-loader",
-                options: {
-                    configFile: path.join(FRONTEND_PATH, 'tsconfig.json')
-                }
             },
             {
                 test: /\.s[ac]ss$/i, // this is for loading scss
@@ -87,8 +78,8 @@ module.exports = {
         setupMiddlewares
             : function (middlewares, devServer) {
                 console.log('*********************************************************************');
-                console.log('***                Server is listening on port 60006              ***');
-                console.log('***  You can now override the Fabric manifest in the config dir.  ***');
+                console.log('****               Server is listening on port 60006             ****');
+                console.log('****   You can now override the Fabric manifest with your own.   ****');
                 console.log('*********************************************************************');
 
                 devServer.app.get('/manifests_new/metadata', function (req, res) {
@@ -113,8 +104,7 @@ module.exports = {
                 devServer.app.get('/manifests_new', async function (req, res) {
                     try {
                         await buildManifestPackage(); // Wait for the build to complete before accessing the file
-                        const filePath = path.resolve(__dirname, '../config/Manifest/ManifestPackage.1.0.0.nupkg');
-
+                        const filePath = path.resolve(__dirname, '../../config/Manifest/ManifestPackage.1.0.0.nupkg');
                         // Check if the file exists
                         await fs.access(filePath);
 
@@ -129,9 +119,9 @@ module.exports = {
                         res.sendFile(filePath);
                     } catch (err) {
                         console.error(`❌ Error: ${err.message}`);
-                        res.status(500).json({ 
+                        res.status(500).json({
                             error: "Failed to serve manifest package",
-                            details: err.message 
+                            details: err.message
                         });
                     }
                 });

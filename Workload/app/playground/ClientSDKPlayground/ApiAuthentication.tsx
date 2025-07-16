@@ -8,7 +8,7 @@ import {
     setHttpMethod,
     setRequestBody
 } from "../ClientSDKPlaygroundStore/apiAuthenticationSlice";
-import { PageProps } from 'app/App';
+import { PageProps } from '../../App';
 import "../../styles.scss";
 
 export function ApiAuthentication({ workloadClient }: PageProps) {

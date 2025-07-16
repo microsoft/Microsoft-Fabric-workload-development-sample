@@ -25,15 +25,11 @@
         "useUnknownInCatchVariables": false,
         "lib": [
             "ES2017",
-            "DOM",
-            "DOM.Iterable",
-            "ScriptHost"
+            "DOM"
         ],
-        "types": ["node"],
-        "baseUrl": ".",
         "paths": {
             "src/*": [
-                "app/*"
+                "./app/*"
             ]
         }
     }

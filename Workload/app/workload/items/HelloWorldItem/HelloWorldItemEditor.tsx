@@ -1,7 +1,7 @@
 import { Label, Stack } from "@fluentui/react";
 import { Field, Input, TabValue } from "@fluentui/react-components";
 import React, { useEffect, useState, useCallback } from "react";
-import { ContextProps, PageProps } from "app/App";
+import { ContextProps, PageProps } from "../../../App";
 import { HelloWorldItemEditorRibbon } from "./HelloWorldItemEditorRibbon";
 import { getWorkloadItem, saveItemDefinition } from "../../controller/ItemCRUDController";
 import { WorkloadItem } from "../../models/ItemCRUDModel";

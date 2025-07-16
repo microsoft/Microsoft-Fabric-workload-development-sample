@@ -1,7 +1,7 @@
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { callAcquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
 import { EnvironmentConstants } from "../../constants";
-import { BatchRequest, BatchResponse, BatchState, ErrorResponse, SessionRequest, SessionResponse, StatementRequest, StatementResponse } from "app/samples/models/SparkLivyModel";
+import { BatchRequest, BatchResponse, BatchState, ErrorResponse, SessionRequest, SessionResponse, StatementRequest, StatementResponse } from "../models/SparkLivyModel";
 
 const livyScope = "https://api.fabric.microsoft.com/Lakehouse.Execute.All https://api.fabric.microsoft.com/Lakehouse.Read.All https://api.fabric.microsoft.com/Item.ReadWrite.All https://api.fabric.microsoft.com/Workspace.ReadWrite.All https://api.fabric.microsoft.com/Code.AccessStorage.All https://api.fabric.microsoft.com/Code.AccessAzureKeyvault.All https://api.fabric.microsoft.com/Code.AccessAzureDataExplorer.All https://api.fabric.microsoft.com/Code.AccessAzureDataLake.All https://api.fabric.microsoft.com/Code.AccessFabric.All"
 

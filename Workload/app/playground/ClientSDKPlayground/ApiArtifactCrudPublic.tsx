@@ -1,7 +1,7 @@
 import { Button, Divider, Field, Input } from '@fluentui/react-components';
 import React, { useState } from "react";
  
-import { PageProps } from 'app/App';
+import { PageProps } from '../../App';
  
 import { GetItemDefinitionResult, UpdateItemDefinitionResult } from '@ms-fabric/workload-client';
 import "../../styles.scss";

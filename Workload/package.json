@@ -5,8 +5,8 @@
   "scripts": {
     "start": "env-cmd -f .env.dev webpack serve --open --config ./devServer/webpack.config.js",
     "start:codespace": "node --max-old-space-size=4096 ./node_modules/.bin/env-cmd -f .env.dev webpack serve --open --config ./devServer/webpack.config.js --no-hot",
-    "build:test": "env-cmd -f .env.test webpack --config ./devServer/webpack.config.js",
-    "build:prod": "env-cmd -f .env.prod webpack --config ./devServer/webpack.config.js"
+    "build:test": "env-cmd -f .env.test webpack --config ./devServer/webpack.config.js --output-path ./dist --progress",
+    "build:prod": "env-cmd -f .env.prod webpack --config ./devServer/webpack.config.js --output-path ./dist --mode production --progress"
   },
   "author": "",
   "license": "ISC",

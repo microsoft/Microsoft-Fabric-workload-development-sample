@@ -17,7 +17,7 @@ import {
   TriangleRight20Regular,
 } from "@fluentui/react-icons";
 import { AfterNavigateAwayData } from "@ms-fabric/workload-client";
-import { ContextProps, PageProps } from "app/App";
+import { ContextProps, PageProps } from "../../../App";
 import {
   calculateResult,
   saveCalculationResult,

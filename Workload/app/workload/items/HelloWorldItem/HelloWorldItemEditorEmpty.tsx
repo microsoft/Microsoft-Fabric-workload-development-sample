@@ -4,7 +4,7 @@ import { Text, Button, Input } from "@fluentui/react-components";
 import "../../../styles.scss";
 import { useTranslation } from "react-i18next";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { GenericItem } from "app/workload/models/ItemCRUDModel";
+import { GenericItem } from "../../models/ItemCRUDModel";
 import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 
 

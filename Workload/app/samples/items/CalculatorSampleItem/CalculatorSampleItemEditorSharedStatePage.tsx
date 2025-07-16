@@ -6,7 +6,7 @@ import {
   } from "@fluentui/react-components";
 import { Stack } from "@fluentui/react";
 import { WorkloadClientAPI } from '@ms-fabric/workload-client';
-import { PageProps, SharedState } from 'app/App';
+import { PageProps, SharedState } from '../../../App';
 import { callDialogClose } from '../../../workload/controller/DialogController';
 
 export function SharedStatePage(props: PageProps) {
