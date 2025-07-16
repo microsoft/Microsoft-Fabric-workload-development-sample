@@ -69,6 +69,7 @@ module.exports = {
     },
     devServer: {
         port: 60006,
+        host: '127.0.0.1',
         open: false,
         historyApiFallback: true,
         headers: {
