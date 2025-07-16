@@ -72,18 +72,18 @@ function RecursiveCopy {
 ###############################################################################
 # Configure the item
 ###############################################################################
-$srCodeDir = Join-Path $PSScriptRoot "..\..\Frontend\src\workload\items\${srcItemName}Item"
+$srCodeDir = Join-Path $PSScriptRoot "..\..\Workload\app\implementation\items\${srcItemName}Item"
 $targetFile = Replace-SourceItemPath -Path $srcFile
 Write-Output "Using ${srcItemName} sample in $srCodeDir as source"
 Write-Host ""
 Write-Host "Creating code files..."
-$targetCodeDir = Join-Path $PSScriptRoot "..\..\Frontend\src\workload\items\${ItemName}Item-editor"
+$targetCodeDir = Join-Path $PSScriptRoot "..\..\Workload\app\implementation\items\${ItemName}Item-editor"
 Write-Host "Write the item code in:"
 Write-Host " $targetCodeDir"
 
 ###############################################################################
 # Writing code files
-# This will create a new item in the src\workload\items directory
+# This will create a new item in the app\implementation\items directory
 ###############################################################################
 Get-ChildItem -Recurse -Path $srCodeDir -File |  
     ForEach-Object {
@@ -92,9 +92,9 @@ Get-ChildItem -Recurse -Path $srCodeDir -File |
         Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
     }
 # assets
-$srcFile = Join-Path  $PSScriptRoot "..\..\Frontend\src\assets\workload\items\${srcItemName}\EditorEmpty.jpg"
+$srcFile = Join-Path  $PSScriptRoot "..\..\Workload\app\assets\implementation\items\${srcItemName}\EditorEmpty.jpg"
 if (Test-Path $srcFile) {
-    $targetFile = Join-Path $PSScriptRoot "..\..\Frontend\src\assets\workload\items\${itemName}\EditorEmpty.jpg"
+    $targetFile = Join-Path $PSScriptRoot "..\..\Workload\app\assets\implementation\items\${itemName}\EditorEmpty.jpg"
     Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
 } else {
     Write-Host "Couldn't find ${srcFile}" -ForegroundColor Red
@@ -154,7 +154,7 @@ Write-Host "The file you need to change are located here:"
 Write-Host " $targetFile"
 
 Write-Host ""
-$targetFile = Join-Path $PSScriptRoot "..\..\Frontend\src\App.tsx"
+$targetFile = Join-Path $PSScriptRoot "..\..\Workload\app\App.tsx"
 $targetFile = Resolve-Path $targetFile
 $routingEntry = "${ItemName}Item-editor"
 Write-Host "TODO: add the routing for '$routingEntry' to the App.tsx file!" -ForegroundColor Blue

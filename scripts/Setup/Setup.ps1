@@ -92,19 +92,20 @@ if (Test-Path $setupWorkloadScript) {
     exit 1
 }
 
+
 ###############################################################################
-# Download Frontend dependencies to have nuget executables available
+# Download Workload dependencies to have nuget executables available
 ###############################################################################
 Write-Host ""
-Write-Output "Downloading Frontend dependencies..."
-$frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
-$nugetDir = Join-Path $frontendDir "node_modules\nuget-bin"
+Write-Output "Downloading Workload dependencies..."
+$workloadDir = Join-Path $PSScriptRoot "..\..\Workload\"
+$nugetDir = Join-Path $workloadDir "node_modules\nuget-bin"
 # Ensure the frontend directory exists
 if (-not (Test-Path $nugetDir)) {
     Write-Host ""
     Write-Host "Running npm install to get the nuget executables..."
     try{
-        Push-Location $frontendDir
+        Push-Location $workloadDir
         npm install
     } finally {
         Pop-Location
@@ -115,33 +116,25 @@ if (-not (Test-Path $nugetDir)) {
 
 
 ###############################################################################
-# Build the manifest package
-###############################################################################
-Write-Host ""
-Write-Output "Building the manifest..."
-
-# Prompt user to build the manifest package
-$buildManifestScript = Join-Path $PSScriptRoot "..\Build\Manifest\build-package.ps1"
-if (Test-Path $buildManifestScript) {
-    $buildManifestScriptFull = (Resolve-Path $buildManifestScript).Path
-    & $buildManifestScriptFull
-    Write-Host ""
-    Write-Host "Manifest has been built. If you change configuration, please run the following script again:" -ForegroundColor Blue
-    Write-Host "`"$buildManifestScriptFull`""
-} else {
-    Write-Host "${redColor}build-package.ps1 not found at $buildManifestScript"
-}
-
-###############################################################################
 # Final output and instructions on how to proceed
 ###############################################################################
 Write-Host ""
 Write-Host "Setup finished successfully ..." -ForegroundColor Green
 Write-Host ""
 Write-Host ""
-Write-Host "Now you can run the following scripts to start your development environment."
+Write-Host "Now you can run the following scripts to start your development environment:"
 Write-Host "--------------------------------------------------------------------------------"
 
+# Promt user to start the DevServer
+$startDevServerScript = Join-Path $PSScriptRoot "..\Run\StartDevServer.ps1"
+if (Test-Path $startDevServerScript) {
+    $startDevServerScriptFull = (Resolve-Path $startDevServerScript).Path
+    Write-Host ""
+    Write-Host "To launch your workload webapp, start the DevServer locally with the following script:" -ForegroundColor Blue
+    Write-Host "`"$startDevServerScriptFull`""
+} else {
+    Write-Host "StartDevServer.ps1 not found at $startDevServerScript"
+}
 
 # Prompt user to run StartDevGateway.ps1 with absolute path
 $startDevGatewayScript = Join-Path $PSScriptRoot "..\Run\StartDevGateway.ps1"
@@ -154,20 +147,10 @@ if (Test-Path $startDevGatewayScript) {
     Write-Host "StartDevGateway.ps1 not found at $startDevGatewayScript"
 }
 
-# Promt user to run mpn start
-$startFrontendScript = Join-Path $PSScriptRoot "..\Run\StartFrontend.ps1"
-if (Test-Path $startFrontendScript) {
-    $startFrontendScriptFull = (Resolve-Path $startFrontendScript).Path
-    Write-Host ""
-    Write-Host "To launch your workload webapp, start your Fronend locally with the following script:" -ForegroundColor Blue
-    Write-Host "`"$startFrontendScriptFull`""
-} else {
-    Write-Host "StartFrontend.ps1 not found at $startFrontendScript"
-}
-
 Write-Host ""
 Write-Host "Make sure you have enabled the Fabric Developer mode in the Fabric portal." -ForegroundColor Blue
 Write-Host "Open https://app.fabric.microsoft.com/ and activate it under Settings > Developer settings > Fabric Developer mode."
+Write-Host "Be aware this setting will not stay on forever. Check back if you have problems if it is still active."
 Write-Host ""
 Write-Host "After following all the instructions above, you will see your workload being available in the Fabric portal."
 Write-Host "It will appear in the Workload Hub and items can be created in the workspace you have configured."

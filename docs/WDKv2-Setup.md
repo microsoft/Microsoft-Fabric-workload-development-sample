@@ -24,6 +24,12 @@ To make it easy as possible we have created a [Setup.ps1](../scripts/Setup/Setup
 * If you want to use an existing Entra application, make sure to configure the SPA redirect URIs in the application's manifest as described in this [section](./WDKv2-Setup-Manual.md#register-a-frontend-entra-application).
 * Follow the guidance the Script provides to get everyting setup
 
+For Mac and Linux use pwsh to start the powershell Scripts:
+
+```bash
+pwsh .\Setup.ps1 -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -AADFrontendAppId "00000000-0000-0000-0000-000000000000" -WorkspaceId "00000000-0000-0000-0000-000000000000"
+```
+
 After the script finished successfully your enviroment is configured and ready to go. The Script will provide you with addtional information on the next steps to see your Workload light up in Fabric.
 
 ### Error handling
@@ -37,24 +43,14 @@ In case you are getting an error similar to the one below please make sure you h
 After you have completed all of the above steps, you are ready to test the workload.
 Start the workload in development mode:
 
-1.Run [StartFrontend.ps1](../scripts/Run/StartFrontend.ps1) to start the Frontend
-2.Run [StartDevGateway.ps1](../scripts/Run/StartDevGateway.ps1) to register your local development instance with Fabric
+1.Run [StartDevServer.ps1](../scripts/Run/StartDevServer.ps1) to start the local Development enviroment which includes the Frontend and APIs
+2.Run [StartDevGateway.ps1](../scripts/Run/StartDevGateway.ps1) to register your local development instance with Fabric Backend
 3.Navigate to the Fabric portal. Head to the Admin Portal settings and enable the following tenant settings:
   ![Setup Test](./media/Setup-Test-1.jpg)
 4.Navigate to the Fabric Developer Settings and enable the Fabric Developer Mode:
    ![Setup Test](./media/Setup-Test-2.jpg)
 
 You are ready to create your first Hello World Item in Fabric.
-
-[!NOTE]
->If you're not using Windows, you might find it easier to run the DevGateway in a Docker container as described in [DevGateway Container](../tools/DevGatewayContainer/README.md).
-
-1.Open **PowerShell** and navigate to the **DevGateway** folder.
-2.Run the command:
-.\Microsoft.Fabric.Workload.DevGateway.exe -DevMode:<absolute_path_to_workload-dev-mode.json>
-When the output shows the message *info: DevGateway started*. the workload is running successfully.
-
-After this step you are all set to start creating your own item in Fabric.
 
 ## Test the sample workload
 
@@ -69,6 +65,6 @@ Congratulations! You have created your first item from your development envirome
 
 ## Start coding
 
-Now that you are all set you can start following your own item ideas. For this you can either change the [HelloWorldItemEditor.tsx](../Frontend/src/workload/items/HelloWorldItem/HelloWorldItemEditor.tsx) or you can use the [CreateNewItem.ps1](../scripts/Setup/CreateNewItem.ps1) to create a new item.
+Now that you are all set you can start following your own item ideas. For this you can either change the [HelloWorldItemEditor.tsx](../Workload/app/implementation/items/HelloWorldItem/HelloWorldItemEditor.tsx) or you can use the [CreateNewItem.ps1](../scripts/Setup/CreateNewItem.ps1) to create a new item.
 
 Happy coding! 🚀

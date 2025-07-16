@@ -26,6 +26,14 @@ if ($HostingType -eq "FERemote" -or $HostingType -eq "Remote") {
     exit 1
 }
 
+# Define key-value dictionary for replacements
+$replacements = @{
+    "WORKLOAD_NAME" = $WorkloadName
+    "FRONTEND_APP_ID" = $AADFrontendAppId
+    "BACKEND_APP_ID" = $AADBackendAppId
+    "WORKLOAD_VERSION" = $WorkloadVersion
+}
+
 ###############################################################################
 # Setup Workload
 ###############################################################################
@@ -46,14 +54,6 @@ Write-Output "Workload Version: $WorkloadVersion"
 ###############################################################################
 # Writing the Manifest files
 ###############################################################################
-# Define key-value dictionary for replacements
-$replacements = @{
-    "WORKLOAD_NAME" = $WorkloadName
-    "FRONTEND_APP_ID" = $AADFrontendAppId
-    "BACKEND_APP_ID" = $AADBackendAppId
-    "WORKLOAD_VERSION" = $WorkloadVersion
-}
-
 
 # Copy the template files to the destination directory
 Write-Output ""
@@ -105,33 +105,35 @@ $nuspecContent = Get-Content $srcNuspecFile -Raw
 # Use the correct directory separator for the current OS
 $sep = [IO.Path]::DirectorySeparatorChar
 $nuspecContent = $nuspecContent -replace '<ManifestFolder>', ($destManifestDir + $sep)
+foreach ($key in $replacements.Keys) {
+    $nuspecContent = $nuspecContent -replace "\{\{$key\}\}", $replacements[$key]
+}
 
 # Write to the temporary nuspec file
 Set-Content $destNuspecFile -Value $nuspecContent -Force
 Write-Output "$destNuspecFile"
 
 ###############################################################################
-# Writing the Frontend config files
+# Writing the Workload config files
 ###############################################################################
 
-Write-Output "Writing Frontend files ..."
-$srcFrontendDir = Join-Path $srcTemplateDir "Frontend"
-$destFrontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
+Write-Output "Writing Workload files ..."
+$srcWorkloadDir = Join-Path $srcTemplateDir "Workload"
+$destWorkloadDir = Join-Path $PSScriptRoot "..\..\Workload"
 
-Write-Host "The Frontend destination dir $destFrontendDir"
-Write-Host "The Frontend src dir $srcFrontendDir"
+Write-Host "The Workload destination dir $destWorkloadDir"
+Write-Host "The Workload src dir $srcWorkloadDir"
 
 # Get all files in the source directory
-Get-ChildItem -Path $srcFrontendDir -Force
-Get-ChildItem -Path $srcFrontendDir -Force -File | ForEach-Object {
+Get-ChildItem -Path $srcWorkloadDir -Force
+Get-ChildItem -Path $srcWorkloadDir -Force -File | ForEach-Object {
     $filePath = $_.FullName
     $content = Get-Content $filePath -Raw
-    $destPath = Join-Path $destFrontendDir $_.Name
+    $destPath = Join-Path $destWorkloadDir $_.Name
 
     $writeFile = $true
     if ((Test-Path $destPath) -and !$Force) {         
-        $writeFile = Read-Host "File  $_ exists do you want to override it with the templates? (y/n)" 
-        $writeFile = $writeManifestFiles -eq 'y'        
+        $writeFile = Read-Host "File  $_ exists do you want to override it with the templates? (y/n)"      
     }
 
     if($writeFile) {
@@ -145,6 +147,5 @@ Get-ChildItem -Path $srcFrontendDir -Force -File | ForEach-Object {
         Write-Host "Skipping file: $filePath"
     }
 }
-
 
 Write-Host "Setup Workload finished successfully ..."  -ForegroundColor Green

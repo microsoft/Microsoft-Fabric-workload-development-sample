@@ -23,7 +23,7 @@ if (Test-Path $downloadDevGatewayScript) {
 ###############################################################################
 # Setup DevGateway configuration files
 ###############################################################################
-$srcDir = Join-Path $PSScriptRoot "..\..\config\Templates\DevGateway"
+$srcDir = Join-Path $PSScriptRoot "..\..\config\templates\DevGateway"
 Write-Output "Using template in $srcDir"
 $destDir = Join-Path $PSScriptRoot "..\..\config\DevGateway"
 if (!(Test-Path $destDir)) { New-Item -ItemType Directory -Path $destDir | Out-Null }

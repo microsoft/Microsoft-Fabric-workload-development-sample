@@ -26,7 +26,7 @@ After selecting an item, the tables and files are loaded and can be selected in 
 The UI is updated to reflect that 'my_table' is selected.
 
 ## Frontend ##
-The implementation of the OneLake Item Explorer can be found here : [OneLake Item Explorer Component](../Frontend/src/components/SampleOneLakeItemExplorer/SampleOneLakeItemExplorer.tsx)
+The implementation of the OneLake Item Explorer can be found here : [OneLake Item Explorer Component](../Workload/app/components/SampleOneLakeItemExplorer/SampleOneLakeItemExplorer.tsx)
 
 First, we'll address the need for two different tree components, one to handle Items/Lakehouses that have a schema and one to handle Lakehouses that don't have a schema.
 
@@ -62,5 +62,5 @@ This information will serve us in Step 2.
 2. Fetches the tables in the Item using The controller
 3. Sets the schema indicator and the tables to be displayed in the component. The schema indicator determines which tree component to render.
 
-Please reference the [OneLake Item Explorer Controller](../Frontend/src/controller/OneLakeItemExplorerController.t
+Please reference the [OneLake Item Explorer Controller](../Workload/app/controller/OneLakeItemExplorerController.t
 
