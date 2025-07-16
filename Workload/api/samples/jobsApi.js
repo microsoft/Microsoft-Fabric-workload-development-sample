@@ -5,8 +5,12 @@
 
 const express = require('express');
 const { JobInstanceStatus, ErrorSource } = require('./types');
+const { start } = require('repl');
 
 const router = express.Router();
+
+
+const jobInstances = new Map();
 
 /**
  * Called by Microsoft Fabric for starting a new job instance.
@@ -26,6 +30,17 @@ router.post('/workspaces/:workspaceId/items/:itemType/:itemId/jobTypes/:jobType/
       
       console.log(`Creating job instance: ${jobInstanceId} of type ${jobType} for item ${itemId} in workspace ${workspaceId}`);
       console.log('Invoke type:', createJobInstanceRequest.invokeType);
+      jobInstances.put(jobInstanceId, {
+        workspaceId: workspaceId,
+        itemId: itemId,
+        itemType: itemType,
+        jobType: jobType,
+        jobInstanceId: jobInstanceId,
+        status: JobInstanceStatus.InProgress,
+        startTimeUtc: new Date().toISOString(),
+        endTimeUtc: null, // No endTimeUtc since it's still in progress
+        invokeType: createJobInstanceRequest.invokeType,
+      })
       
       // Successful response - 202 Accepted for job that will run asynchronously
       res.status(202).send();
@@ -54,13 +69,15 @@ router.get('/workspaces/:workspaceId/items/:itemType/:itemId/jobTypes/:jobType/i
       // 1. Retrieve job instance state
       
       console.log(`Getting state for job instance: ${jobInstanceId} of type ${jobType} for item ${itemId} in workspace ${workspaceId}`);
-      
+      var jobInfo = jobInstances.get(jobInstanceId);
       // Example job instance state response
       const response = {
-        status: JobInstanceStatus.InProgress,
-        startTimeUtc: new Date().toISOString(),
-        // No endTimeUtc since it's still in progress
+        status: jobInfo?.status,
+        startTimeUtc: jobInfo?.startTimeUtc.toISOString(),
+        endTimeUtc: jobInfo?.endTimeUtc?.toISOString() 
       };
+
+      jobInfo.status = JobInstanceStatus.Completed; // Simulate completion for demo
       
       // Successful response
       res.status(200).json(response);
@@ -90,14 +107,23 @@ router.post('/workspaces/:workspaceId/items/:itemType/:itemId/jobTypes/:jobType/
       // 2. Update job instance metadata
       
       console.log(`Cancelling job instance: ${jobInstanceId} of type ${jobType} for item ${itemId} in workspace ${workspaceId}`);
-      
+      var jobInfo = jobInstances.get(jobInstanceId);
+      if (!jobInfo) {
+        return res.status(404).json({
+          errorCode: 'JobInstanceNotFound',
+          message: `Job instance ${jobInstanceId} not found`,
+          source: ErrorSource.System
+        });
+      } else {
+        jobInfo.status = JobInstanceStatus.Cancelled;
+        jobInfo.endTimeUtc = new Date().toISOString();
+      }
       // Example job instance state response after cancellation
       const response = {
-        status: JobInstanceStatus.Cancelled,
-        startTimeUtc: new Date(Date.now() - 3600000).toISOString(), // Example: started 1 hour ago
-        endTimeUtc: new Date().toISOString() // Ended now (when cancelled)
+        status: jobInfo?.status,
+        startTimeUtc: jobInfo?.startTimeUtc.toISOString(),
+        endTimeUtc: jobInfo?.endTimeUtc?.toISOString() 
       };
-      
       // Successful response
       res.status(200).json(response);
     } catch (error) {

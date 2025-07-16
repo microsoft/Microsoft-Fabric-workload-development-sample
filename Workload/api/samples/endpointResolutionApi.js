@@ -8,6 +8,7 @@ const { EndpointResolutionContextPropertyName, ErrorSource } = require('./types'
 
 const router = express.Router();
 
+
 /**
  * Resolve an endpoint for a given service called by Microsoft Fabric
  * 
@@ -46,7 +47,7 @@ router.post('/endpointResoltuion', (req, res) => {
     // Example endpoint resolution response
     // In a real implementation, this would be determined dynamically based on the context
     const response = {
-      url: `https://service-${workspaceRegion || 'global'}.example.com/api/${endpointName}`,
+      url: `${process.env.WORKLOAD_API_ENDPOINT_URL}/api/`,
       ttlInMinutes: 60 // Cache the endpoint URL for 1 hour
     };
     
