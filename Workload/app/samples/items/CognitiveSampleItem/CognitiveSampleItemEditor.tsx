@@ -3,8 +3,8 @@ import { TabValue, Button, Table, TableBody, TableCell, TableRow, TableHeader, T
 import React, { useEffect, useState } from "react";
 import { ContextProps, PageProps } from "src/App";
 import { CognitiveSampleItemEditorRibbon } from "./CognitiveSampleItemEditorRibbon";
-import { getWorkloadItem, saveItemDefinition } from "../../../workload/controller/ItemCRUDController";
-import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
+import { getWorkloadItem, saveItemDefinition } from "../../../implementation/controller/ItemCRUDController";
+import { WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
 import { writeToOneLakeFileAsText, getOneLakeFilePath } from "../../controller/OneLakeController";
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
@@ -14,9 +14,9 @@ import { BatchRequest } from "../../models/SparkLivyModel";
 import { createBatch } from "../../controller/SparkLivyController";
 import { Delete24Regular, PlayCircle24Regular } from "@fluentui/react-icons";
 import { EnvironmentConstants } from "../../../constants";
-import { callNotificationOpen } from "../../../workload/controller/NotificationController";
+import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
 import { NotificationToastDuration, NotificationType } from "@ms-fabric/workload-client";
-import ItemEditorLoadingProgressBar from "../../../workload/controls/ItemEditorLoadingProgressBar";
+import ItemEditorLoadingProgressBar from "../../../implementation/controls/ItemEditorLoadingProgressBar";
 import { t } from "i18next";
 
 export function CognitiveSampleItemEditor(props: PageProps) {

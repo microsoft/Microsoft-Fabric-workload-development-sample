@@ -5,7 +5,7 @@ import "./../../../styles.scss";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { GenericItem } from "src/workload/models/ItemCRUDModel";
 import { CognitiveSampleAnalysisType, CognitiveSampleItemDefinition, CognitiveSampleAnalysisConfiguration } from "./CognitiveSampleItemModel";
-import { callDatahubWizardOpen } from "../../../workload/controller/DataHubController";
+import { callDatahubWizardOpen } from "../../../implementation/controller/DataHubController";
 import { Database16Regular } from "@fluentui/react-icons";
 
 

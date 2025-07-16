@@ -1,11 +1,11 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { Deployment, Package, SparkDeployment, SparkDeploymentItem, SparkDeploymentItemDefinition, DeploymentStatus, PackageDeploymentType, PackageItemDefinitionPayloadType, SparkDeploymentItemDefinitionType } from "./PackageInstallerItemModel";
-import { GenericItem } from "../../../workload/models/ItemCRUDModel";
+import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
 import { getOneLakeFilePath, writeToOneLakeFileAsText } from "../../controller/OneLakeController";
 import { BatchRequest } from "../../models/SparkLivyModel";
 import { createBatch } from "../../controller/SparkLivyController";
 import { EnvironmentConstants } from "../../../constants";
-import { callCreateItem, callUpdateItemDefinition } from "../../../workload/controller/ItemCRUDController";
+import { callCreateItem, callUpdateItemDefinition } from "../../../implementation/controller/ItemCRUDController";
 
 
 export async function deployPackage(

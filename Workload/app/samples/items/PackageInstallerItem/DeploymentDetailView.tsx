@@ -12,9 +12,9 @@ import {
 } from "@fluentui/react-components";
 import { useTranslation } from "react-i18next";
 import { AvailablePackages, Deployment, DeploymentStatus } from "./PackageInstallerItemModel";
-import { GenericItem } from "../../../workload/models/ItemCRUDModel";
+import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
 import { NotificationType, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { callNotificationOpen } from "../../../workload/controller/NotificationController";
+import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
 import { deployPackage } from "./DeploymentController";
 
 // Props for the PackageDetailCard component

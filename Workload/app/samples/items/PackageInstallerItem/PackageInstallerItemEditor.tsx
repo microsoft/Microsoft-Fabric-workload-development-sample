@@ -14,17 +14,17 @@ import { DeleteRegular } from "@fluentui/react-icons";
 import React, { useEffect, useState, useCallback } from "react";
 import { ContextProps, PageProps } from "src/App";
 import { PackageInstallerItemEditorRibbon } from "./PackageInstallerItemEditorRibbon";
-import { getWorkloadItem, saveItemDefinition } from "../../../workload/controller/ItemCRUDController";
-import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
+import { getWorkloadItem, saveItemDefinition } from "../../../implementation/controller/ItemCRUDController";
+import { WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
 import { Deployment, PackageInstallerItemDefinition, DeploymentStatus } from "./PackageInstallerItemModel";
 import { PackageInstallerItemEditorEmpty } from "./PackageInstallerItemEditorEmpty";
-import { ItemEditorLoadingProgressBar } from "../../../workload/controls/ItemEditorLoadingProgressBar";
-import { callNotificationOpen } from "../../../workload/controller/NotificationController";
+import { ItemEditorLoadingProgressBar } from "../../../implementation/controls/ItemEditorLoadingProgressBar";
+import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
 import { DeploymentDetailView } from "./DeploymentDetailView";
-import { callDatahubOpen } from "../../../workload/controller/DataHubController";
+import { callDatahubOpen } from "../../../implementation/controller/DataHubController";
 
 export function PackageInstallerItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
