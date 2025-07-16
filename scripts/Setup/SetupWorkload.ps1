@@ -26,6 +26,13 @@ if ($HostingType -eq "FERemote" -or $HostingType -eq "Remote") {
     exit 1
 }
 
+# Define key-value dictionary for replacements
+$replacements = @{
+    "WORKLOAD_NAME" = $WorkloadName
+    "FRONTEND_APP_ID" = $AADFrontendAppId
+    "BACKEND_APP_ID" = $AADBackendAppId
+    "WORKLOAD_VERSION" = $WorkloadVersion
+}
 
 ###############################################################################
 # Setup Workload
@@ -47,14 +54,6 @@ Write-Output "Workload Version: $WorkloadVersion"
 ###############################################################################
 # Writing the Manifest files
 ###############################################################################
-# Define key-value dictionary for replacements
-$replacements = @{
-    "WORKLOAD_NAME" = $WorkloadName
-    "FRONTEND_APP_ID" = $AADFrontendAppId
-    "BACKEND_APP_ID" = $AADBackendAppId
-    "WORKLOAD_VERSION" = $WorkloadVersion
-}
-
 
 # Copy the template files to the destination directory
 Write-Output ""
@@ -93,26 +92,44 @@ if (Test-Path $srcFile) {
 }
 
 
-Write-Host "Setup Workload finished successfully ..."  -ForegroundColor Green
+# Use a temporary nuspec file
+Write-Output "Create nuspec file ..."
 
+# Use Join-Path and [IO.Path]::DirectorySeparatorChar for cross-platform compatibility
+$nuspecManifestDir = Join-Path $srcTemplateDir "Manifest"
+$srcNuspecFile = Join-Path $nuspecManifestDir "ManifestPackage.nuspec"
+$destNuspecFile = Join-Path $destManifestDir "ManifestPackage.nuspec"
+
+# Read and update nuspec content
+$nuspecContent = Get-Content $srcNuspecFile -Raw
+# Use the correct directory separator for the current OS
+$sep = [IO.Path]::DirectorySeparatorChar
+$nuspecContent = $nuspecContent -replace '<ManifestFolder>', ($destManifestDir + $sep)
+foreach ($key in $replacements.Keys) {
+    $nuspecContent = $nuspecContent -replace "\{\{$key\}\}", $replacements[$key]
+}
+
+# Write to the temporary nuspec file
+Set-Content $destNuspecFile -Value $nuspecContent -Force
+Write-Output "$destNuspecFile"
 
 ###############################################################################
-# Writing the DevServer config files
+# Writing the Workload config files
 ###############################################################################
 
-Write-Output "Writing DevServer files ..."
-$srcDevServerDir = Join-Path $srcTemplateDir "DevServer"
-$destDevServerDir = Join-Path $PSScriptRoot "..\..\DevServer"
+Write-Output "Writing Workload files ..."
+$srcWorkloadDir = Join-Path $srcTemplateDir "Workload"
+$destWorkloadDir = Join-Path $PSScriptRoot "..\..\Workload"
 
-Write-Host "The DevServer destination dir $destDevServerDir"
-Write-Host "The DevServer src dir $srcDevServerDir"
+Write-Host "The Workload destination dir $destWorkloadDir"
+Write-Host "The Workload src dir $srcWorkloadDir"
 
 # Get all files in the source directory
-Get-ChildItem -Path $srcDevServerDir -Force
-Get-ChildItem -Path $srcDevServerDir -Force -File | ForEach-Object {
+Get-ChildItem -Path $srcWorkloadDir -Force
+Get-ChildItem -Path $srcWorkloadDir -Force -File | ForEach-Object {
     $filePath = $_.FullName
     $content = Get-Content $filePath -Raw
-    $destPath = Join-Path $destDevServerDir $_.Name
+    $destPath = Join-Path $destWorkloadDir $_.Name
 
     $writeFile = $true
     if ((Test-Path $destPath) -and !$Force) {         
@@ -131,4 +148,4 @@ Get-ChildItem -Path $srcDevServerDir -Force -File | ForEach-Object {
     }
 }
 
-Write-Host "Setup DevServer finished successfully ..."  -ForegroundColor Green
+Write-Host "Setup Workload finished successfully ..."  -ForegroundColor Green

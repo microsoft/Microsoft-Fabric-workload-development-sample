@@ -94,38 +94,18 @@ if (Test-Path $setupWorkloadScript) {
 
 
 ###############################################################################
-# Run SetupDevServer.ps1
-# This script sets up the dev server configuration and dependencies.
-###############################################################################
-$setupDevServerScript = Join-Path $PSScriptRoot "..\Setup\SetupDevServer.ps1"
-if (Test-Path $setupDevServerScript) {
-    Write-Host ""
-    Write-Host "Running DevServer.ps1..."
-    & $setupDevServerScript -HostingType $HostingType `
-        -WorkloadName $WorkloadName `
-        -WorkloadDisplayName $WorkloadDisplayName `
-        -AADFrontendAppId $AADFrontendAppId `
-        -AADBackendAppId $AADBackendAppId `
-        -WorkloadVersion $WorkloadVersion `
-        -Force $Force
-} else {
-    Write-Host "SetupWorkload.ps1 not found at $setupWorkloadScript" -ForegroundColor Red
-    exit 1
-}
-
-###############################################################################
-# Download Frontend dependencies to have nuget executables available
+# Download Workload dependencies to have nuget executables available
 ###############################################################################
 Write-Host ""
-Write-Output "Downloading Frontend dependencies..."
-$frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
-$nugetDir = Join-Path $frontendDir "node_modules\nuget-bin"
+Write-Output "Downloading Workload dependencies..."
+$workloadDir = Join-Path $PSScriptRoot "..\..\Workload\"
+$nugetDir = Join-Path $workloadDir "node_modules\nuget-bin"
 # Ensure the frontend directory exists
 if (-not (Test-Path $nugetDir)) {
     Write-Host ""
     Write-Host "Running npm install to get the nuget executables..."
     try{
-        Push-Location $frontendDir
+        Push-Location $workloadDir
         npm install
     } finally {
         Pop-Location

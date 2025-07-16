@@ -28,7 +28,7 @@ if($ValidateFiles -eq $true) {
 ################################################
 # Build the current nuget package
 ################################################
-$nugetPath = Join-Path $PSScriptRoot "..\..\DevServer\node_modules\nuget-bin\nuget.exe"
+$nugetPath = Join-Path $PSScriptRoot "..\..\Workload\node_modules\nuget-bin\nuget.exe"
 $nuspecPath = Join-Path $PSScriptRoot "..\..\config\Manifest\ManifestPackage.nuspec"
 $outputDir = Join-Path $PSScriptRoot "..\..\config\Manifest\"
 
