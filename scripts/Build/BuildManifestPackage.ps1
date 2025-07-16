@@ -5,7 +5,6 @@ param (
 
 Write-Host "Building Nuget Package ..."
 
-
 ################################################
 # Build the current nuget package
 ################################################
@@ -50,7 +49,7 @@ if($IsWindows){
 } else {
     # On Mac and Linux, we need to use mono to run the script
     # alternatively, we could use dotnet tool if available
-    # nuget pack $nuspecFile -OutputDirectory $manifestDir -Verbosity detailed 2>&1   
+    # nuget pack $nuspecFile -OutputDirectory $outputDir -Verbosity detailed 2>&1   
     mono $nugetPath pack $nuspecPath -OutputDirectory $outputDir -Verbosity detailed
 }
 

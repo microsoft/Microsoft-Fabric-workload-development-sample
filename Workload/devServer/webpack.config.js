@@ -10,7 +10,6 @@ const { registerDevServerApis } = require('.'); // Import our manifest API
 console.log('******************** Build: Environment Variables *******************');
 console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
 console.log('process.env.DEFAULT_ITEM_NAMEL: ' + process.env.DEFAULT_ITEM_NAME);
-console.log('process.env.DEV_WORKSPACE_ID: ' + process.env.DEV_WORKSPACE_ID);
 console.log('*********************************************************************');
 
 module.exports = {
