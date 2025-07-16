@@ -21,7 +21,7 @@ import {
 } from "../ClientSDKPlaygroundStore/apiDataSlice";
 import "../../styles.scss";
 import { TabContentProps } from "./ClientSDKPlaygroundModel";
-import { callDatahubOpen, callDatahubWizardOpen } from "../../workload/controller/DataHubController";
+import { callDatahubOpen, callDatahubWizardOpen } from "../../implementation/controller/DataHubController";
 
 export function ApiData(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;

@@ -43,8 +43,8 @@ In case you are getting an error similar to the one below please make sure you h
 After you have completed all of the above steps, you are ready to test the workload.
 Start the workload in development mode:
 
-1.Run [StartFrontend.ps1](../scripts/Run/StartFrontend.ps1) to start the Frontend
-2.Run [StartDevGateway.ps1](../scripts/Run/StartDevGateway.ps1) to register your local development instance with Fabric
+1.Run [StartDevServer.ps1](../scripts/Run/StartDevServer.ps1) to start the local Development enviroment which includes the Frontend and APIs
+2.Run [StartDevGateway.ps1](../scripts/Run/StartDevGateway.ps1) to register your local development instance with Fabric Backend
 3.Navigate to the Fabric portal. Head to the Admin Portal settings and enable the following tenant settings:
   ![Setup Test](./media/Setup-Test-1.jpg)
 4.Navigate to the Fabric Developer Settings and enable the Fabric Developer Mode:
@@ -65,6 +65,6 @@ Congratulations! You have created your first item from your development envirome
 
 ## Start coding
 
-Now that you are all set you can start following your own item ideas. For this you can either change the [HelloWorldItemEditor.tsx](../Workload/app/workload/items/HelloWorldItem/HelloWorldItemEditor.tsx) or you can use the [CreateNewItem.ps1](../scripts/Setup/CreateNewItem.ps1) to create a new item.
+Now that you are all set you can start following your own item ideas. For this you can either change the [HelloWorldItemEditor.tsx](../Workload/app/implementation/items/HelloWorldItem/HelloWorldItemEditor.tsx) or you can use the [CreateNewItem.ps1](../scripts/Setup/CreateNewItem.ps1) to create a new item.
 
 Happy coding! 🚀

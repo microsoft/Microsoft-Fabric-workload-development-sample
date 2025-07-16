@@ -15,8 +15,8 @@ import {
   } from "@fluentui/react-icons";
 
 import { EventhouseItemMetadata } from "./SampleEventhouseModel";
-import { GenericItem } from "../../../workload/models/ItemCRUDModel";
-import { callDatahubOpen } from "../../../workload/controller/DataHubController";
+import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
+import { callDatahubOpen } from "../../../implementation/controller/DataHubController";
 import { getEventhouseItem, executeQuery } from "./SampleEventhouseController";
 
 

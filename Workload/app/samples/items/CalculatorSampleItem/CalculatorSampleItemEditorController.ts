@@ -4,8 +4,8 @@ import {
 
 import { Calculation, CalculationOperator, CalculationResult, CalculatorSampleItemDefinition } from "./CalculatorSampleItemModel";
 import { readOneLakeFileAsText, getOneLakeFilePath, writeToOneLakeFileAsText, checkIfFileExists } from "../../controller/OneLakeController";
-import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
-import { GenericItemAndPath } from "../../../workload/models/DataHubModel";
+import { WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
+import { GenericItemAndPath } from "../../../implementation/models/DataHubModel";
 import { OneLakeShortcutCreateRequest, OneLakeShortcutCreateResponse, OneLakeShortcutTargetOneLake } from "../../views/SampleOneLakeShortcutCreator/SampleOneLakeShortcutModel";
 import { createOneLakeShortcut } from "../../views/SampleOneLakeShortcutCreator/SampleOneLakeShortcutController";
 

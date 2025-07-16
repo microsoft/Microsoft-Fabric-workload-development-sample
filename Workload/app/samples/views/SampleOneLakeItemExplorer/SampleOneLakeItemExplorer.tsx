@@ -15,12 +15,12 @@ import { TableMetadata, FileMetadata } from "./SampleOneLakeItemExplorerModel";
 import "../../../styles.scss";
 import { getTables, getFiles } from "./SampleOneLakeItemExplorerController";
 import { PageProps } from "../../../App";
-import { GenericItem as ItemMetadata } from "../../../workload/models/ItemCRUDModel";
+import { GenericItem as ItemMetadata } from "../../../implementation/models/ItemCRUDModel";
 import { TableTreeWithSchema } from "./TableTreeWithSchema";
 import { TableTreeWithoutSchema } from "./TableTreeWithoutSchema";
 import { FileTree } from "./FileTree";
 import { readOneLakeFileAsText, getOneLakeFilePath } from "../../controller/OneLakeController";
-import { callDatahubOpen } from "../../../workload/controller/DataHubController";
+import { callDatahubOpen } from "../../../implementation/controller/DataHubController";
 
 export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
   const [selectedItem, setSelectedItem] = useState<ItemMetadata>(null);

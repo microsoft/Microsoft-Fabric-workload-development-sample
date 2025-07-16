@@ -9,7 +9,7 @@ import {
 } from "@fluentui/react-components";
 import "../../../styles.scss";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { GenericItem } from "../../../workload/models/ItemCRUDModel";
+import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
 import { CalculationOperator, CalculatorSampleItemDefinition } from "./CalculatorSampleItemModel";
 
 

@@ -1,5 +1,5 @@
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { callAcquireFrontendAccessToken } from "../../workload/controller/AuthenticationController";
+import { callAcquireFrontendAccessToken } from "../../implementation/controller/AuthenticationController";
 import { EnvironmentConstants } from "../../constants";
 import { BatchRequest, BatchResponse, BatchState, ErrorResponse, SessionRequest, SessionResponse, StatementRequest, StatementResponse } from "../models/SparkLivyModel";
 

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { GenericItem } from "../../workload/models/ItemCRUDModel";
+import { GenericItem } from "../../implementation/models/ItemCRUDModel";
 
 interface ApiDataState {
   datahubDialogDescription: string;

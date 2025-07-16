@@ -5,9 +5,9 @@ import {
     NotificationType
 } from '@ms-fabric/workload-client';
 
-import { ItemCreationFailureData, ItemCreationSuccessData } from './workload/models/ItemCRUDModel';
-import { callPageOpen } from './workload/controller/PageController';
-import { callNotificationOpen } from './workload/controller/NotificationController';
+import { ItemCreationFailureData, ItemCreationSuccessData } from './implementation/models/ItemCRUDModel';
+import { callPageOpen } from './implementation/controller/PageController';
+import { callNotificationOpen } from './implementation/controller/NotificationController';
 
 export async function initialize(params: InitParams) {
     const workloadClient = createWorkloadClient();

@@ -31,17 +31,17 @@ import {
   Calculation
 } from "./CalculatorSampleItemModel";
 import "../../../styles.scss";
-import { callGetItem, getWorkloadItem, saveItemDefinition } from "../../../workload/controller/ItemCRUDController";
-import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } from "../../../workload/controller/NavigationController";
-import { callThemeOnChange } from "../../../workload/controller/ThemeController";
-import { callOpenSettings } from "../../../workload/controller/SettingsController";
-import { WorkloadItem } from "../../../workload/models/ItemCRUDModel";
-import { callDatahubWizardOpen } from "../../../workload/controller/DataHubController";
-import { callDialogOpenMsgBox } from "../../../workload/controller/DialogController";
+import { callGetItem, getWorkloadItem, saveItemDefinition } from "../../../implementation/controller/ItemCRUDController";
+import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } from "../../../implementation/controller/NavigationController";
+import { callThemeOnChange } from "../../../implementation/controller/ThemeController";
+import { callOpenSettings } from "../../../implementation/controller/SettingsController";
+import { WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
+import { callDatahubWizardOpen } from "../../../implementation/controller/DataHubController";
+import { callDialogOpenMsgBox } from "../../../implementation/controller/DialogController";
 import { defaultCalculatorSampleItemDefinition } from "../../../constants";
 import { CalculatorSampleItemEmpty } from "./CalculatorSampleItemEditorEmpty";
-import { callNotificationOpen } from "../../../workload/controller/NotificationController";
-import { ItemEditorLoadingProgressBar } from "../../../workload/controls/ItemEditorLoadingProgressBar";
+import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
+import { ItemEditorLoadingProgressBar } from "../../../implementation/controls/ItemEditorLoadingProgressBar";
 import { t } from "i18next";
 
 export function CalculatorSampleItemEditor(props: PageProps) {

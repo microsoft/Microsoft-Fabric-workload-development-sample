@@ -122,9 +122,19 @@ Write-Host ""
 Write-Host "Setup finished successfully ..." -ForegroundColor Green
 Write-Host ""
 Write-Host ""
-Write-Host "Now you can run the following scripts to start your development environment."
+Write-Host "Now you can run the following scripts to start your development environment:"
 Write-Host "--------------------------------------------------------------------------------"
 
+# Promt user to start the DevServer
+$startDevServerScript = Join-Path $PSScriptRoot "..\Run\StartDevServer.ps1"
+if (Test-Path $startDevServerScript) {
+    $startDevServerScriptFull = (Resolve-Path $startDevServerScript).Path
+    Write-Host ""
+    Write-Host "To launch your workload webapp, start the DevServer locally with the following script:" -ForegroundColor Blue
+    Write-Host "`"$startDevServerScriptFull`""
+} else {
+    Write-Host "StartDevServer.ps1 not found at $startDevServerScript"
+}
 
 # Prompt user to run StartDevGateway.ps1 with absolute path
 $startDevGatewayScript = Join-Path $PSScriptRoot "..\Run\StartDevGateway.ps1"
@@ -137,20 +147,10 @@ if (Test-Path $startDevGatewayScript) {
     Write-Host "StartDevGateway.ps1 not found at $startDevGatewayScript"
 }
 
-# Promt user to run mpn start
-$startFrontendScript = Join-Path $PSScriptRoot "..\Run\StartFrontend.ps1"
-if (Test-Path $startFrontendScript) {
-    $startFrontendScriptFull = (Resolve-Path $startFrontendScript).Path
-    Write-Host ""
-    Write-Host "To launch your workload webapp, start your Fronend locally with the following script:" -ForegroundColor Blue
-    Write-Host "`"$startFrontendScriptFull`""
-} else {
-    Write-Host "StartFrontend.ps1 not found at $startFrontendScript"
-}
-
 Write-Host ""
 Write-Host "Make sure you have enabled the Fabric Developer mode in the Fabric portal." -ForegroundColor Blue
 Write-Host "Open https://app.fabric.microsoft.com/ and activate it under Settings > Developer settings > Fabric Developer mode."
+Write-Host "Be aware this setting will not stay on forever. Check back if you have problems if it is still active."
 Write-Host ""
 Write-Host "After following all the instructions above, you will see your workload being available in the Fabric portal."
 Write-Host "It will appear in the Workload Hub and items can be created in the workspace you have configured."

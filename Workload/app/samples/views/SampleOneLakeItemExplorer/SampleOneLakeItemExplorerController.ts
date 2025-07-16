@@ -1,6 +1,6 @@
-import { GenericItem } from "../../../workload/models/ItemCRUDModel";
+import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
 import { EnvironmentConstants } from "../../../constants";
-import { callAcquireFrontendAccessToken } from "../../../workload/controller/AuthenticationController";
+import { callAcquireFrontendAccessToken } from "../../../implementation/controller/AuthenticationController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FileMetadata, OneLakePathContainer, TableMetadata } from "./SampleOneLakeItemExplorerModel";
 
