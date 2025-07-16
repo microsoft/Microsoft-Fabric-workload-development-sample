@@ -4,7 +4,9 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const Webpack = require("webpack");
 const path = require("path");
 const fs = require("fs").promises;
-const { buildManifestPackage } = require('./build-manifest'); // Import the buildManifestPackage function
+const express = require("express");
+const { registerDevServerApis } = require('.'); // Import our manifest API
+const { registerFabricRemoteWorkloadApis } = require('./../api/samples/index'); // Import our manifest API
 
 console.log('******************** Build: Environment Variables *******************');
 console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
@@ -75,56 +77,35 @@ module.exports = {
             "Access-Control-Allow-Methods": "GET,OPTIONS",
             "Access-Control-Allow-Headers": "*"
         },
-        setupMiddlewares
-            : function (middlewares, devServer) {
+        setupMiddlewares: function (middlewares, devServer) {
                 console.log('*********************************************************************');
                 console.log('****               Server is listening on port 60006             ****');
                 console.log('****   You can now override the Fabric manifest with your own.   ****');
                 console.log('*********************************************************************');
 
-                devServer.app.get('/manifests_new/metadata', function (req, res) {
-                    res.writeHead(200, {
-                        'Content-Type': 'application/json',
-                        'Access-Control-Allow-Origin': '*',
-                        'Access-Control-Allow-Methods': 'GET',
-                        'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-                    });
-
-                    const devParameters = {
-                        name: process.env.WORKLOAD_NAME,
-                        url: "http://127.0.0.1:60006",
-                        devAADFEAppConfig: {
-                            appId: process.env.DEV_AAD_CONFIG_FE_APPID,
-                        }
-                    };
-
-                    res.end(JSON.stringify({ extension: devParameters }));
-                });
-
-                devServer.app.get('/manifests_new', async function (req, res) {
-                    try {
-                        await buildManifestPackage(); // Wait for the build to complete before accessing the file
-                        const filePath = path.resolve(__dirname, '../../config/Manifest/ManifestPackage.1.0.0.nupkg');
-                        // Check if the file exists
-                        await fs.access(filePath);
-
-                        res.status(200).set({
-                            'Content-Type': 'application/octet-stream',
-                            'Content-Disposition': `attachment; filename="ManifestPackage.1.0.0.nupkg"`,
-                            'Access-Control-Allow-Origin': '*',
-                            'Access-Control-Allow-Methods': 'GET',
-                            'Access-Control-Allow-Headers': 'Content-Type, Authorization'
-                        });
-
-                        res.sendFile(filePath);
-                    } catch (err) {
-                        console.error(`❌ Error: ${err.message}`);
-                        res.status(500).json({
-                            error: "Failed to serve manifest package",
-                            details: err.message
-                        });
+                // Add JSON body parsing middleware for our APIs
+                devServer.app.use(express.json());
+                
+                // Add global CORS middleware
+                devServer.app.use((req, res, next) => {
+                    res.header('Access-Control-Allow-Origin', '*');
+                    res.header('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE, OPTIONS');
+                    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+                    
+                    // Handle preflight requests
+                    if (req.method === 'OPTIONS') {
+                        res.sendStatus(204);
+                    } else {
+                        next();
                     }
                 });
+                
+                // Register the manifest API from our extracted implementation
+                registerDevServerApis(devServer.app);
+
+                // Registering the Remote Workload notification APIs
+                registerFabricRemoteWorkloadApis(devServer.app)
+
                 return middlewares;
             },
     }
