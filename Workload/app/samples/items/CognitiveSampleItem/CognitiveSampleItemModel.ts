@@ -1,4 +1,4 @@
-import { ItemReference } from "src/workload/models/ItemCRUDModel";
+import { ItemReference } from "../../../implementation/models/ItemCRUDModel";
 
 
 export interface CognitiveSampleItemDefinition  {
