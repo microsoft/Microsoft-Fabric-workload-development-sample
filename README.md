@@ -75,7 +75,7 @@ To run the development enviroment locally you need the follwoing components:
 
 #### Setting things up
 
-To set things up follow the [WDKv2 Setup Guide](./WDKv2-Setup.md).
+To set things up follow the [WDKv2 Setup Guide](./docs/WDKv2-Setup.md).
 
 ### Start coding
 
