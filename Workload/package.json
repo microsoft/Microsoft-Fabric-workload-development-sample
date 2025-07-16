@@ -2,9 +2,11 @@
   "name": "fabric-developer-sample",
   "version": "2.0.0",
   "description": "Microsoft Fabric - Developer Sample App",
-  "scripts": {
-    "start": "env-cmd -f .env.dev webpack serve --open --config ./devServer/webpack.config.js",
-    "start:codespace": "node --max-old-space-size=4096 ./node_modules/.bin/env-cmd -f .env.dev webpack serve --open --config ./devServer/webpack.config.js --no-hot",
+  "scripts": {    
+    "start": "npm run start:devServer",
+    "start:devServer": "env-cmd -f .env.dev webpack serve --open --config ./devServer/webpack.config.js",
+    "start:devGateway": "node ./devServer/start-devGateway.js",
+    "start:codespace": "node --max-old-space-size=4096 ./node_modules/.bin/env-cmd -f .env.dev webpack serve --open --config ./devServer/webpack.config.js --no-hot",    
     "build:test": "env-cmd -f .env.test webpack --config ./devServer/webpack.config.js --output-path ./dist --progress",
     "build:prod": "env-cmd -f .env.prod webpack --config ./devServer/webpack.config.js --output-path ./dist --mode production --progress"
   },

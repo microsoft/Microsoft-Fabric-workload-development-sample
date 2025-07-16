@@ -6,7 +6,6 @@ const path = require("path");
 const fs = require("fs").promises;
 const express = require("express");
 const { registerDevServerApis } = require('.'); // Import our manifest API
-const { registerFabricRemoteWorkloadApis } = require('./../api/samples/index'); // Import our manifest API
 
 console.log('******************** Build: Environment Variables *******************');
 console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
@@ -102,9 +101,6 @@ module.exports = {
                 
                 // Register the manifest API from our extracted implementation
                 registerDevServerApis(devServer.app);
-
-                // Registering the Remote Workload notification APIs
-                registerFabricRemoteWorkloadApis(devServer.app)
 
                 return middlewares;
             },

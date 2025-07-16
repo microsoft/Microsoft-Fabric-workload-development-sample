@@ -3,20 +3,32 @@
  * Handles serving of manifest metadata and package files
  */
 
-import express, { Request, Response, Router } from 'express';
-import { promises as fs } from 'fs';
-import path from 'path';
-
-// Using CommonJS require for the build-manifest.js module
-const { buildManifestPackage } = require('../../../devServer/build-manifest');
+const express = require('express');
+const fs = require('fs').promises;
+const path = require('path');
+const { buildManifestPackage } = require('./build-manifest');
 
 const router = express.Router();
+
+/**
+ * OPTIONS handler for CORS preflight requests
+ */
+router.options('/manifests_new*', (req, res) => {
+  res.header({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400' // 24 hours
+  });
+  res.sendStatus(204); // No content needed for OPTIONS response
+  console.log("Handled CORS preflight request for manifest endpoint.");
+});
 
 /**
  * GET /manifests_new/metadata
  * Returns metadata about the manifest
  */
-router.get('/manifests_new/metadata', (req: Request, res: Response) => {
+router.get('/manifests_new/metadata', (req, res) => {
   res.writeHead(200, {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
@@ -33,16 +45,17 @@ router.get('/manifests_new/metadata', (req: Request, res: Response) => {
   };
 
   res.end(JSON.stringify({ extension: devParameters }));
+  console.log("Deliverd manifest metainformation successfully.");
 });
 
 /**
  * GET /manifests_new
  * Builds and returns the manifest package
  */
-router.get('/manifests_new', async (req: Request, res: Response) => {
+router.get('/manifests_new', async (req, res) => {
   try {
     await buildManifestPackage(); // Wait for the build to complete before accessing the file
-    const filePath = path.resolve(__dirname, '../../../../config/Manifest/ManifestPackage.1.0.0.nupkg');
+    const filePath = path.resolve(__dirname, '../../config/Manifest/ManifestPackage.1.0.0.nupkg');
     // Check if the file exists
     await fs.access(filePath);
 
@@ -55,14 +68,14 @@ router.get('/manifests_new', async (req: Request, res: Response) => {
     });
 
     res.sendFile(filePath);
+    console.log("Deliverd manifest package successfully.");
   } catch (err) {
-    const error = err as Error;
-    console.error(`❌ Error: ${error.message}`);
+    console.error(`❌ Error: ${err.message}`);
     res.status(500).json({
       error: "Failed to serve manifest package",
-      details: error.message
+      details: err.message
     });
   }
 });
 
-export default router;
+module.exports = router;
