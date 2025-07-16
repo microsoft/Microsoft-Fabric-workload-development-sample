@@ -47,7 +47,7 @@ if ($env:CODESPACES -eq "true" -or -not $InteractiveLogin -or $IsMacOS) {
 }
 $config = Get-Content -Path $CONFIGURATIONFILE -Raw | ConvertFrom-Json 
 $manifestPackageFilePath = $config.ManifestPackageFilePath 
-$workspaceGuid = $config.WorkspaceGuid 
+$devWorkspaceId = $config.WorkspaceGuid 
 $workloadEndpointURL = $config.WorkloadEndpointURL 
 $logLevel = "Information"
 
@@ -61,7 +61,7 @@ if($IsWindows) {
         $x64DotnetPath = "/usr/local/share/dotnet/x64/dotnet"
         if (Test-Path $x64DotnetPath) {
             Write-Host "Using x64 .NET runtime for ARM64 Mac compatibility..." -ForegroundColor Yellow
-            & $x64DotnetPath $fileExe -LogLevel $logLevel -DevMode:UserAuthorizationToken $token -DevMode:ManifestPackageFilePath $manifestPackageFilePath -DevMode:WorkspaceGuid $workspaceGuid -DevMode:WorkloadEndpointUrl $workloadEndpointURL
+            & $x64DotnetPath $fileExe -LogLevel $logLevel -DevMode:UserAuthorizationToken $token -DevMode:ManifestPackageFilePath $manifestPackageFilePath -DevMode:WorkspaceGuid $devWorkspaceId -DevMode:WorkloadEndpointUrl $workloadEndpointURL
         } else {
             Write-Host "ERROR: This application requires x64 .NET runtime, but you're on ARM64 Mac." -ForegroundColor Red
             Write-Host "Please install x64 .NET 8 Runtime from: https://dotnet.microsoft.com/download/dotnet/8.0" -ForegroundColor Red
@@ -69,6 +69,6 @@ if($IsWindows) {
             exit 1
         }
     } else {
-        & dotnet $fileExe -LogLevel $logLevel -DevMode:UserAuthorizationToken $token -DevMode:ManifestPackageFilePath $manifestPackageFilePath -DevMode:WorkspaceGuid $workspaceGuid -DevMode:WorkloadEndpointUrl $workloadEndpointURL
+        & dotnet $fileExe -LogLevel $logLevel -DevMode:UserAuthorizationToken $token -DevMode:ManifestPackageFilePath $manifestPackageFilePath -DevMode:WorkspaceGuid $devWorkspaceId -DevMode:WorkloadEndpointUrl $workloadEndpointURL
     }
 }

@@ -1,6 +1,6 @@
 param (
     # The Workspace Id to use for development
-    [String]$WorkspaceGuid,
+    [String]$DevWorkspaceId,
     # The version of the workload, used for the manifest package
     [String]$WorkloadVersion = "1.0.0",
     # Force flag to overwrite existing configurations and don't prompt the user
@@ -37,7 +37,7 @@ Write-Output "Manifest location used $manifestFile"
 
 # Define key-value dictionary for replacements
 $replacements = @{
-    "WORKSPACE_GUID"                     = $WorkspaceGuid
+    "DEV_WORKSPACE_ID"                     = $DevWorkspaceId
     "WORLOAD_MANIFEST_PACKAGE_FILE_PATH" = [regex]::Escape($manifestFile).Replace("\.", ".")
     "WORKLOAD_VERSION"                   = $WorkloadVersion
 }

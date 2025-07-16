@@ -45,3 +45,10 @@ export enum CalculationOperator {
     Divide,
     Random,
 }
+
+export const defaultCalculatorSampleItemDefinition: CalculatorSampleItemDefinition = {
+    operand1: 0,
+    operand2: 0,
+    operator: CalculationOperator.Undefined,
+    lastResultFile: null
+}
