@@ -26,6 +26,7 @@ if ($HostingType -eq "FERemote" -or $HostingType -eq "Remote") {
     exit 1
 }
 
+
 ###############################################################################
 # Setup Workload
 ###############################################################################
@@ -93,3 +94,41 @@ if (Test-Path $srcFile) {
 
 
 Write-Host "Setup Workload finished successfully ..."  -ForegroundColor Green
+
+
+###############################################################################
+# Writing the DevServer config files
+###############################################################################
+
+Write-Output "Writing DevServer files ..."
+$srcDevServerDir = Join-Path $srcTemplateDir "DevServer"
+$destDevServerDir = Join-Path $PSScriptRoot "..\..\DevServer"
+
+Write-Host "The DevServer destination dir $destDevServerDir"
+Write-Host "The DevServer src dir $srcDevServerDir"
+
+# Get all files in the source directory
+Get-ChildItem -Path $srcDevServerDir -Force
+Get-ChildItem -Path $srcDevServerDir -Force -File | ForEach-Object {
+    $filePath = $_.FullName
+    $content = Get-Content $filePath -Raw
+    $destPath = Join-Path $destDevServerDir $_.Name
+
+    $writeFile = $true
+    if ((Test-Path $destPath) -and !$Force) {         
+        $writeFile = Read-Host "File  $_ exists do you want to override it with the templates? (y/n)"      
+    }
+
+    if($writeFile) {
+        Write-Host "Processing file: $filePath"
+        foreach ($key in $replacements.Keys) {
+            $content = $content -replace "\{\{$key\}\}", $replacements[$key]
+        }
+        Set-Content -Path $destPath -Value $content -Force
+        Write-Output "$destPath"
+    } else {
+        Write-Host "Skipping file: $filePath"
+    }
+}
+
+Write-Host "Setup DevServer finished successfully ..."  -ForegroundColor Green

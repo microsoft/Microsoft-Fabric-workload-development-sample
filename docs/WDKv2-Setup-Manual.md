@@ -40,7 +40,7 @@ Looking for your Tenant ID? Follow these steps:
 
 The next step is to configure your workload to make use of the new Frontend App.
 
-1. Open the “Frontend/.env.dev” file and insert your workload name in the “WORKLOAD_NAME” configuration property and your frontend application client id in the “DEV_AAD_FE_CONFIG_APPID” configuration property.
+1. Open the “Workload/.env.dev” file and insert your workload name in the “WORKLOAD_NAME” configuration property and your frontend application client id in the “DEV_AAD_FE_CONFIG_APPID” configuration property.
 2. Run `npm install`
 
 ## Change the Workload Manifest

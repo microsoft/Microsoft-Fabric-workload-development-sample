@@ -8,7 +8,7 @@
 ################################################
 Write-Host ""
 Write-Host "Starting the DevServer ..."
-$devServerdDir = Join-Path $PSScriptRoot "..\..\DevServer"
+$devServerdDir = Join-Path $PSScriptRoot "..\..\Workload\devServer"
 Push-Location $devServerdDir
 try {
     # If running in Codespaces, use the low memory version by default to prevent OOM errors

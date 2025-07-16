@@ -3,7 +3,7 @@
 
 ## Frontend API access
 
-The code containing the Frontend Authentication can be found in your repo under [ApiAuthenticationFrontend.tsx](./../Frontend/src/components/ClientSDKPlayground/ApiAuthenticationFrontend.tsx).
+The code containing the Frontend Authentication can be found in your repo under [ApiAuthenticationFrontend.tsx](./../Workload/app/components/ClientSDKPlayground/ApiAuthenticationFrontend.tsx).
 
 There are two important methods in there that will showcase the new functionality: 
 1)	 callAuthAcquireFrontendAccessToken  - which provides you with the ability to get a Entra Token for your FE application
@@ -16,7 +16,7 @@ There are two important methods in there that will showcase the new functionalit
 
 ## Storing Item Definition in Fabric
 
-You can find the code for storing item definition in the `saveItemDefinition` method within the [SampleWorkloadEditor.tsx](./../Frontend/src/workload/items/HelloWorldItem/HelloWorldItemEditor.tsx) file. Here is the method content for reference:
+You can find the code for storing item definition in the `saveItemDefinition` method within the [SampleWorkloadEditor.tsx](./../Workload/app/workload/items/HelloWorldItem/HelloWorldItemEditor.tsx) file. Here is the method content for reference:
 
 ```typescript
   async function SaveItem(definition?: HelloWorldItemDefinition) {
@@ -33,7 +33,7 @@ This method demonstrates how to persist the definition of an item using the SDK.
 ## Standard Item creation experience
 
 
-The configuration for the standard item creation experience can be found in the [Product.json](../Frontend/Package/Product.json) file, specifically within the `create` section under `createItemDialogConfig`. it allows to define event handlers for failure and success. Here is a snippet for reference:
+The configuration for the standard item creation experience can be found in the [Product.json](../config/Manifest/Product.json) file, specifically within the `create` section under `createItemDialogConfig`. it allows to define event handlers for failure and success. Here is a snippet for reference:
 
 ```json
 {
@@ -113,7 +113,7 @@ Add the `enableSandboxRelaxation` setting to your workload manifest:
 ```
 **Important**: The line **`<EnableSandboxRelaxation>true</EnableSandboxRelaxation>`** must be included to enable this feature.
 ### Development Mode
-For local development, you can use sandbox relaxation and bypass consent using the dev override. [Add to devParameters](../Frontend/tools/webpack.config.js)
+For local development, you can use sandbox relaxation and bypass consent using the dev override. [Add to devParameters](../Workload/devServer/webpack.config.js)
 
 
 ```typescript
@@ -129,7 +129,7 @@ const devParameters = {
 **Note**: The line **`devSandboxRelaxation: true`** enables sandbox relaxation in development mode without requiring user consent.
 ## Public API Support
 
-An example of how to acquire a Token with the right scope and make a call to the API can be found in the [ApiAuthenticationFrontend.tsx](../Frontend/src/components/ClientSDKPlayground/ApiAuthenticationFrontend.tsx) file. The method `callAuthAcquireFrontendAccess` implements how to get a token with a specific scope where the `sendWorkloadServerRequest`shows a generic method to parse the token for Fabric API calls.
+An example of how to acquire a Token with the right scope and make a call to the API can be found in the [ApiAuthenticationFrontend.tsx](../Workload/app/components/ClientSDKPlayground/ApiAuthenticationFrontend.tsx) file. The method `callAuthAcquireFrontendAccess` implements how to get a token with a specific scope where the `sendWorkloadServerRequest`shows a generic method to parse the token for Fabric API calls.
 
 ```typescript
 
