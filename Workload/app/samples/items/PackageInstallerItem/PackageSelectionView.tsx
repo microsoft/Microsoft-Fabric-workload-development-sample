@@ -13,14 +13,17 @@ export const PackageSelectionView: React.FC<PackageInstallerSelectionViewProps> 
     <Stack>
       <div style={{ 
         display: "grid", 
-        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", 
+        gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", 
         gap: "20px", 
-        padding: "20px" 
+        padding: "20px",
+        justifyContent: "center",
+        maxWidth: "1200px",
+        margin: "0 auto"
       }}>
         {SolutionConfigurationsArray.map((pack: Package) => (
           <Card
             key={pack.typeId}
-            style={{ cursor: "pointer", height: "100%" }}
+            style={{ cursor: "pointer", height: "100%", maxWidth: "300px" }}
             onClick={() => onPackageSelected(pack.typeId)}
           >
             <CardPreview>

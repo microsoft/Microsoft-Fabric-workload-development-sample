@@ -4,7 +4,7 @@ import { Text } from "@fluentui/react-components";
 import "./../../../styles.scss";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
-import { PackageInstallerItemDefinition } from "./PackageInstallerItemModel";
+import { PackageInstallerItemDefinition} from "./PackageInstallerItemModel";
 import { PackageSelectionView } from "./PackageSelectionView";
 
 interface PackageInstallerItemEmptyStateProps {
@@ -23,7 +23,6 @@ export const PackageInstallerItemEditorEmpty: React.FC<PackageInstallerItemEmpty
 
   // Handle deployment selection
   const handlePackageSelected = (packageId: string) => {
-    console.log(`Selected a package: ${packageId}`);
     onPackageSelected(packageId);
   };
 
@@ -39,7 +38,7 @@ export const PackageInstallerItemEditorEmpty: React.FC<PackageInstallerItemEmpty
       </Stack.Item>
       <Stack.Item>
         <Text as="h2" size={800} weight="semibold">
-          Select a package that should be deploymed
+          What do you want to create?
         </Text>
       </Stack.Item>
       <Stack.Item style={{ width: '100%' }}>

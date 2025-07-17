@@ -13,9 +13,8 @@ import {
 import { useTranslation } from "react-i18next";
 import { AvailablePackages, Deployment, DeploymentStatus } from "./PackageInstallerItemModel";
 import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
-import { NotificationType, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
-import { deployPackage } from "./DeploymentController";
+import { WorkloadClientAPI } from "@ms-fabric/workload-client";
+import { handleItemClick, handleWorkspaceClick, startDeployment } from "./UXHelper";
 
 // Props for the PackageDetailCard component
 export interface DeploymentDetailViewProps {
@@ -41,58 +40,7 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
 }) => {
   const { t } = useTranslation();
   const pack = AvailablePackages[deployment.packageId];
-
- async function onStartDeployment() {
-    // Placeholder for deployment logic
-    // Here you would typically call an API to start the deployment
-    // For example: workloadClient.deploy(package.id);
-    // TODO needs to be implemented
-    console.log(`Starting deployment for package: ${deployment.id}`);
-
-    try {
-      const updatedSolution = await deployPackage(
-                workloadClient,
-                item,
-                pack,
-                deployment,
-                lakehouseId);
-      
-      // Call the onDeploymentUpdate callback with the updated deployment
-      if (onDeploymentUpdate) {
-        onDeploymentUpdate(updatedSolution);
-      }
-
-      callNotificationOpen(
-                workloadClient,
-                "Deployment Started",
-                `Deployment has successfully started ${updatedSolution.jobId}.`,
-                undefined,
-                undefined
-      );
-    }
-    catch (error) {
-      console.error(`Error on Deployment: ${error}`);
-      callNotificationOpen(
-        workloadClient,
-        "Error",
-        `Failed to upload script: ${error.message || error}`,
-        NotificationType.Error,
-        undefined
-      );
-      
-      // Create a failed deployment copy and update via callback
-      const failedDeployment = {
-        ...deployment,
-        deploymentStatus: DeploymentStatus.Failed
-      };
-      
-      if (onDeploymentUpdate) {
-        onDeploymentUpdate(failedDeployment);
-      }
-      return;
-    }
-
-  }
+ 
 
   // Function to get status badge color based on deployment status
   const getStatusBadgeColor = (status: DeploymentStatus) => {
@@ -142,62 +90,95 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
           <Caption1>{t("Deployment ID")}:</Caption1>
           <Body1>{deployment.id}</Body1>
         </div>
+        <div className="deployment-detail-row">
+          <Caption1>{t("Package Name")}:</Caption1>
+          <Body1>{pack?.name}</Body1>
+        </div>    
+        <div className="deployment-detail-row">
+          <Caption1>{t("Deployment Type")}:</Caption1>
+          <Body1>{pack.locationType}</Body1>
+        </div>  
 
         <div className="deployment-detail-row">
           <Caption1>{t("Workspace ID")}:</Caption1>
-          <Body1>{deployment.workspaceId || item.workspaceId || t("N/A")}</Body1>
+          {deployment.workspace?.id ? (
+            <Body1 
+              style={{ 
+                cursor: "pointer", 
+                color: "#0078d4",
+                textDecoration: "underline"
+              }}
+              onClick={() => handleWorkspaceClick(workloadClient, deployment.workspace.id)}
+              title={`Click to open workspace ${deployment.workspace.id}`}
+            >
+              {deployment.workspace.id}
+            </Body1>
+          ) : (
+            <Body1>{t("N/A")}</Body1>
+          )}
         </div>
         <div className="deployment-detail-row">
           <Caption1>{t("Folder ID")}:</Caption1>
-          <Body1>{deployment.folderId || t("N/A")}</Body1>
+          <Body1>{deployment.workspace?.folder?.id || t("N/A")}</Body1>
         </div>
-        <div className="deployment-detail-row">
-          <Caption1>{t("Package Type")}:</Caption1>
-          <Body1>{AvailablePackages[deployment.packageId]?.name}</Body1>
-        </div>       
+   
   
         <Divider style={{ margin: "12px 0" }} />
         
-        <div className="deployment-items">
-          <h2>{t("Deployment Items")}:</h2>
-          <Caption1>{t("Shows a list of all items that will be create as part of the deployment.")}</Caption1>
-          {pack?.items && pack.items.length > 0 ? (
-            <ul className="items-list" style={{ margin: "8px 0", paddingLeft: "20px" }}>
-              {pack.items.map((item, index) => (
-                <li key={index}>
-                  <Body1>{item.name}</Body1>
-                  <div style={{ marginLeft: "8px" }}>
-                    <Caption1>{item.description}</Caption1>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div style={{ marginLeft: "8px" }}>
-              <Body1 italic>{t("No items defined for this deployment")}</Body1>
-            </div>
-          )}
-        </div>
+        {deployment.status !== DeploymentStatus.Succeeded && (
+          <div className="deployment-items">
+            <h2>{t("Configured Items")}:</h2>
+            <Caption1>{t("Shows a list of all items that will be create as part of the deployment.")}</Caption1>
+            {pack?.items && pack.items.length > 0 ? (
+              <ul className="items-list" style={{ margin: "8px 0", paddingLeft: "20px" }}>
+                {pack.items.map((item, index) => (
+                  <li key={index}>
+                    <Body1>{item.name}</Body1>
+                    <div style={{ marginLeft: "8px" }}>
+                      <Caption1>{item.description}</Caption1>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div style={{ marginLeft: "8px" }}>
+                <Body1 italic>{t("No items defined for this deployment")}</Body1>
+              </div>
+            )}
+          </div>
+        )}
         
-        <Divider style={{ margin: "12px 0" }} />
+        {deployment.status !== DeploymentStatus.Succeeded && <Divider style={{ margin: "12px 0" }} />}
         
-        <div className="created-items">
-          <h2>{t("Created Items")}:</h2>
-          <Caption1>{t("Shows a list of all items that have been created by this deployment.")}</Caption1>
-          {deployment.itemsCreated && deployment.itemsCreated.length > 0 ? (
-            <ul className="items-list" style={{ margin: "8px 0", paddingLeft: "20px" }}>
-              {deployment.itemsCreated.map((item: GenericItem) => (
-                <li key={item.id}>
-                  <Body1>{item.displayName || item.id}</Body1>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <div style={{ marginLeft: "8px" }}>
-              <Body1 italic>{t("No items created yet")}</Body1>
-            </div>
-          )}
-        </div>
+        {deployment.status === DeploymentStatus.Succeeded && (
+          <div className="created-items">
+            <h2>{t("Created Items")}:</h2>
+            <Caption1>{t("Shows a list of all items that have been created by this deployment.")}</Caption1>
+            {deployment.itemsCreated && deployment.itemsCreated.length > 0 ? (
+              <ul className="items-list" style={{ margin: "8px 0", paddingLeft: "20px" }}>
+                {deployment.itemsCreated.map((item: GenericItem) => (
+                  <li key={item.id}>
+                    <Body1 
+                      style={{ 
+                        cursor: "pointer", 
+                        color: "#0078d4",
+                        textDecoration: "underline"
+                      }}
+                      onClick={() => handleItemClick(workloadClient, item)}
+                      title={`Click to open ${item.displayName || item.id}`}
+                    >
+                      {item.displayName || item.id}
+                    </Body1>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div style={{ marginLeft: "8px" }}>
+                <Body1 italic>{t("No items created yet")}</Body1>
+              </div>
+            )}
+          </div>
+        )}
       </div>
         <CardFooter>
           <Button 
@@ -211,7 +192,7 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
             deployment.status === DeploymentStatus.Failed ) && (
             <Button 
               appearance="primary"
-              onClick={() => onStartDeployment()}
+              onClick={() => startDeployment(workloadClient, item, deployment, onDeploymentUpdate)}
               style={{ marginLeft: "8px" }}
             >
               {t("Start Deployment")}
@@ -249,5 +230,14 @@ export const styles = `
 .items-list {
   margin: 8px 0;
   padding-left: 20px;
+}
+
+.items-list li {
+  margin: 4px 0;
+}
+
+.items-list li span[style*="cursor: pointer"]:hover {
+  color: #106ebe !important;
+  text-decoration: underline !important;
 }
 `;

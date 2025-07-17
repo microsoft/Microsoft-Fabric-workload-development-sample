@@ -17,7 +17,7 @@ export interface ItemReference {
 export interface GenericItem extends ItemReference {
     type: string;
     displayName: string;
-    description: string;
+    description?: string;
     createdBy?: string;
     createdDate?: Date;
     lastModifiedBy?: string;

@@ -10,7 +10,7 @@ import {
   Text,
   Button,
 } from "@fluentui/react-components";
-import { DeleteRegular } from "@fluentui/react-icons";
+import { DeleteRegular, PlayRegular } from "@fluentui/react-icons";
 import React, { useEffect, useState, useCallback } from "react";
 import { ContextProps, PageProps } from "src/App";
 import { PackageInstallerItemEditorRibbon } from "./PackageInstallerItemEditorRibbon";
@@ -19,12 +19,13 @@ import { WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
-import { Deployment, PackageInstallerItemDefinition, DeploymentStatus } from "./PackageInstallerItemModel";
+import { Deployment, PackageInstallerItemDefinition, DeploymentStatus, WorkspaceConfig, PackageDeploymentLocation, SolutionConfigurationsArray } from "./PackageInstallerItemModel";
 import { PackageInstallerItemEditorEmpty } from "./PackageInstallerItemEditorEmpty";
 import { ItemEditorLoadingProgressBar } from "../../../implementation/controls/ItemEditorLoadingProgressBar";
 import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
 import { DeploymentDetailView } from "./DeploymentDetailView";
 import { callDatahubOpen } from "../../../implementation/controller/DataHubController";
+import { handleWorkspaceClick, startDeployment } from "./UXHelper";
 
 export function PackageInstallerItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
@@ -146,13 +147,53 @@ export function PackageInstallerItemEditor(props: PageProps) {
     }
   }
 
-  async function handleFinishEmpty(packageId: string) {
+  /**
+   * Start deployment for a pending deployment
+   */
+  async function handleStartDeployment(deployment: Deployment, event: React.MouseEvent) {
+    event.stopPropagation(); // Prevent row click from triggering
+    
+    startDeployment(
+      workloadClient,      
+      editorItem,
+      deployment,
+      handleDeploymentUpdate);
+  }
+
+async function addDeployment(packageId: string) {
+  // fint the package configuration that should be used for the deployment
+  //TODO: configuration needs to be added to Deployment
+  const pack = SolutionConfigurationsArray.find(pack => pack.typeId === packageId);
+  if (pack) {
+    const id = generateUniqueId();
+    let workspaceSetting: WorkspaceConfig | undefined = undefined;
+    if(pack.locationType == PackageDeploymentLocation.NewWorkspace) {
+      workspaceSetting = {
+        createNew: true, // Always create a new workspace for the package
+        name: `${packageId} - ${id}`,
+        description: `Workspace for package ${packageId} deployment ${id}`,
+        //TODO: Fix the capacity issue here!
+        capacityId: "4A9D5006-D552-4335-BF0D-7CD5D2FC8B83" // Use the first deployment's capacityId if available
+      };    
+    } else if (pack.locationType == PackageDeploymentLocation.NewFolder) {
+      workspaceSetting = {
+        createNew: false, // Always create a new workspace for the package
+        id: editorItem?.workspaceId,
+        folder: {
+          createNew: true, // Always create a new folder for the package
+          name: `${packageId} - ${id}`
+        }
+      };
+    }
+
     const createdSolution: Deployment = {
-      id: generateUniqueId(),
+      id: id,
       status: DeploymentStatus.Pending,
       itemsCreated: [],
       packageId: packageId,
-      workspaceId: editorItem?.workspaceId,
+      workspace: {
+        ...workspaceSetting,
+      }
       //TODO: subfolderId need to be set once avilable in the item definition
       //subfolderId: editorItem?.subfolderObjectId,
     };
@@ -169,7 +210,11 @@ export function PackageInstallerItemEditor(props: PageProps) {
     await SaveItem(newItemDefinition);
     
     setSelectedDeployment(createdSolution);
-    setSelectedTab("deployment");
+    setSelectedTab("deployment");        
+  } else {      
+    console.error(`Package with typeId ${packageId} not found`);
+    return;
+  }
   }
 
   /**
@@ -222,7 +267,7 @@ export function PackageInstallerItemEditor(props: PageProps) {
                 workloadClient={workloadClient}
                 item={editorItem}
                 itemDefinition={editorItem?.definition}
-                onPackageSelected={handleFinishEmpty}
+                onPackageSelected={addDeployment}
               />
             </span>
           )}
@@ -260,24 +305,51 @@ export function PackageInstallerItemEditor(props: PageProps) {
                       {editorItem.definition.deployments.map((deployment: Deployment) => (
                         <TableRow key={deployment.id} onClick={() => {
                           setSelectedDeployment(deployment);
-                          setSelectedTab("deployments");
+                          setSelectedTab("deployment");
                         }}>
                           <TableCell>{deployment.id}</TableCell>
                           <TableCell>{deployment.packageId}</TableCell>
                           <TableCell>{DeploymentStatus[deployment.status]}</TableCell>
-                          <TableCell>{deployment.workspaceId}</TableCell>
-                          <TableCell>{deployment.folderId}</TableCell>
                           <TableCell>
-                            <Button
-                              icon={<DeleteRegular />}
-                              appearance="subtle"
-                              disabled={deployment.status !== DeploymentStatus.Pending}
-                              onClick={(e: any) => {
-                                e.stopPropagation(); // Prevent row click from triggering
-                                handleRemoveDeployment(deployment.id);
-                              }}
-                              aria-label={t('Remove deployment')}
-                            />
+                            {deployment.workspace?.id ? (
+                              <Text 
+                                style={{ 
+                                  cursor: "pointer", 
+                                  color: "#0078d4",
+                                  textDecoration: "underline"
+                                }}
+                                onClick={(e: React.MouseEvent) => handleWorkspaceClick(workloadClient, deployment.workspace.id)}
+                                title={`Click to open workspace ${deployment.workspace.id}`}
+                              >
+                                {deployment.workspace.id}
+                              </Text>
+                            ) : (
+                              "N/A"
+                            )}
+                          </TableCell>
+                          <TableCell>{deployment.workspace?.folder?.id}</TableCell>
+                          <TableCell>
+                            <div style={{ display: "flex", gap: "4px" }}>
+                              {deployment.status === DeploymentStatus.Pending && (
+                                <Button
+                                  icon={<PlayRegular />}
+                                  appearance="subtle"
+                                  onClick={(e: React.MouseEvent) => handleStartDeployment(deployment, e)}
+                                  aria-label={t('Start deployment')}
+                                  title={t('Start deployment')}
+                                />
+                              )}
+                              <Button
+                                icon={<DeleteRegular />}
+                                appearance="subtle"
+                                disabled={deployment.status !== DeploymentStatus.Pending}
+                                onClick={(e: any) => {
+                                  e.stopPropagation(); // Prevent row click from triggering
+                                  handleRemoveDeployment(deployment.id);
+                                }}
+                                aria-label={t('Remove deployment')}
+                              />
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -301,6 +373,6 @@ export function PackageInstallerItemEditor(props: PageProps) {
 
 function generateUniqueId(): string {
   // Generate a random unique ID for deployment
-  return 'deploy_' + Math.random().toString(36).substring(2, 9);
+  return '' + Math.random().toString(36).substring(2, 9);
 }
 

@@ -5,7 +5,7 @@ import { getOneLakeFilePath, writeToOneLakeFileAsText } from "../../controller/O
 import { BatchRequest } from "../../models/SparkLivyModel";
 import { createBatch } from "../../controller/SparkLivyController";
 import { EnvironmentConstants } from "../../../constants";
-import { callCreateItem, callUpdateItemDefinition } from "../../../implementation/controller/ItemCRUDController";
+import {FabricPlatformAPIClient} from "../../controller/FabricPlatformAPIClient";
 
 
 export async function deployPackage(
@@ -44,29 +44,47 @@ async function deployPackageUX(
     const createdItems: GenericItem[] = [];
     
     try {
+
+      const fabricAPI = FabricPlatformAPIClient.create(workloadClient);
+
+      //check if we need to create a new workspace
+      if (deployment.workspace?.createNew) {
+        const workspace = await fabricAPI.workspaces.createWorkspace({
+          displayName: deployment.workspace.name,
+          description: deployment.workspace.description,          
+          capacityId: deployment.workspace.capacityId
+        });
+        deployment.workspace = {
+          ...deployment.workspace,
+          id: workspace.id
+        };
+        console.log(`Created new workspace: ${deployment.workspace.id}`);
+      }
+
+      if(deployment.workspace?.folder?.createNew){
+        const folder = await fabricAPI.folders.createFolder(
+            deployment.workspace.id, 
+            {
+              displayName: deployment.workspace.folder.name,
+              parentFolderId: deployment.workspace.folder.parentFolderId,
+            });
+        deployment.workspace.folder = {
+          ...deployment.workspace.folder,
+          id: folder.id
+        }
+        console.log(`Created new folder: ${deployment.workspace.folder.id}`);
+      }
+
       // Get target workspace ID, default to the current item's workspace if not specified
-      const targetWorkspaceId = deployment.workspaceId ? deployment.workspaceId : item.workspaceId;
+      const targetWorkspaceId = deployment.workspace.id;
       
       // Create each item defined in the package
       for (const itemDef of pack.items) {
         console.log(`Creating item: ${itemDef.name} of type: ${itemDef.itemType}`);
-        
-        // Create the item using ItemCRUDController
-        const newItem = await callCreateItem(
-          workloadClient,
-          targetWorkspaceId,
-          itemDef.itemType,
-          itemDef.name,
-          itemDef.description || ''
-        );
-        
-        console.log(`Successfully created item: ${newItem.id}`);
-        
-        // If there are item definitions, add them to the newly created item
+
+        // Process definition parts first if they exist
+        let definitionParts = [];
         if (itemDef.itemDefinitions && itemDef.itemDefinitions.length > 0) {
-          // Process each definition part
-          const definitionParts = [];
-          
           for (const defPart of itemDef.itemDefinitions) {
             let payloadData;
             
@@ -100,26 +118,33 @@ async function deployPackageUX(
             }
             
             definitionParts.push({
-              payloadPath: defPart.path,
-              payloadData: payloadData,
-              payloadType: "InlineBase64"
+              path: defPart.path,
+              payload: payloadData,
+              payloadType: "InlineBase64" as const
             });
           }
-          
-          // Update the item definition with all parts
-          if (definitionParts.length > 0) {
-            await callUpdateItemDefinition(
-              workloadClient,
-              newItem.id,
-              definitionParts,
-              false
-            );
-            console.log(`Updated item definition for item: ${newItem.id}`);
-          }
         }
+                  
+        const displayName = pack.suffixItemNames ? `${itemDef.name}_${deployment.id}` : itemDef.name;        
+        const newItem = await fabricAPI.items.createItem(
+          targetWorkspaceId,
+          {
+            displayName: displayName,
+            type: itemDef.itemType,
+            description: itemDef.description || '',
+            definition: definitionParts.length > 0 ? {
+                            parts: definitionParts
+                          }  : undefined,
+            folderId: deployment.workspace?.folder?.id || undefined
+          }
+        );        
+        console.log(`Successfully created item: ${newItem.id}`);
         
-        // Add the created item to our list
-        createdItems.push(newItem);
+        // Add the created item to our list (convert Item to GenericItem format)
+        const genericItem: GenericItem = {
+          ...newItem
+        };
+        createdItems.push(genericItem);
       }
       
       // Create a copy of the deployment with updated status and created items
@@ -202,8 +227,7 @@ async function copyPackageContentToItem(
  
     console.log(`Copying package content for item: ${item.id} and package type: ${pack.typeId}`);
     const sparkDeploymentConf: SparkDeployment = {
-      targetWorkspaceId: deployment.workspaceId ? deployment.workspaceId : item.workspaceId,
-      targetFolderId: deployment.folderId,
+      workspace: deployment.workspace,
       deploymentId: deployment.id,
       items: [],
       deploymentScript: ""
