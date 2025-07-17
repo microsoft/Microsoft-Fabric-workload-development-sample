@@ -1,5 +1,5 @@
 # Use the official .NET 6.0 runtime as the base image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 
 # DevGateway download link in Microsoft Download Center
