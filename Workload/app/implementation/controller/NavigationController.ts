@@ -56,7 +56,7 @@ export async function callNavigationAfterNavigateAway(
  * @param {string} path - The path or route to navigate to.
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.
  */
-export async function CallOpenInNewBrowserTab(
+export async function callNavigationOpenInNewBrowserTab(
     workloadClient: WorkloadClientAPI,
     path: string,
     ) {
