@@ -26,6 +26,7 @@ module.exports = {
         new Webpack.DefinePlugin({
             "process.env.WORKLOAD_NAME": JSON.stringify(process.env.WORKLOAD_NAME),
             "process.env.DEFAULT_ITEM_NAME": JSON.stringify(process.env.DEFAULT_ITEM_NAME),
+            "process.env.DEV_WORKSPACE_ID": JSON.stringify(process.env.DEV_WORKSPACE_ID),
             "NODE_ENV": JSON.stringify(process.env.NODE_ENV || "development")
         }),
         new HtmlWebpackPlugin({
@@ -69,7 +70,10 @@ module.exports = {
     },
     devServer: {
         port: 60006,
-        open: false,
+        host: '127.0.0.1',
+        open: {
+            target: '/WorkloadL2'
+        },
         historyApiFallback: true,
         headers: {
             "Access-Control-Allow-Origin": "*",
