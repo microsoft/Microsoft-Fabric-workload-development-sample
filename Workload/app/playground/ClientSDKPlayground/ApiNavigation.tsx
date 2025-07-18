@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Divider, Label } from "@fluentui/react-components";
 import { PanelRightExpand20Regular } from "@fluentui/react-icons";
-import { callNavigationNavigate, CallOpenInNewBrowserTab } from "../../implementation/controller/NavigationController";
+import { callNavigationNavigate, callNavigationOpenInNewBrowserTab } from "../../implementation/controller/NavigationController";
 import "../../styles.scss";
 import { TabContentProps } from "./ClientSDKPlaygroundModel";
 import { callPageOpen } from "../../implementation/controller/PageController";
@@ -52,7 +52,7 @@ export function ApiNavigation(props: TabContentProps) {
                     appearance="primary"
                     icon={<PanelRightExpand20Regular />}
                     onClick={() =>
-                      CallOpenInNewBrowserTab(workloadClient, "https://example.com/help")
+                      callNavigationOpenInNewBrowserTab(workloadClient, "https://example.com/help")
                     }
                   >
                     Open a link in a new tab
