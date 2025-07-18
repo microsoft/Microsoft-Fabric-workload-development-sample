@@ -28,7 +28,8 @@ import { CalculatorSampleItemEditorRibbon } from "./CalculatorSampleItemEditorRi
 import {
   CalculatorSampleItemDefinition,
   CalculationOperator,
-  Calculation
+  Calculation,
+  defaultCalculatorSampleItemDefinition
 } from "./CalculatorSampleItemModel";
 import "../../../styles.scss";
 import { callGetItem, getWorkloadItem, saveItemDefinition } from "../../../implementation/controller/ItemCRUDController";
@@ -38,7 +39,6 @@ import { callOpenSettings } from "../../../implementation/controller/SettingsCon
 import { WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
 import { callDatahubWizardOpen } from "../../../implementation/controller/DataHubController";
 import { callDialogOpenMsgBox } from "../../../implementation/controller/DialogController";
-import { defaultCalculatorSampleItemDefinition } from "../../../constants";
 import { CalculatorSampleItemEmpty } from "./CalculatorSampleItemEditorEmpty";
 import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
 import { ItemEditorLoadingProgressBar } from "../../../implementation/controls/ItemEditorLoadingProgressBar";
