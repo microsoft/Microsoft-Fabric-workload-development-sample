@@ -6,6 +6,9 @@ param (
     [String]$WorkloadName = "Org.MyWorkloadSample",
     # The display name of the workload, used in the Fabric portal
     [String]$WorkloadDisplayName = "My Sample Workload",
+    # The Workspace Id to use for development
+    # If not provided, the user will be prompted to enter it.
+    [String]$DevWorkspaceId = "00000000-0000-0000-0000-000000000000",
     # The Entra Application ID for the frontend
     # If not provided, the user will be prompted to enter it or create a new one.
     [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
@@ -32,6 +35,7 @@ $replacements = @{
     "FRONTEND_APP_ID" = $AADFrontendAppId
     "BACKEND_APP_ID" = $AADBackendAppId
     "WORKLOAD_VERSION" = $WorkloadVersion
+    "DEV_WORKSPACE_ID" = $DevWorkspaceId
 }
 
 ###############################################################################
