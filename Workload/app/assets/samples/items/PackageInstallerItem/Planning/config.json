@@ -1,0 +1,19 @@
+{
+    "typeId": "PlanningWS",
+    "deploymentType": "PackageDeploymentType.UX",
+    "locationType": "PackageDeploymentLocation.NewWorkspace",
+    "name": "Product Planning Project",
+    "description": "Set up a workspace that will configure every component that is needed to do product planning.",
+    "icon": "/assets/samples/items/PackageInstallerItem/Planning/icon.png",
+    "deploymentFile": "/assets/samples/items/PackageInstallerItem/jobs/DefaultPackageInstaller.py",
+    "suffixItemNames": false,
+    "items": [
+        {
+            "name": "PlanningLH",
+            "itemType": "Lakehouse",
+            "description": "A lakehouse that contains access to all Planning Data.",
+            "icon": "",
+            "itemDefinitions": []
+        }
+    ]
+}

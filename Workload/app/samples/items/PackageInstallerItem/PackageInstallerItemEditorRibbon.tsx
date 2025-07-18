@@ -9,6 +9,7 @@ import {
   Add24Regular,
   Connector24Regular,
   Save24Regular,
+  ArrowSync24Regular,
 } from "@fluentui/react-icons";
 import { PageProps } from 'src/App';
 import './../../../styles.scss';
@@ -30,6 +31,12 @@ const PackageInstallerItemEditorRibbonHome = (props: PackageInstallerItemEditorR
   async function onConnectLakehouseClicked() {
     if (props.connectLakehouseCallback) {
       props.connectLakehouseCallback();
+    }
+  }
+
+  async function onRefreshDeploymentsClicked() {
+    if (props.refreshDeploymentsCallback) {
+      await props.refreshDeploymentsCallback();
     }
   }
 
@@ -65,6 +72,16 @@ const PackageInstallerItemEditorRibbonHome = (props: PackageInstallerItemEditorR
           icon={<Connector24Regular />}
           onClick={ onConnectLakehouseClicked } />
       </Tooltip>
+
+      <Tooltip
+        content="Refresh Deployment Status"
+        relationship="label">
+        <ToolbarButton
+          aria-label="Refresh Deployments"
+          data-testid="item-editor-refresh-deployments-btn"
+          icon={<ArrowSync24Regular />}
+          onClick={ onRefreshDeploymentsClicked } />
+      </Tooltip>
     </Toolbar>
   );
 };
@@ -73,6 +90,7 @@ export interface PackageInstallerItemEditorRibbonProps extends PageProps {
   isLakehouseConnectEnabled: boolean;
   connectLakehouseCallback: () => void;
   addSolutionCallback: () => void;
+  refreshDeploymentsCallback: () => Promise<void>;
   saveItemCallback: () => Promise<void>;
   isSaveButtonEnabled?: boolean;
   onTabChange: (tabValue: TabValue) => void;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { 
   Card,
   CardHeader,
@@ -14,7 +14,94 @@ import { useTranslation } from "react-i18next";
 import { AvailablePackages, Deployment, DeploymentStatus } from "./PackageInstallerItemModel";
 import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { handleItemClick, handleWorkspaceClick, startDeployment } from "./UXHelper";
+import { startDeployment, getItemTypeIcon, handleWorkspaceClick, handleItemClick } from "./UXHelper";
+import { FabricPlatformAPIClient } from "../../controller/FabricPlatformAPIClient";
+
+// Component to fetch and display workspace name
+function WorkspaceNameDisplay({ workspaceId, workloadClient }: { workspaceId: string, workloadClient: WorkloadClientAPI }) {
+  const [workspaceName, setWorkspaceName] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function fetchWorkspaceName() {
+      if (!workspaceId) {
+        setWorkspaceName("N/A");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const fabricAPI = FabricPlatformAPIClient.create(workloadClient);
+        const workspace = await fabricAPI.workspaces.getWorkspace(workspaceId);
+        setWorkspaceName(workspace.displayName || workspaceId);
+      } catch (error) {
+        console.warn(`Failed to fetch workspace name for ${workspaceId}:`, error);
+        setWorkspaceName(workspaceId); // Fallback to ID if name fetch fails
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchWorkspaceName();
+  }, [workspaceId, workloadClient]);
+
+  if (isLoading) {
+    return <Body1>Loading...</Body1>;
+  }
+
+  return (
+    <Body1 
+      style={{ 
+        cursor: "pointer", 
+        color: "#0078d4",
+        textDecoration: "underline"
+      }}
+      onClick={() => handleWorkspaceClick(workloadClient, workspaceId)}
+      title={`Click to open workspace ${workspaceId}`}
+    >
+      {workspaceName}
+    </Body1>
+  );
+}
+
+// Component to fetch and display folder name
+function FolderNameDisplay({ workspaceId, folderId, workloadClient }: { workspaceId: string, folderId: string, workloadClient: WorkloadClientAPI }) {
+  const [folderName, setFolderName] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function fetchFolderName() {
+      if (!folderId || !workspaceId) {
+        setFolderName("N/A");
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const fabricAPI = FabricPlatformAPIClient.create(workloadClient);
+        const folder = await fabricAPI.folders.getFolder(workspaceId, folderId);
+        setFolderName(folder.displayName || folderId);
+      } catch (error) {
+        console.warn(`Failed to fetch folder name for ${folderId}:`, error);
+        setFolderName(folderId); // Fallback to ID if name fetch fails
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchFolderName();
+  }, [workspaceId, folderId, workloadClient]);
+
+  if (isLoading) {
+    return <Body1>Loading...</Body1>;
+  }
+
+  return (
+    <Body1 title={`Folder ID: ${folderId}`}>
+      {folderName}
+    </Body1>
+  );
+}
 
 // Props for the PackageDetailCard component
 export interface DeploymentDetailViewProps {
@@ -100,26 +187,27 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
         </div>  
 
         <div className="deployment-detail-row">
-          <Caption1>{t("Workspace ID")}:</Caption1>
+          <Caption1>{t("Workspace Name")}:</Caption1>
           {deployment.workspace?.id ? (
-            <Body1 
-              style={{ 
-                cursor: "pointer", 
-                color: "#0078d4",
-                textDecoration: "underline"
-              }}
-              onClick={() => handleWorkspaceClick(workloadClient, deployment.workspace.id)}
-              title={`Click to open workspace ${deployment.workspace.id}`}
-            >
-              {deployment.workspace.id}
-            </Body1>
+            <WorkspaceNameDisplay 
+              workspaceId={deployment.workspace.id} 
+              workloadClient={workloadClient}
+            />
           ) : (
             <Body1>{t("N/A")}</Body1>
           )}
         </div>
         <div className="deployment-detail-row">
-          <Caption1>{t("Folder ID")}:</Caption1>
-          <Body1>{deployment.workspace?.folder?.id || t("N/A")}</Body1>
+          <Caption1>{t("Folder Name")}:</Caption1>
+          {deployment.workspace?.folder?.id ? (
+            <FolderNameDisplay 
+              workspaceId={deployment.workspace.id}
+              folderId={deployment.workspace.folder.id} 
+              workloadClient={workloadClient}
+            />
+          ) : (
+            <Body1>{t("N/A")}</Body1>
+          )}
         </div>
    
   
@@ -132,10 +220,15 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
             {pack?.items && pack.items.length > 0 ? (
               <ul className="items-list" style={{ margin: "8px 0", paddingLeft: "20px" }}>
                 {pack.items.map((item, index) => (
-                  <li key={index}>
-                    <Body1>{item.name}</Body1>
-                    <div style={{ marginLeft: "8px" }}>
-                      <Caption1>{item.description}</Caption1>
+                  <li key={index} style={{ display: "flex", alignItems: "flex-start", marginBottom: "8px" }}>
+                    <div style={{ marginRight: "8px", marginTop: "2px" }}>
+                      {getItemTypeIcon(item.itemType)}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <Body1>{item.name}</Body1>
+                      <div style={{ marginLeft: "0px" }}>
+                        <Caption1>{item.description}</Caption1>
+                      </div>
                     </div>
                   </li>
                 ))}
@@ -154,21 +247,26 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
           <div className="created-items">
             <h2>{t("Created Items")}:</h2>
             <Caption1>{t("Shows a list of all items that have been created by this deployment.")}</Caption1>
-            {deployment.itemsCreated && deployment.itemsCreated.length > 0 ? (
+            {deployment.deployedItems && deployment.deployedItems.length > 0 ? (
               <ul className="items-list" style={{ margin: "8px 0", paddingLeft: "20px" }}>
-                {deployment.itemsCreated.map((item: GenericItem) => (
-                  <li key={item.id}>
-                    <Body1 
-                      style={{ 
-                        cursor: "pointer", 
-                        color: "#0078d4",
-                        textDecoration: "underline"
-                      }}
-                      onClick={() => handleItemClick(workloadClient, item)}
-                      title={`Click to open ${item.displayName || item.id}`}
-                    >
-                      {item.displayName || item.id}
-                    </Body1>
+                {deployment.deployedItems.map((item: GenericItem) => (
+                  <li key={item.id} style={{ display: "flex", alignItems: "flex-start", marginBottom: "8px" }}>
+                    <div style={{ marginRight: "8px", marginTop: "2px" }}>
+                      {getItemTypeIcon(item.type)}
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <Body1 
+                        style={{ 
+                          cursor: "pointer", 
+                          color: "#0078d4",
+                          textDecoration: "underline"
+                        }}
+                        onClick={() => handleItemClick(workloadClient, item)}
+                        title={`Click to open ${item.displayName || item.id}`}
+                      >
+                        {item.displayName || item.id}
+                      </Body1>
+                    </div>
                   </li>
                 ))}
               </ul>

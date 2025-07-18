@@ -1,0 +1,32 @@
+{
+    "typeId": "SalesData",
+    "deploymentType": "UX",
+    "locationType": "NewFolder",
+    "name": "Sales Data Workspace",
+    "icon": "/assets/samples/items/PackageInstallerItem/Sales/icon.png",
+    "description": "Set up a new workspace to analyse .",
+    "suffixItemNames": true,
+    "items": [
+      {
+        "name": "SalesDataLH",
+        "itemType": "Lakehouse",
+        "description": "A lakehouse that has access to the sales data.",
+        "icon": "",
+        "itemDefinitions": []
+      },
+      {
+        "name": "SalesDataNB",
+        "itemType": "Notebook",
+        "description": "A Notebook to Analyze the Sales data.",
+        "icon": "",
+        "itemDefinitions": []
+      },
+      {
+        "name": "SalesDataNB2",
+        "itemType": "Notebook",
+        "description": "A Notebook second to Analyze the Sales data.",
+        "icon": "",
+        "itemDefinitions": []
+      }
+    ]
+}

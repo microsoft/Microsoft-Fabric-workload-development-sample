@@ -1,0 +1,210 @@
+{
+  "typeId": "UnifiedAdminMonitoring",
+  "deploymentType": "SparkNotebook",
+  "locationType": "NewWorkspace",
+  "name": "Unified Admin Monitoring Workspace",
+  "icon": "/assets/samples/items/PackageInstallerItem/UnifiedAdminMonitoring/icon.png",
+  "description": "Solution accelerator, which can help you implement a monitoring solution within Fabric",
+  "suffixItemNames": false,
+  "deploymentFile": {
+    "payloadType": "Link",
+    "payload": "https://github.com/microsoft/fabric-toolbox/blob/main/monitoring/fabric-unified-admin-monitoring/scripts/Deploy_FUAM.ipynb"
+  },
+  "items": [
+    {
+      "name": "01_FUAM_Lakehouse_Backup",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "01_Transfer_Active_Items_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "01_Transfer_Capacities_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "01_Transfer_Capacity_Refreshables_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "01_Transfer_CapacityMetricData_Timepoints_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "01_Transfer_Delegated_Tenant_Settings_Overrides_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "01_Transfer_Git_Connections_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "01_Transfer_Incremental_Inventory_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "01_Transfer_Tenant_Admin_Settings_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "02_FUAM_Lakehouse_Optimization",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "02_Transfer_Activities_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "02_Transfer_CapacityMetricData_ItemKind_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "02_Transfer_Workspaces_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "03_Aggregate_Activities_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "03_Transfer_CapacityMetricData_ItemOperation_Unit",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "FUAM_Core_Report",
+      "description": "",
+      "itemType": "Report"
+    },
+    {
+      "name": "FUAM_Core_SM",
+      "description": "",
+      "itemType": "SemanticModel"
+    },
+    {
+      "name": "FUAM_Gateway_Monitoring_From_Files_Report",
+      "description": "",
+      "itemType": "Report"
+    },
+    {
+      "name": "FUAM_Gateway_Monitoring_From_Files_SM",
+      "description": "",
+      "itemType": "SemanticModel"
+    },
+    {
+      "name": "FUAM_Item_Analyzer_Report",
+      "description": "",
+      "itemType": "Report"
+    },
+    {
+      "name": "FUAM_Item_SM",
+      "description": "",
+      "itemType": "SemanticModel"
+    },
+    {
+      "name": "FUAM_Semantic_Model_Meta_Data_Analyzer_Report",
+      "description": "",
+      "itemType": "Report"
+    },
+    {
+      "name": "FUAM_Semantic_Model_Meta_Data_Analyzer_SM",
+      "description": "",
+      "itemType": "SemanticModel"
+    },
+    {
+      "name": "FUAM_SQL_Endpoint_Analyzer_Report",
+      "description": "",
+      "itemType": "Report"
+    },
+    {
+      "name": "FUAM_SQL_Endpoint_Analyzer_SM",
+      "description": "",
+      "itemType": "SemanticModel"
+    },
+    {
+      "name": "Generate_Calendar_Table",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "Init_FUAM_Lakehouse_Tables",
+      "description": "New notebook",
+      "itemType": "Notebook"
+    },
+    {
+      "name": "Load_Activities_E2E",
+      "description": "",
+      "itemType": "DataPipeline"
+    },
+    {
+      "name": "Load_Capacities_E2E",
+      "description": "",
+      "itemType": "DataPipeline"
+    },
+    {
+      "name": "Load_Capacity_Metrics_E2E",
+      "description": "",
+      "itemType": "DataPipeline"
+    },
+    {
+      "name": "Load_Capacity_Refreshables_E2E",
+      "description": "",
+      "itemType": "DataPipeline"
+    },
+    {
+      "name": "Load_Delegated_Tenant_Settings_Overrides_E2E",
+      "description": "",
+      "itemType": "DataPipeline"
+    },
+    {
+      "name": "Load_FUAM_Data_E2E",
+      "description": "",
+      "itemType": "DataPipeline"
+    },
+    {
+      "name": "Load_Git_Connections_E2E",
+      "description": "",
+      "itemType": "DataPipeline"
+    },
+    {
+      "name": "Load_Inventory_E2E",
+      "description": "",
+      "itemType": "DataPipeline"
+    },
+    {
+      "name": "Load_Items_E2E",
+      "description": "",
+      "itemType": "DataPipeline"
+    },
+    {
+      "name": "Load_PBI_Workspaces_E2E",
+      "description": "",
+      "itemType": "DataPipeline"
+    },
+    {
+      "name": "Load_Tenant_Settings_E2E",
+      "description": "",
+      "itemType": "DataPipeline"
+    },
+    {
+      "name": "Maintenance_for_FUAM",
+      "description": "",
+      "itemType": "DataPipeline"
+    }
+  ]
+}

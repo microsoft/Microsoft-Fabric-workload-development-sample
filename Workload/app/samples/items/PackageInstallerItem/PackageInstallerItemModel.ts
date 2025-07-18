@@ -1,5 +1,11 @@
 import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
 
+// Import config files dynamically
+import planningConfig from "../../../assets/samples/items/PackageInstallerItem/Planning/config.json";
+import salesConfig from "../../../assets/samples/items/PackageInstallerItem/Sales/config.json";
+import unifiedAdminConfig from "../../../assets/samples/items/PackageInstallerItem/UnifiedAdminMonitoring/config.json";
+import workspaceMonitoringConfig from "../../../assets/samples/items/PackageInstallerItem/WorkspaceMonitoringDashboards/config.json";
+
 
 export interface PackageInstallerItemDefinition  {
   deployments?: Deployment[];
@@ -10,9 +16,13 @@ export interface Deployment {
   id: string;
   status: DeploymentStatus;
   packageId: string;
-  itemsCreated: GenericItem[];
+  deployedItems: DeployedItem[];
   workspace: WorkspaceConfig;  
   jobId?: string; // The spark job id that is used to deploy the package
+}
+
+export interface DeployedItem extends GenericItem {
+  itemDefenitionName: string; // The item definition name that was used to create the item
 }
 
 export interface WorkspaceConfig {
@@ -36,9 +46,8 @@ export enum DeploymentStatus {
   InProgress,
   Succeeded,
   Failed,
+  Cancelled,
 }
-
-
 
 export interface Package {
   typeId: string;
@@ -47,14 +56,20 @@ export interface Package {
   name: string;
   icon?: string;
   description: string;
-  deploymentFile?: string; // Optional reference to a deployment file
+  deploymentFile?: DeploymentFile; // Optional reference to a deployment file
   items?: PackageItemDefinition[];
   suffixItemNames?: boolean; // Flag to indicate if item names should be prefixed with the package name
 }
 
+export interface DeploymentFile {
+  payloadType: PackageItemDefinitionPayloadType;
+  payload: string;
+}
+
 export enum PackageDeploymentType {
   UX,
-  SparkLivy
+  SparkLivy,
+  SparkNotebook
 }
 
 export enum PackageDeploymentLocation {
@@ -91,60 +106,66 @@ export type ConfiguredPackages = {
   [key: string]: Package;
 };
 
-// Array of available packages 
-const packageList: Package[] = [
-  {
-    typeId: "PlanningWS",
-    deploymentType: PackageDeploymentType.UX,
-    locationType: PackageDeploymentLocation.NewWorkspace,
-    name: "Product Planning Project",
-    description: "Set up a workspace that will configure every component that is needed to do product planning.",
-    icon: "/assets/samples/items/PackageInstallerItem/Planning/icon.png",
-    deploymentFile: "/assets/samples/items/PackageInstallerItem/jobs/DefaultPackageInstaller.py",    
-    suffixItemNames: false,
-    items: [
-     {
-        name: "PlanningLH",
-        itemType: "Lakehouse",
-        description: "A lakehouse that contains access to all Planning Data.",
-        icon: "",
-        itemDefinitions: []
-      },
-    ]
-  },
-  {
-    typeId: "SalesData",
-    deploymentType: PackageDeploymentType.UX,
-    locationType: PackageDeploymentLocation.NewFolder,
-    name: "Sales Data Workspace",
-    icon: "/assets/samples/items/PackageInstallerItem/Sales/icon.png",
-    description: "Set up a new workspace to analyse .", 
-    suffixItemNames: true,
-    items: [
-      {
-        name: "SalesDataLH",
-        itemType: "Lakehouse",
-        description: "A lakehouse that has access to the sales data.",
-        icon: "",
-        itemDefinitions: []
-      },
-      {
-        name: "SalesDataNB",
-        itemType: "Notebook",
-        description: "A Notebook to Analyze the Sales data.",
-        icon: "",
-        itemDefinitions: []
-      },
-      {
-        name: "SalesDataNB2",
-        itemType: "Notebook",
-        description: "A Notebook second to Analyze the Sales data.",
-        icon: "",
-        itemDefinitions: []
-      }
-    ],
+// Helper function to convert config JSON to Package interface
+function convertConfigToPackage(config: any): Package {
+  // Convert string deployment type to enum
+  let deploymentType: PackageDeploymentType;
+  switch (config.deploymentType) {
+    case "UX":
+      deploymentType = PackageDeploymentType.UX;
+      break;
+    case "SparkLivy":
+      deploymentType = PackageDeploymentType.SparkLivy;
+      break;
+    case "SparkNotebook":
+      deploymentType = PackageDeploymentType.SparkNotebook;
+      break;
+    default:
+      throw new Error(`Unsupported deployment type: ${config.deploymentType}`);
   }
+
+  // Convert string location type to enum  
+  let locationType: PackageDeploymentLocation;
+  switch (config.locationType) {
+    case "ExistingWorkspace":
+      locationType = PackageDeploymentLocation.ExistingWorkspace;
+      break;
+    case "NewFolder":
+      locationType = PackageDeploymentLocation.NewFolder;
+      break;
+    case "NewWorkspace":
+      locationType = PackageDeploymentLocation.NewWorkspace;
+      break;
+    default:
+      throw new Error(`Unsupported location type: ${config.locationType}`);
+  }
+
+  return {
+    typeId: config.typeId,
+    deploymentType,
+    locationType,
+    name: config.name,
+    description: config.description,
+    icon: config.icon,
+    suffixItemNames: config.suffixItemNames || false,
+    deploymentFile: config.deploymentFile ? {
+      payloadType: PackageItemDefinitionPayloadType.Link,
+      payload: config.deploymentFile
+    } : undefined,
+    items: config.items || []
+  };
+}
+
+// Load packages from config files
+const configFiles = [
+  planningConfig,
+  salesConfig,
+  unifiedAdminConfig,
+  workspaceMonitoringConfig
 ];
+
+// Array of available packages loaded from config files
+const packageList: Package[] = configFiles.map(convertConfigToPackage);
 
 // Create a registry object from the array for easy access by typeId
 export const AvailablePackages: ConfiguredPackages =
@@ -170,7 +191,7 @@ export interface SparkDeploymentItem {
   definitionParts?: SparkDeploymentItemDefinition[]; // Optional parts of the item definition
 }
 
-export enum SparkDeploymentItemDefinitionType {
+export enum SparkDeploymentReferenceType {
   OneLake = "OneLake", 
   Link = "Link",
   InlineBase64 = "InlineBase64"
@@ -179,7 +200,7 @@ export enum SparkDeploymentItemDefinitionType {
 export interface SparkDeploymentItemDefinition {
   path: string; // The OneLake file path for the item definition
   payload: string; // The file reference for the item definition
-  payloadType: SparkDeploymentItemDefinitionType
+  payloadType: SparkDeploymentReferenceType
 }
 
 

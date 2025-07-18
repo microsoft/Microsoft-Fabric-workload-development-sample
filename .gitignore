@@ -407,6 +407,7 @@ tools/DevGatewayContainer/.env
 # Fabric Script files
 scripts/Build/Manifest/ValidationScripts/ValidationErrors.txt
 scripts/Setup/My*
+scripts/tmp/*
 
 # Fabric Workload files
 Workload/node_modules/*
