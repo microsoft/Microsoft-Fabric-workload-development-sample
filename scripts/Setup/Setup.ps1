@@ -7,7 +7,7 @@ param (
     [String]$WorkloadDisplayName = "My Sample Workload",
     # The Workspace Id to use for development
     # If not provided, the user will be prompted to enter it.
-    [String]$WorkspaceId = "00000000-0000-0000-0000-000000000000",
+    [String]$DevWorkspaceId = "00000000-0000-0000-0000-000000000000",
     # The Entra Application ID for the frontend
     # If not provided, the user will be prompted to enter it or create a new one.
     [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
@@ -27,15 +27,15 @@ param (
 Write-Output "Setting up the environment..."
 $setupDevGatewayScript = Join-Path $PSScriptRoot "..\Setup\SetupDevGateway.ps1"
 if (Test-Path $setupDevGatewayScript) {
-    if ([string]::IsNullOrWhiteSpace($WorkspaceId) -or $WorkspaceId -eq "00000000-0000-0000-0000-000000000000") {
-        $WorkspaceId = Read-Host "Enter your Workspace Id that should be used for development"
-        if ([string]::IsNullOrWhiteSpace($WorkspaceId) -or $WorkspaceId -eq "00000000-0000-0000-0000-000000000000") {
+    if ([string]::IsNullOrWhiteSpace($DevWorkspaceId) -or $DevWorkspaceId -eq "00000000-0000-0000-0000-000000000000") {
+        $DevWorkspaceId = Read-Host "Enter your Workspace Id that should be used for development"
+        if ([string]::IsNullOrWhiteSpace($DevWorkspaceId) -or $DevWorkspaceId -eq "00000000-0000-0000-0000-000000000000") {
            Write-Error "Workspace Id is not set or is using the default placeholder value. Please provide a valid Workspace Id."
            exit 1
         }
     }
     Write-Host "Running SetupDevGateway.ps1..."
-    & $setupDevGatewayScript -WorkspaceGuid $WorkspaceId -WorkloadVersion $WorkloadVersion -Force $Force 
+    & $setupDevGatewayScript -DevWorkspaceId $DevWorkspaceId -WorkloadVersion $WorkloadVersion -Force $Force 
 } else {
     Write-Error "SetupDevGateway.ps1 not found at $setupDevGatewayScript"
     exit 1
@@ -83,6 +83,7 @@ if (Test-Path $setupWorkloadScript) {
     & $setupWorkloadScript -HostingType $HostingType `
         -WorkloadName $WorkloadName `
         -WorkloadDisplayName $WorkloadDisplayName `
+        -DevWorkspaceId $DevWorkspaceId `
         -AADFrontendAppId $AADFrontendAppId `
         -AADBackendAppId $AADBackendAppId `
         -WorkloadVersion $WorkloadVersion `
