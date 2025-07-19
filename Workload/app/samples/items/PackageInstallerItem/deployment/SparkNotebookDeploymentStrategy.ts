@@ -25,7 +25,7 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
       // Get the deployment file content
       const notebookContent = await this.getDeploymentFileContent();
       
-      // Create the Spark Notebook
+      // Create the Spark Notebook (without definition)
       const displayName = `Deploy_${this.pack.id}`;
       
       const notebookItem = await fabricAPI.items.createItem(
@@ -34,22 +34,35 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
           displayName: displayName,
           type: "Notebook", // Spark Notebook item type
           description: this.pack.description || 'Deployment Notebook',
-          folderId: this.deployment.workspace?.folder?.id || undefined,
-          definition: {
-              format: "ipynb",
-              parts: [{
-                path: "notebook-content.ipynb",
-                payload: notebookContent,
-                payloadType: "InlineBase64"
-              }]
-            },
-        
+          folderId: this.deployment.workspace?.folder?.id || undefined
         }
       );
+      
       if(!notebookItem) {
         throw new Error("Failed to create Spark Notebook item.");
       }
       console.log(`Successfully created Spark Notebook: ${notebookItem.id}`);
+      
+      // Update the notebook definition with content
+      console.log(`Updating notebook definition for: ${notebookItem.id}`);
+      await fabricAPI.items.updateItemDefinition(
+        targetWorkspaceId,
+        notebookItem.id,
+        {
+          definition: {
+            format: "ipynb",
+            parts: [
+              {
+                path: "notebook-content.ipynb",
+                payload: notebookContent,
+                payloadType: "InlineBase64"
+              }
+            ]
+          }
+        }
+      );
+      console.log(`Successfully updated notebook definition for: ${notebookItem.id}`);
+      
       createdItems.push({
          ...notebookItem,
           itemDefenitionName: "<Spark Notebook Deployment file>"

@@ -2,40 +2,73 @@ import { WorkloadClientAPI, AccessToken } from "@ms-fabric/workload-client";
 import { EnvironmentConstants } from "../../constants";
 import { CONTROLLER_SCOPES } from "./FabricPlatformScopes";
 import { FabricAuthenticationService } from "./FabricAuthenticationService";
-import { AuthenticationConfig } from "./FabricPlatformTypes";
+import { AuthenticationConfig, ErrorResponse } from "./FabricPlatformTypes";
 
 /**
  * Custom error class for Fabric Platform API errors
+ * Includes structured error information from the API response
  */
 export class FabricPlatformError extends Error {
   public readonly statusCode: number;
   public readonly statusText: string;
-  public readonly errorCode?: string;
-  public readonly details?: any[];
+  public readonly errorResponse?: ErrorResponse;
   public readonly requestId?: string;
-  public readonly errorResponse?: any;
 
   constructor(
-    message: string,
     statusCode: number,
     statusText: string,
-    errorResponse?: any
+    errorResponse?: ErrorResponse,
+    requestId?: string,
+    originalError?: Error
   ) {
+    const message = errorResponse?.error?.message || `HTTP ${statusCode}: ${statusText}`;
     super(message);
+    
     this.name = 'FabricPlatformError';
     this.statusCode = statusCode;
     this.statusText = statusText;
     this.errorResponse = errorResponse;
-
-    // Extract structured error information if available
-    if (errorResponse?.error) {
-      this.errorCode = errorResponse.error.code;
-      this.details = errorResponse.error.details;
-      this.requestId = errorResponse.error.requestId;
+    this.requestId = requestId;
+    
+    // Maintain proper stack trace for where our error was thrown (only available on V8)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, FabricPlatformError);
     }
+    
+    // Include original error stack if available
+    if (originalError?.stack) {
+      this.stack += '\nCaused by: ' + originalError.stack;
+    }
+  }
 
-    // Ensure proper prototype chain for instanceof checks
-    Object.setPrototypeOf(this, FabricPlatformError.prototype);
+  /**
+   * Get the error code from the error response
+   */
+  get errorCode(): string | undefined {
+    return this.errorResponse?.error?.code;
+  }
+
+  /**
+   * Get the error details from the error response
+   */
+  get errorDetails(): any[] | undefined {
+    return this.errorResponse?.error?.details;
+  }
+
+  /**
+   * Convert to a plain object for logging/serialization
+   */
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      statusCode: this.statusCode,
+      statusText: this.statusText,
+      errorCode: this.errorCode,
+      errorResponse: this.errorResponse,
+      requestId: this.requestId,
+      stack: this.stack
+    };
   }
 }
 
@@ -97,47 +130,32 @@ export abstract class FabricPlatformClient {
         },
       });
 
-      // Check for success status codes (200, 202, 204)
-      if (response.status !== 200 && response.status !== 202 && response.status !== 204) {
-        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-        let errorResponse: any = null;
+      if (!response.ok) {
+        let errorResponse: ErrorResponse | undefined;
+        let requestId: string | undefined;
         
         try {
-          // Try to parse error response as JSON
-          errorResponse = await response.json();
-          
-          // Handle structured error response
-          if (errorResponse.error) {
-            const error = errorResponse.error;
-            errorMessage = error.message || errorMessage;
-            
-            // Include error code if available
-            if (error.code) {
-              errorMessage = `${error.code}: ${errorMessage}`;
-            }
-          } else if (errorResponse.message) {
-            // Handle simple error message format
-            errorMessage = errorResponse.message;
+          // Try to parse the error response as JSON
+          const errorText = await response.text();
+          if (errorText) {
+            errorResponse = JSON.parse(errorText) as ErrorResponse;
           }
         } catch (parseError) {
-          // If JSON parsing fails, try to get text response
-          try {
-            const errorText = await response.text();
-            if (errorText) {
-              errorResponse = { rawText: errorText };
-              errorMessage += `. ${errorText}`;
-            }
-          } catch (textError) {
-            // If both JSON and text parsing fail, use basic error
-            errorMessage += ` (Unable to parse error response)`;
-          }
+          // If parsing fails, we'll just use the status text
+          console.warn('Failed to parse error response as JSON:', parseError);
         }
         
+        // Extract request ID from headers if available
+        requestId = response.headers.get('x-ms-request-id') || 
+                   response.headers.get('request-id') || 
+                   response.headers.get('x-request-id') ||
+                   undefined;
+        
         throw new FabricPlatformError(
-          errorMessage,
           response.status,
           response.statusText,
-          errorResponse
+          errorResponse,
+          requestId
         );
       }
 
@@ -149,6 +167,13 @@ export abstract class FabricPlatformClient {
       const result = await response.json();
       return result;
     } catch (error) {
+      // If it's already a FabricPlatformError, re-throw it
+      if (error instanceof FabricPlatformError) {
+        console.error(`Fabric API request failed for ${url}:`, error.toJSON());
+        throw error;
+      }
+      
+      // For other errors (network issues, etc.), wrap them
       console.error(`API request failed for ${url}:`, error);
       throw error;
     }
