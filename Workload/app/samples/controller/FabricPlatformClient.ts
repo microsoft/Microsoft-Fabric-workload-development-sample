@@ -5,6 +5,41 @@ import { FabricAuthenticationService } from "./FabricAuthenticationService";
 import { AuthenticationConfig } from "./FabricPlatformTypes";
 
 /**
+ * Custom error class for Fabric Platform API errors
+ */
+export class FabricPlatformError extends Error {
+  public readonly statusCode: number;
+  public readonly statusText: string;
+  public readonly errorCode?: string;
+  public readonly details?: any[];
+  public readonly requestId?: string;
+  public readonly errorResponse?: any;
+
+  constructor(
+    message: string,
+    statusCode: number,
+    statusText: string,
+    errorResponse?: any
+  ) {
+    super(message);
+    this.name = 'FabricPlatformError';
+    this.statusCode = statusCode;
+    this.statusText = statusText;
+    this.errorResponse = errorResponse;
+
+    // Extract structured error information if available
+    if (errorResponse?.error) {
+      this.errorCode = errorResponse.error.code;
+      this.details = errorResponse.error.details;
+      this.requestId = errorResponse.error.requestId;
+    }
+
+    // Ensure proper prototype chain for instanceof checks
+    Object.setPrototypeOf(this, FabricPlatformError.prototype);
+  }
+}
+
+/**
  * Abstract base class for Fabric Platform API controllers
  * Provides common HTTP client functionality with authentication
  */
@@ -62,9 +97,48 @@ export abstract class FabricPlatformClient {
         },
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${response.statusText}. ${errorText}`);
+      // Check for success status codes (200, 202, 204)
+      if (response.status !== 200 && response.status !== 202 && response.status !== 204) {
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        let errorResponse: any = null;
+        
+        try {
+          // Try to parse error response as JSON
+          errorResponse = await response.json();
+          
+          // Handle structured error response
+          if (errorResponse.error) {
+            const error = errorResponse.error;
+            errorMessage = error.message || errorMessage;
+            
+            // Include error code if available
+            if (error.code) {
+              errorMessage = `${error.code}: ${errorMessage}`;
+            }
+          } else if (errorResponse.message) {
+            // Handle simple error message format
+            errorMessage = errorResponse.message;
+          }
+        } catch (parseError) {
+          // If JSON parsing fails, try to get text response
+          try {
+            const errorText = await response.text();
+            if (errorText) {
+              errorResponse = { rawText: errorText };
+              errorMessage += `. ${errorText}`;
+            }
+          } catch (textError) {
+            // If both JSON and text parsing fail, use basic error
+            errorMessage += ` (Unable to parse error response)`;
+          }
+        }
+        
+        throw new FabricPlatformError(
+          errorMessage,
+          response.status,
+          response.statusText,
+          errorResponse
+        );
       }
 
       // Handle empty responses (like 204 No Content)

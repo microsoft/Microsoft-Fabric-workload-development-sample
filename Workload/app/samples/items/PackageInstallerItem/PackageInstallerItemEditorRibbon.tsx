@@ -1,6 +1,6 @@
 import React from "react";
 import { Tab, TabList } from '@fluentui/react-tabs';
-import { Toolbar } from '@fluentui/react-toolbar';
+import { Toolbar, ToolbarDivider } from '@fluentui/react-toolbar';
 import {
   SelectTabEvent, SelectTabData, TabValue,
   ToolbarButton, Tooltip
@@ -36,7 +36,7 @@ const PackageInstallerItemEditorRibbonHome = (props: PackageInstallerItemEditorR
 
   async function onRefreshDeploymentsClicked() {
     if (props.refreshDeploymentsCallback) {
-      await props.refreshDeploymentsCallback();
+      props.refreshDeploymentsCallback();
     }
   }
 
@@ -62,6 +62,19 @@ const PackageInstallerItemEditorRibbonHome = (props: PackageInstallerItemEditorR
           icon={<Add24Regular />}
           onClick={ onAddSolutionClicked } />
       </Tooltip>
+
+      <Tooltip
+        content="Refresh Deployment Status"
+        relationship="label">
+        <ToolbarButton
+          aria-label="Refresh Deployments"
+          data-testid="item-editor-refresh-deployments-btn"
+          icon={<ArrowSync24Regular />}
+          onClick={ onRefreshDeploymentsClicked } />
+      </Tooltip>
+
+      <ToolbarDivider />
+
       <Tooltip
         content="Select Lakehous Configuration"
         relationship="label">
@@ -73,15 +86,6 @@ const PackageInstallerItemEditorRibbonHome = (props: PackageInstallerItemEditorR
           onClick={ onConnectLakehouseClicked } />
       </Tooltip>
 
-      <Tooltip
-        content="Refresh Deployment Status"
-        relationship="label">
-        <ToolbarButton
-          aria-label="Refresh Deployments"
-          data-testid="item-editor-refresh-deployments-btn"
-          icon={<ArrowSync24Regular />}
-          onClick={ onRefreshDeploymentsClicked } />
-      </Tooltip>
     </Toolbar>
   );
 };

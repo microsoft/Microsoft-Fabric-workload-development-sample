@@ -71,9 +71,7 @@ module.exports = {
     devServer: {
         port: 60006,
         host: '127.0.0.1',
-        open: {
-            target: '/WorkloadL2'
-        },
+        open: false,
         historyApiFallback: true,
         headers: {
             "Access-Control-Allow-Origin": "*",

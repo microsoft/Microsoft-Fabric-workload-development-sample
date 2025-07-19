@@ -19,104 +19,21 @@ import { WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
-import { Deployment, PackageInstallerItemDefinition, DeploymentStatus, WorkspaceConfig, PackageDeploymentLocation, SolutionConfigurationsArray, AvailablePackages } from "./PackageInstallerItemModel";
+import { PackageDeployment, PackageInstallerItemDefinition, DeploymentStatus, WorkspaceConfig, DeploymentLocation } from "./PackageInstallerItemModel";
 import { PackageInstallerItemEditorEmpty } from "./PackageInstallerItemEditorEmpty";
 import { ItemEditorLoadingProgressBar } from "../../../implementation/controls/ItemEditorLoadingProgressBar";
 import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
 import { DeploymentDetailView } from "./DeploymentDetailView";
 import { callDatahubOpen } from "../../../implementation/controller/DataHubController";
-import { handleWorkspaceClick, startDeployment } from "./UXHelper";
-import { FabricPlatformAPIClient } from "../../controller/FabricPlatformAPIClient";
+import { startDeployment } from "./components/UIHelper";
 import { DeploymentStrategyFactory } from "./deployment/DeploymentStrategyFactory";
-
-// Component to fetch and display workspace name
-function WorkspaceNameCell({ workspaceId, workloadClient }: { workspaceId: string, workloadClient: any }) {
-  const [workspaceName, setWorkspaceName] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    async function fetchWorkspaceName() {
-      if (!workspaceId) {
-        setWorkspaceName("N/A");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const fabricAPI = FabricPlatformAPIClient.create(workloadClient);
-        const workspace = await fabricAPI.workspaces.getWorkspace(workspaceId);
-        setWorkspaceName(workspace.displayName || workspaceId);
-      } catch (error) {
-        console.warn(`Failed to fetch workspace name for ${workspaceId}:`, error);
-        setWorkspaceName(workspaceId); // Fallback to ID if name fetch fails
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchWorkspaceName();
-  }, [workspaceId, workloadClient]);
-
-  if (isLoading) {
-    return <Text>Loading...</Text>;
-  }
-
-  return (
-    <Text 
-      style={{ 
-        cursor: "pointer", 
-        color: "#0078d4",
-        textDecoration: "underline"
-      }}
-      onClick={(e: React.MouseEvent) => {
-        e.stopPropagation();
-        handleWorkspaceClick(workloadClient, workspaceId);
-      }}
-      title={`Click to open workspace ${workspaceId}`}
-    >
-      {workspaceName}
-    </Text>
-  );
-}
+import { WorkspaceDisplayNameCell } from "./components/WorkspaceDisplayName";
+import { FolderDisplayNameCell } from "./components/FolderDisplayName";
+import { PackageInstallerContext } from "./package/PackageInstallerContext";
+import { PackageDisplayNameCell } from "./components/PackageDisplayName";
 
 // Component to fetch and display folder name
-function FolderNameCell({ workspaceId, folderId, workloadClient }: { workspaceId: string, folderId: string, workloadClient: any }) {
-  const [folderName, setFolderName] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    async function fetchFolderName() {
-      if (!folderId || !workspaceId) {
-        setFolderName("N/A");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const fabricAPI = FabricPlatformAPIClient.create(workloadClient);
-        const folder = await fabricAPI.folders.getFolder(workspaceId, folderId);
-        setFolderName(folder.displayName || folderId);
-      } catch (error) {
-        console.warn(`Failed to fetch folder name for ${folderId}:`, error);
-        setFolderName(folderId); // Fallback to ID if name fetch fails
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchFolderName();
-  }, [workspaceId, folderId, workloadClient]);
-
-  if (isLoading) {
-    return <Text>Loading...</Text>;
-  }
-
-  return (
-    <Text title={`Folder ID: ${folderId}`}>
-      {folderName}
-    </Text>
-  );
-}
 
 export function PackageInstallerItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
@@ -127,7 +44,8 @@ export function PackageInstallerItemEditor(props: PageProps) {
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [editorItem, setEditorItem] = useState<WorkloadItem<PackageInstallerItemDefinition>>(undefined);
   const [selectedTab, setSelectedTab] = useState<TabValue>("");
-  const [selectedSolution, setSelectedDeployment] = useState<Deployment | undefined>(undefined);
+  const [selectedSolution, setSelectedDeployment] = useState<PackageDeployment | undefined>(undefined);
+  const [context, setContext] = useState<PackageInstallerContext>(undefined);
 
   // Helper function to update item definition immutably
   const updateItemDefinition = useCallback((updates: Partial<PackageInstallerItemDefinition>) => {
@@ -185,6 +103,14 @@ export function PackageInstallerItemEditor(props: PageProps) {
             }
           };
         }
+        const context = new PackageInstallerContext(workloadClient);
+        await context.packageRegistry.loadFromAssets();
+        if(item.definition?.additionalPackages) {
+          item.definition.additionalPackages.forEach(url => {
+            context.packageRegistry.addPackageFromUrl(url);
+          });
+        }
+        setContext(context);
         setEditorItem(item);        
       } catch (error) {
         setEditorItem(undefined);        
@@ -236,7 +162,7 @@ export function PackageInstallerItemEditor(props: PageProps) {
     try {
       // Process all deployments that have job IDs (indicating they have been started)
       const deploymentsToUpdate = editorItem.definition.deployments.filter(
-        deployment => deployment.jobId && deployment.status !== DeploymentStatus.Succeeded && deployment.status !== DeploymentStatus.Failed && deployment.status !== DeploymentStatus.Cancelled
+        deployment => deployment.job && deployment.status !== DeploymentStatus.Succeeded && deployment.status !== DeploymentStatus.Failed && deployment.status !== DeploymentStatus.Cancelled
       );
 
       if (deploymentsToUpdate.length === 0) {
@@ -253,7 +179,7 @@ export function PackageInstallerItemEditor(props: PageProps) {
       // Process all deployments that need status updates
       const updatePromises = deploymentsToUpdate.map(async (deployment) => {
         try {
-          const pack = SolutionConfigurationsArray.find(pack => pack.typeId === deployment.packageId);
+          const pack = context.getPackage(deployment.packageId);
           if (!pack) {
             console.warn(`Package with typeId ${deployment.packageId} not found`);
             return null;
@@ -279,7 +205,7 @@ export function PackageInstallerItemEditor(props: PageProps) {
       
       // Filter out null results and check if any deployments were actually updated
       const validUpdates = updatedDeployments.filter(
-        (deployment): deployment is Deployment => deployment !== null
+        (deployment): deployment is PackageDeployment => deployment !== null
       );
 
       if (validUpdates.length > 0) {
@@ -352,11 +278,11 @@ export function PackageInstallerItemEditor(props: PageProps) {
   /**
    * Start deployment for a pending deployment
    */
-  async function handleStartDeployment(deployment: Deployment, event: React.MouseEvent) {
+  async function handleStartDeployment(deployment: PackageDeployment, event: React.MouseEvent) {
     event.stopPropagation(); // Prevent row click from triggering
     
     startDeployment(
-      workloadClient,      
+      context,      
       editorItem,
       deployment,
       handleDeploymentUpdate);
@@ -365,11 +291,11 @@ export function PackageInstallerItemEditor(props: PageProps) {
 async function addDeployment(packageId: string) {
   // fint the package configuration that should be used for the deployment
   //TODO: configuration needs to be added to Deployment
-  const pack = SolutionConfigurationsArray.find(pack => pack.typeId === packageId);
+  const pack = context.getPackage(packageId);
   if (pack) {
     const id = generateUniqueId();
     let workspaceSetting: WorkspaceConfig | undefined = undefined;
-    if(pack.locationType == PackageDeploymentLocation.NewWorkspace) {
+    if(pack.deploymentConfig.location == DeploymentLocation.NewWorkspace) {
       workspaceSetting = {
         createNew: true, // Always create a new workspace for the package
         name: `${packageId} - ${id}`,
@@ -377,7 +303,7 @@ async function addDeployment(packageId: string) {
         //TODO: Fix the capacity issue here!
         capacityId: "4A9D5006-D552-4335-BF0D-7CD5D2FC8B83" // Use the first deployment's capacityId if available
       };    
-    } else if (pack.locationType == PackageDeploymentLocation.NewFolder) {
+    } else if (pack.deploymentConfig.location == DeploymentLocation.NewFolder) {
       workspaceSetting = {
         createNew: false, // Create a new workspace for the package
         id: editorItem?.workspaceId,
@@ -388,7 +314,7 @@ async function addDeployment(packageId: string) {
       };
     }
 
-    const createdSolution: Deployment = {
+    const createdSolution: PackageDeployment = {
       id: id,
       status: DeploymentStatus.Pending,
       deployedItems: [],
@@ -423,7 +349,7 @@ async function addDeployment(packageId: string) {
    * Handle deployment update from the DeploymentDetailView component
    * Updates the deployment in the editor item and saves the changes
    */
-  async function handleDeploymentUpdate(updatedDeployment: Deployment) {
+  async function handleDeploymentUpdate(updatedDeployment: PackageDeployment) {
     // Update the selectedSolution state
     setSelectedDeployment(updatedDeployment);
 
@@ -467,7 +393,7 @@ async function addDeployment(packageId: string) {
           {["empty"].includes(selectedTab as string) && (
             <span>
               <PackageInstallerItemEditorEmpty
-                workloadClient={workloadClient}
+                context={context}
                 item={editorItem}
                 itemDefinition={editorItem?.definition}
                 onPackageSelected={addDeployment}
@@ -477,10 +403,9 @@ async function addDeployment(packageId: string) {
           {["deployment"].includes(selectedTab as string) && (
             <span>
               <DeploymentDetailView
-                workloadClient={workloadClient}
+                context={context}
                 deployment={selectedSolution}
                 item={editorItem}
-                lakehouseId={editorItem?.definition?.lakehouseId}
                 onBackToHome={() => setSelectedTab("home")}
                 onDeploymentUpdate={handleDeploymentUpdate}
               />
@@ -495,87 +420,64 @@ async function addDeployment(packageId: string) {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHeaderCell>{t('Icon')}</TableHeaderCell>
                         <TableHeaderCell>{t('Deployment Id')}</TableHeaderCell>
                         <TableHeaderCell>{t('Package Type')}</TableHeaderCell>
                         <TableHeaderCell>{t('Deployment Status')}</TableHeaderCell>
                         <TableHeaderCell>{t('Workspace Name')}</TableHeaderCell>
                         <TableHeaderCell>{t('Folder Name')}</TableHeaderCell>
                         <TableHeaderCell>{t('Actions')}</TableHeaderCell>
-
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {editorItem.definition.deployments.map((deployment: Deployment) => {
-                        const packageConfig = AvailablePackages[deployment.packageId];
-                        const packageIcon = packageConfig?.icon;
-                        
+                      {editorItem.definition.deployments.map((deployment: PackageDeployment) => {
                         return (
-                        <TableRow key={deployment.id} onClick={() => {
-                          setSelectedDeployment(deployment);
-                          setSelectedTab("deployment");
-                        }}>
-                          <TableCell>
-                            {packageIcon && (
-                              <img 
-                                src={packageIcon} 
-                                alt={`${deployment.packageId} icon`}
-                                style={{ width: "24px", height: "24px", objectFit: "contain" }}
-                                onError={(e) => {
-                                  // Hide image if it fails to load
-                                  (e.target as HTMLImageElement).style.display = "none";
-                                }}
-                              />
-                            )}
-                          </TableCell>
-                          <TableCell>{deployment.id}</TableCell>
-                          <TableCell>{deployment.packageId}</TableCell>
-                          <TableCell>{DeploymentStatus[deployment.status]}</TableCell>
-                          <TableCell>
-                            {deployment.workspace?.id ? (
-                              <WorkspaceNameCell 
-                                workspaceId={deployment.workspace.id} 
-                                workloadClient={workloadClient}
-                              />
-                            ) : (
-                              "N/A"
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {deployment.workspace?.folder?.id ? (
-                              <FolderNameCell 
-                                workspaceId={deployment.workspace.id}
-                                folderId={deployment.workspace.folder.id} 
-                                workloadClient={workloadClient}
-                              />
-                            ) : (
-                              "N/A"
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <div style={{ display: "flex", gap: "4px" }}>
-                              {deployment.status === DeploymentStatus.Pending && (
+                          <TableRow key={deployment.id} onClick={() => {
+                            setSelectedDeployment(deployment);
+                            setSelectedTab("deployment");
+                          }}>
+                            <TableCell>{deployment.id}</TableCell>
+                            <TableCell>
+                              <PackageDisplayNameCell
+                                context={context}
+                                packageId={deployment.packageId}
+                                showIcon={true} />
+                            </TableCell>
+                            <TableCell>{DeploymentStatus[deployment.status]}</TableCell>
+                            <TableCell>
+                              <WorkspaceDisplayNameCell
+                                context={context}
+                                workspaceId={deployment.workspace?.id} />
+                            </TableCell>
+                            <TableCell>
+                              <FolderDisplayNameCell
+                                  context={context}
+                                  workspaceId={deployment.workspace?.id} 
+                                  folderId={deployment.workspace?.folder?.id} />
+                            </TableCell>
+                            <TableCell>
+                              <div style={{ display: "flex", gap: "4px" }}>
+                                {deployment.status === DeploymentStatus.Pending && (
+                                  <Button
+                                    icon={<PlayRegular />}
+                                    appearance="subtle"
+                                    onClick={(e: React.MouseEvent) => handleStartDeployment(deployment, e)}
+                                    aria-label={t('Start deployment')}
+                                    title={t('Start deployment')}
+                                  />
+                                )}
                                 <Button
-                                  icon={<PlayRegular />}
+                                  icon={<DeleteRegular />}
                                   appearance="subtle"
-                                  onClick={(e: React.MouseEvent) => handleStartDeployment(deployment, e)}
-                                  aria-label={t('Start deployment')}
-                                  title={t('Start deployment')}
+                                  disabled={deployment.status !== DeploymentStatus.Pending}
+                                  onClick={(e: any) => {
+                                    e.stopPropagation(); // Prevent row click from triggering
+                                    handleRemoveDeployment(deployment.id);
+                                  }}
+                                  aria-label={t('Remove deployment')}
                                 />
-                              )}
-                              <Button
-                                icon={<DeleteRegular />}
-                                appearance="subtle"
-                                disabled={deployment.status !== DeploymentStatus.Pending}
-                                onClick={(e: any) => {
-                                  e.stopPropagation(); // Prevent row click from triggering
-                                  handleRemoveDeployment(deployment.id);
-                                }}
-                                aria-label={t('Remove deployment')}
-                              />
-                            </div>
-                          </TableCell>
-                        </TableRow>
+                              </div>
+                            </TableCell>
+                          </TableRow>
                         );
                       })}
                     </TableBody>

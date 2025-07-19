@@ -10,10 +10,18 @@ import { App } from "./App";
 import { callGetItem } from "./implementation/controller/ItemCRUDController"
 
 export async function initialize(params: InitParams) {
+    console.log('🚀 UI: Initialization started with params:', params);
+    
     const workloadClient = createWorkloadClient();
+    console.log('✅ UI: WorkloadClient created successfully');
 
     const history = createBrowserHistory();
-    workloadClient.navigation.onNavigate((route) => history.replace(route.targetUrl));
+    console.log('✅ UI: Browser history created successfully');
+    
+    workloadClient.navigation.onNavigate((route) => {
+        console.log('🧭 UI: Navigation event:', route);
+        history.replace(route.targetUrl);
+    });
     workloadClient.action.onAction(async function ({ action, data }) {
         const { id } = data as ItemTabActionContext;
         switch (action) {
@@ -45,10 +53,36 @@ export async function initialize(params: InitParams) {
                 throw new Error('Unknown action received');
         }
     });
-    const root = createRoot(document.getElementById('root'));
-    root.render(
-        <FluentProvider theme={fabricLightTheme}>
-            <App history={history} workloadClient={workloadClient} />
-        </FluentProvider>
-    );
+    
+    console.log('🔍 Looking for root element...');
+    const rootElement = document.getElementById('root');
+    if (!rootElement) {
+        console.error('❌ Root element not found!');
+        document.body.innerHTML = '<div style="padding: 20px; color: red;">❌ Error: Root element not found</div>';
+        return;
+    }
+    console.log('✅ Root element found:', rootElement);
+    
+    try {
+        const root = createRoot(rootElement);
+        console.log('✅ React root created successfully');
+        
+        console.log('🎨 Rendering App component...');
+        root.render(
+            <FluentProvider theme={fabricLightTheme}>
+                <App history={history} workloadClient={workloadClient} />
+            </FluentProvider>
+        );
+        console.log('✅ UI: ready for use.');
+    } catch (error) {
+        console.error('❌ Error during React rendering:', error);
+        rootElement.innerHTML = `
+            <div style="padding: 20px; color: red; font-family: monospace;">
+                <h2>❌ React Rendering Error</h2>
+                <p>Error: ${error.message}</p>
+                <pre>${error.stack}</pre>
+            </div>
+        `;
+    }
+
 }

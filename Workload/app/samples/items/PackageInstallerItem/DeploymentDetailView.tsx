@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { 
   Card,
   CardHeader,
@@ -11,106 +11,21 @@ import {
   Caption1
 } from "@fluentui/react-components";
 import { useTranslation } from "react-i18next";
-import { AvailablePackages, Deployment, DeploymentStatus } from "./PackageInstallerItemModel";
-import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
-import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { startDeployment, getItemTypeIcon, handleWorkspaceClick, handleItemClick } from "./UXHelper";
-import { FabricPlatformAPIClient } from "../../controller/FabricPlatformAPIClient";
-
-// Component to fetch and display workspace name
-function WorkspaceNameDisplay({ workspaceId, workloadClient }: { workspaceId: string, workloadClient: WorkloadClientAPI }) {
-  const [workspaceName, setWorkspaceName] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    async function fetchWorkspaceName() {
-      if (!workspaceId) {
-        setWorkspaceName("N/A");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const fabricAPI = FabricPlatformAPIClient.create(workloadClient);
-        const workspace = await fabricAPI.workspaces.getWorkspace(workspaceId);
-        setWorkspaceName(workspace.displayName || workspaceId);
-      } catch (error) {
-        console.warn(`Failed to fetch workspace name for ${workspaceId}:`, error);
-        setWorkspaceName(workspaceId); // Fallback to ID if name fetch fails
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchWorkspaceName();
-  }, [workspaceId, workloadClient]);
-
-  if (isLoading) {
-    return <Body1>Loading...</Body1>;
-  }
-
-  return (
-    <Body1 
-      style={{ 
-        cursor: "pointer", 
-        color: "#0078d4",
-        textDecoration: "underline"
-      }}
-      onClick={() => handleWorkspaceClick(workloadClient, workspaceId)}
-      title={`Click to open workspace ${workspaceId}`}
-    >
-      {workspaceName}
-    </Body1>
-  );
-}
-
-// Component to fetch and display folder name
-function FolderNameDisplay({ workspaceId, folderId, workloadClient }: { workspaceId: string, folderId: string, workloadClient: WorkloadClientAPI }) {
-  const [folderName, setFolderName] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    async function fetchFolderName() {
-      if (!folderId || !workspaceId) {
-        setFolderName("N/A");
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const fabricAPI = FabricPlatformAPIClient.create(workloadClient);
-        const folder = await fabricAPI.folders.getFolder(workspaceId, folderId);
-        setFolderName(folder.displayName || folderId);
-      } catch (error) {
-        console.warn(`Failed to fetch folder name for ${folderId}:`, error);
-        setFolderName(folderId); // Fallback to ID if name fetch fails
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    fetchFolderName();
-  }, [workspaceId, folderId, workloadClient]);
-
-  if (isLoading) {
-    return <Body1>Loading...</Body1>;
-  }
-
-  return (
-    <Body1 title={`Folder ID: ${folderId}`}>
-      {folderName}
-    </Body1>
-  );
-}
+import { PackageDeployment, DeploymentStatus, PackageInstallerItemDefinition } from "./PackageInstallerItemModel";
+import { GenericItem, WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
+import { startDeployment, getItemTypeIcon, handleItemClick } from "./components/UIHelper";
+import { WorkspaceDisplayNameLabel } from "./components/WorkspaceDisplayName";
+import { FolderDisplayNameLabel } from "./components/FolderDisplayName";
+import { DeploymentJobLabel } from "./components/DeploymentJob";
+import { PackageInstallerContext } from "./package/PackageInstallerContext";
 
 // Props for the PackageDetailCard component
 export interface DeploymentDetailViewProps {
-  workloadClient: WorkloadClientAPI;
-  deployment: Deployment;
-  item: GenericItem;
-  lakehouseId: string; // The lakehouse id that is used for the package deployment
+  context: PackageInstallerContext;
+  deployment: PackageDeployment;
+  item: WorkloadItem<PackageInstallerItemDefinition>;
   onBackToHome: () => void;
-  onDeploymentUpdate?: (updatedPackage: Deployment) => void; // Callback when package is updated
+  onDeploymentUpdate?: (updatedPackage: PackageDeployment) => void; // Callback when package is updated
 }
 
 /**
@@ -118,15 +33,14 @@ export interface DeploymentDetailViewProps {
  * a button to start deployment if the package is in Pending status.
  */
 export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({ 
-  workloadClient,
-  deployment: deployment,
+  context,
+  deployment,
   item,
-  lakehouseId,
   onBackToHome,
-  onDeploymentUpdate: onDeploymentUpdate
+  onDeploymentUpdate
 }) => {
   const { t } = useTranslation();
-  const pack = AvailablePackages[deployment.packageId];
+  const pack = context.packageRegistry.getPackage(deployment.packageId);
  
 
   // Function to get status badge color based on deployment status
@@ -151,14 +65,14 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
           pack?.icon && (
             <img 
               src={pack?.icon} 
-              alt={pack?.name}
+              alt={pack?.displayName}
               style={{ width: "32px", height: "32px", objectFit: "contain" }}
             />
           )
         }
         header={
           <Text weight="semibold" size={500}>
-            {pack?.name}
+            {pack?.displayName}
           </Text>
         }
         description={
@@ -179,38 +93,33 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
         </div>
         <div className="deployment-detail-row">
           <Caption1>{t("Package Name")}:</Caption1>
-          <Body1>{pack?.name}</Body1>
+          <Body1>{pack?.displayName}</Body1>
         </div>    
         <div className="deployment-detail-row">
           <Caption1>{t("Deployment Type")}:</Caption1>
-          <Body1>{pack.locationType}</Body1>
+          <Body1>{pack.deploymentConfig.location}</Body1>
         </div>  
 
         <div className="deployment-detail-row">
           <Caption1>{t("Workspace Name")}:</Caption1>
-          {deployment.workspace?.id ? (
-            <WorkspaceNameDisplay 
-              workspaceId={deployment.workspace.id} 
-              workloadClient={workloadClient}
-            />
-          ) : (
-            <Body1>{t("N/A")}</Body1>
-          )}
+          <WorkspaceDisplayNameLabel
+            context={context}
+            workspaceId={deployment.workspace?.id} />
         </div>
         <div className="deployment-detail-row">
           <Caption1>{t("Folder Name")}:</Caption1>
-          {deployment.workspace?.folder?.id ? (
-            <FolderNameDisplay 
-              workspaceId={deployment.workspace.id}
-              folderId={deployment.workspace.folder.id} 
-              workloadClient={workloadClient}
-            />
-          ) : (
-            <Body1>{t("N/A")}</Body1>
-          )}
+          <FolderDisplayNameLabel
+            context={context}
+            workspaceId={deployment.workspace?.id}
+            folderId={deployment.workspace?.folder?.id} />
         </div>
-   
-  
+        <div className="deployment-detail-row">
+          <Caption1>{t("Deployment Job")}:</Caption1>
+          <DeploymentJobLabel
+            context={context}
+            jobInfo={deployment.job} />
+        </div>
+
         <Divider style={{ margin: "12px 0" }} />
         
         {deployment.status !== DeploymentStatus.Succeeded && (
@@ -261,7 +170,7 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
                           color: "#0078d4",
                           textDecoration: "underline"
                         }}
-                        onClick={() => handleItemClick(workloadClient, item)}
+                        onClick={() => handleItemClick(context.workloadClientAPI, item)}
                         title={`Click to open ${item.displayName || item.id}`}
                       >
                         {item.displayName || item.id}
@@ -290,7 +199,7 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
             deployment.status === DeploymentStatus.Failed ) && (
             <Button 
               appearance="primary"
-              onClick={() => startDeployment(workloadClient, item, deployment, onDeploymentUpdate)}
+              onClick={() => startDeployment(context, item, deployment, onDeploymentUpdate)}
               style={{ marginLeft: "8px" }}
             >
               {t("Start Deployment")}

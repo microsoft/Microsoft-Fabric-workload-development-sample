@@ -1,15 +1,15 @@
 import { DeploymentStrategy } from "./DeploymentStrategy";
-import { DeployedItem, Deployment, DeploymentStatus, PackageItemDefinitionPayloadType } from "../PackageInstallerItemModel";
+import { DeployedItem, PackageDeployment, DeploymentStatus, PackageItemDefinitionPayloadType } from "../PackageInstallerItemModel";
 import { FabricPlatformAPIClient } from "../../../controller/FabricPlatformAPIClient";
 
 // Spark Notebook Deployment Strategy
 export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
 
 
-  async deploy(): Promise<Deployment> {
-    console.log(`Deploying package via Spark Notebook for item: ${this.item.id}. Deployment: ${this.deployment.id} with type: ${this.pack.typeId}`);
+  async deploy(): Promise<PackageDeployment> {
+    console.log(`Deploying package via Spark Notebook for item: ${this.item.id}. Deployment: ${this.deployment.id} with type: ${this.pack.id}`);
     
-    if (!this.pack.deploymentFile) {
+    if (!this.pack.deploymentConfig.deploymentFile) {
       throw new Error("No deployment file specified in package for Spark Notebook deployment.");
     }
 
@@ -26,27 +26,29 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
       const notebookContent = await this.getDeploymentFileContent();
       
       // Create the Spark Notebook
-      const displayName = this.pack.suffixItemNames ? 
-        `${this.pack.name || 'SparkNotebook'}_${this.deployment.id}` : 
-        (this.pack.name || 'SparkNotebook');
+      const displayName = `Deploy_${this.pack.id}`;
       
       const notebookItem = await fabricAPI.items.createItem(
         targetWorkspaceId,
         {
           displayName: displayName,
           type: "Notebook", // Spark Notebook item type
-          description: this.pack.description || 'Deployed Spark Notebook',
+          description: this.pack.description || 'Deployment Notebook',
+          folderId: this.deployment.workspace?.folder?.id || undefined,
           definition: {
-            parts: [{
-              path: "notebook-content.ipynb",
-              payload: notebookContent,
-              payloadType: "InlineBase64"
-            }]
-          },
-          folderId: this.deployment.workspace?.folder?.id || undefined
+              format: "ipynb",
+              parts: [{
+                path: "notebook-content.ipynb",
+                payload: notebookContent,
+                payloadType: "InlineBase64"
+              }]
+            },
+        
         }
       );
-      
+      if(!notebookItem) {
+        throw new Error("Failed to create Spark Notebook item.");
+      }
       console.log(`Successfully created Spark Notebook: ${notebookItem.id}`);
       createdItems.push({
          ...notebookItem,
@@ -61,18 +63,28 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
         "RunNotebook",
         {
           executionData: {
-            deploymentId: this.deployment.id,
-            packageId: this.deployment.packageId,
-            packageName: this.pack.name,
-            deployedBy: 'PackageInstaller'
+            parameters: {
+              deploymentId: this.deployment.id,
+            },
+            configuration: {
+              spark: {
+                "useStarterPool": true
+              }
+            }
           }
         }
       );
       console.log(`Successfully started RunNotebook job for notebook: ${notebookItem.id}, Job ID: ${jobInstanceId}`);
       
+      const jobId = jobInstanceId.substring(jobInstanceId.lastIndexOf("/") + 1); // Extract just the job ID
       return {
         ...this.deployment,
-        jobId: jobInstanceId,
+        job: {
+          id: jobId,
+          item: {
+            ...notebookItem
+          }
+        },
         deployedItems: createdItems,
         status: DeploymentStatus.InProgress
       };
@@ -86,14 +98,14 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
     }
   }
 
-  async updateDeploymentStatus(): Promise<Deployment> {
+  async updateDeploymentStatus(): Promise<PackageDeployment> {
     // Check status of the job
     const fabricAPI = FabricPlatformAPIClient.create(this.workloadClient);
-    const jobInstanceId = this.deployment.jobId;
-    const jobId = jobInstanceId.substring(jobInstanceId.lastIndexOf("/") + 1); // Extract just the job ID
-    const itemId = jobInstanceId.substring(jobInstanceId.lastIndexOf("items/") + 1, 
-          jobInstanceId.lastIndexOf("/jobs")); // Extract just the item ID
-    const job = await fabricAPI.scheduler.getItemJobInstance(this.deployment.workspace.id, itemId, jobId);
+    const depJob = this.deployment.job;
+
+    const job = await fabricAPI.scheduler.getItemJobInstance(depJob.item.workspaceId, 
+                                                            depJob.item.id,
+                                                            depJob.id);
     
     //map the job status to deployment status
     switch (job.status) {
@@ -122,39 +134,58 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
     }
   }
 
+  /** 
+   * Retrieves the content of the deployment file based on its payload type
+   * @returns Promise<string> Base64 encoded content of the deployment file
+   */
   private async getDeploymentFileContent(): Promise<string> {
-    if (!this.pack.deploymentFile) {
+
+    const deplyomentConfig = this.pack.deploymentConfig;
+    if (!deplyomentConfig.deploymentFile) {
       throw new Error("No deployment file specified");
     }
 
     let content: string;
     
-    switch (this.pack.deploymentFile.payloadType) {
+
+    switch (deplyomentConfig.deploymentFile.payloadType) {
       case PackageItemDefinitionPayloadType.Asset:
         // Fetch content from asset and encode as base64
-        content = await this.getAssetContent(this.pack.deploymentFile.payload);
+        content = await this.getAssetContent(deplyomentConfig.deploymentFile.payload);
         return btoa(content);
         
       case PackageItemDefinitionPayloadType.Link:
         // Download content from HTTP link and encode as base64
         try {
-          const response = await fetch(this.pack.deploymentFile.payload);
+          const url = deplyomentConfig.deploymentFile.payload;
+          console.log(`Fetching deployment file from URL: ${url}`);
+          
+          // Validate that the URL is absolute
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            throw new Error(`Invalid URL format. Expected absolute URL starting with http:// or https://, got: ${url}`);
+          }
+          
+          // Create a proper URL object to ensure it's valid
+          const validatedUrl = new URL(url);
+          console.log(`Validated URL: ${validatedUrl.toString()}`);
+          
+          const response = await fetch(validatedUrl.toString());
           if (!response.ok) {
             throw new Error(`Failed to fetch deployment file from link: ${response.status} ${response.statusText}`);
           }
           content = await response.text();
           return btoa(content);
         } catch (error) {
-          console.error(`Error fetching deployment file from link ${this.pack.deploymentFile.payload}:`, error);
+          console.error(`Error fetching deployment file from link ${deplyomentConfig.deploymentFile.payload}:`, error);
           throw new Error(`Failed to process deployment file link: ${error.message}`);
         }
         
       case PackageItemDefinitionPayloadType.InlineBase64:
         // Use base64 payload directly
-        return this.pack.deploymentFile.payload;
+        return deplyomentConfig.deploymentFile.payload;
         
       default:
-        throw new Error(`Unsupported deployment file payload type: ${this.pack.deploymentFile.payloadType}`);
+        throw new Error(`Unsupported deployment file payload type: ${deplyomentConfig.deploymentFile.payloadType}`);
     }
   }
 }

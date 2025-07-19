@@ -1,24 +1,13 @@
-import React from "react";
 import { NotificationType, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
-import { callNavigationNavigate } from "../../../implementation/controller/NavigationController";
-import { GenericItem, WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
-import { Deployment, DeploymentStatus, PackageDeploymentType, PackageInstallerItemDefinition, SolutionConfigurationsArray } from "./PackageInstallerItemModel";
-import { DeploymentStrategyFactory } from "./deployment/DeploymentStrategyFactory";
-import {
-  Notebook24Regular,
-  DocumentTable24Regular,
-  DatabaseSearch24Regular,
-  ChartMultiple24Regular,
-  Code24Regular,
-  DocumentDatabase24Regular,
-  DataTrending24Regular,
-  Beaker24Regular,
-  BrainCircuit24Regular,
-  Stream24Regular,
-  Database24Regular,
-  Question24Regular,
-} from "@fluentui/react-icons";
+import { callNotificationOpen } from "../../../../implementation/controller/NotificationController";
+import { callNavigationNavigate } from "../../../../implementation/controller/NavigationController";
+import { GenericItem, WorkloadItem } from "../../../../implementation/models/ItemCRUDModel";
+import { PackageDeployment, DeploymentStatus, DeploymentType, PackageInstallerItemDefinition } from "../PackageInstallerItemModel";
+import { DeploymentStrategyFactory } from "../deployment/DeploymentStrategyFactory";
+import { Beaker24Regular, BrainCircuit24Regular, ChartMultiple24Regular, Code24Regular, Database24Regular, DatabaseSearch24Regular, DataTrending24Regular, DocumentDatabase24Regular, DocumentTable24Regular, Notebook24Regular, Question24Regular, Stream24Regular } from "@fluentui/react-icons";
+import React from "react";
+import { PackageInstallerContext } from "../package/PackageInstallerContext";
+
 
 // Function to navigate to a created item
   export async function handleItemClick(workloadClient: WorkloadClientAPI, item: GenericItem) {
@@ -54,55 +43,22 @@ import {
     }
   };
 
-  // Function to navigate to a workspace
-  export async function handleWorkspaceClick(workloadClient: WorkloadClientAPI, workspaceId: string) {
-    try {
-      // Validate workspace ID to prevent undefined values in URL
-      if (!workspaceId || workspaceId === 'undefined' || workspaceId.trim() === '') {
-        console.warn('Invalid workspace ID:', workspaceId);
-        callNotificationOpen(
-          workloadClient,
-          "Navigation Error",
-          "Cannot open workspace: Invalid or missing workspace ID",
-          NotificationType.Error,
-          undefined
-        );
-        return;
-      }
-      
-      await callNavigationNavigate(workloadClient, 
-        "host",
-        `/groups/${workspaceId}`);
-    } catch (error) {
-      console.error(`Error navigating to workspace ${workspaceId}:`, error);
-      callNotificationOpen(
-        workloadClient,
-        "Navigation Error",
-        `Failed to open workspace: ${error.message || error}`,
-        NotificationType.Error,
-        undefined
-      );
-    }
-  };
-
-
-
-  export async function startDeployment( workloadClient: WorkloadClientAPI, 
+  export async function startDeployment( context: PackageInstallerContext, 
                                           item: WorkloadItem<PackageInstallerItemDefinition>,  
-                                          deployment: Deployment, 
-                                          onDeploymentUpdate?: (updatedPackage: Deployment) => void) {
+                                          deployment: PackageDeployment, 
+                                          onDeploymentUpdate?: (updatedPackage: PackageDeployment) => void) {
     console.log(`Starting deployment for package: ${deployment.id}`);
 
     try {
 
-      const pack = SolutionConfigurationsArray.find(pack => pack.typeId === deployment.packageId);
+      const pack = context.getPackage(deployment.packageId);
       if (!pack) {
         throw new Error(`Package with typeId ${deployment.packageId} not found`);
       }
-      if (pack.deploymentType === PackageDeploymentType.SparkLivy && 
+      if (pack.deploymentConfig.type === DeploymentType.SparkLivy && 
           !item.definition?.lakehouseId) {
         callNotificationOpen(
-          workloadClient,
+          context.workloadClientAPI,
           "Lakehouse Required",
           "Please connect a lakehouse before starting deployment.",
           undefined,
@@ -113,7 +69,7 @@ import {
 
       // Create the deployment strategy based on the package type
       const strategy = DeploymentStrategyFactory.createStrategy(
-                workloadClient,
+                context.workloadClientAPI,
                 item,
                 pack,
                 deployment,
@@ -126,9 +82,9 @@ import {
       }
 
       callNotificationOpen(
-                workloadClient,
+                context.workloadClientAPI,
                 "Deployment Started",
-                `Deployment has successfully started ${updatedSolution.jobId}.`,
+                `Deployment has successfully started ${updatedSolution.job.id}.`,
                 undefined,
                 undefined
       );
@@ -136,7 +92,7 @@ import {
     catch (error) {
       console.error(`Error on Deployment: ${error}`);
       callNotificationOpen(
-        workloadClient,
+        context.workloadClientAPI,
         "Error",
         `Failed to upload script: ${error.message || error}`,
         NotificationType.Error,
@@ -202,4 +158,6 @@ import {
         return React.createElement(Question24Regular);
     }
   }
+
+
 

@@ -1,5 +1,5 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { Deployment, Package, PackageInstallerItemDefinition } from "../PackageInstallerItemModel";
+import { PackageDeployment, Package, PackageInstallerItemDefinition } from "../PackageInstallerItemModel";
 import { WorkloadItem } from "../../../../implementation/models/ItemCRUDModel";
 import { FabricPlatformAPIClient } from "../../../controller/FabricPlatformAPIClient";
 
@@ -9,16 +9,16 @@ export abstract class DeploymentStrategy {
     protected workloadClient: WorkloadClientAPI,
     protected item: WorkloadItem<PackageInstallerItemDefinition>,
     protected pack: Package,
-    protected deployment: Deployment
+    protected deployment: PackageDeployment
   ) {}
 
   
 
   // Abstract method that each strategy must implement
-  abstract deploy(): Promise<Deployment>;
+  abstract deploy(): Promise<PackageDeployment>;
 
   //Abstract method to update deployment status depending on the underlying strategy
-  abstract updateDeploymentStatus(): Promise<Deployment>;
+  abstract updateDeploymentStatus(): Promise<PackageDeployment>;
 
   // Common functionality that all strategies can use
   protected async createWorkspaceAndFolder() {

@@ -1,11 +1,13 @@
 {
-    "typeId": "SalesData",
-    "deploymentType": "UX",
-    "locationType": "NewFolder",
-    "name": "Sales Data Workspace",
+    "id": "SalesData",
+    "displayName": "Sales Data Workspace",
     "icon": "/assets/samples/items/PackageInstallerItem/Sales/icon.png",
     "description": "Set up a new workspace to analyse .",
-    "suffixItemNames": true,
+    "deploymentConfig": {
+        "type": "UX",
+        "location": "NewFolder",
+        "suffixItemNames": true 
+    },
     "items": [
       {
         "name": "SalesDataLH",

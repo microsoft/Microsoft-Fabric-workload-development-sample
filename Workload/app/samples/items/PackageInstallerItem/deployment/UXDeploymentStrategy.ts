@@ -1,12 +1,12 @@
 import { DeploymentStrategy } from "./DeploymentStrategy";
-import { DeployedItem, Deployment, DeploymentStatus, PackageItemDefinitionPayloadType } from "../PackageInstallerItemModel";
+import { DeployedItem, PackageDeployment, DeploymentStatus, PackageItemDefinitionPayloadType } from "../PackageInstallerItemModel";
 import { FabricPlatformAPIClient } from "../../../controller/FabricPlatformAPIClient";
 
 // UX Deployment Strategy
 export class UXDeploymentStrategy extends DeploymentStrategy {
   
-  async deploy(): Promise<Deployment> {
-    console.log(`Deploying package via UX for item: ${this.item.id}. Deployment: ${this.deployment.id} with type: ${this.pack.typeId}`);
+  async deploy(): Promise<PackageDeployment> {
+    console.log(`Deploying package via UX for item: ${this.item.id}. Deployment: ${this.deployment.id} with type: ${this.pack.id}`);
     
     // Check if items are defined in the package
     if (!this.pack.items || this.pack.items.length === 0) {
@@ -27,7 +27,7 @@ export class UXDeploymentStrategy extends DeploymentStrategy {
         console.log(`Creating item: ${itemDef.name} of type: ${itemDef.itemType}`);
 
         const definitionParts = await this.processItemDefinitions(itemDef.itemDefinitions || []);
-        const displayName = this.pack.suffixItemNames ? `${itemDef.name}_${this.deployment.id}` : itemDef.name;        
+        const displayName = this.pack.deploymentConfig.suffixItemNames ? `${itemDef.name}_${this.deployment.id}` : itemDef.name;        
         
         const newItem = await fabricAPI.items.createItem(
           targetWorkspaceId,
@@ -60,7 +60,7 @@ export class UXDeploymentStrategy extends DeploymentStrategy {
     }
   }
 
-  async updateDeploymentStatus(): Promise<Deployment>{
+  async updateDeploymentStatus(): Promise<PackageDeployment>{
     // UX deployment does not require status updates, so we can return the current deployment
     return this.deployment;
   }

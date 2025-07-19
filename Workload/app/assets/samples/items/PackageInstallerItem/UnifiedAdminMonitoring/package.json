@@ -1,15 +1,17 @@
 {
-  "typeId": "UnifiedAdminMonitoring",
-  "deploymentType": "SparkNotebook",
-  "locationType": "NewWorkspace",
-  "name": "Unified Admin Monitoring Workspace",
+  "id": "FUAM",
+  "displayName": "Unified Admin Monitoring",
   "icon": "/assets/samples/items/PackageInstallerItem/UnifiedAdminMonitoring/icon.png",
   "description": "Solution accelerator, which can help you implement a monitoring solution within Fabric",
-  "suffixItemNames": false,
-  "deploymentFile": {
-    "payloadType": "Link",
-    "payload": "https://github.com/microsoft/fabric-toolbox/blob/main/monitoring/fabric-unified-admin-monitoring/scripts/Deploy_FUAM.ipynb"
-  },
+  "deploymentConfig": {
+      "type": "SparkNotebook",
+      "location": "NewWorkspace",
+      "suffixItemNames": false,  
+      "deploymentFile": {
+        "payloadType": "Link",
+        "payload": "https://raw.githubusercontent.com/microsoft/fabric-toolbox/refs/heads/main/monitoring/fabric-unified-admin-monitoring/scripts/Deploy_FUAM.ipynb"
+      }  
+  },  
   "items": [
     {
       "name": "01_FUAM_Lakehouse_Backup",

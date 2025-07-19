@@ -10,10 +10,15 @@ import { callPageOpen } from './implementation/controller/PageController';
 import { callNotificationOpen } from './implementation/controller/NotificationController';
 
 export async function initialize(params: InitParams) {
+    console.log('🚀 Worker: Initialization started with params:', params);
+
     const workloadClient = createWorkloadClient();
+    console.log('✅ Worker: WorkloadClient created successfully');
+
     const sampleWorkloadName = process.env.WORKLOAD_NAME;
 
     workloadClient.action.onAction(async function ({ action, data }) {
+        console.log(`🧭 Worker: Started action ${action} with data:`, data);
         switch (action) {
             case 'item.onCreationSuccess':
                 const { item: createdItem } = data as ItemCreationSuccessData;
@@ -86,4 +91,5 @@ export async function initialize(params: InitParams) {
                 throw new Error('Unknown action received');
         }
     });
+    console.log('✅ Worker ready for use.');
 }

@@ -3,7 +3,7 @@ import { DeploymentStrategy } from "./DeploymentStrategy";
 import { UXDeploymentStrategy } from "./UXDeploymentStrategy";
 import { SparkLivyDeploymentStrategy } from "./SparkLivyDeploymentStrategy";
 import { SparkNotebookDeploymentStrategy } from "./SparkNotebookDeploymentStrategy";
-import { Deployment, Package, PackageDeploymentType } from "../PackageInstallerItemModel";
+import { PackageDeployment, Package, DeploymentType } from "../PackageInstallerItemModel";
 import { GenericItem } from "../../../../implementation/models/ItemCRUDModel";
 
 // Deployment Factory
@@ -12,17 +12,17 @@ export class DeploymentStrategyFactory {
     workloadClient: WorkloadClientAPI,
     item: GenericItem,
     pack: Package,
-    deployment: Deployment
+    deployment: PackageDeployment
   ): DeploymentStrategy {
-    switch (pack.deploymentType) {
-      case PackageDeploymentType.UX:
+    switch (pack.deploymentConfig.type) {
+      case DeploymentType.UX:
         return new UXDeploymentStrategy(workloadClient, item, pack, deployment);
-      case PackageDeploymentType.SparkLivy:
+      case DeploymentType.SparkLivy:
         return new SparkLivyDeploymentStrategy(workloadClient, item, pack, deployment);
-      case PackageDeploymentType.SparkNotebook:
+      case DeploymentType.SparkNotebook:
         return new SparkNotebookDeploymentStrategy(workloadClient, item, pack, deployment);
       default:
-        throw new Error(`Unsupported deployment type: ${pack.deploymentType}`);
+        throw new Error(`Unsupported deployment type: ${pack.deploymentConfig.type}`);
     }
   }
 }

@@ -2,20 +2,20 @@ import React from "react";
 import { Stack } from "@fluentui/react";
 import { Text } from "@fluentui/react-components";
 import "./../../../styles.scss";
-import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
 import { PackageInstallerItemDefinition} from "./PackageInstallerItemModel";
 import { PackageSelectionView } from "./PackageSelectionView";
+import { PackageInstallerContext } from "./package/PackageInstallerContext";
 
 interface PackageInstallerItemEmptyStateProps {
-  workloadClient: WorkloadClientAPI,
+  context: PackageInstallerContext,
   item: GenericItem;
   itemDefinition: PackageInstallerItemDefinition,
   onPackageSelected: (packageId: string) => void;
 }
 
 export const PackageInstallerItemEditorEmpty: React.FC<PackageInstallerItemEmptyStateProps> = ({
-  workloadClient,
+  context,
   item,
   itemDefinition: definition,
   onPackageSelected: onPackageSelected
@@ -42,7 +42,9 @@ export const PackageInstallerItemEditorEmpty: React.FC<PackageInstallerItemEmpty
         </Text>
       </Stack.Item>
       <Stack.Item style={{ width: '100%' }}>
-        <PackageSelectionView onPackageSelected={handlePackageSelected} />
+        <PackageSelectionView 
+          context={context}
+          onPackageSelected={handlePackageSelected} />
       </Stack.Item>
     </Stack>
   );

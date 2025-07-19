@@ -1,12 +1,12 @@
 {
-  "typeId": "WorkspaceMonitoringDashboards",
-  "deploymentType": "SparkLivy",
-  "locationType": "ExistingWorkspace",
-  "name": "Workspace Monitioring Dashboards",
+  "id": "FWMD",
+  "displayName": "Workspace Monitioring Dashboards",
   "icon": "/assets/samples/items/PackageInstallerItem/WorkspaceMonitoringDashboards/icon.png",
   "description": "Workspace Monitoring provides a seamless, consistent experience with end-to-end visibility across Fabric workloads.",
-  "suffixItemNames": false,
-  "deploymentFile": {
+  "deploymentConfig": {
+      "type": "SparkLivy",
+      "location": "ExistingWorkspace",
+      "suffixItemNames": false
   },
   "items": [
     {

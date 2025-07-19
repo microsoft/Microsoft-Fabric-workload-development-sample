@@ -1,5 +1,6 @@
 import { DeploymentStrategy } from "./DeploymentStrategy";
-import { Deployment, DeploymentStatus, SparkDeployment, SparkDeploymentItem, SparkDeploymentItemDefinition, PackageItemDefinitionPayloadType, SparkDeploymentReferenceType } from "../PackageInstallerItemModel";
+import { PackageDeployment, DeploymentStatus, PackageItemDefinitionPayloadType } from "../PackageInstallerItemModel";
+import { SparkDeployment, SparkDeploymentItem, SparkDeploymentItemDefinition, SparkDeploymentReferenceType } from "./DeploymentModel";
 import { getOneLakeFilePath, writeToOneLakeFileAsText } from "../../../controller/OneLakeController";
 import { BatchRequest, BatchState } from "../../../models/SparkLivyModel";
 import { EnvironmentConstants } from "../../../../constants";
@@ -9,8 +10,8 @@ const defaultDeploymentSparkFile = "/assets/samples/items/PackageInstallerItem/j
 
 // Spark Livy Deployment Strategy
 export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
-  async deploy(): Promise<Deployment> {
-    console.log(`Deploying package via Spark Livy for item: ${this.item.id}. Deployment: ${this.deployment.id} with type: ${this.pack.typeId}`);
+  async deploy(): Promise<PackageDeployment> {
+    console.log(`Deploying package via Spark Livy for item: ${this.item.id}. Deployment: ${this.deployment.id} with type: ${this.pack.id}`);
     
     const sparkDeployment = await this.copyPackageContentToItem();
     const lakehouseId = this.item.definition.lakehouseId;
@@ -48,13 +49,19 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
     
     return {
       ...this.deployment,
-      jobId: batchResponse.id,
+      job: {
+        id: batchResponse.id,
+        item: {
+          id: lakehouseId, 
+          workspaceId: this.item.workspaceId,
+        }
+      },
       status: deploymentStatus,
     };
   }
 
-  async updateDeploymentStatus(): Promise<Deployment> {
-    if (!this.deployment.jobId) {
+  async updateDeploymentStatus(): Promise<PackageDeployment> {
+    if (!this.deployment.job || !this.deployment.job.id) {
       throw new Error("No job ID found for deployment status update");
     }
 
@@ -62,7 +69,7 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
     const batchState = await fabricAPI.sparkLivy.getBatchState(
       this.deployment.workspace.id, 
       this.item.definition.lakehouseId,
-      this.deployment.jobId
+      this.deployment.job.id
     );
 
     // Map BatchState to DeploymentStatus
@@ -74,7 +81,7 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
   }
 
   private async copyPackageContentToItem(): Promise<SparkDeployment> {
-    console.log(`Copying package content for item: ${this.item.id} and package type: ${this.pack.typeId}`);
+    console.log(`Copying package content for item: ${this.item.id} and package type: ${this.pack.id}`);
     
     const sparkDeploymentConf: SparkDeployment = {
       workspace: this.deployment.workspace,
@@ -126,13 +133,14 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
     sparkDeploymentConf.items = await Promise.all(itemPromises);
 
     // Handle deployment file
+    const deploymentConfig = this.pack.deploymentConfig;
     let deploymentFileDestPath;
-    if (!this.pack.deploymentFile) {
+    if (!deploymentConfig.deploymentFile) {
       deploymentFileDestPath = await this.copyAssetToOneLake(defaultDeploymentSparkFile);
-    } else if (this.pack.deploymentFile?.payloadType === PackageItemDefinitionPayloadType.Asset) {
-      deploymentFileDestPath = await this.copyAssetToOneLake(this.pack.deploymentFile.payload);
-    } else if (this.pack.deploymentFile?.payloadType === PackageItemDefinitionPayloadType.Link) {
-      deploymentFileDestPath = await this.copyLinkToOneLake(this.pack.deploymentFile.payload);
+    } else if (deploymentConfig.deploymentFile?.payloadType === PackageItemDefinitionPayloadType.Asset) {
+      deploymentFileDestPath = await this.copyAssetToOneLake(deploymentConfig.deploymentFile.payload);
+    } else if (deploymentConfig.deploymentFile?.payloadType === PackageItemDefinitionPayloadType.Link) {
+      deploymentFileDestPath = await this.copyLinkToOneLake(deploymentConfig.deploymentFile.payload);
     }
 
     console.log(`Successfully uploaded deployment script to OneLake: ${deploymentFileDestPath}`);
@@ -168,7 +176,7 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
 
   private getContentSubPath(path: string): string {
     const fileReference = path.substring(path.lastIndexOf("/") + 1);
-    return `${this.pack.typeId}/${fileReference}`;
+    return `${this.pack.id}/${fileReference}`;
   }
 
   private convertOneLakeLinktoABFSSLink(oneLakeLink: string, workspaceId: string): string {
