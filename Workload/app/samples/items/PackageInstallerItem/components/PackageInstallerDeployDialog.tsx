@@ -3,7 +3,7 @@ import { PageProps } from "../../../../App";
 import { Stack } from "@fluentui/react";
 import { Button, Text } from "@fluentui/react-components";
 import { useTranslation } from "react-i18next";
-import { callDialogClose } from "src/implementation/controller/DialogController";
+import { callDialogClose } from "../../../../implementation/controller/DialogController";
 import { CloseMode } from "@ms-fabric/workload-client";
 
 
