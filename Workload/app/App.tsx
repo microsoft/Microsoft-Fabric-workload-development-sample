@@ -13,6 +13,7 @@ import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlaygroun
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
 import { CognitiveSampleItemEditor } from "./samples/items/CognitiveSampleItem/CognitiveSampleItemEditor";
 import { PackageInstallerItemEditor } from "./samples/items/PackageInstallerItem/PackageInstallerItemEditor";
+import { PackageInstallerDeployDialog } from "./samples/items/PackageInstallerItem/components/PackageInstallerDeployDialog";
 
 
 /*
@@ -79,6 +80,10 @@ export function App({ history, workloadClient }: AppProps) {
             <Route path="/PackageInstallerItem-editor/:itemObjectId">
                 <PackageInstallerItemEditor
                     workloadClient={workloadClient} data-testid="PackageInstallerItem-editor" />
+            </Route>
+             <Route path="/PackageInstallerItem-deploy-dialog/:itemObjectId">
+                <PackageInstallerDeployDialog
+                    workloadClient={workloadClient} />
             </Route>
 
             <Route path="/client-sdk-playground">

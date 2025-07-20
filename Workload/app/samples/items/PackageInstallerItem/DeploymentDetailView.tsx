@@ -13,7 +13,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { PackageDeployment, DeploymentStatus, PackageInstallerItemDefinition } from "./PackageInstallerItemModel";
 import { GenericItem, WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
-import { startDeployment, getItemTypeIcon, handleItemClick } from "./components/UIHelper";
+import { getItemTypeIcon, handleItemClick } from "./components/UIHelper";
 import { WorkspaceDisplayNameLabel } from "./components/WorkspaceDisplayName";
 import { FolderDisplayNameLabel } from "./components/FolderDisplayName";
 import { DeploymentJobLabel } from "./components/DeploymentJob";
@@ -25,7 +25,7 @@ export interface DeploymentDetailViewProps {
   deployment: PackageDeployment;
   item: WorkloadItem<PackageInstallerItemDefinition>;
   onBackToHome: () => void;
-  onDeploymentUpdate?: (updatedPackage: PackageDeployment) => void; // Callback when package is updated
+  onStartDeployment?: () => void; // Callback when package is updated
 }
 
 /**
@@ -37,7 +37,7 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
   deployment,
   item,
   onBackToHome,
-  onDeploymentUpdate
+  onStartDeployment
 }) => {
   const { t } = useTranslation();
   const pack = context.packageRegistry.getPackage(deployment.packageId);
@@ -131,10 +131,10 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
                 {pack.items.map((item, index) => (
                   <li key={index} style={{ display: "flex", alignItems: "flex-start", marginBottom: "8px" }}>
                     <div style={{ marginRight: "8px", marginTop: "2px" }}>
-                      {getItemTypeIcon(item.itemType)}
+                      {getItemTypeIcon(item.type)}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <Body1>{item.name}</Body1>
+                      <Body1>{item.displayName}</Body1>
                       <div style={{ marginLeft: "0px" }}>
                         <Caption1>{item.description}</Caption1>
                       </div>
@@ -199,7 +199,7 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
             deployment.status === DeploymentStatus.Failed ) && (
             <Button 
               appearance="primary"
-              onClick={() => startDeployment(context, item, deployment, onDeploymentUpdate)}
+              onClick={() => onStartDeployment()}
               style={{ marginLeft: "8px" }}
             >
               {t("Start Deployment")}

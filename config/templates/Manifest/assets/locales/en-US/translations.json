@@ -26,6 +26,6 @@
     "CognitiveSampleItem_DisplayName_Plural": "Cognitive Samples",
     "CognitiveSampleItem_Description": "A Simple Cognitive Item that uses AI to analyze data",
     "PackageInstallerItem_DisplayName": "Package Deployer",
-    "PackageInstallerItem_DisplayName_Plural": "Package Deployers",
-    "PackageInstallerItem_Description": "A item that can deploy different package configurations into Fabric workspaces."
+    "PackageInstallerItem_DisplayName_Plural": "Package Installer",
+    "PackageInstallerItem_Description": "A item that can install different package configurations into Fabric workspaces."
 }

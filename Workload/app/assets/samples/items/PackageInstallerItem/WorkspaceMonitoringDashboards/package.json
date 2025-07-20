@@ -10,21 +10,23 @@
   },
   "items": [
     {
-      "name": "Workspace_Monitoring_Dashboard",
+      "displayName": "Workspace_Monitoring_Dashboard",
       "description": "abric Workspace Monitoring Dashboard",
-      "itemType": "Report",
-      "itemDefinitions": [
-        {
-          "path": "Fabric Workspace Monitoring Dashboard.json",
-          "payloadType": "Link",
-          "payload": "https://github.com/microsoft/fabric-toolbox/raw/refs/heads/main/monitoring/workspace-monitoring-dashboards/Fabric%20Workspace%20Monitoring%20Dashboard.json"
-        },
-        {
-          "path": "Fabric Workspace Monitoring.pbit",
-          "payloadType": "Link",
-          "payload": "https://github.com/microsoft/fabric-toolbox/raw/refs/heads/main/monitoring/workspace-monitoring-dashboards/Fabric%20Workspace%20Monitoring.pbit"
-        }
-      ]
+      "type": "Report",
+      "itemDefinition": {
+        "parts": [
+          {
+            "path": "Fabric Workspace Monitoring Dashboard.json",
+            "payloadType": "Link",
+            "payload": "https://github.com/microsoft/fabric-toolbox/raw/refs/heads/main/monitoring/workspace-monitoring-dashboards/Fabric%20Workspace%20Monitoring%20Dashboard.json"
+          },
+          {
+            "path": "Fabric Workspace Monitoring.pbit",
+            "payloadType": "Link",
+            "payload": "https://github.com/microsoft/fabric-toolbox/raw/refs/heads/main/monitoring/workspace-monitoring-dashboards/Fabric%20Workspace%20Monitoring.pbit"
+          }
+        ]
+      }
     }
   ]
 }

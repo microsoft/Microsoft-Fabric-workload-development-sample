@@ -2,7 +2,7 @@ import { NotificationType, WorkloadClientAPI } from "@ms-fabric/workload-client"
 import { callNotificationOpen } from "../../../../implementation/controller/NotificationController";
 import { callNavigationNavigate } from "../../../../implementation/controller/NavigationController";
 import { GenericItem, WorkloadItem } from "../../../../implementation/models/ItemCRUDModel";
-import { PackageDeployment, DeploymentStatus, DeploymentType, PackageInstallerItemDefinition } from "../PackageInstallerItemModel";
+import { PackageDeployment, DeploymentStatus, DeploymentType, PackageInstallerItemDefinition, WorkspaceConfig, DeploymentLocation, Package } from "../PackageInstallerItemModel";
 import { DeploymentStrategyFactory } from "../deployment/DeploymentStrategyFactory";
 import { Beaker24Regular, BrainCircuit24Regular, ChartMultiple24Regular, Code24Regular, Database24Regular, DatabaseSearch24Regular, DataTrending24Regular, DocumentDatabase24Regular, DocumentTable24Regular, Notebook24Regular, Question24Regular, Stream24Regular } from "@fluentui/react-icons";
 import React from "react";
@@ -43,18 +43,69 @@ import { PackageInstallerContext } from "../package/PackageInstallerContext";
     }
   };
 
+  //TODO: move to DeploymentDialog once ready
+  function getWorkspaceConfig(
+    context: PackageInstallerContext,
+    item: WorkloadItem<PackageInstallerItemDefinition>, 
+    deployment: PackageDeployment,
+    pack: Package): WorkspaceConfig {
+      console.log(`Configuring deployment for item: ${item.id}. Deployment: ${deployment.id} with type: ${context.getPackage(deployment.packageId)?.id}`);
+      //TODO: Show the DeploymentDialog here!
+      let workspaceConfig: WorkspaceConfig | undefined = undefined;
+      switch (pack.deploymentConfig.location) {
+        case DeploymentLocation.ExistingWorkspace:
+          workspaceConfig = {
+            createNew: false, // Use existing workspace
+            id: item.workspaceId, // Use the item's workspace ID
+          }
+          break;
+        case DeploymentLocation.NewWorkspace:
+          workspaceConfig = {
+            createNew: true, // Always create a new workspace for the package
+            name: `${pack.id} - ${deployment.id}`,
+            description: `Workspace for package ${pack.id} deployment ${deployment.id}`,
+            //TODO: Fix the capacity issue here!
+            capacityId: "4A9D5006-D552-4335-BF0D-7CD5D2FC8B83" // Use the first deployment's capacityId if available
+          };    
+          break;
+        case DeploymentLocation.NewFolder:
+          workspaceConfig = {
+            createNew: false, // Create a new workspace for the package
+            id: item?.workspaceId,
+            folder: {
+              createNew: true, // Create a new folder for the package
+              name: `${pack.id} - ${deployment.id}`
+            }
+          };
+          break;
+        default:
+          throw new Error(`Unsupported deployment location: ${pack.deploymentConfig.location}`);
+      }
+      return workspaceConfig;
+    }
+  //TODO: move to DeploymentDialog once ready
   export async function startDeployment( context: PackageInstallerContext, 
                                           item: WorkloadItem<PackageInstallerItemDefinition>,  
                                           deployment: PackageDeployment, 
                                           onDeploymentUpdate?: (updatedPackage: PackageDeployment) => void) {
     console.log(`Starting deployment for package: ${deployment.id}`);
 
-    try {
+    const pack = context.getPackage(deployment.packageId);
+    if (!pack) {
+      throw new Error(`Package with typeId ${deployment.packageId} not found`);
+    }
+    const workspaceConfig = getWorkspaceConfig(context, item, deployment, pack);
 
-      const pack = context.getPackage(deployment.packageId);
-      if (!pack) {
-        throw new Error(`Package with typeId ${deployment.packageId} not found`);
+    var newDeployment = {
+      ...deployment,
+      triggeredTime: new Date(),
+      triggeredBy: "TODO",
+      workspace: {
+        ...workspaceConfig,
       }
+    } 
+
+    try {
       if (pack.deploymentConfig.type === DeploymentType.SparkLivy && 
           !item.definition?.lakehouseId) {
         callNotificationOpen(
@@ -69,10 +120,10 @@ import { PackageInstallerContext } from "../package/PackageInstallerContext";
 
       // Create the deployment strategy based on the package type
       const strategy = DeploymentStrategyFactory.createStrategy(
-                context.workloadClientAPI,
+                context,
                 item,
                 pack,
-                deployment,
+                newDeployment,
       );
       var updatedSolution = await strategy.deploy();
       
@@ -100,15 +151,15 @@ import { PackageInstallerContext } from "../package/PackageInstallerContext";
       );
       
       // Create a failed deployment copy and update via callback
-      const failedDeployment = {
-        ...deployment,
-        deploymentStatus: DeploymentStatus.Failed
+      newDeployment = {
+        ...newDeployment,
+        status: DeploymentStatus.Failed
       };
-      
+    }
+    finally {
       if (onDeploymentUpdate) {
-        onDeploymentUpdate(failedDeployment);
+        onDeploymentUpdate(newDeployment);
       }
-      return;
     }
   }
 

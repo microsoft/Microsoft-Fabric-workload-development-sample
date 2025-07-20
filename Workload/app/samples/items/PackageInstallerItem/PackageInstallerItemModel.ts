@@ -9,15 +9,20 @@ export interface PackageInstallerItemDefinition  {
 export interface PackageDeployment {
   id: string;
   status: DeploymentStatus;
+  triggeredBy?: string; // The user who triggered the deployment
+  triggeredTime?: Date; // The date when the deployment was triggered
   packageId: string;
   deployedItems: DeployedItem[];
-  workspace: WorkspaceConfig;  
+  workspace?: WorkspaceConfig;  
   job?: DeploymentJobInfo; // The spark job id that is used to deploy the package
 }
 
 export interface DeploymentJobInfo {
   id: string; // The job id that is used to deploy the package
   item: ItemReference
+  startTime?: Date; // The date when the job was created
+  endTime?: Date; // The date when the job was finished
+  failureReason?: any; // The reason why the job failed
 }
 
 export interface DeployedItem extends GenericItem {
@@ -41,20 +46,20 @@ export interface FolderConfig {
 }
 
 export enum DeploymentStatus {
-  Pending,
-  InProgress,
-  Succeeded,
-  Failed,
-  Cancelled,
+  Pending = "Pending",
+  InProgress = "InProgress",
+  Succeeded = "Succeeded",
+  Failed = "Failed",
+  Cancelled = "Cancelled",
 }
-
+ 
 export interface Package {
   id: string;
   displayName: string;
   description?: string;
   icon?: string;
   deploymentConfig: DeploymentConfiguration; // Configuration for the deployment
-  items?: PackageItemDefinition[];
+  items?: PackageItem[];
 }
 
 export interface DeploymentConfiguration {
@@ -70,9 +75,9 @@ export interface DeploymentFile {
 }
 
 export enum DeploymentType {
-  UX,
-  SparkLivy,
-  SparkNotebook
+  UX = "UX", // UX deployment strategy
+  SparkLivy = "SparkLivy", // Spark Livy deployment strategy
+  SparkNotebook = "SparkNotebook" // Spark Notebook deployment strategy
 }
 
 export enum DeploymentLocation {
@@ -84,13 +89,11 @@ export enum DeploymentLocation {
   NewFolder = "NewFolder"
 }
 
-export interface PackageItemDefinition {
-  name: string;
-  itemType: string;
-  itemTypeName?: string;
-  itemDefinitions?: PackageItemDefinitionPayload[];
+export interface PackageItem {
+  type: string;
+  displayName: string;
   description: string;
-  icon?: string;
+  definition?: PackageItemDefinition; // The item definition that is used to create the item
 }
 
 export enum PackageItemDefinitionPayloadType {
@@ -99,7 +102,12 @@ export enum PackageItemDefinitionPayloadType {
   InlineBase64 = "InlineBase64"
 }
 
-export interface PackageItemDefinitionPayload {
+export interface PackageItemDefinition {
+  format?: string; // Format of the item definition, e.g., "ipynb" for Jupyter Notebooks
+  parts?: PackageItemDefinitionPart[]; // Parts of the item definition, e.g., file paths and payloads
+}
+
+export interface PackageItemDefinitionPart {
   payloadType: PackageItemDefinitionPayloadType;
   payload: string;
   path: string;

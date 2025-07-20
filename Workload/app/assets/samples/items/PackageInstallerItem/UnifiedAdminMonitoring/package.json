@@ -14,199 +14,199 @@
   },  
   "items": [
     {
-      "name": "01_FUAM_Lakehouse_Backup",
+      "displayName": "01_FUAM_Lakehouse_Backup",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "01_Transfer_Active_Items_Unit",
+      "displayName": "01_Transfer_Active_Items_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "01_Transfer_Capacities_Unit",
+      "displayName": "01_Transfer_Capacities_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "01_Transfer_Capacity_Refreshables_Unit",
+      "displayName": "01_Transfer_Capacity_Refreshables_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "01_Transfer_CapacityMetricData_Timepoints_Unit",
+      "displayName": "01_Transfer_CapacityMetricData_Timepoints_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "01_Transfer_Delegated_Tenant_Settings_Overrides_Unit",
+      "displayName": "01_Transfer_Delegated_Tenant_Settings_Overrides_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "01_Transfer_Git_Connections_Unit",
+      "displayName": "01_Transfer_Git_Connections_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "01_Transfer_Incremental_Inventory_Unit",
+      "displayName": "01_Transfer_Incremental_Inventory_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "01_Transfer_Tenant_Admin_Settings_Unit",
+      "displayName": "01_Transfer_Tenant_Admin_Settings_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "02_FUAM_Lakehouse_Optimization",
+      "displayName": "02_FUAM_Lakehouse_Optimization",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "02_Transfer_Activities_Unit",
+      "displayName": "02_Transfer_Activities_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "02_Transfer_CapacityMetricData_ItemKind_Unit",
+      "displayName": "02_Transfer_CapacityMetricData_ItemKind_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "02_Transfer_Workspaces_Unit",
+      "displayName": "02_Transfer_Workspaces_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "03_Aggregate_Activities_Unit",
+      "displayName": "03_Aggregate_Activities_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "03_Transfer_CapacityMetricData_ItemOperation_Unit",
+      "displayName": "03_Transfer_CapacityMetricData_ItemOperation_Unit",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "FUAM_Core_Report",
+      "displayName": "FUAM_Core_Report",
       "description": "",
-      "itemType": "Report"
+      "type": "Report"
     },
     {
-      "name": "FUAM_Core_SM",
+      "displayName": "FUAM_Core_SM",
       "description": "",
-      "itemType": "SemanticModel"
+      "type": "SemanticModel"
     },
     {
-      "name": "FUAM_Gateway_Monitoring_From_Files_Report",
+      "displayName": "FUAM_Gateway_Monitoring_From_Files_Report",
       "description": "",
-      "itemType": "Report"
+      "type": "Report"
     },
     {
-      "name": "FUAM_Gateway_Monitoring_From_Files_SM",
+      "displayName": "FUAM_Gateway_Monitoring_From_Files_SM",
       "description": "",
-      "itemType": "SemanticModel"
+      "type": "SemanticModel"
     },
     {
-      "name": "FUAM_Item_Analyzer_Report",
+      "displayName": "FUAM_Item_Analyzer_Report",
       "description": "",
-      "itemType": "Report"
+      "type": "Report"
     },
     {
-      "name": "FUAM_Item_SM",
+      "displayName": "FUAM_Item_SM",
       "description": "",
-      "itemType": "SemanticModel"
+      "type": "SemanticModel"
     },
     {
-      "name": "FUAM_Semantic_Model_Meta_Data_Analyzer_Report",
+      "displayName": "FUAM_Semantic_Model_Meta_Data_Analyzer_Report",
       "description": "",
-      "itemType": "Report"
+      "type": "Report"
     },
     {
-      "name": "FUAM_Semantic_Model_Meta_Data_Analyzer_SM",
+      "displayName": "FUAM_Semantic_Model_Meta_Data_Analyzer_SM",
       "description": "",
-      "itemType": "SemanticModel"
+      "type": "SemanticModel"
     },
     {
-      "name": "FUAM_SQL_Endpoint_Analyzer_Report",
+      "displayName": "FUAM_SQL_Endpoint_Analyzer_Report",
       "description": "",
-      "itemType": "Report"
+      "type": "Report"
     },
     {
-      "name": "FUAM_SQL_Endpoint_Analyzer_SM",
+      "displayName": "FUAM_SQL_Endpoint_Analyzer_SM",
       "description": "",
-      "itemType": "SemanticModel"
+      "type": "SemanticModel"
     },
     {
-      "name": "Generate_Calendar_Table",
+      "displayName": "Generate_Calendar_Table",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "Init_FUAM_Lakehouse_Tables",
+      "displayName": "Init_FUAM_Lakehouse_Tables",
       "description": "New notebook",
-      "itemType": "Notebook"
+      "type": "Notebook"
     },
     {
-      "name": "Load_Activities_E2E",
+      "displayName": "Load_Activities_E2E",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     },
     {
-      "name": "Load_Capacities_E2E",
+      "displayName": "Load_Capacities_E2E",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     },
     {
-      "name": "Load_Capacity_Metrics_E2E",
+      "displayName": "Load_Capacity_Metrics_E2E",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     },
     {
-      "name": "Load_Capacity_Refreshables_E2E",
+      "displayName": "Load_Capacity_Refreshables_E2E",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     },
     {
-      "name": "Load_Delegated_Tenant_Settings_Overrides_E2E",
+      "displayName": "Load_Delegated_Tenant_Settings_Overrides_E2E",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     },
     {
-      "name": "Load_FUAM_Data_E2E",
+      "displayName": "Load_FUAM_Data_E2E",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     },
     {
-      "name": "Load_Git_Connections_E2E",
+      "displayName": "Load_Git_Connections_E2E",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     },
     {
-      "name": "Load_Inventory_E2E",
+      "displayName": "Load_Inventory_E2E",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     },
     {
-      "name": "Load_Items_E2E",
+      "displayName": "Load_Items_E2E",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     },
     {
-      "name": "Load_PBI_Workspaces_E2E",
+      "displayName": "Load_PBI_Workspaces_E2E",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     },
     {
-      "name": "Load_Tenant_Settings_E2E",
+      "displayName": "Load_Tenant_Settings_E2E",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     },
     {
-      "name": "Maintenance_for_FUAM",
+      "displayName": "Maintenance_for_FUAM",
       "description": "",
-      "itemType": "DataPipeline"
+      "type": "DataPipeline"
     }
   ]
 }

@@ -1,6 +1,5 @@
 import { DeploymentStrategy } from "./DeploymentStrategy";
-import { DeployedItem, PackageDeployment, DeploymentStatus, PackageItemDefinitionPayloadType } from "../PackageInstallerItemModel";
-import { FabricPlatformAPIClient } from "../../../controller/FabricPlatformAPIClient";
+import { DeployedItem, PackageDeployment, DeploymentStatus, PackageItem } from "../PackageInstallerItemModel";
 
 // Spark Notebook Deployment Strategy
 export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
@@ -19,48 +18,27 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
       // Create workspace and folder if needed
       await this.createWorkspaceAndFolder();
       
-      const fabricAPI = FabricPlatformAPIClient.create(this.workloadClient);
+      const depConfig = this.pack.deploymentConfig;
+      const fabricAPI = this.context.fabricPlatformAPIClient;
       const targetWorkspaceId = this.deployment.workspace.id;
       
-      // Get the deployment file content
-      const notebookContent = await this.getDeploymentFileContent();
-      
-      // Create the Spark Notebook (without definition)
-      const displayName = `Deploy_${this.pack.id}`;
-      
-      const notebookItem = await fabricAPI.items.createItem(
-        targetWorkspaceId,
-        {
-          displayName: displayName,
+      const nbItemDef:PackageItem = {
+          displayName: `Deploy_${this.pack.id}`,
           type: "Notebook", // Spark Notebook item type
           description: this.pack.description || 'Deployment Notebook',
-          folderId: this.deployment.workspace?.folder?.id || undefined
-        }
-      );
-      
-      if(!notebookItem) {
-        throw new Error("Failed to create Spark Notebook item.");
-      }
-      console.log(`Successfully created Spark Notebook: ${notebookItem.id}`);
-      
-      // Update the notebook definition with content
-      console.log(`Updating notebook definition for: ${notebookItem.id}`);
-      await fabricAPI.items.updateItemDefinition(
-        targetWorkspaceId,
-        notebookItem.id,
-        {
           definition: {
             format: "ipynb",
             parts: [
               {
                 path: "notebook-content.ipynb",
-                payload: notebookContent,
-                payloadType: "InlineBase64"
+                payload: depConfig.deploymentFile.payload,
+                payloadType: depConfig.deploymentFile.payloadType
               }
             ]
           }
-        }
-      );
+      }
+      const notebookItem = await this.createItemUX(nbItemDef, targetWorkspaceId, 
+        this.deployment.workspace?.folder?.id || undefined);
       console.log(`Successfully updated notebook definition for: ${notebookItem.id}`);
       
       createdItems.push({
@@ -80,9 +58,21 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
               deploymentId: this.deployment.id,
             },
             configuration: {
-              spark: {
-                "useStarterPool": true
-              }
+            //TODO: Run notebook payload is not well formatted.
+            //  "conf": {
+            //      "spark.conf1": "value"
+            //  },
+            //  "environment": {
+            //      "id": "<environment_id>",
+            //      "name": "<environment_name>"
+            //  },
+            //  "defaultLakehouse": {
+            //      "name": "<lakehouse-name>",
+            //      "id": "<lakehouse-id>",
+            //      "workspaceId": "<(optional) workspace-id-that-contains-the-lakehouse>"
+            //  },
+            //  "useStarterPool": false,
+            //  "useWorkspacePool": "<workspace-pool-name>"
             }
           }
         }
@@ -113,92 +103,48 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
 
   async updateDeploymentStatus(): Promise<PackageDeployment> {
     // Check status of the job
-    const fabricAPI = FabricPlatformAPIClient.create(this.workloadClient);
+    const fabricAPI = this.context.fabricPlatformAPIClient;
     const depJob = this.deployment.job;
 
     const job = await fabricAPI.scheduler.getItemJobInstance(depJob.item.workspaceId, 
                                                             depJob.item.id,
                                                             depJob.id);
     
-    //map the job status to deployment status
-    switch (job.status) {
-      case "Completed": 
-        return {          
-          ...this.deployment,
-          status: DeploymentStatus.Succeeded
-        };  
-      case "Failed":
-        return { 
-          ...this.deployment,
-          status: DeploymentStatus.Failed
-        };
-      case "Cancelled":
-        return {
-          ...this.deployment,
-          status: DeploymentStatus.Cancelled
-        };  
-      default:
-        // If job is still running or pending, return InProgress
-        console.log(`Job ${job.id} is still in progress or pending.`);
-        return {
-            ...this.deployment, 
-            status: DeploymentStatus.InProgress
-          };
-    }
-  }
-
-  /** 
-   * Retrieves the content of the deployment file based on its payload type
-   * @returns Promise<string> Base64 encoded content of the deployment file
-   */
-  private async getDeploymentFileContent(): Promise<string> {
-
-    const deplyomentConfig = this.pack.deploymentConfig;
-    if (!deplyomentConfig.deploymentFile) {
-      throw new Error("No deployment file specified");
-    }
-
-    let content: string;
+    // Map the job status to deployment status
+    const deploymentStatus = this.mapJobStatusToDeploymentStatus(job.status);
     
+    // Create updated job info with converted dates
+    const updatedJob = {
+      ...depJob,
+      startTime: job.startTimeUtc ? new Date(job.startTimeUtc) : undefined,
+      endTime: job.endTimeUtc ? new Date(job.endTimeUtc) : undefined,
+      ...(job.failureReason && { failureReason: job.failureReason })
+    };
 
-    switch (deplyomentConfig.deploymentFile.payloadType) {
-      case PackageItemDefinitionPayloadType.Asset:
-        // Fetch content from asset and encode as base64
-        content = await this.getAssetContent(deplyomentConfig.deploymentFile.payload);
-        return btoa(content);
-        
-      case PackageItemDefinitionPayloadType.Link:
-        // Download content from HTTP link and encode as base64
-        try {
-          const url = deplyomentConfig.deploymentFile.payload;
-          console.log(`Fetching deployment file from URL: ${url}`);
-          
-          // Validate that the URL is absolute
-          if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            throw new Error(`Invalid URL format. Expected absolute URL starting with http:// or https://, got: ${url}`);
-          }
-          
-          // Create a proper URL object to ensure it's valid
-          const validatedUrl = new URL(url);
-          console.log(`Validated URL: ${validatedUrl.toString()}`);
-          
-          const response = await fetch(validatedUrl.toString());
-          if (!response.ok) {
-            throw new Error(`Failed to fetch deployment file from link: ${response.status} ${response.statusText}`);
-          }
-          content = await response.text();
-          return btoa(content);
-        } catch (error) {
-          console.error(`Error fetching deployment file from link ${deplyomentConfig.deploymentFile.payload}:`, error);
-          throw new Error(`Failed to process deployment file link: ${error.message}`);
-        }
-        
-      case PackageItemDefinitionPayloadType.InlineBase64:
-        // Use base64 payload directly
-        return deplyomentConfig.deploymentFile.payload;
-        
+    return {
+      ...this.deployment,
+      status: deploymentStatus,
+      job: updatedJob
+    };
+  }
+
+  /**
+   * Maps job status from the API to deployment status
+   * @param jobStatus The job status from the API
+   * @returns The corresponding deployment status
+   */
+  private mapJobStatusToDeploymentStatus(jobStatus: string): DeploymentStatus {
+    switch (jobStatus) {
+      case "Completed":
+        return DeploymentStatus.Succeeded;
+      case "Failed":
+        return DeploymentStatus.Failed;
+      case "Cancelled":
+        return DeploymentStatus.Cancelled;
       default:
-        throw new Error(`Unsupported deployment file payload type: ${deplyomentConfig.deploymentFile.payloadType}`);
+        console.log(`Job status ${jobStatus} is still in progress or pending.`);
+        return DeploymentStatus.InProgress;
     }
   }
+
 }

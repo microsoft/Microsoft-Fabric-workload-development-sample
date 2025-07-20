@@ -10,11 +10,9 @@
     },
     "items": [
         {
-            "name": "PlanningLH",
-            "itemType": "Lakehouse",
-            "description": "A lakehouse that contains access to all Planning Data.",
-            "icon": "",
-            "itemDefinitions": []
+            "displayName": "PlanningLH",
+            "type": "Lakehouse",
+            "description": "A lakehouse that contains access to all Planning Data."
         }
     ]
 }

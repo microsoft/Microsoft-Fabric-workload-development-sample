@@ -1,12 +1,14 @@
-import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { PackageDeployment, Package, PackageInstallerItemDefinition } from "../PackageInstallerItemModel";
+
+import { PackageDeployment, Package, PackageInstallerItemDefinition, PackageItemDefinition, PackageItemDefinitionPayloadType, PackageItem, PackageItemDefinitionPart } from "../PackageInstallerItemModel";
 import { WorkloadItem } from "../../../../implementation/models/ItemCRUDModel";
-import { FabricPlatformAPIClient } from "../../../controller/FabricPlatformAPIClient";
+import { PackageInstallerContext } from "../package/PackageInstallerContext";
+import { ItemDefinition } from "@ms-fabric/workload-client";
+import { Item } from "src/samples/controller";
 
 // Abstract base class for deployment strategies
 export abstract class DeploymentStrategy {
   constructor(
-    protected workloadClient: WorkloadClientAPI,
+    protected context: PackageInstallerContext,
     protected item: WorkloadItem<PackageInstallerItemDefinition>,
     protected pack: Package,
     protected deployment: PackageDeployment
@@ -22,7 +24,7 @@ export abstract class DeploymentStrategy {
 
   // Common functionality that all strategies can use
   protected async createWorkspaceAndFolder() {
-    const fabricAPI = FabricPlatformAPIClient.create(this.workloadClient);
+    const fabricAPI =this.context.fabricPlatformAPIClient;
 
     // Check if we need to create a new workspace
     if (this.deployment.workspace?.createNew) {
@@ -62,5 +64,109 @@ export abstract class DeploymentStrategy {
       throw new Error(`Failed to fetch content: ${response.status} ${response.statusText}`);
     }
     return await response.text();
+  }
+
+  /**
+   * Creates the item in the UX
+   * @param item The item to create
+   * @param workspaceId The workspace ID where the item should be created 
+   * @param folderId
+   * @returns 
+   */
+  protected async createItemUX(item: PackageItem, workspaceId: string, folderId: string): Promise<Item> {
+    const newItem = await this.context.fabricPlatformAPIClient.items.createItem(
+        workspaceId,
+        {
+          displayName: item.displayName,
+          type: item.type,
+          description: item.description || '',
+          folderId: folderId || undefined
+        }
+      );
+    const definitionParts = await this.convertPackageItemDefinition(item.definition);
+    await this.context.fabricPlatformAPIClient.items.updateItemDefinition(
+      workspaceId,
+      newItem.id,
+      {
+        definition: definitionParts.parts.length > 0 ? definitionParts : undefined,
+      }
+    );
+    console.log(`Successfully created item: ${newItem.id}`);
+    return newItem;
+  }
+
+  protected async convertPackageItemDefinition(itemDefinition: PackageItemDefinition): Promise<ItemDefinition> {
+
+    const definitionParts = [];
+    
+    for (const defPart of itemDefinition.parts) {
+      let payloadData = await this.getItemDefinitionPartContent(defPart);
+      
+      definitionParts.push({
+        path: defPart.path,
+        payload: payloadData,
+        payloadType: "InlineBase64" as const
+      });
+    }
+    
+    return {
+      format: itemDefinition.format,
+      parts: definitionParts
+    } as ItemDefinition;
+  }
+
+  /** 
+   * Retrieves the content of the deployment file based on its payload type
+   * @returns Promise<string> Base64 encoded content of the deployment file
+   */
+  private async getItemDefinitionPartContent(defPart: PackageItemDefinitionPart): Promise<string> {
+
+    const deploymentConfig = this.pack.deploymentConfig;
+    if (!deploymentConfig.deploymentFile) {
+      throw new Error("No deployment file specified");
+    }
+
+    let content: string;
+    
+
+    switch (defPart.payloadType) {
+      case PackageItemDefinitionPayloadType.Asset:
+        // Fetch content from asset and encode as base64
+        content = await this.getAssetContent(deploymentConfig.deploymentFile.payload);
+        return btoa(content);
+        
+      case PackageItemDefinitionPayloadType.Link:
+        // Download content from HTTP link and encode as base64
+        try {
+          const url = defPart.payload;
+          console.log(`Fetching deployment file from URL: ${url}`);
+          
+          // Validate that the URL is absolute
+          if (!url.startsWith('http://') && !url.startsWith('https://')) {
+            throw new Error(`Invalid URL format. Expected absolute URL starting with http:// or https://, got: ${url}`);
+          }
+          
+          // Create a proper URL object to ensure it's valid
+          const validatedUrl = new URL(url);
+          console.log(`Validated URL: ${validatedUrl.toString()}`);
+          
+          const response = await fetch(validatedUrl.toString());
+          if (!response.ok) {
+            throw new Error(`Failed to fetch deployment file from link: ${response.status} ${response.statusText}`);
+          }
+          content = await response.text();
+          return btoa(content);
+        } catch (error) {
+          console.error(`Error fetching deployment file from link ${deploymentConfig.deploymentFile.payload}:`, error);
+          throw new Error(`Failed to process deployment file link: ${error.message}`);
+        }
+        
+      case PackageItemDefinitionPayloadType.InlineBase64:
+        // Use base64 payload directly
+        return deploymentConfig.deploymentFile.payload;
+        
+      default:
+        throw new Error(`Unsupported deployment file payload type: ${deploymentConfig.deploymentFile.payloadType}`);
+    }
   }
 }

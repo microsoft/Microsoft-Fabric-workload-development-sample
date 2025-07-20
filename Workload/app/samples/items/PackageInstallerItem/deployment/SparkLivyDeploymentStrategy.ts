@@ -4,7 +4,6 @@ import { SparkDeployment, SparkDeploymentItem, SparkDeploymentItemDefinition, Sp
 import { getOneLakeFilePath, writeToOneLakeFileAsText } from "../../../controller/OneLakeController";
 import { BatchRequest, BatchState } from "../../../models/SparkLivyModel";
 import { EnvironmentConstants } from "../../../../constants";
-import { FabricPlatformAPIClient } from "../../../controller/FabricPlatformAPIClient";
 
 const defaultDeploymentSparkFile = "/assets/samples/items/PackageInstallerItem/jobs/DefaultPackageInstaller.py";
 
@@ -37,7 +36,7 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
     
     console.log("Starting the analysis with batch request:", batchRequest);
     
-    const fabricAPI = FabricPlatformAPIClient.create(this.workloadClient);
+    const fabricAPI = this.context.fabricPlatformAPIClient;
     const batchResponse = await fabricAPI.sparkLivy.createBatch(
       this.item.workspaceId,
       lakehouseId,
@@ -65,18 +64,27 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
       throw new Error("No job ID found for deployment status update");
     }
 
-    const fabricAPI = FabricPlatformAPIClient.create(this.workloadClient);
-    const batchState = await fabricAPI.sparkLivy.getBatchState(
+    const fabricAPI = this.context.fabricPlatformAPIClient;
+    const batch = await fabricAPI.sparkLivy.getBatch(
       this.deployment.workspace.id, 
       this.item.definition.lakehouseId,
       this.deployment.job.id
     );
 
     // Map BatchState to DeploymentStatus
-    const deploymentStatus = this.mapBatchStateToDeploymentStatus(batchState.state);
+    const deploymentStatus = this.mapBatchStateToDeploymentStatus(batch.state);
+    
+    // Create updated job info with converted dates from livyInfo
+    const updatedJob = {
+      ...this.deployment.job,
+      startTime: batch.livyInfo?.startedAt ? new Date(batch.livyInfo.startedAt) : undefined,
+      endTime: batch.livyInfo?.endedAt ? new Date(batch.livyInfo.endedAt) : undefined,
+    };
+
     return {
       ...this.deployment,
-      status: deploymentStatus
+      status: deploymentStatus,
+      job: updatedJob
     };
   }
 
@@ -93,13 +101,13 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
     // Process all items
     const itemPromises = this.pack.items.map(async (configItem) => {
       const itemConfig: SparkDeploymentItem = {
-        name: configItem.name,
+        name: configItem.displayName,
         description: configItem.description,
-        itemType: configItem.itemType,
+        itemType: configItem.type,
         definitionParts: []
       };
       
-      await Promise.all(configItem.itemDefinitions.map(async (itemDefinitionReference) => {
+      await Promise.all(configItem.definition.parts.map(async (itemDefinitionReference) => {
         const definitionPart: SparkDeploymentItemDefinition = {
           path: itemDefinitionReference.path,
           payload: undefined,
@@ -157,7 +165,7 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
     const assetContent = await this.getAssetContent(path);
     const destinationSubPath = `Packages/${this.getContentSubPath(path)}`;
     const destinationPath = getOneLakeFilePath(this.item.workspaceId, this.item.id, destinationSubPath);
-    await writeToOneLakeFileAsText(this.workloadClient, destinationPath, assetContent);
+    await writeToOneLakeFileAsText(this.context.workloadClientAPI, destinationPath, assetContent);
     return EnvironmentConstants.OneLakeDFSBaseUrl + "/" + destinationPath;
   }
 
@@ -166,7 +174,7 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
     if (response.ok) {
       const destinationSubPath = `Packages/${this.getContentSubPath(path)}`;
       const destinationPath = getOneLakeFilePath(this.item.workspaceId, this.item.id, destinationSubPath);
-      await writeToOneLakeFileAsText(this.workloadClient, destinationPath, response.body.toString());
+      await writeToOneLakeFileAsText(this.context.workloadClientAPI, destinationPath, response.body.toString());
       return EnvironmentConstants.OneLakeDFSBaseUrl + "/" + destinationPath;
     } else {
       console.error('Error fetching content:', path);

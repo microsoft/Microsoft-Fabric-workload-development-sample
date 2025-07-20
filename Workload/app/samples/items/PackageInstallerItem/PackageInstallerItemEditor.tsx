@@ -19,7 +19,7 @@ import { WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
-import { PackageDeployment, PackageInstallerItemDefinition, DeploymentStatus, WorkspaceConfig, DeploymentLocation } from "./PackageInstallerItemModel";
+import { PackageDeployment, PackageInstallerItemDefinition, DeploymentStatus } from "./PackageInstallerItemModel";
 import { PackageInstallerItemEditorEmpty } from "./PackageInstallerItemEditorEmpty";
 import { ItemEditorLoadingProgressBar } from "../../../implementation/controls/ItemEditorLoadingProgressBar";
 import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
@@ -31,6 +31,8 @@ import { WorkspaceDisplayNameCell } from "./components/WorkspaceDisplayName";
 import { FolderDisplayNameCell } from "./components/FolderDisplayName";
 import { PackageInstallerContext } from "./package/PackageInstallerContext";
 import { PackageDisplayNameCell } from "./components/PackageDisplayName";
+import { callDialogOpen } from "../../../implementation/controller/DialogController";
+import { PackageInstallerDeployResult } from "./components/PackageInstallerDeployDialog";
 
 // Component to fetch and display folder name
 
@@ -45,7 +47,7 @@ export function PackageInstallerItemEditor(props: PageProps) {
   const [editorItem, setEditorItem] = useState<WorkloadItem<PackageInstallerItemDefinition>>(undefined);
   const [selectedTab, setSelectedTab] = useState<TabValue>("");
   const [selectedSolution, setSelectedDeployment] = useState<PackageDeployment | undefined>(undefined);
-  const [context, setContext] = useState<PackageInstallerContext>(undefined);
+  const [context, setContext] = useState<PackageInstallerContext>(new PackageInstallerContext(workloadClient));
 
   // Helper function to update item definition immutably
   const updateItemDefinition = useCallback((updates: Partial<PackageInstallerItemDefinition>) => {
@@ -187,7 +189,7 @@ export function PackageInstallerItemEditor(props: PageProps) {
 
           // Create the deployment strategy and update status
           const strategy = DeploymentStrategyFactory.createStrategy(
-            workloadClient,
+            context,
             editorItem,
             pack,
             deployment
@@ -279,13 +281,26 @@ export function PackageInstallerItemEditor(props: PageProps) {
    * Start deployment for a pending deployment
    */
   async function handleStartDeployment(deployment: PackageDeployment, event: React.MouseEvent) {
-    event.stopPropagation(); // Prevent row click from triggering
-    
-    startDeployment(
-      context,      
-      editorItem,
-      deployment,
-      handleDeploymentUpdate);
+    if(event){
+      event.stopPropagation(); // Prevent row click from triggering
+    }
+    const dialogResult = await callDialogOpen(
+      workloadClient,
+      process.env.WORKLOAD_NAME,
+      "/PackageInstallerItem-deploy-dialog",
+      500, 500,
+      true)
+    const result = dialogResult.value as PackageInstallerDeployResult;
+
+    if (result && result.state === 'deploy') {
+      startDeployment(
+        context,      
+        editorItem,
+        deployment,
+        handleDeploymentUpdate)
+    } else {
+      console.log("Deployment dialog was cancelled");
+    }
   }
 
 async function addDeployment(packageId: string) {
@@ -294,36 +309,12 @@ async function addDeployment(packageId: string) {
   const pack = context.getPackage(packageId);
   if (pack) {
     const id = generateUniqueId();
-    let workspaceSetting: WorkspaceConfig | undefined = undefined;
-    if(pack.deploymentConfig.location == DeploymentLocation.NewWorkspace) {
-      workspaceSetting = {
-        createNew: true, // Always create a new workspace for the package
-        name: `${packageId} - ${id}`,
-        description: `Workspace for package ${packageId} deployment ${id}`,
-        //TODO: Fix the capacity issue here!
-        capacityId: "4A9D5006-D552-4335-BF0D-7CD5D2FC8B83" // Use the first deployment's capacityId if available
-      };    
-    } else if (pack.deploymentConfig.location == DeploymentLocation.NewFolder) {
-      workspaceSetting = {
-        createNew: false, // Create a new workspace for the package
-        id: editorItem?.workspaceId,
-        folder: {
-          createNew: true, // Create a new folder for the package
-          name: `${packageId} - ${id}`
-        }
-      };
-    }
 
     const createdSolution: PackageDeployment = {
       id: id,
       status: DeploymentStatus.Pending,
       deployedItems: [],
       packageId: packageId,
-      workspace: {
-        ...workspaceSetting,
-      }
-      //TODO: subfolderId need to be set once avilable in the item definition
-      //subfolderId: editorItem?.subfolderObjectId,
     };
 
     const newItemDefinition: PackageInstallerItemDefinition = {
@@ -407,7 +398,7 @@ async function addDeployment(packageId: string) {
                 deployment={selectedSolution}
                 item={editorItem}
                 onBackToHome={() => setSelectedTab("home")}
-                onDeploymentUpdate={handleDeploymentUpdate}
+                onStartDeployment={() => handleStartDeployment(selectedSolution, undefined)}
               />
             </span>
           )}
@@ -423,6 +414,7 @@ async function addDeployment(packageId: string) {
                         <TableHeaderCell>{t('Deployment Id')}</TableHeaderCell>
                         <TableHeaderCell>{t('Package Type')}</TableHeaderCell>
                         <TableHeaderCell>{t('Deployment Status')}</TableHeaderCell>
+                        <TableHeaderCell>{t('Deployment Triggerd')}</TableHeaderCell>
                         <TableHeaderCell>{t('Workspace Name')}</TableHeaderCell>
                         <TableHeaderCell>{t('Folder Name')}</TableHeaderCell>
                         <TableHeaderCell>{t('Actions')}</TableHeaderCell>
@@ -443,6 +435,7 @@ async function addDeployment(packageId: string) {
                                 showIcon={true} />
                             </TableCell>
                             <TableCell>{DeploymentStatus[deployment.status]}</TableCell>
+                            <TableCell>{deployment.triggeredTime + ""}</TableCell>
                             <TableCell>
                               <WorkspaceDisplayNameCell
                                 context={context}

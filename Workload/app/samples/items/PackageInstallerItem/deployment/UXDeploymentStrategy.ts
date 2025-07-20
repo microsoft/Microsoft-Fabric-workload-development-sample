@@ -1,6 +1,5 @@
 import { DeploymentStrategy } from "./DeploymentStrategy";
-import { DeployedItem, PackageDeployment, DeploymentStatus, PackageItemDefinitionPayloadType } from "../PackageInstallerItemModel";
-import { FabricPlatformAPIClient } from "../../../controller/FabricPlatformAPIClient";
+import { DeployedItem, PackageDeployment, DeploymentStatus, DeploymentJobInfo } from "../PackageInstallerItemModel";
 
 // UX Deployment Strategy
 export class UXDeploymentStrategy extends DeploymentStrategy {
@@ -14,49 +13,47 @@ export class UXDeploymentStrategy extends DeploymentStrategy {
       return { ...this.deployment, status: DeploymentStatus.Succeeded };
     }
 
+    const targetWorkspaceId = this.deployment.workspace.id;
     const createdItems: DeployedItem[] = [];
+    const job:DeploymentJobInfo = { 
+      id: "",
+      startTime: new Date(),
+      item: { 
+        id: this.item.id, 
+        workspaceId: targetWorkspaceId
+      } 
+    };
     
     try {
       await this.createWorkspaceAndFolder();
       
-      const fabricAPI = FabricPlatformAPIClient.create(this.workloadClient);
-      const targetWorkspaceId = this.deployment.workspace.id;
-      
       // Create each item defined in the package
       for (const itemDef of this.pack.items) {
-        console.log(`Creating item: ${itemDef.name} of type: ${itemDef.itemType}`);
+        console.log(`Creating item: ${itemDef.displayName} of type: ${itemDef.type}`);
 
-        const definitionParts = await this.processItemDefinitions(itemDef.itemDefinitions || []);
-        const displayName = this.pack.deploymentConfig.suffixItemNames ? `${itemDef.name}_${this.deployment.id}` : itemDef.name;        
-        
-        const newItem = await fabricAPI.items.createItem(
-          targetWorkspaceId,
-          {
-            displayName: displayName,
-            type: itemDef.itemType,
-            description: itemDef.description || '',
-            definition: definitionParts.length > 0 ? { parts: definitionParts } : undefined,
-            folderId: this.deployment.workspace?.folder?.id || undefined
-          }
-        );        
-        
-        console.log(`Successfully created item: ${newItem.id}`);
+        itemDef.description = this.pack.deploymentConfig.suffixItemNames ? `${itemDef.displayName}_${this.deployment.id}` : itemDef.displayName;
+        const newItem = await this.createItemUX(itemDef, targetWorkspaceId, this.deployment.workspace?.folder?.id);
         createdItems.push(
           {
              ...newItem,
-             itemDefenitionName: itemDef.name
+             itemDefenitionName: itemDef.displayName
           });
       }
-      
+            
+    } catch (error) {
+      console.error(`Error in UX deployment: ${error}`);
+      job.failureReason = error;
+    }
+    finally {
       return {
         ...this.deployment,
         deployedItems: createdItems,
-        status: DeploymentStatus.Succeeded
+        status: job.failureReason ? DeploymentStatus.Failed : DeploymentStatus.Succeeded,
+        job: {
+          ...job,
+          endTime: new Date(),
+        }
       };
-      
-    } catch (error) {
-      console.error(`Error in UX deployment: ${error}`);
-      return { ...this.deployment, status: DeploymentStatus.Failed };
     }
   }
 
@@ -64,45 +61,5 @@ export class UXDeploymentStrategy extends DeploymentStrategy {
     // UX deployment does not require status updates, so we can return the current deployment
     return this.deployment;
   }
-
-  private async processItemDefinitions(itemDefinitions: any[]): Promise<any[]> {
-    const definitionParts = [];
-    
-    for (const defPart of itemDefinitions) {
-      let payloadData;
-      
-      switch (defPart.payloadType) {
-        case PackageItemDefinitionPayloadType.Asset:
-          const assetContent = await this.getAssetContent(defPart.payload);
-          payloadData = btoa(assetContent);
-          break;
-        case PackageItemDefinitionPayloadType.Link:
-          try {
-            const response = await fetch(defPart.payload);
-            if (!response.ok) {
-              throw new Error(`Failed to fetch content from link: ${response.status} ${response.statusText}`);
-            }
-            const linkContent = await response.text();
-            payloadData = btoa(linkContent);
-          } catch (error) {
-            console.error(`Error fetching content from link ${defPart.payload}:`, error);
-            throw new Error(`Failed to process link: ${error.message}`);
-          }
-          break;
-        case PackageItemDefinitionPayloadType.InlineBase64:
-          payloadData = defPart.payload;
-          break;
-        default:
-          throw new Error(`Unsupported payload type: ${defPart.payloadType}`);
-      }
-      
-      definitionParts.push({
-        path: defPart.path,
-        payload: payloadData,
-        payloadType: "InlineBase64" as const
-      });
-    }
-    
-    return definitionParts;
-  }
+  
 }
