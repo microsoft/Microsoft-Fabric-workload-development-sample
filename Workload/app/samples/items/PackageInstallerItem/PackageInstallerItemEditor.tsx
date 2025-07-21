@@ -31,8 +31,8 @@ import { WorkspaceDisplayNameCell } from "./components/WorkspaceDisplayName";
 import { FolderDisplayNameCell } from "./components/FolderDisplayName";
 import { PackageInstallerContext } from "./package/PackageInstallerContext";
 import { PackageDisplayNameCell } from "./components/PackageDisplayName";
-import { callDialogOpen } from "../../../implementation/controller/DialogController";
 import { PackageInstallerDeployResult } from "./components/PackageInstallerDeployDialog";
+import { callDialogOpen } from "../../../implementation/controller/DialogController";
 
 // Component to fetch and display folder name
 
@@ -284,15 +284,27 @@ export function PackageInstallerItemEditor(props: PageProps) {
     if(event){
       event.stopPropagation(); // Prevent row click from triggering
     }
+    
+    // Get the package to determine deployment location
+    const pack = context.getPackage(deployment.packageId);
+    const deploymentLocation = pack?.deploymentConfig.location;
+    
     const dialogResult = await callDialogOpen(
       workloadClient,
       process.env.WORKLOAD_NAME,
-      "/PackageInstallerItem-deploy-dialog",
+      `/PackageInstallerItem-deploy-dialog/${editorItem.id}?packageId=${deployment.packageId}&deploymentId=${deployment.id}&deploymentLocation=${deploymentLocation}`,
       500, 500,
       true)
     const result = dialogResult.value as PackageInstallerDeployResult;
 
     if (result && result.state === 'deploy') {
+      // If a capacity was selected, update the deployment with the capacity info
+      if (result.workspaceConfig) {
+        deployment.workspace = {
+          ...result.workspaceConfig          
+        };
+      }
+    
       startDeployment(
         context,      
         editorItem,
@@ -435,7 +447,11 @@ async function addDeployment(packageId: string) {
                                 showIcon={true} />
                             </TableCell>
                             <TableCell>{DeploymentStatus[deployment.status]}</TableCell>
-                            <TableCell>{deployment.triggeredTime + ""}</TableCell>
+                            <TableCell>
+                              {deployment.triggeredTime 
+                                ? new Date(deployment.triggeredTime).toLocaleString() 
+                                : t('Not started yet')}
+                            </TableCell>
                             <TableCell>
                               <WorkspaceDisplayNameCell
                                 context={context}
