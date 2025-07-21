@@ -79,6 +79,7 @@ export class PackageRegistry {
         () => import('../../../../assets/samples/items/PackageInstallerItem/Sales/package.json'),
         () => import('../../../../assets/samples/items/PackageInstallerItem/UnifiedAdminMonitoring/package.json'),
         () => import('../../../../assets/samples/items/PackageInstallerItem/WorkspaceMonitoringDashboards/package.json'),
+        () => import('../../../../assets/samples/items/PackageInstallerItem/MDSF-F/package.json'),
       ];
 
       // Load all config files

@@ -73,24 +73,26 @@ export abstract class DeploymentStrategy {
    * @param folderId
    * @returns 
    */
-  protected async createItemUX(item: PackageItem, workspaceId: string, folderId: string): Promise<Item> {
+  protected async createItemUX(item: PackageItem, workspaceId: string, folderId: string, itemNameSuffix: string): Promise<Item> {
     const newItem = await this.context.fabricPlatformAPIClient.items.createItem(
         workspaceId,
         {
-          displayName: item.displayName,
+          displayName: itemNameSuffix ? `${item.displayName}${itemNameSuffix}` : item.displayName,
           type: item.type,
           description: item.description || '',
           folderId: folderId || undefined
         }
       );
-    const definitionParts = await this.convertPackageItemDefinition(item.definition);
-    await this.context.fabricPlatformAPIClient.items.updateItemDefinition(
-      workspaceId,
-      newItem.id,
-      {
-        definition: definitionParts.parts.length > 0 ? definitionParts : undefined,
-      }
-    );
+    if(item.definition?.parts?.length > 0) {
+      const definitionParts = await this.convertPackageItemDefinition(item.definition);
+      await this.context.fabricPlatformAPIClient.items.updateItemDefinition(
+        workspaceId,
+        newItem.id,
+        {
+          definition: definitionParts.parts.length > 0 ? definitionParts : undefined,
+        }
+      );
+    }
     console.log(`Successfully created item: ${newItem.id}`);
     return newItem;
   }
@@ -121,52 +123,39 @@ export abstract class DeploymentStrategy {
    */
   private async getItemDefinitionPartContent(defPart: PackageItemDefinitionPart): Promise<string> {
 
-    const deploymentConfig = this.pack.deploymentConfig;
-    if (!deploymentConfig.deploymentFile) {
-      throw new Error("No deployment file specified");
-    }
-
     let content: string;
-    
-
     switch (defPart.payloadType) {
       case PackageItemDefinitionPayloadType.Asset:
         // Fetch content from asset and encode as base64
-        content = await this.getAssetContent(deploymentConfig.deploymentFile.payload);
+        content = await this.getAssetContent(defPart.payload);
         return btoa(content);
         
       case PackageItemDefinitionPayloadType.Link:
         // Download content from HTTP link and encode as base64
-        try {
-          const url = defPart.payload;
-          console.log(`Fetching deployment file from URL: ${url}`);
-          
-          // Validate that the URL is absolute
-          if (!url.startsWith('http://') && !url.startsWith('https://')) {
-            throw new Error(`Invalid URL format. Expected absolute URL starting with http:// or https://, got: ${url}`);
-          }
-          
-          // Create a proper URL object to ensure it's valid
-          const validatedUrl = new URL(url);
-          console.log(`Validated URL: ${validatedUrl.toString()}`);
-          
-          const response = await fetch(validatedUrl.toString());
-          if (!response.ok) {
-            throw new Error(`Failed to fetch deployment file from link: ${response.status} ${response.statusText}`);
-          }
-          content = await response.text();
-          return btoa(content);
-        } catch (error) {
-          console.error(`Error fetching deployment file from link ${deploymentConfig.deploymentFile.payload}:`, error);
-          throw new Error(`Failed to process deployment file link: ${error.message}`);
+
+        const url = defPart.payload;
+        console.log(`Fetching deployment file from URL: ${url}`);
+        
+        // Validate that the URL is absolute
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          throw new Error(`Invalid URL format. Expected absolute URL starting with http:// or https://, got: ${url}`);
         }
         
+        // Create a proper URL object to ensure it's valid
+        const validatedUrl = new URL(url);
+        console.log(`Validated URL: ${validatedUrl.toString()}`);
+        
+        const response = await fetch(validatedUrl.toString());
+        if (!response.ok) {
+          throw new Error(`Failed to fetch deployment file from link: ${response.status} ${response.statusText}`);
+        }
+        content = await response.text();
+        return btoa(content);        
       case PackageItemDefinitionPayloadType.InlineBase64:
         // Use base64 payload directly
-        return deploymentConfig.deploymentFile.payload;
-        
+        return defPart.payload;
       default:
-        throw new Error(`Unsupported deployment file payload type: ${deploymentConfig.deploymentFile.payloadType}`);
+        throw new Error(`Unsupported payload type: ${defPart.payloadType}`);
     }
   }
 }

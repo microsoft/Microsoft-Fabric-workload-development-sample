@@ -92,10 +92,10 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
     console.log(`Copying package content for item: ${this.item.id} and package type: ${this.pack.id}`);
     
     const sparkDeploymentConf: SparkDeployment = {
-      workspace: this.deployment.workspace,
       deploymentId: this.deployment.id,
-      items: [],
-      deploymentScript: ""
+      deploymentScript: "",
+      workspace: this.deployment.workspace,
+      items: [],      
     };
 
     // Process all items

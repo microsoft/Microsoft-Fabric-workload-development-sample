@@ -38,7 +38,7 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
           }
       }
       const notebookItem = await this.createItemUX(nbItemDef, targetWorkspaceId, 
-        this.deployment.workspace?.folder?.id || undefined);
+        this.deployment.workspace?.folder?.id || undefined, undefined);
       console.log(`Successfully updated notebook definition for: ${notebookItem.id}`);
       
       createdItems.push({

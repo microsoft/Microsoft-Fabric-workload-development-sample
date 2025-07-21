@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { PageProps } from "../../../../App";
-import { Button, Text } from "@fluentui/react-components";
+import { Button, Text, Input } from "@fluentui/react-components";
 import { useTranslation } from "react-i18next";
 import { useParams, useLocation } from "react-router-dom";
 import { callDialogClose } from "../../../../implementation/controller/DialogController";
@@ -24,15 +24,18 @@ export interface PackageInstallerDeployResult {
 
 export function PackageInstallerDeployDialog(props: PackageInstallerDeployProps) {
     const { t } = useTranslation();
-    const { workloadClient, deploymentLocation } = props;
+    const { workloadClient, deploymentLocation, packageId, deploymentId } = props;
     
     const [selectedCapacityId, setSelectedCapacityId] = useState<string>("");
     const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>("");
+    const [workspaceName, setWorkspaceName] = useState<string>(`${packageId} - ${deploymentId}`);
+    const [folderName, setFolderName] = useState<string>(`${packageId} - ${deploymentId}`);
 
     // Check what kind of selection we need to show
     const needsCapacitySelection = deploymentLocation === DeploymentLocation.NewWorkspace;
     const needsWorkspaceSelection = deploymentLocation === DeploymentLocation.ExistingWorkspace || 
                                     deploymentLocation === DeploymentLocation.NewFolder;
+    const needsFolderName = deploymentLocation === DeploymentLocation.NewFolder;
 
     const handleCancel = () => {
       // Close the dialog with a cancelled result
@@ -46,13 +49,14 @@ export function PackageInstallerDeployDialog(props: PackageInstallerDeployProps)
         state: 'deploy',
         workspaceConfig: {
           id: needsWorkspaceSelection ? selectedWorkspaceId : undefined,
+          name: needsCapacitySelection ? workspaceName : undefined, // Set workspace name for new workspaces
           capacityId: needsCapacitySelection ? selectedCapacityId : undefined,
           createNew: !needsWorkspaceSelection,
           folder: {
             createNew: deploymentLocation === DeploymentLocation.NewFolder,
             //TODO: Add parent folder selection
             parentFolderId: undefined,
-            name: props.packageId + " - " + props.deploymentId
+            name: needsFolderName ? folderName : undefined
           }
         } as WorkspaceConfig,
       } as PackageInstallerDeployResult;      
@@ -61,13 +65,15 @@ export function PackageInstallerDeployDialog(props: PackageInstallerDeployProps)
 
     const isStartButtonDisabled = 
         (needsCapacitySelection && !selectedCapacityId) || 
-        (needsWorkspaceSelection && !selectedWorkspaceId);
+        (needsWorkspaceSelection && !selectedWorkspaceId) ||
+        (needsCapacitySelection && !workspaceName.trim()) || // Require workspace name for new workspaces
+        (needsFolderName && !folderName.trim()); // Require folder name for new folders
 
     return (
         <div style={{ padding: '20px', minWidth: '400px' }}>
             <div style={{ marginBottom: '20px' }}>
                 <Text size={500} weight="semibold">
-                    {t('Deploy Package')}
+                    {t('Configure the installation')}
                 </Text>
             </div>
             
@@ -75,6 +81,8 @@ export function PackageInstallerDeployDialog(props: PackageInstallerDeployProps)
                 <Text>
                     {needsCapacitySelection 
                         ? t('Select a capacity for the new workspace and start the deployment.')
+                        : needsWorkspaceSelection && needsFolderName
+                        ? t('Select an existing workspace and specify the folder name for deployment.')
                         : needsWorkspaceSelection
                         ? t('Select an existing workspace and start the deployment.')
                         : t('This will deploy the package to your selected workspace.')
@@ -97,6 +105,21 @@ export function PackageInstallerDeployDialog(props: PackageInstallerDeployProps)
                 </div>
             )}
 
+            {/* Show workspace name input for new workspaces */}
+            {needsCapacitySelection && (
+                <div style={{ marginBottom: '20px' }}>
+                    <Text weight="semibold" style={{ display: 'block', marginBottom: '8px' }}>
+                        {t('Workspace Name')}
+                    </Text>
+                    <Input
+                        value={workspaceName}
+                        onChange={(ev, data) => setWorkspaceName(data.value)}
+                        placeholder={t('Enter workspace name')}
+                        style={{ width: '100%' }}
+                    />
+                </div>
+            )}
+
             {/* Show workspace selection if needed */}
             {needsWorkspaceSelection && (
                 <div style={{ marginBottom: '20px' }}>
@@ -108,6 +131,21 @@ export function PackageInstallerDeployDialog(props: PackageInstallerDeployProps)
                         selectedWorkspaceId={selectedWorkspaceId}
                         onWorkspaceSelect={setSelectedWorkspaceId}
                         placeholder={t('Select a workspace')}
+                    />
+                </div>
+            )}
+
+            {/* Show folder name input for new folders */}
+            {needsFolderName && (
+                <div style={{ marginBottom: '20px' }}>
+                    <Text weight="semibold" style={{ display: 'block', marginBottom: '8px' }}>
+                        {t('Folder Name')}
+                    </Text>
+                    <Input
+                        value={folderName}
+                        onChange={(ev, data) => setFolderName(data.value)}
+                        placeholder={t('Enter folder name')}
+                        style={{ width: '100%' }}
                     />
                 </div>
             )}
@@ -124,7 +162,7 @@ export function PackageInstallerDeployDialog(props: PackageInstallerDeployProps)
                     onClick={handleStartDeployment}
                     disabled={isStartButtonDisabled}
                 >
-                    {t('Start Deployment')}
+                    {t('Start Installation')}
                 </Button>
             </div>
         </div>

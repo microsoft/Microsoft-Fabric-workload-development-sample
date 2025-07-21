@@ -27,12 +27,16 @@ export class UXDeploymentStrategy extends DeploymentStrategy {
     try {
       await this.createWorkspaceAndFolder();
       
+      var itemNameSuffix: string | undefined = this.pack.deploymentConfig.suffixItemNames ? `_${this.deployment.id}` : undefined;
+      console.log(`Creating items in workspace: ${targetWorkspaceId}, folder: ${this.deployment.workspace?.folder?.id}, itemNameSuffix: ${itemNameSuffix}`);
+      
       // Create each item defined in the package
       for (const itemDef of this.pack.items) {
         console.log(`Creating item: ${itemDef.displayName} of type: ${itemDef.type}`);
 
         itemDef.description = this.pack.deploymentConfig.suffixItemNames ? `${itemDef.displayName}_${this.deployment.id}` : itemDef.displayName;
-        const newItem = await this.createItemUX(itemDef, targetWorkspaceId, this.deployment.workspace?.folder?.id);
+        const newItem = await this.createItemUX(itemDef, targetWorkspaceId, 
+                                                this.deployment.workspace?.folder?.id, itemNameSuffix);
         createdItems.push(
           {
              ...newItem,

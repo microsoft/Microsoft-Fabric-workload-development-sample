@@ -1,7 +1,7 @@
 {
     "id": "PlanningWS",
-    "displayName": "Product Planning Project",
-    "description": "Set up a workspace that will configure every component that is needed to do product planning.",
+    "displayName": "Product Planning Workspace",
+    "description": "Set up a workspace that will configure every component that is needed for product planning.",
     "icon": "/assets/samples/items/PackageInstallerItem/Planning/icon.png",
     "deploymentConfig": {
         "type": "UX",

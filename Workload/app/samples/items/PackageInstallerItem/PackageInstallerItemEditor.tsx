@@ -19,13 +19,12 @@ import { WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
 import { useLocation, useParams } from "react-router-dom";
 import "./../../../styles.scss";
 import { useTranslation } from "react-i18next";
-import { PackageDeployment, PackageInstallerItemDefinition, DeploymentStatus } from "./PackageInstallerItemModel";
+import { PackageDeployment, PackageInstallerItemDefinition, DeploymentStatus, DeploymentType } from "./PackageInstallerItemModel";
 import { PackageInstallerItemEditorEmpty } from "./PackageInstallerItemEditorEmpty";
 import { ItemEditorLoadingProgressBar } from "../../../implementation/controls/ItemEditorLoadingProgressBar";
 import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
 import { DeploymentDetailView } from "./DeploymentDetailView";
 import { callDatahubOpen } from "../../../implementation/controller/DataHubController";
-import { startDeployment } from "./components/UIHelper";
 import { DeploymentStrategyFactory } from "./deployment/DeploymentStrategyFactory";
 import { WorkspaceDisplayNameCell } from "./components/WorkspaceDisplayName";
 import { FolderDisplayNameCell } from "./components/FolderDisplayName";
@@ -33,6 +32,8 @@ import { PackageInstallerContext } from "./package/PackageInstallerContext";
 import { PackageDisplayNameCell } from "./components/PackageDisplayName";
 import { PackageInstallerDeployResult } from "./components/PackageInstallerDeployDialog";
 import { callDialogOpen } from "../../../implementation/controller/DialogController";
+import { NotificationType } from "@ms-fabric/workload-client";
+import { t } from "i18next";
 
 // Component to fetch and display folder name
 
@@ -305,11 +306,8 @@ export function PackageInstallerItemEditor(props: PageProps) {
         };
       }
     
-      startDeployment(
-        context,      
-        editorItem,
-        deployment,
-        handleDeploymentUpdate)
+      // Start the specific deployment strategy
+      startDeployment(context, editorItem, deployment, handleDeploymentUpdate)
     } else {
       console.log("Deployment dialog was cancelled");
     }
@@ -510,5 +508,107 @@ async function addDeployment(packageId: string) {
 function generateUniqueId(): string {
   // Generate a random unique ID for deployment
   return '' + Math.random().toString(36).substring(2, 9);
+}
+
+async function startDeployment( context: PackageInstallerContext, 
+                                        item: WorkloadItem<PackageInstallerItemDefinition>,  
+                                        deployment: PackageDeployment, 
+                                        onDeploymentUpdate?: (updatedPackage: PackageDeployment) => void) {
+  console.log(`Starting deployment for package: ${deployment.id}`);
+
+  // Create a new deployment object to avoid modifying the original
+  var newDeployment:PackageDeployment = {
+    ...deployment,
+    triggeredTime: new Date(),
+    triggeredBy: "TODO",
+    workspace: {
+      ...deployment.workspace,
+    }
+  }; 
+
+  try {
+    
+    // This allows us to track the deployment status without affecting the original deployment object
+    if (!newDeployment.workspace) {
+      throw new Error("Deployment workspace is not defined");
+    }
+
+    //Get the package from the context
+    const pack = context.getPackage(newDeployment.packageId);
+    if (!pack) {
+      throw new Error(`Package with typeId ${newDeployment.packageId} not found`);
+    }
+
+
+    // Check if lakehouseId is required for SparkLivy deployment
+    if (pack.deploymentConfig.type === DeploymentType.SparkLivy && 
+        !item.definition?.lakehouseId) {
+      throw new Error("Lakehouse ID is required for SparkLivy deployment but not provided in item definition.");
+    }
+
+    // Create the deployment strategy based on the package type
+    const strategy = DeploymentStrategyFactory.createStrategy(
+              context,
+              item,
+              pack,
+              newDeployment,
+    );
+    //set the updated deployment object
+    newDeployment = await strategy.deploy();
+
+    switch (newDeployment.status) {
+      case DeploymentStatus.Succeeded:
+        callNotificationOpen(
+            context.workloadClientAPI,
+            t("Deployment finished"),
+            t(`Deployment has successfully started ${newDeployment.job.id}.`),
+            NotificationType.Success,
+            undefined
+          );
+        break;
+      case DeploymentStatus.Failed:
+          callNotificationOpen(
+            context.workloadClientAPI,
+            t("Deployment failed"),
+            t(`Deployment has failed.`),
+            NotificationType.Error,
+            undefined
+          );
+        break;
+      case DeploymentStatus.InProgress:
+          callNotificationOpen(
+            context.workloadClientAPI,
+            t("Deployment started"),
+            t(`Deployment has successfully started ${newDeployment.job.id}.`),
+            NotificationType.Info,
+            undefined
+          );
+        break;
+      case DeploymentStatus.Pending:
+        break;
+      case DeploymentStatus.Cancelled:
+        break;
+      default:
+        console.warn(`Unknown deployment status: ${newDeployment.status}`);
+        break;
+    }
+  }
+  catch (error) {
+    console.error(`Error on Deployment: ${error}`);
+    callNotificationOpen(
+      context.workloadClientAPI,
+      "Deployment failed",
+      `Failed to deploy the package: ${error.message || error}`,
+      NotificationType.Error,
+      undefined
+    );
+    // Create a failed deployment copy and update via callback
+    newDeployment.status = DeploymentStatus.Failed
+  }
+  finally {
+    if (onDeploymentUpdate) {
+      onDeploymentUpdate(newDeployment);
+    }
+  }
 }
 

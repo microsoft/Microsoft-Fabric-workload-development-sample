@@ -1,8 +1,8 @@
 {
     "id": "SalesData",
-    "displayName": "Sales Data Workspace",
+    "displayName": "Sales Data Access",
     "icon": "/assets/samples/items/PackageInstallerItem/Sales/icon.png",
-    "description": "Set up a new workspace to analyse .",
+    "description": "Add all required items to a workspace to get started to analyse your sales data.",
     "deploymentConfig": {
         "type": "UX",
         "location": "NewFolder",
@@ -17,12 +17,18 @@
       {
         "displayName": "SalesDataNB",
         "type": "Notebook",
-        "description": "A Notebook to Analyze the Sales data."
-      },
-      {
-        "displayName": "SalesDataNB2",
-        "type": "Notebook",
-        "description": "A Notebook second to Analyze the Sales data."
+        "description": "A Notebook to Analyze the Sales data.",
+        "definition":{
+          "format": "ipynb",
+          "parts": [
+            {
+              "path": "notebook-content.ipynb",
+              "payloadType": "Asset",
+              "payload": "/assets/samples/items/PackageInstallerItem/Sales/definitions/SalesDataNB/SalesDataNB.ipynb"              
+            }
+          ]
+
+        }
       }
     ]
 }

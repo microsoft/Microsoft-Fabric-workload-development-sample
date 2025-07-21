@@ -15,6 +15,7 @@ export class DeploymentStrategyFactory {
     pack: Package,
     deployment: PackageDeployment
   ): DeploymentStrategy {
+    console.info(`Creating deployment strategy for type: ${pack.deploymentConfig.type}, package: ${pack.id}, deployment: ${deployment.id}`);
     switch (pack.deploymentConfig.type) {
       case DeploymentType.UX:
         return new UXDeploymentStrategy(context, item, pack, deployment);
