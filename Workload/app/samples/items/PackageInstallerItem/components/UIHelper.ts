@@ -1,44 +1,5 @@
-import { NotificationType, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { callNotificationOpen } from "../../../../implementation/controller/NotificationController";
-import { callNavigationNavigate } from "../../../../implementation/controller/NavigationController";
-import { GenericItem } from "../../../../implementation/models/ItemCRUDModel";
 import { Beaker24Regular, BrainCircuit24Regular, ChartMultiple24Regular, Code24Regular, Database24Regular, DatabaseSearch24Regular, DataTrending24Regular, DocumentDatabase24Regular, DocumentTable24Regular, Notebook24Regular, Question24Regular, Stream24Regular } from "@fluentui/react-icons";
 import React from "react";
-
-
-// Function to navigate to a created item
-  export async function handleItemClick(workloadClient: WorkloadClientAPI, item: GenericItem) {
-    console.log('handleItemClick called with item:', item);
-    
-    try {
-      // Validate required fields to prevent undefined values in URL
-      if (!item || !item.workspaceId || !item.type || !item.id) {
-        console.warn('Invalid item data:', item);
-        callNotificationOpen(
-          workloadClient,
-          "Navigation Error",
-          "Cannot open item: Missing required information (workspace, type, or ID)",
-          NotificationType.Error,
-          undefined
-        );
-        return;
-      }
-
-      await callNavigationNavigate(workloadClient, 
-        "host",
-        `/groups/${item.workspaceId}/${item.type}/${item.id}`);
-      console.log('Successfully called CallOpenInNewBrowserTab for item');
-    } catch (error) {
-      console.error(`Error navigating to item ${item?.id}:`, error);
-      callNotificationOpen(
-        workloadClient,
-        "Navigation Error",
-        `Failed to open item: ${error.message || error}`,
-        NotificationType.Error,
-        undefined
-      );
-    }
-  };
 
 
   // Function to get icon component for a given item type
@@ -83,9 +44,6 @@ import React from "react";
         return React.createElement(Code24Regular);
       case "environment":
         return React.createElement(DocumentDatabase24Regular);
-      case "eventhouse":
-      case "event house":
-        return React.createElement(DatabaseSearch24Regular);
       case "eventstream":
       case "event stream":
         return React.createElement(Stream24Regular);

@@ -13,14 +13,18 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
     }
 
     const createdItems: DeployedItem[] = [];
+    const newPackageDeployment: PackageDeployment = {
+        ...this.deployment
+    };
     
     try {
       // Create workspace and folder if needed
-      await this.createWorkspaceAndFolder();
+      const newWorkspace = await this.createWorkspaceAndFolder(this.deployment.workspace);
+      newPackageDeployment.workspace = newWorkspace;
+      console.log(`Created workspace: ${newWorkspace.id} for deployment: ${this.deployment.id}`);
       
       const depConfig = this.pack.deploymentConfig;
       const fabricAPI = this.context.fabricPlatformAPIClient;
-      const targetWorkspaceId = this.deployment.workspace.id;
       
       const nbItemDef:PackageItem = {
           displayName: `Deploy_${this.pack.id}`,
@@ -37,9 +41,10 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
             ]
           }
       }
-      const notebookItem = await this.createItemUX(nbItemDef, targetWorkspaceId, 
-        this.deployment.workspace?.folder?.id || undefined, undefined);
-      console.log(`Successfully updated notebook definition for: ${notebookItem.id}`);
+      const notebookItem = await this.createItemUX(nbItemDef, 
+        newPackageDeployment.workspace.id, 
+        newPackageDeployment.workspace?.folder?.id || undefined, undefined);
+      console.log(`Created notebook for deployment: ${notebookItem.id}`);
       
       createdItems.push({
          ...notebookItem,
@@ -47,9 +52,8 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
         });
       
       // Start a RunNotebook job on the created notebook
-      console.log(`Starting RunNotebook job for notebook: ${notebookItem.id}`);
       const jobInstanceId = await fabricAPI.scheduler.runOnDemandItemJob(
-        targetWorkspaceId,
+        newPackageDeployment.workspace.id,
         notebookItem.id,
         "RunNotebook",
         {
@@ -77,28 +81,22 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
           }
         }
       );
-      console.log(`Successfully started RunNotebook job for notebook: ${notebookItem.id}, Job ID: ${jobInstanceId}`);
+      console.log(`Started RunNotebook job for notebook: ${notebookItem.id}, Job ID: ${jobInstanceId}`);
       
       const jobId = jobInstanceId.substring(jobInstanceId.lastIndexOf("/") + 1); // Extract just the job ID
-      return {
-        ...this.deployment,
-        job: {
-          id: jobId,
-          item: {
-            ...notebookItem
-          }
+      newPackageDeployment.job = {
+        id: jobId,
+        item: {
+          ...notebookItem
         },
-        deployedItems: createdItems,
-        status: DeploymentStatus.InProgress
       };
-      
+      newPackageDeployment.deployedItems = createdItems
+      newPackageDeployment.status = DeploymentStatus.InProgress
     } catch (error) {
       console.error(`Error in Spark Notebook deployment: ${error}`);
-      return { 
-        ...this.deployment, 
-        status: DeploymentStatus.Failed 
-      };
+      newPackageDeployment.status = DeploymentStatus.Failed;
     }
+    return newPackageDeployment;
   }
 
   async updateDeploymentStatus(): Promise<PackageDeployment> {

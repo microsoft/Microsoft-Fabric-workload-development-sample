@@ -1,5 +1,5 @@
 
-import { PackageDeployment, Package, PackageInstallerItemDefinition, PackageItemDefinition, PackageItemDefinitionPayloadType, PackageItem, PackageItemDefinitionPart } from "../PackageInstallerItemModel";
+import { PackageDeployment, Package, PackageInstallerItemDefinition, PackageItemDefinition, PackageItemDefinitionPayloadType, PackageItem, PackageItemDefinitionPart, WorkspaceConfig } from "../PackageInstallerItemModel";
 import { WorkloadItem } from "../../../../implementation/models/ItemCRUDModel";
 import { PackageInstallerContext } from "../package/PackageInstallerContext";
 import { ItemDefinition } from "@ms-fabric/workload-client";
@@ -23,38 +23,37 @@ export abstract class DeploymentStrategy {
   abstract updateDeploymentStatus(): Promise<PackageDeployment>;
 
   // Common functionality that all strategies can use
-  protected async createWorkspaceAndFolder() {
+  protected async createWorkspaceAndFolder(workspaceConfig: WorkspaceConfig): Promise<WorkspaceConfig> {
     const fabricAPI =this.context.fabricPlatformAPIClient;
 
+    const newWorkspaceConfig: WorkspaceConfig = {
+      ...workspaceConfig
+    }
+
     // Check if we need to create a new workspace
-    if (this.deployment.workspace?.createNew) {
+    if (newWorkspaceConfig?.createNew) {
       const workspace = await fabricAPI.workspaces.createWorkspace({
-        displayName: this.deployment.workspace.name,
-        description: this.deployment.workspace.description,          
-        capacityId: this.deployment.workspace.capacityId
+        displayName: newWorkspaceConfig.name,
+        description: newWorkspaceConfig.description,          
+        capacityId: newWorkspaceConfig.capacityId
       });
-      this.deployment.workspace = {
-        ...this.deployment.workspace,
-        id: workspace.id
-      };
-      console.log(`Created new workspace: ${this.deployment.workspace.id}`);
+      newWorkspaceConfig.id = workspace.id
+      console.log(`Created new workspace: ${newWorkspaceConfig.id}`);
     }
 
     // Check if we need to create a new folder
-    if (this.deployment.workspace?.folder?.createNew) {
+    if (newWorkspaceConfig?.folder?.createNew) {
       const folder = await fabricAPI.folders.createFolder(
-        this.deployment.workspace.id, 
+        newWorkspaceConfig.id, 
         {
-          displayName: this.deployment.workspace.folder.name,
-          parentFolderId: this.deployment.workspace.folder.parentFolderId,
+          displayName: newWorkspaceConfig.folder.name,
+          parentFolderId: newWorkspaceConfig.folder.parentFolderId,
         }
       );
-      this.deployment.workspace.folder = {
-        ...this.deployment.workspace.folder,
-        id: folder.id
-      };
-      console.log(`Created new folder: ${this.deployment.workspace.folder.id}`);
+      newWorkspaceConfig.folder.id = folder.id;
+      console.log(`Created new folder: ${newWorkspaceConfig.folder.id}`);
     }
+    return newWorkspaceConfig;
   }
 
   protected async getAssetContent(path: string): Promise<string> {

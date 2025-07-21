@@ -13,11 +13,12 @@ import {
 import { useTranslation } from "react-i18next";
 import { PackageDeployment, DeploymentStatus, PackageInstallerItemDefinition } from "./PackageInstallerItemModel";
 import { GenericItem, WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
-import { getItemTypeIcon, handleItemClick } from "./components/UIHelper";
+import { getItemTypeIcon } from "./components/UIHelper";
 import { WorkspaceDisplayNameLabel } from "./components/WorkspaceDisplayName";
 import { FolderDisplayNameLabel } from "./components/FolderDisplayName";
 import { DeploymentJobLabel } from "./components/DeploymentJob";
 import { PackageInstallerContext } from "./package/PackageInstallerContext";
+import { navigateToItem } from "../../../implementation/controller/NavigationController";
 
 // Props for the PackageDetailCard component
 export interface DeploymentDetailViewProps {
@@ -170,7 +171,7 @@ export const DeploymentDetailView: React.FC<DeploymentDetailViewProps> = ({
                           color: "#0078d4",
                           textDecoration: "underline"
                         }}
-                        onClick={() => handleItemClick(context.workloadClientAPI, item)}
+                        onClick={() => navigateToItem(context.workloadClientAPI, item)}
                         title={`Click to open ${item.displayName || item.id}`}
                       >
                         {item.displayName || item.id}

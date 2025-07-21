@@ -30,12 +30,13 @@ export function CapacityDropdown({
         loadCapacities();
     }, []);
 
+
     const loadCapacities = async () => {
         try {
             setIsLoading(true);
             setError("");
             const fabricAPI = new FabricPlatformAPIClient(workloadClient);
-            const capacityList = await fabricAPI.capacities.getAllCapacities();
+            const capacityList = await fabricAPI.capacities.getActiveCapacities();
             setCapacities(capacityList);
         } catch (err) {
             setError(t('Failed to load capacities. Please try again.'));
@@ -45,11 +46,17 @@ export function CapacityDropdown({
         }
     };
 
-    // Filter capacities based on filter text
+    // Filter capacities based on filter text and SKU starting with "F"
     const filteredCapacities = capacities.filter(capacity => {
+        // First filter: SKU must start with "F"
+        const sku = capacity.sku || '';
+        if (!sku.toLowerCase().startsWith('f')) {
+            return false;
+        }
+        
+        // Second filter: text filtering if filterText is provided
         if (!filterText) return true;
         const displayText = capacity.displayName || capacity.id || '';
-        const sku = capacity.sku || '';
         return displayText.toLowerCase().includes(filterText.toLowerCase()) ||
                sku.toLowerCase().includes(filterText.toLowerCase());
     });
