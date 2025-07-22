@@ -1,6 +1,6 @@
 
-import { PackageDeployment, Package, PackageInstallerItemDefinition, PackageItemDefinition, PackageItemDefinitionPayloadType, PackageItem, PackageItemDefinitionPart, WorkspaceConfig } from "../PackageInstallerItemModel";
-import { WorkloadItem } from "../../../../implementation/models/ItemCRUDModel";
+import { PackageDeployment, Package, PackageInstallerItemDefinition, PackageItemDefinition, PackageItemDefinitionPayloadType, PackageItem, PackageItemDefinitionPart, WorkspaceConfig, DeploymentStatus, DeployedItem } from "../PackageInstallerItemModel";
+import { GenericItem, WorkloadItem } from "../../../../implementation/models/ItemCRUDModel";
 import { PackageInstallerContext } from "../package/PackageInstallerContext";
 import { ItemDefinition } from "@ms-fabric/workload-client";
 import { Item } from "src/samples/controller";
@@ -65,30 +65,66 @@ export abstract class DeploymentStrategy {
     return await response.text();
   }
 
+  protected async getAssetContentBlob(path: string): Promise<Blob> {
+    const response = await fetch(path);
+    if (!response.ok) {
+      console.error('Error fetching content:', path);
+      throw new Error(`Failed to fetch content: ${response.status} ${response.statusText}`);
+    }
+    return await response.blob();
+  }
+
+  protected async getAssetContentAsBase64(path: string): Promise<string> {
+    const response = await fetch(path);
+    if (!response.ok) {
+      console.error('Error fetching content:', path);
+      throw new Error(`Failed to fetch content: ${response.status} ${response.statusText}`);
+    }
+    
+    // Always use arrayBuffer approach for consistent handling of both text and binary
+    const arrayBuffer = await response.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    
+    // Convert bytes to binary string
+    let binaryString = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binaryString += String.fromCharCode(bytes[i]);
+    }
+    
+    return btoa(binaryString);
+  }
+
   /**
    * Creates the item in the UX
    * @param item The item to create
    * @param workspaceId The workspace ID where the item should be created 
    * @param folderId
+   * @param itemNameSuffix Optional suffix to append to the item name
+   * @param direct If true, the item will be created directly in the create call if false two api calls for create and update definition will be used. In this case the returned item cann be null because the call is async
    * @returns 
    */
-  protected async createItemUX(item: PackageItem, workspaceId: string, folderId: string, itemNameSuffix: string): Promise<Item> {
-    const newItem = await this.context.fabricPlatformAPIClient.items.createItem(
+  protected async createItemUX(item: PackageItem, workspaceId: string, folderId: string, itemNameSuffix: string, direct?: boolean): Promise<Item> {
+
+    let itemDef = undefined;
+    if(!this.pack.deploymentConfig.ignoreItemDefinitions) {
+      itemDef = await this.convertPackageItemDefinition(item.definition);
+    }
+    let newItem = await this.context.fabricPlatformAPIClient.items.createItem(
         workspaceId,
         {
           displayName: itemNameSuffix ? `${item.displayName}${itemNameSuffix}` : item.displayName,
           type: item.type,
           description: item.description || '',
-          folderId: folderId || undefined
+          folderId: folderId || undefined,
+          definition: (direct && itemDef?.parts?.length > 0) ? itemDef : undefined,
         }
       );
-    if(item.definition?.parts?.length > 0) {
-      const definitionParts = await this.convertPackageItemDefinition(item.definition);
+    if(!direct && itemDef?.parts?.length > 0) {
       await this.context.fabricPlatformAPIClient.items.updateItemDefinition(
         workspaceId,
         newItem.id,
         {
-          definition: definitionParts.parts.length > 0 ? definitionParts : undefined,
+          definition: itemDef
         }
       );
     }
@@ -96,25 +132,28 @@ export abstract class DeploymentStrategy {
     return newItem;
   }
 
-  protected async convertPackageItemDefinition(itemDefinition: PackageItemDefinition): Promise<ItemDefinition> {
+  protected async convertPackageItemDefinition(itemDefinition: PackageItemDefinition): Promise<ItemDefinition | undefined> {
 
     const definitionParts = [];
-    
-    for (const defPart of itemDefinition.parts) {
-      let payloadData = await this.getItemDefinitionPartContent(defPart);
-      
-      definitionParts.push({
-        path: defPart.path,
-        payload: payloadData,
-        payloadType: "InlineBase64" as const
-      });
+    if(itemDefinition?.parts?.length > 0) {
+      for (const defPart of itemDefinition.parts) {
+        let payloadData = await this.getItemDefinitionPartContent(defPart);
+        
+        definitionParts.push({
+          path: defPart.path,
+          payload: payloadData,
+          payloadType: "InlineBase64" as const
+        });
+      }
+      return {
+          format: itemDefinition.format,
+          parts: definitionParts
+        } as ItemDefinition;
+    } else {
+      return undefined;
     }
-    
-    return {
-      format: itemDefinition.format,
-      parts: definitionParts
-    } as ItemDefinition;
   }
+
 
   /** 
    * Retrieves the content of the deployment file based on its payload type
@@ -124,10 +163,9 @@ export abstract class DeploymentStrategy {
 
     let content: string;
     switch (defPart.payloadType) {
-      case PackageItemDefinitionPayloadType.Asset:
-        // Fetch content from asset and encode as base64
-        content = await this.getAssetContent(defPart.payload);
-        return btoa(content);
+      case PackageItemDefinitionPayloadType.AssetLink:
+        // Fetch content from asset and encode as base64 (handles both text and binary)
+        return await this.getAssetContentAsBase64(defPart.payload);
         
       case PackageItemDefinitionPayloadType.Link:
         // Download content from HTTP link and encode as base64
@@ -155,6 +193,85 @@ export abstract class DeploymentStrategy {
         return defPart.payload;
       default:
         throw new Error(`Unsupported payload type: ${defPart.payloadType}`);
+    }
+  }
+
+
+  async checkDeployedItems(): Promise<PackageDeployment> {
+    console.log(`Checking item availability for deployment: ${this.deployment.id}`);
+    
+    // Create a copy of the original deployment
+    const deploymentCopy: PackageDeployment = {
+      ...this.deployment,
+      deployedItems: []
+    };
+
+    if (!this.pack.items || this.pack.items.length === 0) {
+      console.log("No items defined in package");
+      return deploymentCopy;
+    }
+
+    // Get all existing items in the workspace to check for conflicts
+    let existingWorkspaceItems: GenericItem[] = [];
+    if (this.deployment.workspace?.id) {
+      try {
+        const fabricAPI = this.context.fabricPlatformAPIClient;
+        existingWorkspaceItems = await fabricAPI.items.getAllItems(this.deployment.workspace.id);
+        console.log(`Found ${existingWorkspaceItems.length} existing items in target workspace`);
+      } catch (error) {
+        console.warn(`Could not retrieve existing workspace items:`, error);
+      }
+    }
+
+    try {
+      // Iterate over each item in the package
+      for (const itemDef of this.pack.items) {
+        console.log(`Checking availability for item: ${itemDef.displayName} of type: ${itemDef.type}`);
+        
+        try {
+          // Check if the item type is supported/available
+          const deployedItem = await this.getDeployedItem(itemDef, existingWorkspaceItems);
+          
+          if (deployedItem) {
+            // Determine the final display name (with suffix if configured)            
+            deploymentCopy.deployedItems.push(deployedItem);
+            console.log(`✓ Item ${itemDef.displayName} is deployed.`);
+          } else {
+            console.log(`✗ Item ${itemDef.displayName} is not deployed.`);
+          }
+        } catch (error) {
+          console.warn(`Error checking availability for item ${itemDef.displayName}:`, error);
+        }
+      }
+      
+      console.log(`Deployment check complete. ${deploymentCopy.deployedItems.length} out of ${this.pack.items.length} items are available`);
+      
+      // Log summary of existing items in workspace for reference
+      if (this.pack.items &&
+        deploymentCopy.deployedItems?.length  === this.pack.items?.length) {
+        deploymentCopy.status = DeploymentStatus.Succeeded;
+        console.log(`All items deployed for deployment:`, deploymentCopy.id);
+      }      
+    } catch (error) {
+      console.error(`Error checking items availability: ${error}`);
+    }
+    
+    return deploymentCopy;
+  }
+
+  private async getDeployedItem(itemDef: PackageItem, items: GenericItem[]): Promise<DeployedItem | undefined> {
+    // List of supported item types in Fabric
+    const name = this.pack.deploymentConfig.suffixItemNames ? 
+              `${itemDef.displayName}_${this.deployment.id}` : 
+              itemDef.displayName;
+    const deployedItem = items.find(i => { return (i.type === itemDef.type && i.displayName === name)});
+    if(deployedItem){
+      return {
+        ...deployedItem,
+        itemDefenitionName: itemDef.displayName
+      } as DeployedItem;
+    } else {
+      return undefined;
     }
   }
 }

@@ -78,8 +78,8 @@ export class PackageRegistry {
         () => import('../../../../assets/samples/items/PackageInstallerItem/Planning/package.json'),
         () => import('../../../../assets/samples/items/PackageInstallerItem/Sales/package.json'),
         () => import('../../../../assets/samples/items/PackageInstallerItem/UnifiedAdminMonitoring/package.json'),
-        () => import('../../../../assets/samples/items/PackageInstallerItem/WorkspaceMonitoringDashboards/package.json'),
-        () => import('../../../../assets/samples/items/PackageInstallerItem/MDSF/package.json'),
+        //() => import('../../../../assets/samples/items/PackageInstallerItem/WorkspaceMonitoringDashboards/package.json'),
+        //() => import('../../../../assets/samples/items/PackageInstallerItem/MDSF/package.json'),
       ];
 
       // Load all config files

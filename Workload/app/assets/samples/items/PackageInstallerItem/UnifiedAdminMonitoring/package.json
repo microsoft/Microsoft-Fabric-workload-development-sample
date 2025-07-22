@@ -8,9 +8,9 @@
       "location": "NewWorkspace",
       "suffixItemNames": false,  
       "deploymentFile": {
-        "payloadType": "Link",
-        "payload": "https://raw.githubusercontent.com/microsoft/fabric-toolbox/refs/heads/main/monitoring/fabric-unified-admin-monitoring/scripts/Deploy_FUAM.ipynb"
-      }  
+        "payloadType": "AssetLink",
+        "payload": "/assets/samples/items/PackageInstallerItem/UnifiedAdminMonitoring/definitions/Deploy_FUAM.ipynb"
+      }      
   },  
   "items": [
     {

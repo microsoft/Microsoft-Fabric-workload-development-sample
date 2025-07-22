@@ -13,6 +13,8 @@ export { JobSchedulerController } from './JobSchedulerController';
 export { OneLakeShortcutController } from './OneLakeShortcutController';
 export { LongRunningOperationsController } from './LongRunningOperationsController';
 export { SparkLivyController } from './SparkLivyController';
+export { SparkController } from './SparkController';
+export { AzureKeyVaultController } from './AzureKeyVaultController';
 
 // Re-export WorkloadClientAPI for convenience
 export { WorkloadClientAPI } from '@ms-fabric/workload-client';

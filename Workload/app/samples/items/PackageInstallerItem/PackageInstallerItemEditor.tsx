@@ -70,20 +70,26 @@ export function PackageInstallerItemEditor(props: PageProps) {
       loadDataFromUrl(pageContext, pathname);
     }, [pageContext, pathname]);
 
-  async function SaveItem(definition?: PackageInstallerItemDefinition) {
-
-    var successResult = await saveItemDefinition<PackageInstallerItemDefinition>(
-      workloadClient,
-      editorItem.id,
-      definition || editorItem.definition);
-    setIsUnsaved(!successResult);
-    callNotificationOpen(
+  async function saveItemWithSuccessDialog(definition?: PackageInstallerItemDefinition) {
+    const successResult = await SaveItem(definition);
+    if (successResult) {
+       callNotificationOpen(
             workloadClient,
             t("ItemEditor_Saved_Notification_Title"),
             t("ItemEditor_Saved_Notification_Text", { itemName: editorItem.displayName }),
             undefined,
             undefined
         );
+      }
+  }
+
+  async function SaveItem(definition?: PackageInstallerItemDefinition) {
+    var successResult = await saveItemDefinition<PackageInstallerItemDefinition>(
+      workloadClient,
+      editorItem.id,
+      definition || editorItem.definition);
+    setIsUnsaved(!successResult); 
+    return successResult;  
   }
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
@@ -386,7 +392,7 @@ async function addDeployment(packageId: string) {
             addSolutionCallback={addSolution}
             refreshDeploymentsCallback={handleRefreshDeployments}
             isSaveButtonEnabled={isUnsaved}
-            saveItemCallback={SaveItem}
+            saveItemCallback={saveItemWithSuccessDialog}
             selectedTab={selectedTab}
             onTabChange={setSelectedTab}
         />
@@ -475,7 +481,8 @@ async function addDeployment(packageId: string) {
                                 <Button
                                   icon={<DeleteRegular />}
                                   appearance="subtle"
-                                  disabled={deployment.status !== DeploymentStatus.Pending}
+                                  disabled={deployment.status !== DeploymentStatus.Pending 
+                                    && deployment.status !== DeploymentStatus.Failed}                                   
                                   onClick={(e: any) => {
                                     e.stopPropagation(); // Prevent row click from triggering
                                     handleRemoveDeployment(deployment.id);

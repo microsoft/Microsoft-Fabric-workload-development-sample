@@ -1,5 +1,6 @@
 import { DeploymentStrategy } from "./DeploymentStrategy";
-import { DeployedItem, PackageDeployment, DeploymentStatus } from "../PackageInstallerItemModel";
+import { PackageDeployment, DeploymentStatus } from "../PackageInstallerItemModel";
+
 
 // UX Deployment Strategy
 export class UXDeploymentStrategy extends DeploymentStrategy {
@@ -13,8 +14,7 @@ export class UXDeploymentStrategy extends DeploymentStrategy {
       return { ...this.deployment, status: DeploymentStatus.Succeeded };
     }
 
-    const createdItems: DeployedItem[] = [];
-    
+   
     const newPackageDeployment: PackageDeployment = {
         ...this.deployment   
     };
@@ -40,18 +40,12 @@ export class UXDeploymentStrategy extends DeploymentStrategy {
         console.log(`Creating item: ${itemDef.displayName} of type: ${itemDef.type}`);
 
         itemDef.description = this.pack.deploymentConfig.suffixItemNames ? `${itemDef.displayName}_${this.deployment.id}` : itemDef.displayName;
-        const newItem = await this.createItemUX(itemDef, 
-                                                newPackageDeployment.workspace.id, 
-                                                this.deployment.workspace?.folder?.id, 
-                                                itemNameSuffix);
-        createdItems.push(
-          {
-             ...newItem,
-             itemDefenitionName: itemDef.displayName
-          });
-      }
-      newPackageDeployment.deployedItems = createdItems;
-      newPackageDeployment.status = DeploymentStatus.Succeeded;
+        await this.createItemUX(itemDef, 
+                                newPackageDeployment.workspace.id, 
+                                this.deployment.workspace?.folder?.id, 
+                                itemNameSuffix);
+}
+      newPackageDeployment.status = DeploymentStatus.InProgress;
       newPackageDeployment.job.endTime = new Date();
             
     } catch (error) {
@@ -64,10 +58,9 @@ export class UXDeploymentStrategy extends DeploymentStrategy {
   }
 
   async updateDeploymentStatus(): Promise<PackageDeployment>{
-    // UX deployment does not require status updates, so we can return the current deployment
-    return {
-      ...this.deployment
-    }
+    return this.checkDeployedItems();
   }
+
+
   
 }

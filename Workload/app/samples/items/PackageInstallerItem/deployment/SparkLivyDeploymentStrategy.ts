@@ -63,6 +63,7 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
     if (!this.deployment.job || !this.deployment.job.id) {
       throw new Error("No job ID found for deployment status update");
     }
+    const newPackageDeployment = await this.checkDeployedItems();
 
     const fabricAPI = this.context.fabricPlatformAPIClient;
     const batch = await fabricAPI.sparkLivy.getBatch(
@@ -80,12 +81,10 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
       startTime: batch.livyInfo?.startedAt ? new Date(batch.livyInfo.startedAt) : undefined,
       endTime: batch.livyInfo?.endedAt ? new Date(batch.livyInfo.endedAt) : undefined,
     };
+    newPackageDeployment.status = deploymentStatus;
+    newPackageDeployment.job = updatedJob;
 
-    return {
-      ...this.deployment,
-      status: deploymentStatus,
-      job: updatedJob
-    };
+    return newPackageDeployment;
   }
 
   private async copyPackageContentToItem(): Promise<SparkDeployment> {
@@ -115,7 +114,7 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
         };
         
         switch (itemDefinitionReference.payloadType) {
-          case PackageItemDefinitionPayloadType.Asset:
+          case PackageItemDefinitionPayloadType.AssetLink:
             definitionPart.payload = await this.copyAssetToOneLake(itemDefinitionReference.payload);
             definitionPart.payloadType = SparkDeploymentReferenceType.OneLake;
             break;
@@ -145,7 +144,7 @@ export class SparkLivyDeploymentStrategy extends DeploymentStrategy {
     let deploymentFileDestPath;
     if (!deploymentConfig.deploymentFile) {
       deploymentFileDestPath = await this.copyAssetToOneLake(defaultDeploymentSparkFile);
-    } else if (deploymentConfig.deploymentFile?.payloadType === PackageItemDefinitionPayloadType.Asset) {
+    } else if (deploymentConfig.deploymentFile?.payloadType === PackageItemDefinitionPayloadType.AssetLink) {
       deploymentFileDestPath = await this.copyAssetToOneLake(deploymentConfig.deploymentFile.payload);
     } else if (deploymentConfig.deploymentFile?.payloadType === PackageItemDefinitionPayloadType.Link) {
       deploymentFileDestPath = await this.copyLinkToOneLake(deploymentConfig.deploymentFile.payload);

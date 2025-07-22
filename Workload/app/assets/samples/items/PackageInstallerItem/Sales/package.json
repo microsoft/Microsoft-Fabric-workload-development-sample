@@ -23,7 +23,7 @@
           "parts": [
             {
               "path": "notebook-content.ipynb",
-              "payloadType": "Asset",
+              "payloadType": "AssetLink",
               "payload": "/assets/samples/items/PackageInstallerItem/Sales/definitions/SalesDataNB/SalesDataNB.ipynb"              
             }
           ]

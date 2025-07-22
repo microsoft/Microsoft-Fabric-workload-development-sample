@@ -51,6 +51,29 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
           itemDefenitionName: "<Spark Notebook Deployment file>"
         });
       
+ 
+      
+      //create the parameters object for the notebook
+      const deploymentParameters = this.pack.deploymentConfig.parameters || {};
+      //convert the deployment parameters to parameters that can be parsed to the notebook run
+      const notebookParameters: Record<string, { value: string; type: string }> = {};
+      
+      // Add deployment parameters
+      Object.entries(deploymentParameters).forEach(([paramName, param]) => {
+        notebookParameters[paramName] = {
+          value: param.value || "",
+          type: param.type
+        };
+      });
+
+      // add the deployment specific parameters
+      notebookParameters["deploymentId"] = {
+        value: this.deployment.id,
+        type: "string"
+      };
+
+
+
       // Start a RunNotebook job on the created notebook
       const jobInstanceId = await fabricAPI.scheduler.runOnDemandItemJob(
         newPackageDeployment.workspace.id,
@@ -58,26 +81,23 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
         "RunNotebook",
         {
           executionData: {
-            parameters: {
-              deploymentId: this.deployment.id,
-            },
+            parameters: notebookParameters,
             configuration: {
-            //TODO: Run notebook payload is not well formatted.
-            //  "conf": {
-            //      "spark.conf1": "value"
-            //  },
-            //  "environment": {
-            //      "id": "<environment_id>",
-            //      "name": "<environment_name>"
-            //  },
-            //  "defaultLakehouse": {
-            //      "name": "<lakehouse-name>",
-            //      "id": "<lakehouse-id>",
-            //      "workspaceId": "<(optional) workspace-id-that-contains-the-lakehouse>"
-            //  },
-            //  "useStarterPool": false,
-            //  "useWorkspacePool": "<workspace-pool-name>"
-            }
+              //"conf": {
+              //    "spark.conf1": "value"
+              //},
+              //"environment": {
+              //    "id": "<environment_id>",
+              //    "name": workspaceSparkSetting.environment.name
+              //},
+              //"defaultLakehouse": {
+              //    "name": "<lakehouse-name>",
+              //    "id": "<lakehouse-id>",
+              //    "workspaceId": "<(optional) workspace-id-that-contains-the-lakehouse>"
+              //},
+              //"useStarterPool": true,
+              //"useWorkspacePool":  "<workspace-pool-name>"
+              },
           }
         }
       );
@@ -100,6 +120,9 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
   }
 
   async updateDeploymentStatus(): Promise<PackageDeployment> {
+    
+    const newDeplyoment = await this.checkDeployedItems();
+    
     // Check status of the job
     const fabricAPI = this.context.fabricPlatformAPIClient;
     const depJob = this.deployment.job;
@@ -118,12 +141,9 @@ export class SparkNotebookDeploymentStrategy extends DeploymentStrategy {
       endTime: job.endTimeUtc ? new Date(job.endTimeUtc) : undefined,
       ...(job.failureReason && { failureReason: job.failureReason })
     };
-
-    return {
-      ...this.deployment,
-      status: deploymentStatus,
-      job: updatedJob
-    };
+    newDeplyoment.status = deploymentStatus;
+    newDeplyoment.job = updatedJob;    
+    return newDeplyoment;
   }
 
   /**

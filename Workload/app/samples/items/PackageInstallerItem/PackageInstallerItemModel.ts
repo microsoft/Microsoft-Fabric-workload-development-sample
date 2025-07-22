@@ -67,6 +67,16 @@ export interface DeploymentConfiguration {
   location: DeploymentLocation; // Optional location type, default is NewWorkspace
   deploymentFile?: DeploymentFile; // Optional reference to a deployment file
   suffixItemNames?: boolean; // Flag to indicate if item names should be prefixed with the package name
+  ignoreItemDefinitions?: boolean; // Flag to indicate if item definitions should be ignored
+  parameters?: Record<string, DeploymentParameter>; // Optional parameters for the deployment as key-value pairs
+}
+
+export interface DeploymentParameter {
+  type: string; // The type of the parameter, e.g., "string", "number", "boolean"
+  value?: string; // The value of the parameter
+  //uxSelection?: boolean; // Flag to indicate if the parameter should be selected in the UX
+  displayName?: string; // The display name of the parameter in the UX
+  description?: string; // Optional description of the parameter
 }
 
 export interface DeploymentFile {
@@ -97,9 +107,9 @@ export interface PackageItem {
 }
 
 export enum PackageItemDefinitionPayloadType {
-  Asset = "Asset", 
-  Link = "Link",
-  InlineBase64 = "InlineBase64"
+  AssetLink = "AssetLink", // Link to an asset in the application
+  Link = "Link", // Link to an external resource
+  InlineBase64 = "InlineBase64" // Inline base64 encoded content
 }
 
 export interface PackageItemDefinition {
