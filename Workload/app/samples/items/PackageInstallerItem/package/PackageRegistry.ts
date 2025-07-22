@@ -31,20 +31,17 @@ function convertConfigToPackage(config: any): Package {
   let locationType: DeploymentLocation;
   if (typeof deploymentConfig.location === 'string') {
   switch (deploymentConfig.location) {
-      case "ExistingWorkspace":
-        locationType = DeploymentLocation.ExistingWorkspace;
-        break;
-      case "NewFolder":
-        locationType = DeploymentLocation.NewFolder;
+      case "Default":
+        locationType = DeploymentLocation.Default;
         break;
       case "NewWorkspace":
         locationType = DeploymentLocation.NewWorkspace;
         break;
       default:
-        throw new Error(`Unsupported location type: ${deploymentConfig.location}`);
+        locationType = DeploymentLocation.Default; // Default to Default if not specified
     }
   } else {
-    locationType = deploymentConfig.location || DeploymentLocation.NewWorkspace; // Default to NewWorkspace if not specified
+    locationType = deploymentConfig.location || DeploymentLocation.Default;
   }
 
   return {

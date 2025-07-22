@@ -33,9 +33,8 @@ export function PackageInstallerDeployDialog(props: PackageInstallerDeployProps)
 
     // Check what kind of selection we need to show
     const needsCapacitySelection = deploymentLocation === DeploymentLocation.NewWorkspace;
-    const needsWorkspaceSelection = deploymentLocation === DeploymentLocation.ExistingWorkspace || 
-                                    deploymentLocation === DeploymentLocation.NewFolder;
-    const needsFolderName = deploymentLocation === DeploymentLocation.NewFolder;
+    const needsWorkspaceSelection = deploymentLocation === DeploymentLocation.Default;
+    const needsFolderName = deploymentLocation === DeploymentLocation.Default;
 
     const handleCancel = () => {
       // Close the dialog with a cancelled result
@@ -53,8 +52,8 @@ export function PackageInstallerDeployDialog(props: PackageInstallerDeployProps)
           capacityId: needsCapacitySelection ? selectedCapacityId : undefined,
           createNew: !needsWorkspaceSelection,
           folder: {
-            createNew: deploymentLocation === DeploymentLocation.NewFolder,
-            //TODO: Add parent folder selection
+            //TODO: change to a floder selector
+            createNew: deploymentLocation === DeploymentLocation.Default,            
             parentFolderId: undefined,
             name: needsFolderName ? folderName : undefined
           }

@@ -92,11 +92,9 @@ export enum DeploymentType {
 
 export enum DeploymentLocation {
   // A new workspace will be created for the package
+  Default = "Default",
+  // A new workspace will be created for the package
   NewWorkspace = "NewWorkspace",
-  // The package will be deployed to an existing workspace into a new folder
-  ExistingWorkspace = "ExistingWorkspace",
-  // The package will be deployed to an existing folder in the workspace
-  NewFolder = "NewFolder"
 }
 
 export interface PackageItem {

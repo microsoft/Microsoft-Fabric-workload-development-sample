@@ -5,7 +5,6 @@
     "description": "Add all required items to a workspace to get started to analyse your sales data.",
     "deploymentConfig": {
         "type": "UX",
-        "location": "NewFolder",
         "suffixItemNames": true 
     },
     "items": [
