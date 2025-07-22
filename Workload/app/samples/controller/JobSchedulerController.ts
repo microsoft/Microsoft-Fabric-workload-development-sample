@@ -192,7 +192,7 @@ export class JobSchedulerController extends FabricPlatformClient {
     jobInstanceId: string
   ): Promise<ItemJobInstance> {
     return this.get<ItemJobInstance>(
-      `/workspaces/${workspaceId}/items/${itemId}/jobInstances/${jobInstanceId}`
+      `/workspaces/${workspaceId}/items/${itemId}/jobs/instances/${jobInstanceId}`
     );
   }
 
@@ -257,14 +257,70 @@ export class JobSchedulerController extends FabricPlatformClient {
     itemId: string,
     jobInstanceId: string
   ): Promise<void> {
-    await this.post<void>(
-      `/workspaces/${workspaceId}/items/${itemId}/jobInstances/${jobInstanceId}/cancel`
-    );
+    // Try the newer API pattern first (matches runOnDemandItemJob pattern)
+    try {
+      await this.post<void>(
+        `/workspaces/${workspaceId}/items/${itemId}/jobs/instances/${jobInstanceId}/cancel`
+      );
+    } catch (error: any) {
+      // If the newer pattern fails with 404, try the legacy pattern
+      if (error.message?.includes('404') || error.status === 404) {
+        console.warn(`Job instance cancel endpoint /jobs/instances/ failed, trying legacy /jobInstances/ pattern for job ${jobInstanceId}`);
+        await this.post<void>(
+          `/workspaces/${workspaceId}/items/${itemId}/jobInstances/${jobInstanceId}/cancel`
+        );
+      } else {
+        // For other errors, rethrow
+        throw error;
+      }
+    }
   }
 
   // ============================
   // Helper Methods
   // ============================
+
+  /**
+   * Validates and gets a job instance with detailed error information
+   * @param workspaceId The workspace ID
+   * @param itemId The item ID
+   * @param jobInstanceId The job instance ID
+   * @returns Promise<ItemJobInstance>
+   */
+  async getJobInstanceWithValidation(
+    workspaceId: string,
+    itemId: string,
+    jobInstanceId: string
+  ): Promise<ItemJobInstance> {
+    console.log(`Attempting to get job instance:`, {
+      workspaceId,
+      itemId,
+      jobInstanceId,
+      jobInstanceIdLength: jobInstanceId.length,
+      jobInstanceIdType: typeof jobInstanceId
+    });
+
+    // First, try to list all job instances to see if the job exists
+    try {
+      const allJobs = await this.getAllItemJobInstances(workspaceId, itemId);
+      console.log(`Found ${allJobs.length} total job instances for item ${itemId}`);
+      
+      const matchingJob = allJobs.find(job => job.id === jobInstanceId);
+      if (!matchingJob) {
+        console.error(`Job instance ${jobInstanceId} not found in list of ${allJobs.length} jobs. Available jobs:`, 
+          allJobs.map(j => ({ id: j.id, status: j.status, startTimeUtc: j.startTimeUtc })));
+        throw new Error(`Job instance ${jobInstanceId} not found. Available jobs: ${allJobs.map(j => j.id).join(', ')}`);
+      }
+
+      console.log(`Found matching job in list:`, { id: matchingJob.id, status: matchingJob.status });
+      
+      // Now try to get the specific job instance
+      return await this.getItemJobInstance(workspaceId, itemId, jobInstanceId);
+    } catch (error) {
+      console.error(`Error getting job instance:`, error);
+      throw error;
+    }
+  }
 
   /**
    * Gets job instances by status

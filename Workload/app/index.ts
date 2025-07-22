@@ -51,9 +51,18 @@ console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
 console.log('process.env.DEFAULT_ITEM_NAME: ' + process.env.DEFAULT_ITEM_NAME);
 console.log('**************************************');
 
+console.log('🚀 Starting bootstrap process...');
 bootstrap({
-    initializeWorker: (params) =>
-        import('./index.worker').then(({ initialize }) => initialize(params)),
-    initializeUI: (params) =>
-        import('./index.ui').then(({ initialize }) => initialize(params)),
+    initializeWorker: (params) => {
+        console.log('👷 Initializing worker with params:', params);
+        return import('./index.worker').then(({ initialize }) => {
+            return initialize(params);
+        });
+    },
+    initializeUI: (params) => {
+        console.log('🎨 Initializing UI with params:', params);
+        return import('./index.ui').then(({ initialize }) => {
+            return initialize(params);            
+        });
+    },
 });

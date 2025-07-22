@@ -7,6 +7,7 @@ import { JobSchedulerController } from "./JobSchedulerController";
 import { OneLakeShortcutController } from "./OneLakeShortcutController";
 import { LongRunningOperationsController } from "./LongRunningOperationsController";
 import { SparkLivyController } from "./SparkLivyController";
+import { SparkController } from "./SparkController";
 import { FabricPlatformClient } from "./FabricPlatformClient";
 
 /**
@@ -22,6 +23,7 @@ export class FabricPlatformAPIClient {
   public readonly shortcuts: OneLakeShortcutController;
   public readonly operations: LongRunningOperationsController;
   public readonly sparkLivy: SparkLivyController;
+  public readonly spark: SparkController;
 
   constructor(workloadClient: WorkloadClientAPI) {
     this.workspaces = new WorkspaceController(workloadClient);
@@ -31,9 +33,11 @@ export class FabricPlatformAPIClient {
     this.scheduler = new JobSchedulerController(workloadClient);
     this.shortcuts = new OneLakeShortcutController(workloadClient);
     this.operations = new LongRunningOperationsController(workloadClient);
+    this.spark = new SparkController(workloadClient);    
     this.sparkLivy = new SparkLivyController(workloadClient);
-  }
 
+  }  
+  
   /**
    * Factory method to create a new FabricPlatformAPIClient instance
    * @param workloadClient The WorkloadClientAPI instance
@@ -74,6 +78,7 @@ export class FabricPlatformAPIClient {
     client.shortcuts.updateAuthenticationConfig(authConfig);
     client.operations.updateAuthenticationConfig(authConfig);
     client.sparkLivy.updateAuthenticationConfig(authConfig);
+    client.spark.updateAuthenticationConfig(authConfig);
     
     return client;
   }
@@ -100,6 +105,7 @@ export class FabricPlatformAPIClient {
     client.shortcuts.updateAuthenticationConfig(authConfig);
     client.operations.updateAuthenticationConfig(authConfig);
     client.sparkLivy.updateAuthenticationConfig(authConfig);
+    client.spark.updateAuthenticationConfig(authConfig);
     
     return client;
   }
@@ -132,12 +138,17 @@ export class FabricPlatformAPIClient {
  * const items = await fabricAPI.items.getAllItems(workspaceId);
  * const capacity = await fabricAPI.capacities.getCapacity(capacityId);
  * 
- * // Spark Livy operations
+ * // Spark operations
+ * const sparkSettings = await fabricAPI.spark.getWorkspaceSparkSettings(workspaceId);
+ * const customPools = await fabricAPI.spark.getAllCustomPools(workspaceId);
+ * const livySessions = await fabricAPI.spark.getAllLivySessions(workspaceId);
+ * 
+ * // Spark Livy operations (lower-level API)
  * const batchResponse = await fabricAPI.sparkLivy.createBatch(workspaceId, lakehouseId, batchRequest);
  * const sessions = await fabricAPI.sparkLivy.listSessions(workspaceId, lakehouseId);
  * 
  * // Or use controllers directly for more specific use cases
- * import { WorkspaceController, SparkLivyController, FabricPlatformClient } from './controller';
+ * import { WorkspaceController, SparkController, SparkLivyController, FabricPlatformClient } from './controller';
  * 
  * // User token authentication (legacy)
  * const workspaceController = new WorkspaceController(workloadClient);
@@ -146,9 +157,11 @@ export class FabricPlatformAPIClient {
  * const authConfig = FabricPlatformClient.createServicePrincipalAuth(
  *   'client-id', 'client-secret', 'tenant-id'
  * );
- * const sparkController = new SparkLivyController(authConfig);
+ * const sparkController = new SparkController(authConfig);
+ * const sparkLivyController = new SparkLivyController(authConfig);
  * 
  * const workspace = await workspaceController.getWorkspace(workspaceId);
- * const batch = await sparkController.getBatch(workspaceId, lakehouseId, batchId);
+ * const sparkSettings = await sparkController.getWorkspaceSparkSettings(workspaceId);
+ * const batch = await sparkLivyController.getBatch(workspaceId, lakehouseId, batchId);
  * ```
  */
