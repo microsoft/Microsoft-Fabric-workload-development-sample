@@ -4,13 +4,13 @@ import { Text, Button, Input } from "@fluentui/react-components";
 import "../../../styles.scss";
 import { useTranslation } from "react-i18next";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { GenericItem } from "../../models/ItemCRUDModel";
+import { ItemWithDefinition } from "../../controller/ItemCRUDController";
 import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 
 
 interface HelloWorldItemEmptyStateProps {
   workloadClient: WorkloadClientAPI,
-  item: GenericItem;
+  item: ItemWithDefinition<HelloWorldItemDefinition>;
   itemDefinition: HelloWorldItemDefinition,
   onFinishEmpty: (message: string) => void;
 }

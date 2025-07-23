@@ -7,8 +7,8 @@ export * from './FabricPlatformTypes';
 // API Controllers
 export { WorkspaceClient as WorkspaceController } from './WorkspaceClient';
 export { ItemClient as ItemController } from './ItemClient';
-export { FolderController } from './FolderClient';
-export { CapacityController } from './CapacityController';
+export { FolderClient } from './FolderClient';
+export { CapacityClient } from './CapacityClient';
 export { JobSchedulerClient as JobSchedulerController } from './JobSchedulerClient';
 export { OneLakeShortcutClient as OneLakeShortcutController } from './OneLakeShortcutClient';
 export { LongRunningOperationsClient as LongRunningOperationsController } from './LongRunningOperationsClient';

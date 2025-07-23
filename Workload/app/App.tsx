@@ -24,7 +24,6 @@ interface AppProps {
 export interface PageProps {
     workloadClient: WorkloadClientAPI;
     history?: History
-
 }
 
 export interface ContextProps {
