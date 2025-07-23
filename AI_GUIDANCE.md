@@ -125,7 +125,7 @@ Every workload item must have exactly these four components in `Workload/app/imp
 - **Identify Task Type**: Item creation, workload management, or configuration update
 - **Check Dependencies**: Ensure setup is complete and environment is configured
 - **Verify Context**: Read relevant `.ai/context/` files for domain knowledge
-- **Review Examples**: Use `playground/` and `samples/` as reference patterns
+- **Review Examples**: Use `implementation/`, `playground/` and `samples/` as reference patterns
 
 ### Task Categories and Approaches
 
@@ -140,7 +140,9 @@ Every workload item must have exactly these four components in `Workload/app/imp
 #### Workload Management Tasks
 1. **Name Updates**: Use `.ai/commands/workload/update.md` guidance
 2. **Running**: Follow `.ai/commands/workload/run.md` startup process
-3. **Publishing**: Reference `.ai/commands/workload/publish.md` for deployment
+3. **Build**: Reference `.ai/commands/workload/build.md` for building
+4. **Deploy**: Reference `.ai/commands/workload/deploy.md` for deployment
+5. **Publishing**: Reference `.ai/commands/workload/publish.md` for publishing
 
 #### Configuration Tasks
 - **Always update both**: Implementation files AND manifest files
@@ -257,22 +259,27 @@ try {
 ## 🚀 Quick Reference
 
 ### Essential Commands
-```powershell
-# Setup new workload
-.\scripts\Setup\Setup.ps1 -WorkloadName "Org.MyWorkload"
 
-# Start development
+#### Setup a new workload
+```powershell
+.\scripts\Setup\Setup.ps1 -WorkloadName "Org.MyWorkload"
+```
+
+#### Start development enviroment
+```powershell
 .\scripts\Run\StartDevGateway.ps1
 .\scripts\Run\StartDevServer.ps1
+```
 
-# Build and test
-.\scripts\Build\BuildManifestPackage.ps1
+#### Build and test
+```powershell
 .\scripts\Build\BuildRelease.ps1
+```
 
-# Frontend development
-cd Workload
-npm install
-npm start
+#### Frontend development
+```powershell
+.\scripts\Run\StartDevGateway.ps1
+.\scripts\Run\StartDevServer.ps1
 ```
 
 ### Key File Locations
