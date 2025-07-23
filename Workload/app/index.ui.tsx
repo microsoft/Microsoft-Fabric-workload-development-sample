@@ -10,16 +10,16 @@ import { App } from "./App";
 import { callGetItem } from "./implementation/controller/ItemCRUDController"
 
 export async function initialize(params: InitParams) {
-    console.log('🚀 UI: Initialization started with params:', params);
+    console.log('🚀 UI initialization started with params:', params);
     
     const workloadClient = createWorkloadClient();
-    console.log('✅ UI: WorkloadClient created successfully');
+    console.log('✅ WorkloadClient created successfully');
 
     const history = createBrowserHistory();
-    console.log('✅ UI: Browser history created successfully');
+    console.log('✅ Browser history created successfully');
     
     workloadClient.navigation.onNavigate((route) => {
-        console.log('🧭 UI: Navigation event:', route);
+        console.log('🧭 Navigation event:', route);
         history.replace(route.targetUrl);
     });
     workloadClient.action.onAction(async function ({ action, data }) {
@@ -54,14 +54,12 @@ export async function initialize(params: InitParams) {
         }
     });
     
-    console.log('🔍 Looking for root element...');
     const rootElement = document.getElementById('root');
     if (!rootElement) {
         console.error('❌ Root element not found!');
         document.body.innerHTML = '<div style="padding: 20px; color: red;">❌ Error: Root element not found</div>';
         return;
     }
-    console.log('✅ Root element found:', rootElement);
     
     try {
         const root = createRoot(rootElement);
@@ -73,7 +71,7 @@ export async function initialize(params: InitParams) {
                 <App history={history} workloadClient={workloadClient} />
             </FluentProvider>
         );
-        console.log('✅ UI: ready for use.');
+        console.log('✅ App component rendered successfully');
     } catch (error) {
         console.error('❌ Error during React rendering:', error);
         rootElement.innerHTML = `
@@ -84,5 +82,4 @@ export async function initialize(params: InitParams) {
             </div>
         `;
     }
-
 }
