@@ -1,10 +1,6 @@
 /**
  * Microsoft Fabric Platform API Scopes
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformScopes.ts
- * Centralized definitions for OAuth scopes used by different controllers
-=======
  * Centralized definitions for OAuth scopes used by different clients
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformScopes.ts
  */
 
 // Base Fabric API scopes
@@ -41,13 +37,8 @@ export const FABRIC_BASE_SCOPES = {
 
 };
 
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformScopes.ts
-// Predefined scope combinations for different controllers
-export const CONTROLLER_SCOPES = {
-=======
 // Predefined scope combinations for different clients
 export const SCOPES = {
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformScopes.ts
   // Default comprehensive scopes for backward compatibility
   DEFAULT: [
     FABRIC_BASE_SCOPES.ITEM_READWRITE,
@@ -56,81 +47,49 @@ export const SCOPES = {
     FABRIC_BASE_SCOPES.ONELAKE_READWRITE
   ].join(" "),
   
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformScopes.ts
-  // Item Controller - focused on item management
-=======
   // Item Client - focused on item management
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformScopes.ts
   ITEM: [
     FABRIC_BASE_SCOPES.ITEM_READWRITE,
     FABRIC_BASE_SCOPES.WORKSPACE_READ
   ].join(" "),
   
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformScopes.ts
-  // Workspace Controller - focused on workspace management
-=======
   // Workspace Client - focused on workspace management
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformScopes.ts
   WORKSPACE: [
     FABRIC_BASE_SCOPES.WORKSPACE_READWRITE,
     FABRIC_BASE_SCOPES.CAPACITY_READ
   ].join(" "),
   
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformScopes.ts
-  // Folder Controller - focused on folder management within workspaces
-=======
   // Folder Client - focused on folder management within workspaces
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformScopes.ts
   FOLDER: [
     FABRIC_BASE_SCOPES.WORKSPACE_READWRITE,
     FABRIC_BASE_SCOPES.ITEM_READ
   ].join(" "),
   
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformScopes.ts
-  // Capacity Controller - focused on capacity management
-=======
   // Capacity Client - focused on capacity management
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformScopes.ts
   CAPACITY: [
     FABRIC_BASE_SCOPES.CAPACITY_READWRITE,
     FABRIC_BASE_SCOPES.WORKSPACE_READ
   ].join(" "),
   
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformScopes.ts
-  // OneLake Shortcut Controller - focused on OneLake operations
-=======
   // OneLake Shortcut Client - focused on OneLake operations
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformScopes.ts
   ONELAKE: [
     FABRIC_BASE_SCOPES.ONELAKE_READWRITE,
     FABRIC_BASE_SCOPES.ITEM_READ
   ].join(" "),
   
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformScopes.ts
-  // Job Scheduler Controller - focused on job execution
-=======
   // Job Scheduler Client - focused on job execution
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformScopes.ts
   JOB_SCHEDULER: [
     FABRIC_BASE_SCOPES.ITEM_EXECUTE,
     FABRIC_BASE_SCOPES.ITEM_READ
   ].join(" "),
   
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformScopes.ts
-  // Long Running Operations Controller - focused on operation monitoring
-=======
   // Long Running Operations Client - focused on operation monitoring
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformScopes.ts
   OPERATIONS: [
     FABRIC_BASE_SCOPES.ITEM_READ,
     FABRIC_BASE_SCOPES.WORKSPACE_READ
   ].join(" "),
   
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformScopes.ts
-  // Spark Livy Controller - focused on Spark batch jobs and interactive sessions
-=======
   // Spark Livy Client - focused on Spark batch jobs and interactive sessions
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformScopes.ts
   SPARK_LIVY: [
     FABRIC_BASE_SCOPES.ITEM_EXECUTE,
     FABRIC_BASE_SCOPES.ITEM_READWRITE,

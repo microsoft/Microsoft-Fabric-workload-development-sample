@@ -1,15 +1,4 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformAPIClient.ts
-import { WorkspaceController } from "./WorkspaceController";
-import { ItemController } from "./ItemController";
-import { FolderController } from "./FolderController";
-import { CapacityController } from "./CapacityController";
-import { JobSchedulerController } from "./JobSchedulerController";
-import { OneLakeShortcutController } from "./OneLakeShortcutController";
-import { LongRunningOperationsController } from "./LongRunningOperationsController";
-import { SparkLivyController } from "./SparkLivyController";
-import { SparkController } from "./SparkController";
-=======
 import { WorkspaceClient } from "./WorkspaceClient";
 import { ItemClient } from "./ItemClient";
 import { FolderClient } from "./FolderClient";
@@ -19,36 +8,10 @@ import { OneLakeShortcutClient } from "./OneLakeShortcutClient";
 import { LongRunningOperationsClient } from "./LongRunningOperationsClient";
 import { SparkLivyClient } from "./SparkLivyClient";
 import { SparkClient } from "./SparkClient";
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformAPIClient.ts
 import { FabricPlatformClient } from "./FabricPlatformClient";
 
 /**
  * Comprehensive Fabric Platform API Client
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformAPIClient.ts
- * Provides unified access to all Fabric platform APIs through individual controllers
- */
-export class FabricPlatformAPIClient {
-  public readonly workspaces: WorkspaceController;
-  public readonly items: ItemController;
-  public readonly folders: FolderController;
-  public readonly capacities: CapacityController;
-  public readonly scheduler: JobSchedulerController;
-  public readonly shortcuts: OneLakeShortcutController;
-  public readonly operations: LongRunningOperationsController;
-  public readonly sparkLivy: SparkLivyController;
-  public readonly spark: SparkController;
-
-  constructor(workloadClient: WorkloadClientAPI) {
-    this.workspaces = new WorkspaceController(workloadClient);
-    this.items = new ItemController(workloadClient);
-    this.folders = new FolderController(workloadClient);
-    this.capacities = new CapacityController(workloadClient);
-    this.scheduler = new JobSchedulerController(workloadClient);
-    this.shortcuts = new OneLakeShortcutController(workloadClient);
-    this.operations = new LongRunningOperationsController(workloadClient);
-    this.spark = new SparkController(workloadClient);    
-    this.sparkLivy = new SparkLivyController(workloadClient);
-=======
  * Provides unified access to all Fabric platform APIs through individual clients
  */
 export class FabricPlatformAPIClient {
@@ -72,7 +35,6 @@ export class FabricPlatformAPIClient {
     this.operations = new LongRunningOperationsClient(workloadClient);
     this.spark = new SparkClient(workloadClient);    
     this.sparkLivy = new SparkLivyClient(workloadClient);
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformAPIClient.ts
 
   }  
   
@@ -100,16 +62,6 @@ export class FabricPlatformAPIClient {
     tenantId: string,
     authority?: string
   ): FabricPlatformAPIClient {
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformAPIClient.ts
-    // Create a mock WorkloadClientAPI since the controllers expect it
-    const mockWorkloadClient = {} as WorkloadClientAPI;
-    const client = new FabricPlatformAPIClient(mockWorkloadClient);
-    
-    // Configure all controllers with service principal authentication
-    const authConfig = FabricPlatformClient.createServicePrincipalAuth(clientId, clientSecret, tenantId, authority);
-    
-    // Update authentication config for all controllers
-=======
     // Create a mock WorkloadClientAPI since the clients expect it
     const mockWorkloadClient = {} as WorkloadClientAPI;
     const client = new FabricPlatformAPIClient(mockWorkloadClient);
@@ -118,7 +70,6 @@ export class FabricPlatformAPIClient {
     const authConfig = FabricPlatformClient.createServicePrincipalAuth(clientId, clientSecret, tenantId, authority);
     
     // Update authentication config for all Clients
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformAPIClient.ts
     client.workspaces.updateAuthenticationConfig(authConfig);
     client.items.updateAuthenticationConfig(authConfig);
     client.folders.updateAuthenticationConfig(authConfig);
@@ -138,16 +89,6 @@ export class FabricPlatformAPIClient {
    * @returns FabricPlatformAPIClient configured for custom token authentication
    */
   static createWithCustomToken(token: string): FabricPlatformAPIClient {
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformAPIClient.ts
-    // Create a mock WorkloadClientAPI since the controllers expect it
-    const mockWorkloadClient = {} as WorkloadClientAPI;
-    const client = new FabricPlatformAPIClient(mockWorkloadClient);
-    
-    // Configure all controllers with custom token authentication
-    const authConfig = FabricPlatformClient.createCustomTokenAuth(token);
-    
-    // Update authentication config for all controllers
-=======
     // Create a mock WorkloadClientAPI since the clients expect it
     const mockWorkloadClient = {} as WorkloadClientAPI;
     const client = new FabricPlatformAPIClient(mockWorkloadClient);
@@ -156,7 +97,6 @@ export class FabricPlatformAPIClient {
     const authConfig = FabricPlatformClient.createCustomTokenAuth(token);
 
     // Update authentication config for all clients
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformAPIClient.ts
     client.workspaces.updateAuthenticationConfig(authConfig);
     client.items.updateAuthenticationConfig(authConfig);
     client.folders.updateAuthenticationConfig(authConfig);

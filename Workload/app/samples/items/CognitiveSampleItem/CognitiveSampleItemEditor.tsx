@@ -4,14 +4,13 @@ import React, { useEffect, useState } from "react";
 import { ContextProps, PageProps } from "src/App";
 import { CognitiveSampleItemEditorRibbon } from "./CognitiveSampleItemEditorRibbon";
 import { getWorkloadItem, saveItemDefinition } from "../../../implementation/controller/ItemCRUDController";
-import { WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
-import { writeToOneLakeFileAsText, getOneLakeFilePath } from "../../controller/OneLakeController";
+import { ItemWithDefinition } from "../../../implementation/controller/ItemCRUDController";
+import { writeToOneLakeFileAsText, getOneLakeFilePath } from "../../../implementation/clients/OneLakeClient";
 import { useLocation, useParams } from "react-router-dom";
-import "./../../../styles.scss";
 import { CognitiveSampleItemDefinition } from "./CognitiveSampleItemModel";
 import { CognitiveSampleItemEditorEmpty } from "./CognitiveSampleItemEditorEmpty";
-import { BatchRequest } from "../../models/SparkLivyModel";
-import { createBatch } from "../../controller/SparkLivyController";
+import { BatchRequest } from "../../../implementation/clients/FabricPlatformTypes";
+import { createBatch } from "../../../implementation/clients/SparkLivyClient";
 import { Delete24Regular, PlayCircle24Regular } from "@fluentui/react-icons";
 import { EnvironmentConstants } from "../../../constants";
 import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
@@ -26,7 +25,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
   const [selectedConfig, setSelectedConfig] = useState<number>(-1);
   const [isUnsaved, setIsUnsaved] = useState<boolean>(true);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
-  const [editorItem, setEditorItem] = useState<WorkloadItem<CognitiveSampleItemDefinition>>(undefined);
+  const [editorItem, setEditorItem] = useState<ItemWithDefinition<CognitiveSampleItemDefinition>>(undefined);
   const [selectedTab, setSelectedTab] = useState<TabValue>("");
 
   useEffect(() => {
@@ -200,7 +199,7 @@ export function CognitiveSampleItemEditor(props: PageProps) {
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
       setIsLoadingData(true);
-      var item: WorkloadItem<CognitiveSampleItemDefinition> = undefined;    
+      var item: ItemWithDefinition<CognitiveSampleItemDefinition> = undefined;    
       if (pageContext.itemObjectId) {
         // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
         try {

@@ -20,11 +20,7 @@ const JOB_SCHEDULER_SCOPES = [
  * API wrapper for Fabric Platform Job Scheduler operations
  * Provides methods for managing item schedules and job instances
  */
-<<<<<<< HEAD:Workload/app/samples/controller/JobSchedulerController.ts
-export class JobSchedulerController extends FabricPlatformClient {
-=======
 export class JobSchedulerClient extends FabricPlatformClient {
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/JobSchedulerClient.ts
   
   constructor(workloadClient: WorkloadClientAPI) {
     super(workloadClient, JOB_SCHEDULER_SCOPES);

@@ -16,11 +16,7 @@ const OPERATIONS_SCOPES = [
  * API wrapper for Long Running Operations
  * Provides methods for tracking and managing long-running operations
  */
-<<<<<<< HEAD:Workload/app/samples/controller/LongRunningOperationsController.ts
-export class LongRunningOperationsController extends FabricPlatformClient {
-=======
 export class LongRunningOperationsClient extends FabricPlatformClient {
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/LongRunningOperationsClient.ts
   
   constructor(workloadClient: WorkloadClientAPI) {
     super(workloadClient, OPERATIONS_SCOPES);

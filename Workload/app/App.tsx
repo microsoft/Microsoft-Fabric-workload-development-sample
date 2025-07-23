@@ -12,8 +12,6 @@ import { SharedStatePage } from "./samples/items/CalculatorSampleItem/Calculator
 import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlayground/ClientSDKPlayground";
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
 import { CognitiveSampleItemEditor } from "./samples/items/CognitiveSampleItem/CognitiveSampleItemEditor";
-import { PackageInstallerItemEditor } from "./samples/items/PackageInstallerItem/PackageInstallerItemEditor";
-import { PackageInstallerDeployDialogWrapper } from "./samples/items/PackageInstallerItem/components/PackageInstallerDeployDialog";
 
 
 /*

@@ -460,8 +460,6 @@ export interface OperationErrorDetail {
   message: string;
   target?: string;
 }
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformTypes.ts
-=======
 
 // Enum for batch job states
 export enum BatchState {
@@ -691,4 +689,3 @@ export interface StatementResponse {
     completed?: number;
 }
 
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformTypes.ts

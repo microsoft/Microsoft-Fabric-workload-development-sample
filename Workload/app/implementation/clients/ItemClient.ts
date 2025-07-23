@@ -19,11 +19,7 @@ const ITEM_SCOPES = [
  * API wrapper for Fabric Platform Item operations
  * Provides methods for managing items (reports, datasets, notebooks, etc.)
  */
-<<<<<<< HEAD:Workload/app/samples/controller/ItemController.ts
-export class ItemController extends FabricPlatformClient {
-=======
 export class ItemClient extends FabricPlatformClient {
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/ItemClient.ts
   
   constructor(workloadClient: WorkloadClientAPI) {
     super(workloadClient, ITEM_SCOPES);

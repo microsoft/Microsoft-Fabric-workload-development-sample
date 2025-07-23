@@ -18,11 +18,7 @@ const CAPACITY_SCOPES = [
  * API wrapper for Fabric Platform Capacity operations
  * Provides methods for managing capacities and workspace assignments
  */
-<<<<<<< HEAD:Workload/app/samples/controller/CapacityController.ts
-export class CapacityController extends FabricPlatformClient {
-=======
 export class CapacityClient extends FabricPlatformClient {
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/CapacityClient.ts
   
   constructor(workloadClient: WorkloadClientAPI) {
     super(workloadClient, CAPACITY_SCOPES);
