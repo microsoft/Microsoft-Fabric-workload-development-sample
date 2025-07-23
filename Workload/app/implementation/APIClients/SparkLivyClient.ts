@@ -1,7 +1,7 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
 import { SCOPES } from "./FabricPlatformScopes";
-import { BatchRequest, BatchResponse, BatchState, SessionRequest, SessionResponse, StatementRequest, StatementResponse } from "../../samples/models/SparkLivyModel";
+import { BatchRequest, BatchResponse, BatchState, SessionRequest, SessionResponse, StatementRequest, StatementResponse } from "./FabricPlatformTypes";
 
 // Livy API version
 const LIVY_API_VERSION = "2024-07-30";
