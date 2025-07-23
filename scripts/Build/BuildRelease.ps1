@@ -8,7 +8,10 @@ param (
     # If not provided, it will default to an empty string.
     [String]$AADBackendAppId,
     # The version of the workload, used for the manifest package
-    [String]$WorkloadVersion = "1.0.0"
+    [String]$WorkloadVersion = "1.0.0",
+    # Environment that should be build
+    [ValidateSet("dev", "test", "prod")]
+    [String]$Environment = "prod"
 )
 
 # Define key-value dictionary for replacements
@@ -36,6 +39,11 @@ $tempDir = Join-Path $realeaseDir "temp\"
 $tempManifestDir = Join-Path $tempDir "temp\Manifest"
 $realeaseManifestDir = Join-Path $realeaseDir ""
 
+#TODO: create a temp copy of the manifest directory
+#TODO: create the manifest with the Enviroment settings (dev,test,prod)
+#TODO: build the manifest package in the temp directory
+#TODO: change source location of the copy below
+
 if (!(Test-Path $manifestDir)) {
     Write-Error "Manifest directory not found at $manifestDir"
     exit 1
@@ -44,9 +52,6 @@ if (!(Test-Path $manifestDir)) {
     Copy-Item -Path $manifestDir -Destination $tempManifestDir -Recurse -Force
 }
 
-#TODO: need to update the settings in the manifest
-#TODO: need to validate the manifest files
-#TODO: build the manifest package again
 
 # Copy the nuget package to the release directory
 Move-Item -Path "$tempManifestDir\*.nupkg" -Destination $realeaseManifestDir -Force
@@ -61,13 +66,13 @@ Remove-Item $tempDir -Recurse -Force
 
 $realeaseApptDir = Join-Path $realeaseDir "app"
 
-#TODO: overwrite the .env.prod file with the correct values
+#TODO: overwrite the .env.$Environment file with the correct settings
 
 Write-Host "Building the app release ..."
 $workloadDir = Join-Path $PSScriptRoot "..\..\Workload"
 Push-Location $workloadDir
 try {
-    npm run build:prod
+    npm run build:$Environment
     if (!(Test-Path $realeaseApptDir)) {
         New-Item -ItemType Directory -Path $realeaseApptDir | Out-Null
     }
