@@ -1,6 +1,6 @@
 import { WorkloadClientAPI, AccessToken } from "@ms-fabric/workload-client";
 import { EnvironmentConstants } from "../../constants";
-import { callAcquireFrontendAccessToken } from "../../implementation/controller/AuthenticationController";
+import { callAcquireFrontendAccessToken } from "../controller/AuthenticationController";
 
 // Define comprehensive Fabric API scopes for platform operations
 const FABRIC_PLATFORM_SCOPES = [

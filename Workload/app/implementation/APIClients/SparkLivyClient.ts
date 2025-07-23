@@ -1,7 +1,7 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
-import { CONTROLLER_SCOPES } from "./FabricPlatformScopes";
-import { BatchRequest, BatchResponse, BatchState, SessionRequest, SessionResponse, StatementRequest, StatementResponse } from "../models/SparkLivyModel";
+import { SCOPES } from "./FabricPlatformScopes";
+import { BatchRequest, BatchResponse, BatchState, SessionRequest, SessionResponse, StatementRequest, StatementResponse } from "../../samples/models/SparkLivyModel";
 
 // Livy API version
 const LIVY_API_VERSION = "2024-07-30";
@@ -10,10 +10,10 @@ const LIVY_API_VERSION = "2024-07-30";
  * API wrapper for Spark Livy operations in Fabric
  * Provides methods for managing Spark batch jobs and interactive sessions
  */
-export class SparkLivyController extends FabricPlatformClient {
+export class SparkLivyClient extends FabricPlatformClient {
   
   constructor(workloadClient: WorkloadClientAPI) {
-    super(workloadClient, CONTROLLER_SCOPES.SPARK_LIVY);
+    super(workloadClient, SCOPES.SPARK_LIVY);
   }
 
   // ============================
@@ -372,7 +372,7 @@ export async function createBatch(
     lakehouseId: string,
     batchRequest: BatchRequest
 ): Promise<BatchResponse> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.createBatch(workspaceId, lakehouseId, batchRequest);
 }
 
@@ -385,7 +385,7 @@ export async function listBatches(
     workspaceId: string,
     lakehouseId: string
 ): Promise<BatchResponse[]> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.listBatches(workspaceId, lakehouseId);
 }
 
@@ -399,7 +399,7 @@ export async function getBatch(
     lakehouseId: string,
     batchId: string
 ): Promise<BatchResponse> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.getBatch(workspaceId, lakehouseId, batchId);
 }
 
@@ -413,7 +413,7 @@ export async function deleteBatch(
     lakehouseId: string,
     batchId: string
 ): Promise<void> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.deleteBatch(workspaceId, lakehouseId, batchId);
 }
 
@@ -427,7 +427,7 @@ export async function cancelBatch(
     lakehouseId: string,
     batchId: string
 ): Promise<BatchResponse> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.cancelBatch(workspaceId, lakehouseId, batchId);
 }
 
@@ -443,7 +443,7 @@ export async function getBatchLogs(
     from?: number,
     size?: number
 ): Promise<{ id: string, log: string[] }> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.getBatchLogs(workspaceId, lakehouseId, batchId, from, size);
 }
 
@@ -457,7 +457,7 @@ export async function getBatchState(
     lakehouseId: string,
     batchId: string
 ): Promise<{ id: string, state: BatchState }> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.getBatchState(workspaceId, lakehouseId, batchId);
 }
 
@@ -471,7 +471,7 @@ export async function createSession(
     lakehouseId: string,
     sessionRequest: SessionRequest
 ): Promise<SessionResponse> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.createSession(workspaceId, lakehouseId, sessionRequest);
 }
 
@@ -484,7 +484,7 @@ export async function listSessions(
     workspaceId: string,
     lakehouseId: string
 ): Promise<SessionResponse[]> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.listSessions(workspaceId, lakehouseId);
 }
 
@@ -498,7 +498,7 @@ export async function getSession(
     lakehouseId: string,
     sessionId: string
 ): Promise<SessionResponse> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.getSession(workspaceId, lakehouseId, sessionId);
 }
 
@@ -512,7 +512,7 @@ export async function deleteSession(
     lakehouseId: string,
     sessionId: string
 ): Promise<void> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.deleteSession(workspaceId, lakehouseId, sessionId);
 }
 
@@ -526,7 +526,7 @@ export async function cancelSession(
     lakehouseId: string,
     sessionId: string
 ): Promise<SessionResponse> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.cancelSession(workspaceId, lakehouseId, sessionId);
 }
 
@@ -541,7 +541,7 @@ export async function submitStatement(
     sessionId: string,
     statementRequest: StatementRequest
 ): Promise<StatementResponse> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.submitStatement(workspaceId, lakehouseId, sessionId, statementRequest);
 }
 
@@ -556,7 +556,7 @@ export async function getStatement(
     sessionId: string,
     statementId: string
 ): Promise<StatementResponse> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.getStatement(workspaceId, lakehouseId, sessionId, statementId);
 }
 
@@ -570,6 +570,6 @@ export async function listStatements(
     lakehouseId: string,
     sessionId: string
 ): Promise<StatementResponse[]> {
-    const controller = new SparkLivyController(workloadClient);
+    const controller = new SparkLivyClient(workloadClient);
     return controller.listStatements(workspaceId, lakehouseId, sessionId);
 }

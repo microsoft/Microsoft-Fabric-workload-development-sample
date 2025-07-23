@@ -1,6 +1,6 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
-import { CONTROLLER_SCOPES } from "./FabricPlatformScopes";
+import { SCOPES } from "./FabricPlatformScopes";
 import {
   Folder,
   CreateFolderRequest,
@@ -13,10 +13,10 @@ import {
  * API wrapper for Fabric Platform Folder operations
  * Provides methods for managing folders within workspaces
  */
-export class FolderController extends FabricPlatformClient {
+export class FolderClient extends FabricPlatformClient {
   
   constructor(workloadClient: WorkloadClientAPI) {
-    super(workloadClient, CONTROLLER_SCOPES.FOLDER);
+    super(workloadClient, SCOPES.FOLDER);
   }
 
   // ============================
