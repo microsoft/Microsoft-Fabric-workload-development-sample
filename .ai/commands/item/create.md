@@ -279,6 +279,7 @@ When creating a new item, ensure all these components are created:
 **Manifest Files** (in `config/Manifest/`):
 - [ ] `[ItemName]Item.xml` - XML manifest configuration
 - [ ] `[ItemName]Item.json` - JSON manifest with editor path and metadata
+- [ ] `Product.json` - Product JSON manifest that containst the configuration for all Items. Need to include a createExperience for the newly created item.
 
 **Asset Files**:
 - [ ] `config/Manifest/assets/images/[ItemName]Item-icon.png` - Item icon
