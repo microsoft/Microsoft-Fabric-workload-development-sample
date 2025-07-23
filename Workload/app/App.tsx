@@ -85,15 +85,6 @@ export function App({ history, workloadClient }: AppProps) {
                     workloadClient={workloadClient} data-testid="CognitiveSampleItem-editor" />
             </Route>
 
-            <Route path="/PackageInstallerItem-editor/:itemObjectId">
-                <PackageInstallerItemEditor
-                    workloadClient={workloadClient} data-testid="PackageInstallerItem-editor" />
-            </Route>
-             <Route path="/PackageInstallerItem-deploy-dialog/:itemObjectId">
-                <PackageInstallerDeployDialogWrapper
-                    workloadClient={workloadClient} />
-            </Route>
-
             <Route path="/client-sdk-playground">
                 <Provider store={ClientSDKStore}>
                     <ClientSDKPlayground workloadClient={workloadClient} />

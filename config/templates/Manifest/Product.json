@@ -116,27 +116,6 @@
             "onCreationFailure": { "action": "item.onCreationFailure" },
             "onCreationSuccess": { "action": "item.onCreationSuccess" }
           }
-        },
-        {
-          "title": "PackageInstallerItem_DisplayName",
-          "description": "PackageInstallerItem_Description",
-          "icon": {
-            "name": "assets/images/PackageInstallerItem-icon.png"
-          },
-          "icon_small": {
-            "name": "assets/images/PackageInstallerItem-icon.png"
-          },
-          "availableIn": [
-            "home",
-            "create-hub",
-            "workspace-plus-new",
-            "workspace-plus-new-teams"
-          ],
-          "itemType": "PackageInstaller",
-          "createItemDialogConfig": {
-            "onCreationFailure": { "action": "item.onCreationFailure" },
-            "onCreationSuccess": { "action": "item.onCreationSuccess" }
-          }
         }
       ]
     },
