@@ -24,7 +24,11 @@ const WORKSPACE_SCOPES = [
  * API wrapper for Fabric Platform Workspace operations
  * Provides methods for managing workspaces, roles, and capacity assignments
  */
+<<<<<<< HEAD:Workload/app/samples/controller/WorkspaceController.ts
 export class WorkspaceController extends FabricPlatformClient {
+=======
+export class WorkspaceClient extends FabricPlatformClient {
+>>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/WorkspaceClient.ts
   
   constructor(workloadClient: WorkloadClientAPI) {
     super(workloadClient, WORKSPACE_SCOPES);

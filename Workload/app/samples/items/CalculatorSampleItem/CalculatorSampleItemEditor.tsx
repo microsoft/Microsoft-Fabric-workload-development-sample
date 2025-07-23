@@ -36,7 +36,7 @@ import { callGetItem, getWorkloadItem, saveItemDefinition } from "../../../imple
 import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } from "../../../implementation/controller/NavigationController";
 import { callThemeOnChange } from "../../../implementation/controller/ThemeController";
 import { callOpenSettings } from "../../../implementation/controller/SettingsController";
-import { WorkloadItem } from "../../../implementation/models/ItemCRUDModel";
+import { ItemWithDefinition } from "../../../implementation/controller/ItemCRUDController";
 import { callDatahubWizardOpen } from "../../../implementation/controller/DataHubController";
 import { callDialogOpenMsgBox } from "../../../implementation/controller/DialogController";
 import { CalculatorSampleItemEmpty } from "./CalculatorSampleItemEditorEmpty";
@@ -52,7 +52,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
   // React state for WorkloadClient APIs
   const [operand1ValidationMessage, setOperand1ValidationMessage] = useState<string>("");
   const [operand2ValidationMessage, setOperand2ValidationMessage] = useState<string>("");
-  const [editorItem, setEditorItem] = useState<WorkloadItem<CalculatorSampleItemDefinition>>(undefined);
+  const [editorItem, setEditorItem] = useState<ItemWithDefinition<CalculatorSampleItemDefinition>>(undefined);
   const [isDirty, setDirty] = useState<boolean>(false);
   const [calculationResult, setCalculationResult] = useState<string>("");
   const [calculationTime, setCalculationTime] = useState<Date>(undefined);
@@ -224,7 +224,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
     pathname: string
   ): Promise<void> {
     setIsLoadingData(true);
-    var item: WorkloadItem<CalculatorSampleItemDefinition> = undefined;    
+    var item: ItemWithDefinition<CalculatorSampleItemDefinition> = undefined;    
     if (pageContext.itemObjectId) {
       // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
       try {

@@ -1,6 +1,40 @@
 import { CreateItemParams, CreateItemResult, GetItemDefinitionResult, GetItemResult, ItemDefinitionPart, PayloadType, UpdateItemDefinitionPayload, UpdateItemDefinitionResult, UpdateItemResult, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { ItemDefinitionPath, WorkloadItem, GenericItem } from "../models/ItemCRUDModel";
 import { handleException } from "./ErrorHandlingController";
+import { Item } from "../clients/FabricPlatformTypes";
+
+/*
+* Represents a reference to a fabric item.
+* This interface extends ItemLikeV2 to include additional metadata.
+*/
+export interface ItemReference {
+    workspaceId: string;
+    id: string;
+}
+
+/*
+* Represents a fabric item with additional metadata and a payload.  
+* This interface extends GenericItem and includes a payload property.
+*/
+export interface ItemWithDefinition<T> extends ItemReference{
+    type: string;
+    displayName: string;
+    description?: string;
+    definition?: T;
+}
+
+/**
+* Enum representing the paths for item payloads.
+* This enum is used to define the paths for item metadata and platform files.
+* If you have more files that need to be stored in the item payload, you can add them here.
+* The paths are relative to the item payload root. 
+* The platform file is used to store platform-specific information about the item and needs to be present in the item payload.
+* The item metadata file is used to store metadata about the item and needs to be present in the item payload.
+* The paths are used to read and write files in the item payload.
+*/
+export enum ItemDefinitionPath {
+    Default = "definition.json",
+    Platform = ".platform",
+}
 
 
 /**
@@ -22,7 +56,7 @@ export async function callCreateItem<T>(
     itemType: string,
     displayName: string,
     description: string
-    ): Promise<GenericItem> {
+    ): Promise<Item> {
 
 
     const params: CreateItemParams = {
@@ -42,11 +76,7 @@ export async function callCreateItem<T>(
             workspaceId: workspaceId,
             type: itemType,
             displayName,
-            description,
-            createdBy: result.createdByUser.name,
-            createdDate: result.createdDate,
-            lastModifiedBy: result.modifiedByUser.name,
-            lastModifiedDate: result.lastUpdatedDate
+            description
         };
     }
     catch (exception) {
@@ -196,12 +226,12 @@ export async function getItemDefinition<T>(
  * 
  * @param {WorkloadClientAPI} workloadClient - An instance of the WorkloadClientAPI.    
  * @param {string} itemObjectId - The ObjectId of the item to retrieve.
- * @returns {Promise<WorkloadItem<T>>} - A promise that resolves to the WorkloadItem.
+ * @returns {Promise<ItemWithDefinition<T>>} - A promise that resolves to the WorkloadItem.
  */
 export async function getWorkloadItem<T>(
     workloadClient: WorkloadClientAPI,
     itemObjectId: string,
-    defaultDefinition?: T): Promise<WorkloadItem<T>> {
+    defaultDefinition?: T): Promise<ItemWithDefinition<T>> {
         const getItemResult = await callGetItem(workloadClient, itemObjectId);
         const getItemDefinitionResult = await callGetItemDefinition(workloadClient, itemObjectId);
         const item = convertGetItemResultToWorkloadItem<T>(getItemResult, getItemDefinitionResult, defaultDefinition);
@@ -280,14 +310,14 @@ export async function callGetItemDefinition(
  * 
  * @param {GetItemResult} item - The item result to convert.
  * @param {GetItemDefinitionResult} itemDefinitionResult - The item definition result to convert.
- * @returns {WorkloadItem<T>} - The converted WorkloadItem.
+ * @returns {ItemWithDefinition<T>} - The converted WorkloadItem.
  */
 export function convertGetItemResultToWorkloadItem<T>(
         item: GetItemResult, 
         itemDefinitionResult: GetItemDefinitionResult, 
-        defaultDefinition?: T): WorkloadItem<T> {            
+        defaultDefinition?: T): ItemWithDefinition<T> {            
     let payload: T;
-    let itemPlatformMetadata: GenericItem | undefined;
+    let itemPlatformMetadata: Item | undefined;
     if (itemDefinitionResult?.definition?.parts) {
         try {
             const itemMetadata = itemDefinitionResult.definition.parts.find((part) => part.path === ItemDefinitionPath.Default);
@@ -308,10 +338,6 @@ export function convertGetItemResultToWorkloadItem<T>(
         displayName: itemPlatformMetadata?.displayName ?? item.displayName,
         description: itemPlatformMetadata?.description ?? item.description,
         definition: payload ?? defaultDefinition,
-        createdBy: item.createdByUser.name,
-        createdDate: item.createdDate,
-        lastModifiedBy: item.modifiedByUser.name,
-        lastModifiedDate: item.lastUpdatedDate
     };
 }
 

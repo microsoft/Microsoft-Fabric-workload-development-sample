@@ -9,13 +9,13 @@ import {
 } from "@fluentui/react-components";
 import "../../../styles.scss";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
+import { ItemWithDefinition } from "../../../implementation/controller/ItemCRUDController";
 import { CalculationOperator, CalculatorSampleItemDefinition } from "./CalculatorSampleItemModel";
 
 
 interface CalculatorSampleItemEmptyStateProps {
   workloadClient: WorkloadClientAPI,
-  item: GenericItem;
+  item: ItemWithDefinition<CalculatorSampleItemDefinition>,
   itemDefinition: CalculatorSampleItemDefinition,
   onFinishEmpty: (operand1: number, operand2: number, operator: CalculationOperator) => void;
 }

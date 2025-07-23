@@ -1,7 +1,7 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
 import { AuthenticationConfig, PaginatedResponse } from "./FabricPlatformTypes";
-import { CONTROLLER_SCOPES } from "./FabricPlatformScopes";
+import { SCOPES } from "./FabricPlatformScopes";
 
 /**
  * Node family types for Spark pools
@@ -249,18 +249,18 @@ export interface LivySessions extends PaginatedResponse<LivySession> {
 }
 
 /**
- * Spark Controller for Microsoft Fabric
+ * Spark Client for Microsoft Fabric
  * Provides comprehensive management of Spark settings, custom pools, and Livy sessions
  * Based on the Fabric Spark REST API specification
  */
-export class SparkController extends FabricPlatformClient {
+export class SparkClient extends FabricPlatformClient {
 
   constructor(
     workloadClientOrAuthConfig?: WorkloadClientAPI | AuthenticationConfig,
     authConfig?: AuthenticationConfig
   ) {
     // Use Spark-specific scopes
-    const sparkScopes = CONTROLLER_SCOPES.SPARK_LIVY;
+    const sparkScopes = SCOPES.SPARK_LIVY;
     super(workloadClientOrAuthConfig, sparkScopes, authConfig);
   }
 
@@ -275,8 +275,8 @@ export class SparkController extends FabricPlatformClient {
    * 
    * @example
    * ```typescript
-   * const sparkController = new SparkController(workloadClient);
-   * const settings = await sparkController.getWorkspaceSparkSettings('workspace-id');
+   * const sparkClient = new SparkClient(workloadClient);
+   * const settings = await sparkClient.getWorkspaceSparkSettings('workspace-id');
    * console.log('Automatic logging enabled:', settings.automaticLog?.enabled);
    * ```
    */
@@ -297,8 +297,8 @@ export class SparkController extends FabricPlatformClient {
    * 
    * @example
    * ```typescript
-   * const sparkController = new SparkController(workloadClient);
-   * const updatedSettings = await sparkController.updateWorkspaceSparkSettings('workspace-id', {
+   * const sparkClient = new SparkClient(workloadClient);
+   * const updatedSettings = await sparkClient.updateWorkspaceSparkSettings('workspace-id', {
    *   automaticLog: { enabled: true },
    *   highConcurrency: {
    *     notebookInteractiveRunEnabled: true,
@@ -339,8 +339,8 @@ export class SparkController extends FabricPlatformClient {
    * 
    * @example
    * ```typescript
-   * const sparkController = new SparkController(workloadClient);
-   * const pools = await sparkController.listCustomPools('workspace-id');
+   * const sparkClient = new SparkClient(workloadClient);
+   * const pools = await sparkClient.listCustomPools('workspace-id');
    * console.log('Found pools:', pools.value.length);
    * ```
    */
@@ -374,8 +374,8 @@ export class SparkController extends FabricPlatformClient {
    * 
    * @example
    * ```typescript
-   * const sparkController = new SparkController(workloadClient);
-   * const pool = await sparkController.getCustomPool('workspace-id', 'pool-id');
+   * const sparkClient = new SparkClient(workloadClient);
+   * const pool = await sparkClient.getCustomPool('workspace-id', 'pool-id');
    * console.log('Pool name:', pool.name);
    * console.log('Node size:', pool.nodeSize);
    * ```
@@ -401,8 +401,8 @@ export class SparkController extends FabricPlatformClient {
    * 
    * @example
    * ```typescript
-   * const sparkController = new SparkController(workloadClient);
-   * const newPool = await sparkController.createCustomPool('workspace-id', {
+   * const sparkClient = new SparkClient(workloadClient);
+   * const newPool = await sparkClient.createCustomPool('workspace-id', {
    *   name: 'My Analytics Pool',
    *   nodeFamily: 'MemoryOptimized',
    *   nodeSize: 'Large',
@@ -462,8 +462,8 @@ export class SparkController extends FabricPlatformClient {
    * 
    * @example
    * ```typescript
-   * const sparkController = new SparkController(workloadClient);
-   * const updatedPool = await sparkController.updateCustomPool('workspace-id', 'pool-id', {
+   * const sparkClient = new SparkClient(workloadClient);
+   * const updatedPool = await sparkClient.updateCustomPool('workspace-id', 'pool-id', {
    *   name: 'Updated Pool Name',
    *   autoScale: {
    *     enabled: true,
@@ -502,8 +502,8 @@ export class SparkController extends FabricPlatformClient {
    * 
    * @example
    * ```typescript
-   * const sparkController = new SparkController(workloadClient);
-   * await sparkController.deleteCustomPool('workspace-id', 'pool-id');
+   * const sparkClient = new SparkClient(workloadClient);
+   * await sparkClient.deleteCustomPool('workspace-id', 'pool-id');
    * console.log('Pool deleted successfully');
    * ```
    */
@@ -532,8 +532,8 @@ export class SparkController extends FabricPlatformClient {
    * 
    * @example
    * ```typescript
-   * const sparkController = new SparkController(workloadClient);
-   * const sessions = await sparkController.listLivySessions('workspace-id');
+   * const sparkClient = new SparkClient(workloadClient);
+   * const sessions = await sparkClient.listLivySessions('workspace-id');
    * sessions.value.forEach(session => {
    *   console.log(`Session ${session.livyName}: ${session.state}`);
    * });

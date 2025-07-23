@@ -4,7 +4,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { ContextProps, PageProps } from "../../../App";
 import { HelloWorldItemEditorRibbon } from "./HelloWorldItemEditorRibbon";
 import { getWorkloadItem, saveItemDefinition } from "../../controller/ItemCRUDController";
-import { WorkloadItem } from "../../models/ItemCRUDModel";
+import { ItemWithDefinition } from "../../controller/ItemCRUDController";
 import { useLocation, useParams } from "react-router-dom";
 import "../../../styles.scss";
 import { useTranslation } from "react-i18next";
@@ -20,7 +20,7 @@ export function HelloWorldItemEditor(props: PageProps) {
   const { workloadClient } = props;
   const [isUnsaved, setIsUnsaved] = useState<boolean>(true);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
-  const [editorItem, setEditorItem] = useState<WorkloadItem<HelloWorldItemDefinition>>(undefined);
+  const [editorItem, setEditorItem] = useState<ItemWithDefinition<HelloWorldItemDefinition>>(undefined);
   const [selectedTab, setSelectedTab] = useState<TabValue>("");
 
   // Computed value from editorItem (single source of truth)
@@ -63,7 +63,7 @@ export function HelloWorldItemEditor(props: PageProps) {
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
     setIsLoadingData(true);
-    var item: WorkloadItem<HelloWorldItemDefinition> = undefined;    
+    var item: ItemWithDefinition<HelloWorldItemDefinition> = undefined;    
     if (pageContext.itemObjectId) {
       // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
       try {
@@ -155,21 +155,6 @@ export function HelloWorldItemEditor(props: PageProps) {
                   <Field label={t('Item_Description_Label')} orientation="horizontal" className="field">
                     <Label>{editorItem?.description} </Label>
                   </Field>
-
-                  <Field label={t('Item_LastModifiedDate_Label')} orientation="horizontal" className="field">
-                    <Label>{editorItem?.lastModifiedDate + ""} </Label>
-                  </Field>
-                  <Field label={t('Item_LastModifiedBy_Label')} orientation="horizontal" className="field">
-                    <Label>{editorItem?.lastModifiedBy} </Label>
-                  </Field>
-
-                  <Field label={t('Item_CreatedDate_Label')} orientation="horizontal" className="field">
-                    <Label>{editorItem?.createdDate + ""} </Label>
-                  </Field>
-                  <Field label={t('Item_CreatedBy_Label')} orientation="horizontal" className="field">
-                    <Label>{editorItem?.createdBy} </Label>
-                  </Field>
-                  
                   <Field label={t('Workspace_ID_Label')} orientation="horizontal" className="field">
                     <Label>{editorItem?.workspaceId} </Label>
                   </Field>

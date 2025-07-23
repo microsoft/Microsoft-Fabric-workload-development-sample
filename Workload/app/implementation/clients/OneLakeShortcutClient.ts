@@ -16,7 +16,11 @@ const ONELAKE_SCOPES = [
  * API wrapper for OneLake Shortcuts operations
  * Provides methods for managing shortcuts to external data sources
  */
+<<<<<<< HEAD:Workload/app/samples/controller/OneLakeShortcutController.ts
 export class OneLakeShortcutController extends FabricPlatformClient {
+=======
+export class OneLakeShortcutClient extends FabricPlatformClient {
+>>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/OneLakeShortcutClient.ts
   
   constructor(workloadClient: WorkloadClientAPI) {
     super(workloadClient, ONELAKE_SCOPES);

@@ -15,13 +15,13 @@ import {
   } from "@fluentui/react-icons";
 
 import { EventhouseItemMetadata } from "./SampleEventhouseModel";
-import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
+import { Item } from "../../../implementation/clients/FabricPlatformTypes";
 import { callDatahubOpen } from "../../../implementation/controller/DataHubController";
 import { getEventhouseItem, executeQuery } from "./SampleEventhouseController";
 
 
 export function EventhouseExplorerComponent({ workloadClient }: PageProps) {
-    const [selectedEventhouse, setSelectedEventhouse] = useState<GenericItem>(undefined);
+    const [selectedEventhouse, setSelectedEventhouse] = useState<Item>(undefined);
     const [selectedEventhouseItemMetadata, setSelectedEventhouseItemMetadata] = useState<EventhouseItemMetadata>(undefined);
      const [isDirtyEventhouse, setDirtyEventhouse] = useState<boolean>(false);
     const [selectedDatabaseForQuery, setSelectedDatabaseForQuery] = useState<string>(undefined);

@@ -1,4 +1,4 @@
-import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
+import { Item } from "../../../implementation/clients/FabricPlatformTypes";
 import { EnvironmentConstants } from "../../../constants";
 import { callAcquireFrontendAccessToken } from "../../../implementation/controller/AuthenticationController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
@@ -57,14 +57,14 @@ export async function getItem(
     token: string,
     workspaceId: string,
     itemId: string
-): Promise<GenericItem | null> {
+): Promise<Item | null> {
     const url = `${EnvironmentConstants.FabricApiBaseUrl}/v1/workspaces/${workspaceId}/items/${itemId}`;
     try {
         const response = await fetch(url, {
             headers: { Authorization: `Bearer ${token}` }
         });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const item: GenericItem = await response.json();
+        const item: Item = await response.json();
         return item;
     } catch (ex: any) {
         console.error(`Failed to retrieve Fabric item for id: ${itemId} in workspace: ${workspaceId}. Error: ${ex.message}`);

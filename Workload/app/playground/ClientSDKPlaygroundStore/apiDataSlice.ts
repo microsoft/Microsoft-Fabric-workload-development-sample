@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { GenericItem } from "../../implementation/models/ItemCRUDModel";
+import { Item } from "../../implementation/clients/FabricPlatformTypes";
 
 interface ApiDataState {
   datahubDialogDescription: string;
   dataHubMsgBoxType: string;
   isWorkspaceExplorerPresented: boolean;
   isMultiSelectionEnabled: boolean;
-  selectedLinkedItem: GenericItem | null;
+  selectedLinkedItem: Item | null;
 }
 
 const initialState: ApiDataState = {
@@ -36,7 +36,7 @@ export const apiDataSlice = createSlice({
     setMultiSelectionEnabled: (state, action: PayloadAction<boolean>) => {
       state.isMultiSelectionEnabled = action.payload;
     },
-    setSelectedLinkedItem: (state, action: PayloadAction<GenericItem | null>) => {
+    setSelectedLinkedItem: (state, action: PayloadAction<Item | null>) => {
       state.selectedLinkedItem = action.payload;
     },
   },

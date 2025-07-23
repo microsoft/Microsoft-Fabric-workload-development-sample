@@ -1,10 +1,10 @@
-import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
+import { Item } from "../../../implementation/clients/FabricPlatformTypes";
 
 /* 
  * Represents a reference to a fabric item.
  * This interface extends ItemLikeV2 to include additional metadata.    
  */
-export interface EventhouseItemMetadata  extends GenericItem {
+export interface EventhouseItemMetadata extends Item {
     properties: EventhouseItemPropertiesMetadata;
 }
 

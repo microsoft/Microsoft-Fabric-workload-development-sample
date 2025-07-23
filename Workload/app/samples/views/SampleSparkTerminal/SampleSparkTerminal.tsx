@@ -17,16 +17,16 @@ import {
   SessionResponse,
   StatementRequest,
   StatementResponse
-} from '../../models/SparkLivyModel';
+} from '../../../implementation/clients/FabricPlatformTypes';
 import {
   createSession,
   submitStatement,
   getSession,
   getStatement,
   cancelSession
-} from '../../controller/SparkLivyController';
+} from '../../../implementation/clients/SparkLivyClient';
 import { callDatahubOpen } from '../../../implementation/controller/DataHubController';
-import { GenericItem } from '../../../implementation/models/ItemCRUDModel';
+import { Item } from '../../../implementation/clients/FabricPlatformTypes';
 
 // Define interface for component props
 export interface SampleSparkTerminalProps {
@@ -144,7 +144,7 @@ export const SampleSparkTerminal: React.FC<SampleSparkTerminalProps> = ({
   const terminalBodyRef = useRef<HTMLDivElement>(null);
   
   // State for selected lakehouse
-  const [selectedItem, setSelectedItem] = useState<GenericItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<Item | null>(null);
   const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | undefined>(initialWorkspaceId);
   const [currentLakehouseId, setCurrentLakehouseId] = useState<string | undefined>(initialLakehouseId);
 

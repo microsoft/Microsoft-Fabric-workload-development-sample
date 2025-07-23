@@ -1,7 +1,7 @@
 // --- Navigation API
 
 import { WorkloadClientAPI, BeforeNavigateAwayData, BeforeNavigateAwayResult, AfterNavigateAwayData, OpenBrowserTabParams } from "@ms-fabric/workload-client";
-import { GenericItem } from "../models/ItemCRUDModel";
+import { Item } from "../clients/FabricPlatformTypes";
 
 /**
  * Calls the 'navigation.navigate' function from the WorkloadClientAPI to navigate to a target (host or workload) and path.
@@ -24,7 +24,7 @@ export async function callNavigationNavigate<T extends 'host' | 'workload'>(
  * @param workloadClient The WorkloadClientAPI instance
  * @param item The item to navigate to
  */
-export async function navigateToItem(workloadClient: WorkloadClientAPI, item: GenericItem) {
+export async function navigateToItem(workloadClient: WorkloadClientAPI, item: Item) {
     const path = getFrontendPath(item.type, item.workspaceId, item.id);
     if (path) {
         await callNavigationNavigate(workloadClient, "host", path);

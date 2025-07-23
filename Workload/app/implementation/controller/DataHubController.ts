@@ -7,9 +7,11 @@ import { DatahubCompactViewConfig, DatahubCompactViewPageConfig, DatahubHeaderDi
     OneLakeExplorerPageConfig, 
     OnelakeExplorerType, 
     WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { GenericItem } from "../models/ItemCRUDModel";
-import { GenericItemAndPath } from "../models/DataHubModel";
+import { Item } from "../clients/FabricPlatformTypes";
 
+export interface ItemAndPath extends Item {
+    selectedPath: string;
+}
 
 export async function callDatahubWizardOpen(    
     workloadClient: WorkloadClientAPI,
@@ -18,7 +20,7 @@ export async function callDatahubWizardOpen(
     dialogDescription: string,    
     multiSelectionEnabled: boolean = false,
     showFilesFolder: boolean = true,
-    workspaceNavigationEnabled: boolean = true): Promise<GenericItemAndPath> {
+    workspaceNavigationEnabled: boolean = true): Promise<ItemAndPath> {
 
    const datahubWizardConfig: DatahubWizardDialogConfig = {
         datahubCompactViewPageConfig: {
@@ -63,7 +65,7 @@ export async function callDatahubWizardOpen(
 
 /**
  * Calls the 'datahub.openDialog' function from the WorkloadClientAPI to open a OneLake data hub dialog to select Lakehouse item(s).
- * 
+ * TODO: needs to change TypeV2
  * @param {ExtendedItemTypeV2[]} supportedTypes - The item types supported by the datahub dialog.
  * @param {string} dialogDescription - The sub-title of the datahub dialog
  * @param {boolean} multiSelectionEnabled - Whether the datahub dialog supports multi selection of datahub items
@@ -76,7 +78,7 @@ export async function callDatahubOpen(
     dialogDescription: string,
     multiSelectionEnabled: boolean,
     
-    workspaceNavigationEnabled: boolean = true): Promise<GenericItem> {
+    workspaceNavigationEnabled: boolean = true): Promise<Item> {
 
     const datahubConfig: DatahubSelectorDialogConfig = {
         supportedTypes: supportedTypes,

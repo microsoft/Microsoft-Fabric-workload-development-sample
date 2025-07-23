@@ -1,13 +1,31 @@
 import {
     createWorkloadClient,
     InitParams,
+    ItemLikeV2,
     NotificationToastDuration,
     NotificationType
 } from '@ms-fabric/workload-client';
 
-import { ItemCreationFailureData, ItemCreationSuccessData } from './implementation/models/ItemCRUDModel';
 import { callPageOpen } from './implementation/controller/PageController';
 import { callNotificationOpen } from './implementation/controller/NotificationController';
+
+/*
+* Represents a fabric item with additional metadata and a payload.
+* This interface extends WorkloadItem and includes a payload property.
+*/
+interface ItemCreationFailureData {
+    errorCode?: string;
+    resultCode?: string;
+}
+
+/**
+* Represents a fabric item with additional metadata and a payload.
+* This interface extends WorkloadItem and includes a payload property.
+*/
+interface ItemCreationSuccessData {
+    item: ItemLikeV2;
+}
+
 
 export async function initialize(params: InitParams) {
     console.log('🚀 Worker initialization started with params:', params);

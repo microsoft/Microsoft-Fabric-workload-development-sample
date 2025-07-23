@@ -15,17 +15,17 @@ import {
 import { createOneLakeShortcut } from "./SampleOneLakeShortcutController";
 import { OneLakeShortcutCreateRequest, OneLakeShortcutTargetOneLake } from "./SampleOneLakeShortcutModel";
 import { PageProps } from "../../../App";
-import { GenericItem } from "../../../implementation/models/ItemCRUDModel";
 import { callDatahubOpen} from "../../../implementation/controller/DataHubController";
+import { Item } from "../../../implementation/clients/FabricPlatformTypes";
 
 export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
   // Source and target item states
   const [shortcutName, setShortcutName] = useState<string>("");
 
-  const [sourceItem, setSourceItem] = useState<GenericItem>(null);
+  const [sourceItem, setSourceItem] = useState<Item>(null);
   const [sourceShortcutPath, setSourceShortcutPath] = useState<string>("Files");
 
-  const [targetItem, setTargetItem] = useState<GenericItem>(null);
+  const [targetItem, setTargetItem] = useState<Item>(null);
   const [targetShortcutPath, setTargetShortcutPath] = useState<string>("Files");
   
   // UI states
