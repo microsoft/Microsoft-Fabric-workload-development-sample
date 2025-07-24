@@ -10,6 +10,7 @@
     "Default_Language_Title": "שפה ברירת מחדל",
     "ItemEditor_Ribbon_Home_Label": "בית",
     "ItemEditor_Ribbon_Save_Label": "שמור",
+    "ItemEditor_Ribbon_Settings_Label": "הגדרות",
     "ItemEditor_Saved_Notification_Title": "פריט נשמר",
     "ItemEditor_Saved_Notification_Text": "{{itemName}} נשמר בהצלחה.",
     "HelloWorldItemEditor_Title": "עורך פריטי Hello World",

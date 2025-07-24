@@ -10,6 +10,7 @@
     "Default_Language_Title": "Language is default",
     "ItemEditor_Ribbon_Home_Label": "Home",
     "ItemEditor_Ribbon_Save_Label": "Save",
+    "ItemEditor_Ribbon_Settings_Label": "Settings",
     "ItemEditor_Saved_Notification_Title": "Item saved",
     "ItemEditor_Saved_Notification_Text": "{{itemName}} saved successfully.",
     "HelloWorldItemEditor_Title": "Hello World Item Editor",
