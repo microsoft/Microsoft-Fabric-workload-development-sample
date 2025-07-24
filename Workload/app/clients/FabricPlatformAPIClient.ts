@@ -119,7 +119,7 @@ export class FabricPlatformAPIClient {
  * import { FabricPlatformAPIClient } from './controller';
 =======
  * import { FabricPlatformAPIClient } from './APIC';
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformAPIClient.ts
+>>>>>>> origin/dev/preview/wdkv2:Workload/app/clients/FabricPlatformAPIClient.ts
  * import { WorkloadClientAPI } from '@ms-fabric/workload-client';
  * 
  * // Method 1: User Token Authentication (default)
@@ -141,7 +141,7 @@ export class FabricPlatformAPIClient {
  * // Use individual controllers (works the same regardless of authentication method)
 =======
  * // Use individual clients (works the same regardless of authentication method)
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformAPIClient.ts
+>>>>>>> origin/dev/preview/wdkv2:Workload/app/clients/FabricPlatformAPIClient.ts
  * const workspaces = await fabricAPI.workspaces.getAllWorkspaces();
  * const items = await fabricAPI.items.getAllItems(workspaceId);
  * const capacity = await fabricAPI.capacities.getCapacity(capacityId);
@@ -167,7 +167,7 @@ export class FabricPlatformAPIClient {
  * 
  * // User token authentication (legacy)
  * const workspaceClient = new WorkspaceClient(workloadClient);
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformAPIClient.ts
+>>>>>>> origin/dev/preview/wdkv2:Workload/app/clients/FabricPlatformAPIClient.ts
  * 
  * // Service principal authentication
  * const authConfig = FabricPlatformClient.createServicePrincipalAuth(
@@ -187,6 +187,6 @@ export class FabricPlatformAPIClient {
  * const workspace = await workspaceClient.getWorkspace(workspaceId);
  * const sparkSettings = await sparkClient.getWorkspaceSparkSettings(workspaceId);
  * const batch = await sparkLivyClient.getBatch(workspaceId, lakehouseId, batchId);
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformAPIClient.ts
+>>>>>>> origin/dev/preview/wdkv2:Workload/app/clients/FabricPlatformAPIClient.ts
  * ```
  */

@@ -1,5 +1,5 @@
 import { WorkloadClientAPI, AccessToken } from "@ms-fabric/workload-client";
-import { EnvironmentConstants } from "../../constants";
+import { EnvironmentConstants } from "../constants";
 import { SCOPES } from "./FabricPlatformScopes";
 import { FabricAuthenticationService } from "./FabricAuthenticationService";
 import { AuthenticationConfig, ErrorResponse } from "./FabricPlatformTypes";
@@ -73,11 +73,7 @@ export class FabricPlatformError extends Error {
 }
 
 /**
-<<<<<<< HEAD:Workload/app/samples/controller/FabricPlatformClient.ts
- * Abstract base class for Fabric Platform API controllers
-=======
  * Abstract base class for Fabric Platform API Clients
->>>>>>> origin/dev/preview/wdkv2:Workload/app/implementation/clients/FabricPlatformClient.ts
  * Provides common HTTP client functionality with authentication
  */
 export abstract class FabricPlatformClient {

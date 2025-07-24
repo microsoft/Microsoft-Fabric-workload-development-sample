@@ -7,7 +7,7 @@ import { createWorkloadClient, InitParams, ItemTabActionContext } from '@ms-fabr
 
 import { fabricLightTheme } from "./theme";
 import { App } from "./App";
-import { callGetItem } from "./implementation/controller/ItemCRUDController"
+import { callGetItem } from "./controller/ItemCRUDController"
 
 export async function initialize(params: InitParams) {
     console.log('🚀 UI initialization started with params:', params);

@@ -7,9 +7,9 @@ import {
 import { Stack } from "@fluentui/react";
 import { WorkloadClientAPI } from '@ms-fabric/workload-client';
 import { PageProps, SharedState } from '../../../App';
-import { callDialogClose } from '../../../implementation/controller/DialogController';
+import { callDialogClose } from '../../../controller/DialogController';
 
-export function SharedStatePage(props: PageProps) {
+export function CalculatorSampleItemEditorSharedStatePage(props: PageProps) {
   const { workloadClient } = props;
 
   // declaring the workload's shared state
@@ -51,4 +51,4 @@ export function SharedStatePage(props: PageProps) {
   );
 }
 
-export default SharedStatePage;
+export default CalculatorSampleItemEditorSharedStatePage;

@@ -21,5 +21,8 @@
     "HelloWorldItem_Description": "A Hello World Item to start your Dev Experience",
     "CalculatorSampleItem_DisplayName": "Calculator Sample",
     "CalculatorSampleItem_DisplayName_Plural": "Calculator Samples",
-    "CalculatorSampleItem_Description": "A Simple Calculator Item that stores data in OneLake"
+    "CalculatorSampleItem_Description": "A Simple Calculator Item that stores data in OneLake",
+    "CognitiveSampleItem_DisplayName": "Cognitive Sample",
+    "CognitiveSampleItem_DisplayName_Plural": "Cognitive Samples",
+    "CognitiveSampleItem_Description": "A Cognitive Sample Item that stores data in OneLake"
 }

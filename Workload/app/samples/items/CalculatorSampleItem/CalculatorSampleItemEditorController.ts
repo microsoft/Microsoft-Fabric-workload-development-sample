@@ -3,11 +3,11 @@ import {
 } from "@ms-fabric/workload-client";
 
 import { Calculation, CalculationOperator, CalculationResult, CalculatorSampleItemDefinition } from "./CalculatorSampleItemModel";
-import { readOneLakeFileAsText, getOneLakeFilePath, writeToOneLakeFileAsText, checkIfFileExists } from "../../../implementation/clients/OneLakeClient";
-import { ItemWithDefinition } from "../../../implementation/controller/ItemCRUDController";
+import { readOneLakeFileAsText, getOneLakeFilePath, writeToOneLakeFileAsText, checkIfFileExists } from "../../../clients/OneLakeClient";
+import { ItemWithDefinition } from "../../../controller/ItemCRUDController";
 import { OneLakeShortcutCreateRequest, OneLakeShortcutCreateResponse, OneLakeShortcutTargetOneLake } from "../../views/SampleOneLakeShortcutCreator/SampleOneLakeShortcutModel";
 import { createOneLakeShortcut } from "../../views/SampleOneLakeShortcutCreator/SampleOneLakeShortcutController";
-import { ItemAndPath } from "../../..//implementation/controller/DataHubController";
+import { ItemAndPath } from "../../../controller/DataHubController";
 
 
 /**

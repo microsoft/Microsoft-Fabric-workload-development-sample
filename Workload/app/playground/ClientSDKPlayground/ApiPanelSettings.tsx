@@ -7,12 +7,12 @@ import { setApiPanelIsLightDismiss } from "../ClientSDKPlaygroundStore/apiPanelS
 import {
     themeToView,
     callThemeGet,
-} from "../../implementation/controller/ThemeController";
+} from "../../controller/ThemeController";
 import "../../styles.scss";
 import { TabContentProps } from "./ClientSDKPlaygroundModel";
-import { callSettingsGet, settingsToView } from "../../implementation/controller/SettingsController";
-import { callDialogOpenMsgBox } from "../../implementation/controller/DialogController";
-import { callPanelOpen } from "../../implementation/controller/PanelController";
+import { callSettingsGet, settingsToView } from "../../controller/SettingsController";
+import { callDialogOpenMsgBox } from "../../controller/DialogController";
+import { callPanelOpen } from "../../controller/PanelController";
 
 export function ApiPanelSettings(props: TabContentProps) {
     const { sampleWorkloadName, workloadClient } = props;

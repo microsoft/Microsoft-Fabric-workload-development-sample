@@ -17,16 +17,16 @@ import {
   SessionResponse,
   StatementRequest,
   StatementResponse
-} from '../../../implementation/clients/FabricPlatformTypes';
+} from '../../../clients/FabricPlatformTypes';
 import {
   createSession,
   submitStatement,
   getSession,
   getStatement,
   cancelSession
-} from '../../../implementation/clients/SparkLivyClient';
-import { callDatahubOpen } from '../../../implementation/controller/DataHubController';
-import { Item } from '../../../implementation/clients/FabricPlatformTypes';
+} from '../../../clients/SparkLivyClient';
+import { callDatahubOpen } from '../../../controller/DataHubController';
+import { Item } from '../../../clients/FabricPlatformTypes';
 
 // Define interface for component props
 export interface SampleSparkTerminalProps {

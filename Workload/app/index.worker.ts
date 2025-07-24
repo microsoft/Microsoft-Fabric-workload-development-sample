@@ -6,8 +6,8 @@ import {
     NotificationType
 } from '@ms-fabric/workload-client';
 
-import { callPageOpen } from './implementation/controller/PageController';
-import { callNotificationOpen } from './implementation/controller/NotificationController';
+import { callPageOpen } from './controller/PageController';
+import { callNotificationOpen } from './controller/NotificationController';
 
 /*
 * Represents a fabric item with additional metadata and a payload.

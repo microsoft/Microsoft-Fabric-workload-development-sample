@@ -32,16 +32,16 @@ import {
   defaultCalculatorSampleItemDefinition
 } from "./CalculatorSampleItemModel";
 import "../../../styles.scss";
-import { callGetItem, getWorkloadItem, saveItemDefinition } from "../../../implementation/controller/ItemCRUDController";
-import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } from "../../../implementation/controller/NavigationController";
-import { callThemeOnChange } from "../../../implementation/controller/ThemeController";
-import { callOpenSettings } from "../../../implementation/controller/SettingsController";
-import { ItemWithDefinition } from "../../../implementation/controller/ItemCRUDController";
-import { callDatahubWizardOpen } from "../../../implementation/controller/DataHubController";
-import { callDialogOpenMsgBox } from "../../../implementation/controller/DialogController";
+import { callGetItem, getWorkloadItem, saveItemDefinition } from "../../../controller/ItemCRUDController";
+import { callNavigationAfterNavigateAway, callNavigationBeforeNavigateAway } from "../../../controller/NavigationController";
+import { callThemeOnChange } from "../../../controller/ThemeController";
+import { callOpenSettings } from "../../../controller/SettingsController";
+import { ItemWithDefinition } from "../../../controller/ItemCRUDController";
+import { callDatahubWizardOpen } from "../../../controller/DataHubController";
+import { callDialogOpenMsgBox } from "../../../controller/DialogController";
 import { CalculatorSampleItemEmpty } from "./CalculatorSampleItemEditorEmpty";
-import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
-import { ItemEditorLoadingProgressBar } from "../../../implementation/controls/ItemEditorLoadingProgressBar";
+import { callNotificationOpen } from "../../../controller/NotificationController";
+import { ItemEditorLoadingProgressBar } from "../../../controls/ItemEditorLoadingProgressBar";
 import { t } from "i18next";
 
 export function CalculatorSampleItemEditor(props: PageProps) {
@@ -292,7 +292,7 @@ export function CalculatorSampleItemEditor(props: PageProps) {
   async function openSettings() {
     if (editorItem) {
       const item = await callGetItem(workloadClient, editorItem.id);
-      await callOpenSettings(item, workloadClient, 'About');
+      await callOpenSettings(workloadClient, item, 'About');
     }
   }
 

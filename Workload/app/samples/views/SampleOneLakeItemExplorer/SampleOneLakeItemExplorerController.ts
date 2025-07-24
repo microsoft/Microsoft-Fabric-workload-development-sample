@@ -1,6 +1,6 @@
-import { Item } from "../../../implementation/clients/FabricPlatformTypes";
+import { Item } from "../../../clients/FabricPlatformTypes";
 import { EnvironmentConstants } from "../../../constants";
-import { callAcquireFrontendAccessToken } from "../../../implementation/controller/AuthenticationController";
+import { callAcquireFrontendAccessToken } from "../../../controller/AuthenticationController";
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FileMetadata, OneLakePathContainer, TableMetadata } from "./SampleOneLakeItemExplorerModel";
 

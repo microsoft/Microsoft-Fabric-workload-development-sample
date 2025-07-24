@@ -15,8 +15,8 @@ import {
 import { createOneLakeShortcut } from "./SampleOneLakeShortcutController";
 import { OneLakeShortcutCreateRequest, OneLakeShortcutTargetOneLake } from "./SampleOneLakeShortcutModel";
 import { PageProps } from "../../../App";
-import { callDatahubOpen} from "../../../implementation/controller/DataHubController";
-import { Item } from "../../../implementation/clients/FabricPlatformTypes";
+import { callDatahubOpen} from "../../../controller/DataHubController";
+import { Item } from "../../../clients/FabricPlatformTypes";
 
 export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
   // Source and target item states

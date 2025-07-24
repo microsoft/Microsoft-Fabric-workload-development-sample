@@ -9,6 +9,9 @@ import CustomAbout from "./items/HelloWorldItem/HelloWorldItemEditorAboutPage";
 import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlayground/ClientSDKPlayground";
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
 import { CognitiveSampleItemEditor } from "./samples/items/CognitiveSampleItem/CognitiveSampleItemEditor";
+import { HelloWorldItemEditor } from "./items/HelloWorldItem/HelloWorldItemEditor";
+import { CalculatorSampleItemEditor } from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditor";
+import { CalculatorSampleItemEditorSharedStatePage } from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorSharedStatePage";
 
 
 /*
@@ -79,6 +82,10 @@ export function App({ history, workloadClient }: AppProps) {
             <Route path="/CalculatorSampleItem-about-page">
                 <CustomAbout  data-testid="CalculatorSampleItem-about-page" />
             </Route>
+            <Route path="/CalculatorSampleItem-shared-state-page">
+                <CalculatorSampleItemEditorSharedStatePage
+                    workloadClient={workloadClient} />
+            </Route> 
 
             <Route path="/CognitiveSampleItem-editor/:itemObjectId">
                 <CognitiveSampleItemEditor
@@ -94,11 +101,6 @@ export function App({ history, workloadClient }: AppProps) {
                 <DataPlayground workloadClient={workloadClient} />
             </Route>
 
-             {/* -- TODO: Clean up not needed --*/}
-            <Route path="/shared-state-page">
-                <SharedStatePage
-                    workloadClient={workloadClient} />
-            </Route> 
             <Route path="/sample-page">
                 <SamplePage workloadClient={workloadClient} />
             </Route>

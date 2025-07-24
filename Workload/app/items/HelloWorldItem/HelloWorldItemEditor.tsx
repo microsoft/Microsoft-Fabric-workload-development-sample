@@ -1,12 +1,12 @@
 import { Label, Stack } from "@fluentui/react";
 import { Field, Input, TabValue } from "@fluentui/react-components";
 import React, { useEffect, useState, useCallback } from "react";
-import { ContextProps, PageProps } from "../../../App";
+import { ContextProps, PageProps } from "../../App";
 import { HelloWorldItemEditorRibbon } from "./HelloWorldItemEditorRibbon";
 import { callGetItem, getWorkloadItem, saveItemDefinition } from "../../controller/ItemCRUDController";
 import { ItemWithDefinition } from "../../controller/ItemCRUDController";
 import { useLocation, useParams } from "react-router-dom";
-import "../../../styles.scss";
+import "../../styles.scss";
 import { useTranslation } from "react-i18next";
 import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 import { HelloWorldItemEmpty } from "./HelloWorldItemEditorEmpty";

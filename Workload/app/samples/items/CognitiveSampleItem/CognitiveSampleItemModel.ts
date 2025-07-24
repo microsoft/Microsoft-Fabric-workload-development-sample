@@ -1,4 +1,4 @@
-import { ItemReference } from "../../../implementation/controller/ItemCRUDController";
+import { ItemReference } from "../../../controller/ItemCRUDController";
 
 
 export interface CognitiveSampleItemDefinition  {

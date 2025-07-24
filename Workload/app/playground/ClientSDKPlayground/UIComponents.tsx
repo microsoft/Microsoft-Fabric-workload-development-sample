@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import "../../styles.scss";
 import { TabContentProps } from "./ClientSDKPlaygroundModel";
 import { RootState } from "../ClientSDKPlaygroundStore/Store";
-import { callLanguageGet, callSettingsOnChange } from "../../implementation/controller/SettingsController";
+import { callLanguageGet, callSettingsOnChange } from "../../controller/SettingsController";
 import { setCheckboxChecked, setSampleInput, setSelectedRadio, setSwitchChecked } from "../ClientSDKPlaygroundStore/uiComponentsSlice";
 
 export function UIComponentsExample(props: TabContentProps) {

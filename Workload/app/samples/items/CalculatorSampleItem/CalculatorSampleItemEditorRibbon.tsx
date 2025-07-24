@@ -53,7 +53,6 @@ const CalculatorSampleItemEditorRibbonHomeTabToolbar = (props: CalculatorSampleI
         content="Settings"
         relationship="label">
         <ToolbarButton
-          disabled={!props.isSaveButtonEnabled}
           aria-label="Settings"
           data-testid="item-editor-settings-btn"
           icon={<Settings24Regular />}

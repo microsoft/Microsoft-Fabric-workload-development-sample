@@ -15,7 +15,7 @@ import {
 import {
     callNotificationOpen,
     callNotificationHide,
-} from "../../implementation/controller/NotificationController";
+} from "../../controller/NotificationController";
 import "../../styles.scss";
 import { TabContentProps } from "./ClientSDKPlaygroundModel";
 

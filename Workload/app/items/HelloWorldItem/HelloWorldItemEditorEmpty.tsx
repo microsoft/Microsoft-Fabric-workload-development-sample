@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Stack } from "@fluentui/react";
 import { Text, Button, Input } from "@fluentui/react-components";
-import "../../../styles.scss";
+import "../../styles.scss";
 import { useTranslation } from "react-i18next";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { ItemWithDefinition } from "../../controller/ItemCRUDController";
@@ -32,7 +32,7 @@ export const HelloWorldItemEmpty: React.FC<HelloWorldItemEmptyStateProps> = ({
     <Stack className="empty-item-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
       <Stack.Item>
         <img
-          src="/assets/implementation/items/HelloWorld/EditorEmpty.jpg"
+          src="/assets/items/HelloWorld/EditorEmpty.jpg"
           alt="Empty item illustration"
           className="empty-item-image"
         />

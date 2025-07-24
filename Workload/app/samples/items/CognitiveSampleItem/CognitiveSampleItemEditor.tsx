@@ -3,19 +3,19 @@ import { TabValue, Button, Table, TableBody, TableCell, TableRow, TableHeader, T
 import React, { useEffect, useState } from "react";
 import { ContextProps, PageProps } from "src/App";
 import { CognitiveSampleItemEditorRibbon } from "./CognitiveSampleItemEditorRibbon";
-import { getWorkloadItem, saveItemDefinition } from "../../../implementation/controller/ItemCRUDController";
-import { ItemWithDefinition } from "../../../implementation/controller/ItemCRUDController";
-import { writeToOneLakeFileAsText, getOneLakeFilePath } from "../../../implementation/clients/OneLakeClient";
+import { getWorkloadItem, saveItemDefinition } from "../../../controller/ItemCRUDController";
+import { ItemWithDefinition } from "../../../controller/ItemCRUDController";
+import { writeToOneLakeFileAsText, getOneLakeFilePath } from "../../../clients/OneLakeClient";
 import { useLocation, useParams } from "react-router-dom";
 import { CognitiveSampleItemDefinition } from "./CognitiveSampleItemModel";
 import { CognitiveSampleItemEditorEmpty } from "./CognitiveSampleItemEditorEmpty";
-import { BatchRequest } from "../../../implementation/clients/FabricPlatformTypes";
-import { createBatch } from "../../../implementation/clients/SparkLivyClient";
+import { BatchRequest } from "../../../clients/FabricPlatformTypes";
+import { createBatch } from "../../../clients/SparkLivyClient";
 import { Delete24Regular, PlayCircle24Regular } from "@fluentui/react-icons";
 import { EnvironmentConstants } from "../../../constants";
-import { callNotificationOpen } from "../../../implementation/controller/NotificationController";
+import { callNotificationOpen } from "../../../controller/NotificationController";
 import { NotificationToastDuration, NotificationType } from "@ms-fabric/workload-client";
-import ItemEditorLoadingProgressBar from "../../../implementation/controls/ItemEditorLoadingProgressBar";
+import ItemEditorLoadingProgressBar from "../../../controls/ItemEditorLoadingProgressBar";
 import { t } from "i18next";
 
 export function CognitiveSampleItemEditor(props: PageProps) {
