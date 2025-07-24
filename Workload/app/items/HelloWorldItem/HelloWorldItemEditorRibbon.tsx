@@ -8,8 +8,8 @@ import {
 import {
   Save24Regular,
 } from "@fluentui/react-icons";
-import { PageProps } from '../../../App';
-import '../../../styles.scss';
+import { PageProps } from '../../App';
+import '../../styles.scss';
 import { t } from "i18next";
 
 const HelloWorldItemEditorRibbonHomeTabToolbar = (props: HelloWorldItemEditorRibbonProps) => {

@@ -6,8 +6,8 @@ import {
     NotificationType
 } from '@ms-fabric/workload-client';
 
-import { callPageOpen } from './implementation/controller/PageController';
-import { callNotificationOpen } from './implementation/controller/NotificationController';
+import { callPageOpen } from './controller/PageController';
+import { callNotificationOpen } from './controller/NotificationController';
 
 /*
 * Represents a fabric item with additional metadata and a payload.
@@ -73,7 +73,7 @@ export async function initialize(params: InitParams) {
                         displayName: 'About',
                         workloadSettingLocation: {
                             workloadName: sampleWorkloadName,
-                            route: 'CalculatorSampleItem-about-dialog',
+                            route: 'HelloWorldItem-about-dialog',
                         },
                         workloadIframeHeight: '1000px'
                     },
@@ -85,7 +85,7 @@ export async function initialize(params: InitParams) {
                         },
                         workloadSettingLocation: {
                             workloadName: sampleWorkloadName,
-                            route: 'CalculatorSampleItem-settings-dialog',
+                            route: 'HelloWorldItem-settings-dialog',
                         },
                         workloadIframeHeight: '1000px'
                     }

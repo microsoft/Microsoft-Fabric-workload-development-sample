@@ -15,8 +15,8 @@ import {
   } from "@fluentui/react-icons";
 
 import { EventhouseItemMetadata } from "./SampleEventhouseModel";
-import { Item } from "../../../implementation/clients/FabricPlatformTypes";
-import { callDatahubOpen } from "../../../implementation/controller/DataHubController";
+import { Item } from "../../../clients/FabricPlatformTypes";
+import { callDatahubOpen } from "../../../controller/DataHubController";
 import { getEventhouseItem, executeQuery } from "./SampleEventhouseController";
 
 

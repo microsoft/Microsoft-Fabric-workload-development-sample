@@ -72,18 +72,18 @@ function RecursiveCopy {
 ###############################################################################
 # Configure the item
 ###############################################################################
-$srCodeDir = Join-Path $PSScriptRoot "..\..\Workload\app\implementation\items\${srcItemName}Item"
+$srCodeDir = Join-Path $PSScriptRoot "..\..\Workload\app\items\${srcItemName}Item"
 $targetFile = Replace-SourceItemPath -Path $srcFile
 Write-Output "Using ${srcItemName} sample in $srCodeDir as source"
 Write-Host ""
 Write-Host "Creating code files..."
-$targetCodeDir = Join-Path $PSScriptRoot "..\..\Workload\app\implementation\items\${ItemName}Item-editor"
+$targetCodeDir = Join-Path $PSScriptRoot "..\..\Workload\app\items\${ItemName}Item-editor"
 Write-Host "Write the item code in:"
 Write-Host " $targetCodeDir"
 
 ###############################################################################
 # Writing code files
-# This will create a new item in the app\implementation\items directory
+# This will create a new item in the app\items directory
 ###############################################################################
 Get-ChildItem -Recurse -Path $srCodeDir -File |  
     ForEach-Object {
@@ -92,9 +92,9 @@ Get-ChildItem -Recurse -Path $srCodeDir -File |
         Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
     }
 # assets
-$srcFile = Join-Path  $PSScriptRoot "..\..\Workload\app\assets\implementation\items\${srcItemName}\EditorEmpty.jpg"
+$srcFile = Join-Path  $PSScriptRoot "..\..\Workload\app\assets\items\${srcItemName}\EditorEmpty.jpg"
 if (Test-Path $srcFile) {
-    $targetFile = Join-Path $PSScriptRoot "..\..\Workload\app\assets\implementation\items\${itemName}\EditorEmpty.jpg"
+    $targetFile = Join-Path $PSScriptRoot "..\..\Workload\app\assets\items\${itemName}\EditorEmpty.jpg"
     Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
 } else {
     Write-Host "Couldn't find ${srcFile}" -ForegroundColor Red

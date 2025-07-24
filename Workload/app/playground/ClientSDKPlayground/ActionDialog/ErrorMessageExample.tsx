@@ -15,7 +15,7 @@ import {
 import {
     callErrorHandlingOpenDialog,
     callErrorHandlingRequestFailure,
-} from "../../../implementation/controller/ErrorHandlingController";
+} from "../../../controller/ErrorHandlingController";
 import "../../../styles.scss";
 import { TabContentProps } from '../ClientSDKPlaygroundModel';
 

@@ -16,7 +16,7 @@ There are two important methods in there that will showcase the new functionalit
 
 ## Storing Item Definition in Fabric
 
-You can find the code for storing item definition in the `saveItemDefinition` method within the [SampleWorkloadEditor.tsx](./../Workload/app/implementation/items/HelloWorldItem/HelloWorldItemEditor.tsx) file. Here is the method content for reference:
+You can find the code for storing item definition in the `saveItemDefinition` method within the [SampleWorkloadEditor.tsx](./../Workload/app/items/HelloWorldItem/HelloWorldItemEditor.tsx) file. Here is the method content for reference:
 
 ```typescript
   async function SaveItem(definition?: HelloWorldItemDefinition) {
@@ -47,10 +47,10 @@ The configuration for the standard item creation experience can be found in the 
               "title": "CreateHub_Card_2_Title",
               "description": "CreateHub_Card_2_Description",
               "icon": {
-                "name": "assets/images/CalculatorSampleItem-icon.png"
+                "name": "assets/images/HelloWorldItem-icon.png"
               },
               "icon_small": {
-                "name": "assets/images/CalculatorSampleItem-icon.png"
+                "name": "assets/images/HelloWorldItem-icon.png"
               },
               "availableIn": [
                 "home",

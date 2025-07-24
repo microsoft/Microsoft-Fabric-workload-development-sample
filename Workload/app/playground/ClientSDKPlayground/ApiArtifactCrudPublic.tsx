@@ -5,7 +5,7 @@ import { PageProps } from '../../App';
  
 import { GetItemDefinitionResult, UpdateItemDefinitionResult } from '@ms-fabric/workload-client';
 import "../../styles.scss";
-import { callGetItemDefinition, callUpdateItemDefinition } from '../../implementation/controller/ItemCRUDController';
+import { callGetItemDefinition, callUpdateItemDefinition } from '../../controller/ItemCRUDController';
  
  
 export function ApiArtifactCrudPublic({ workloadClient }: PageProps) {

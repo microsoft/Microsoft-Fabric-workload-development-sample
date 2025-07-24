@@ -1,5 +1,5 @@
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { callAcquireFrontendAccessToken } from "../../../implementation/controller/AuthenticationController";
+import { callAcquireFrontendAccessToken } from "../../../controller/AuthenticationController";
 import { EnvironmentConstants } from "../../../constants";
 import {OneLakeShorcutListResponse, OneLakeShortcutCreateRequest, OneLakeShortcutCreateResponse } from "./SampleOneLakeShortcutModel";
 

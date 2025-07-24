@@ -1,4 +1,4 @@
-import { Item } from "../../../implementation/clients/FabricPlatformTypes";
+import { Item } from "../../../clients/FabricPlatformTypes";
 
 /* 
  * Represents a reference to a fabric item.

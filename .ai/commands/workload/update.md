@@ -65,7 +65,7 @@ When updating a workload name, the following files must be updated consistently:
 #### Item Manifest Files (`*Item.xml`)
 **All item XML files must be updated:**
 - `HelloWorldItem.xml`
-- `CalculatorSampleItem.xml`
+- `[ItemName].xml`
 - Any custom item XML files
 
 ```xml

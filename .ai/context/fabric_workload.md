@@ -55,7 +55,7 @@ This is where customers should place their custom workload code. The structure i
 - **Key files**:
   - `WorkloadManifest.xml` - Main workload configuration (hosting type, endpoints, AAD apps). This file is used to let Fabric know which items exist. It contains the hosting information.
   - `Product.json` - Product metadata and definitions which is used by the Fabric Frontend. This contains basic information about workload and items e.g. names and descriptions as well as the entry definitions in the frontend the item should participate. 
-  - `*Item.json` and `*Item.xml` - Item type definitions (e.g., CalculatorSampleItem, HelloWorldItem)
+  - `*Item.json` and `*Item.xml` - Item type definitions (e.g., HelloWorldItem)
   - `*.xsd` files - XML schema definitions for validation
   - `ManifestPackage.nuspec` - NuGet package specification for deployment which will be built automatically based on the files in the directory
 

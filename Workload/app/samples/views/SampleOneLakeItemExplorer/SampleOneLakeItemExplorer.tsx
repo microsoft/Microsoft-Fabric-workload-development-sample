@@ -15,12 +15,12 @@ import { TableMetadata, FileMetadata } from "./SampleOneLakeItemExplorerModel";
 import "../../../styles.scss";
 import { getTables, getFiles } from "./SampleOneLakeItemExplorerController";
 import { PageProps } from "../../../App";
-import { Item } from "../../../implementation/clients/FabricPlatformTypes";
+import { Item } from "../../../clients/FabricPlatformTypes";
 import { TableTreeWithSchema } from "./TableTreeWithSchema";
 import { TableTreeWithoutSchema } from "./TableTreeWithoutSchema";
 import { FileTree } from "./FileTree";
-import { readOneLakeFileAsText, getOneLakeFilePath } from "../../../implementation/clients/OneLakeClient";
-import { callDatahubOpen } from "../../../implementation/controller/DataHubController";
+import { readOneLakeFileAsText, getOneLakeFilePath } from "../../../clients/OneLakeClient";
+import { callDatahubOpen } from "../../../controller/DataHubController";
 
 export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
   const [selectedItem, setSelectedItem] = useState<Item>(null);
@@ -67,8 +67,7 @@ export function OneLakeItemExplorerComponent({ workloadClient }: PageProps) {
     const result = await callDatahubOpen(
       workloadClient,
       ["Lakehouse",  
-        process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME, 
-        process.env.WORKLOAD_NAME + ".CalculatorSample"],
+        process.env.WORKLOAD_NAME + "." + process.env.DEFAULT_ITEM_NAME],
       "Select an item to use for Frontend Sample Workload",
       false
     );

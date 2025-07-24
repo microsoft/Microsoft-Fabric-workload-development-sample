@@ -47,8 +47,7 @@
         "customActions": [
         ]},
         "recommendedItemTypes": [
-          "HelloWorld",
-          "CalculatorSample"
+          "HelloWorld"
         ]
     },
     "createExperience": {
@@ -70,27 +69,6 @@
             "workspace-plus-new-teams"
           ],
           "itemType": "HelloWorld",
-          "createItemDialogConfig": {
-            "onCreationFailure": { "action": "item.onCreationFailure" },
-            "onCreationSuccess": { "action": "item.onCreationSuccess" }
-          }
-        },
-        {
-          "title": "CalculatorSampleItem_DisplayName",
-          "description": "CalculatorSampleItem_Description",
-          "icon": {
-            "name": "assets/images/CalculatorSampleItem-icon.png"
-          },
-          "icon_small": {
-            "name": "assets/images/CalculatorSampleItem-icon.png"
-          },
-          "availableIn": [
-            "home",
-            "create-hub",
-            "workspace-plus-new",
-            "workspace-plus-new-teams"
-          ],
-          "itemType": "CalculatorSample",
           "createItemDialogConfig": {
             "onCreationFailure": { "action": "item.onCreationFailure" },
             "onCreationSuccess": { "action": "item.onCreationSuccess" }

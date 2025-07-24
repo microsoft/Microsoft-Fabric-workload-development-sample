@@ -1,5 +1,5 @@
 import { WorkloadClientAPI, AccessToken } from "@ms-fabric/workload-client";
-import { EnvironmentConstants } from "../../constants";
+import { EnvironmentConstants } from "../constants";
 import { SCOPES } from "./FabricPlatformScopes";
 import { FabricAuthenticationService } from "./FabricAuthenticationService";
 import { AuthenticationConfig, ErrorResponse } from "./FabricPlatformTypes";

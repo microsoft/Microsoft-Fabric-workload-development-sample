@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { Item } from "../../implementation/clients/FabricPlatformTypes";
+import { Item } from "../../clients/FabricPlatformTypes";
 
 interface ApiDataState {
   datahubDialogDescription: string;

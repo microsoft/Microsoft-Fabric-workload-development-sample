@@ -8,7 +8,7 @@ This guide provides step-by-step instructions for AI tools to create a new item 
 
 1. **Create item directory**:
    ```
-   Workload/app/implementation/items/[ItemName]Item/
+   Workload/app/items/[ItemName]Item/
    ```
 
 2. **Create the four required implementation files**:
@@ -190,7 +190,7 @@ Update `Workload/app/App.tsx` to add the route for your new item:
 
 ```typescript
 // Add import for your editor
-import { [ItemName]ItemEditor } from "./implementation/items/[ItemName]Item/[ItemName]ItemEditor";
+import { [ItemName]ItemEditor } from "./items/[ItemName]Item/[ItemName]ItemEditor";
 
 // Add route in the Switch statement
 <Route path="/[ItemName]Item-editor/:itemObjectId">
@@ -270,7 +270,7 @@ If your item requires specific workload-level configuration, update `config/Mani
 
 When creating a new item, ensure all these components are created:
 
-**Implementation Files** (in `Workload/app/implementation/items/[ItemName]Item/`):
+**Implementation Files** (in `Workload/app/items/[ItemName]Item/`):
 - [ ] `[ItemName]ItemModel.ts` - Data model interface
 - [ ] `[ItemName]ItemEditor.tsx` - Main editor component  
 - [ ] `[ItemName]ItemEditorEmpty.tsx` - Empty state component

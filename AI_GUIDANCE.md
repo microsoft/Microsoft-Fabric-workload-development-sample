@@ -20,12 +20,11 @@ Microsoft-Fabric-workload-development-sample/
 │       └── typescript.md         # TypeScript conventions
 ├── Workload/                     # Frontend React/TypeScript application
 │   ├── app/                      # Main application source code
-│   │   ├── implementation/       # Customer implementation area
-│   │   │   ├── items/            # Workload item implementations
-│   │   │   ├── models/           # Data models and interfaces
-│   │   │   └── controller/       # Business logic controllers
-│   │   ├── playground/           # Demo/learning examples (deletable)
-│   │   └── samples/              # Reference implementations
+│   │   ├── clients/              # API client implementation area
+│   │   └── controller/           # Business logic controllers
+│   │   ├── items/                # Workload item implementations
+│   │   ├── playground/           # Demo/learning examples (deletable) 
+│   │   └── samples/              # Reference implementations (deletable) 
 │   ├── devServer/                # Development server configuration
 │   ├── package.json              # Node.js dependencies and scripts
 │   └── .env.*                    # Environment configurations
@@ -59,7 +58,7 @@ Microsoft-Fabric-workload-development-sample/
 ### Core Architecture Principles
 
 - **Workload Structure**: `[Organization].[WorkloadId]` naming convention
-- **Item Relationship**: Each `Workload/app/implementation/items/[ItemName]/` maps to `config/Manifest/[ItemName]Item.xml`
+- **Item Relationship**: Each `Workload/app/items/[ItemName]/` maps to `config/Manifest/[ItemName]Item.xml`
 - **Environment Separation**: Development ("Org") vs Production (registered organization name)
 - **Script-Driven**: Use PowerShell scripts in `scripts/` for automation
 
@@ -72,7 +71,7 @@ Microsoft-Fabric-workload-development-sample/
 ## 🧱 Code Structure & Modularity
 
 ### Workload Item Structure (Mandatory Pattern)
-Every workload item must have exactly these four components in `Workload/app/implementation/items/[ItemName]Item/`:
+Every workload item must have exactly these four components in `Workload/app/items/[ItemName]Item/`:
 
 ```typescript
 [ItemName]ItemModel.ts        // Data interface and state definition
@@ -82,7 +81,7 @@ Every workload item must have exactly these four components in `Workload/app/imp
 ```
 
 ### File Organization Rules
-- **Customer Code**: Place all custom implementations in `Workload/app/implementation/`
+- **Customer Code**: Place all custom implementations in `Workload/app/`
 - **Item Implementations**: Use PascalCase naming: `MyCustomItem`
 - **Manifest Files**: XML and JSON files in `config/Manifest/` must match item names
 - **Asset Management**: Icons in `config/Manifest/assets/images/`, translations in `locales/`
@@ -125,7 +124,7 @@ Every workload item must have exactly these four components in `Workload/app/imp
 - **Identify Task Type**: Item creation, workload management, or configuration update
 - **Check Dependencies**: Ensure setup is complete and environment is configured
 - **Verify Context**: Read relevant `.ai/context/` files for domain knowledge
-- **Review Examples**: Use `implementation/`, `playground/` and `samples/` as reference patterns
+- **Review Examples**: Use `items/`, `clients/`, `controller/` `playground/` and `samples/` as reference patterns
 
 ### Task Categories and Approaches
 
@@ -283,7 +282,7 @@ try {
 ```
 
 ### Key File Locations
-- **Item Implementation**: `Workload/app/implementation/items/[ItemName]Item/`
+- **Item Implementation**: `Workload/app/items/[ItemName]Item/`
 - **Manifest Configuration**: `config/Manifest/[ItemName]Item.xml` and `.json`
 - **Environment Config**: `Workload/.env.dev`, `.env.prod`, `.env.test`
 - **Build Output**: `release/` directory
