@@ -73,7 +73,7 @@ export async function initialize(params: InitParams) {
                         displayName: 'About',
                         workloadSettingLocation: {
                             workloadName: sampleWorkloadName,
-                            route: 'HelloWorldItem-about-dialog',
+                            route: 'HelloWorldItem-about-page',
                         },
                         workloadIframeHeight: '1000px'
                     },
@@ -85,7 +85,7 @@ export async function initialize(params: InitParams) {
                         },
                         workloadSettingLocation: {
                             workloadName: sampleWorkloadName,
-                            route: 'HelloWorldItem-settings-dialog',
+                            route: 'HelloWorldItem-settings-page',
                         },
                         workloadIframeHeight: '1000px'
                     }

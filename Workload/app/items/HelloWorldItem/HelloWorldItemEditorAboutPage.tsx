@@ -1,8 +1,8 @@
 import React from 'react';
 
-export function CustomAbout() {
+export function HelloWorldItemEditorAboutPage() {
     return (
-        <div data-testid="HelloWorldItem-about-dialog">
+        <div>
             This is a custom about page for the HelloWorld Item Editor.
             <br />
             You can use this page to provide information about the item editor, its features, and how to use it.            
@@ -11,4 +11,4 @@ export function CustomAbout() {
     );
 }
 
-export default CustomAbout;
+export default HelloWorldItemEditorAboutPage;
