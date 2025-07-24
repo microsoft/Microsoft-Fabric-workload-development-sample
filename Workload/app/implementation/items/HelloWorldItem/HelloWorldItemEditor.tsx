@@ -3,7 +3,7 @@ import { Field, Input, TabValue } from "@fluentui/react-components";
 import React, { useEffect, useState, useCallback } from "react";
 import { ContextProps, PageProps } from "../../../App";
 import { HelloWorldItemEditorRibbon } from "./HelloWorldItemEditorRibbon";
-import { getWorkloadItem, saveItemDefinition } from "../../controller/ItemCRUDController";
+import { callGetItem, getWorkloadItem, saveItemDefinition } from "../../controller/ItemCRUDController";
 import { ItemWithDefinition } from "../../controller/ItemCRUDController";
 import { useLocation, useParams } from "react-router-dom";
 import "../../../styles.scss";
@@ -12,6 +12,7 @@ import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 import { HelloWorldItemEmpty } from "./HelloWorldItemEditorEmpty";
 import { ItemEditorLoadingProgressBar } from "../../controls/ItemEditorLoadingProgressBar";
 import { callNotificationOpen } from "../../controller/NotificationController";
+import { callOpenSettings } from "../../controller/SettingsController";
 
 export function HelloWorldItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
@@ -59,6 +60,14 @@ export function HelloWorldItemEditor(props: PageProps) {
             undefined,
             undefined
         );
+  }
+
+  async function openSettings() {
+    if (editorItem) {
+      //TODO: this needs to be updated to use the Item instead of Itemv2
+      const item = await callGetItem(workloadClient, editorItem.id);
+      await callOpenSettings(workloadClient, item, 'About');
+    }
   }
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
@@ -124,6 +133,7 @@ export function HelloWorldItemEditor(props: PageProps) {
             {...props}        
             isSaveButtonEnabled={isUnsaved}
             saveItemCallback={SaveItem}
+            openSettingsCallback={openSettings}
             selectedTab={selectedTab}
             onTabChange={setSelectedTab}
         />

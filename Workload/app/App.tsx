@@ -4,11 +4,8 @@ import { ClientSDKStore } from "./playground/ClientSDKPlaygroundStore/Store";
 import { Route, Router, Switch } from "react-router-dom";
 import { History } from "history";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
-import { HelloWorldItemEditor } from "./implementation/items/HelloWorldItem/HelloWorldItemEditor";
-import { CalculatorSampleItemEditor } from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditor";
-import { CustomItemSettings } from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorSettingsDialog";
-import { CustomAbout } from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorAboutDialog";
-import { SharedStatePage } from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorSharedStatePage"
+import CustomItemSettings from "./items/HelloWorldItem/HelloWorldItemEditorSettingsPage";
+import CustomAbout from "./items/HelloWorldItem/HelloWorldItemEditorAboutPage";
 import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlayground/ClientSDKPlayground";
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
 import { CognitiveSampleItemEditor } from "./samples/items/CognitiveSampleItem/CognitiveSampleItemEditor";
@@ -64,18 +61,24 @@ export function App({ history, workloadClient }: AppProps) {
             <Route path="/HelloWorldItem-editor/:itemObjectId">
                 <HelloWorldItemEditor
                     workloadClient={workloadClient} data-testid="HelloWorldItem-editor" />
+            </Route>  
+            <Route path="/HelloWorldItem-settings-page">
+                <CustomItemSettings data-testid="HelloWorldItem-settings-page" />
+            </Route>
+            <Route path="/HelloWorldItem-about-page">
+                <CustomAbout  data-testid="HelloWorldItem-about-page" />
             </Route>
 
             <Route path="/CalculatorSampleItem-editor/:itemObjectId">
                 <CalculatorSampleItemEditor
                     workloadClient={workloadClient} data-testid="CalculatorSampleItem-editor" />
             </Route>
-            <Route path="/CalculatorSampleItem-settings-dialog">
-                <CustomItemSettings data-testid="custom-about" />
+            <Route path="/CalculatorSampleItem-settings-page">
+                <CustomItemSettings data-testid="CalculatorSampleItem-settings-page" />
             </Route>
-            <Route path="/CalculatorSampleItem-about-dialog">
-                <CustomAbout />
-            </Route>     
+            <Route path="/CalculatorSampleItem-about-page">
+                <CustomAbout  data-testid="CalculatorSampleItem-about-page" />
+            </Route>
 
             <Route path="/CognitiveSampleItem-editor/:itemObjectId">
                 <CognitiveSampleItemEditor

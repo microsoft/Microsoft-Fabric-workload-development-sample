@@ -10,6 +10,7 @@
     "Default_Language_Title": "Idioma predeterminado",
     "ItemEditor_Ribbon_Home_Label": "Inicio",
     "ItemEditor_Ribbon_Save_Label": "Guardar",
+    "ItemEditor_Ribbon_Settings_Label": "Configuración",
     "ItemEditor_Saved_Notification_Title": "Artículo guardado",
     "ItemEditor_Saved_Notification_Text": "{{itemName}} guardado con éxito.",
     "HelloWorldItemEditor_Title": "Editor de artículos Hello World",
