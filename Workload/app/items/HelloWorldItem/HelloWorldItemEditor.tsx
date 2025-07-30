@@ -22,7 +22,7 @@ export function HelloWorldItemEditor(props: PageProps) {
   const [isUnsaved, setIsUnsaved] = useState<boolean>(true);
   const [isLoadingData, setIsLoadingData] = useState<boolean>(true);
   const [editorItem, setEditorItem] = useState<ItemWithDefinition<HelloWorldItemDefinition>>(undefined);
-  const [selectedTab, setSelectedTab] = useState<TabValue>("");
+  const [selectedView, setSelectedView] = useState<TabValue>("");
 
   // Computed value from editorItem (single source of truth)
   const payload = editorItem?.definition?.message ?? "";
@@ -99,9 +99,9 @@ export function HelloWorldItemEditor(props: PageProps) {
     }
     setIsUnsaved(false);
     if(item?.definition?.message) {
-      setSelectedTab("home");
+      setSelectedView("home");
     } else {
-      setSelectedTab("empty");
+      setSelectedView("empty");
     }
     setIsLoadingData(false);
   }
@@ -118,7 +118,7 @@ export function HelloWorldItemEditor(props: PageProps) {
     // Save with the updated definition directly to avoid race condition
     await SaveItem(newItemDefinition);
     
-    setSelectedTab("home");
+    setSelectedView("home");
   }
 
   if (isLoadingData) {
@@ -131,14 +131,13 @@ export function HelloWorldItemEditor(props: PageProps) {
       <Stack className="editor" data-testid="item-editor-inner">
         <HelloWorldItemEditorRibbon
             {...props}        
+            isRibbonDisabled={selectedView === "empty"}
             isSaveButtonEnabled={isUnsaved}
             saveItemCallback={SaveItem}
             openSettingsCallback={openSettings}
-            selectedTab={selectedTab}
-            onTabChange={setSelectedTab}
         />
         <Stack className="main">
-          {["empty"].includes(selectedTab as string) && (
+          {["empty"].includes(selectedView as string) && (
             <span>
               <HelloWorldItemEmpty
                 workloadClient={workloadClient}
@@ -148,7 +147,7 @@ export function HelloWorldItemEditor(props: PageProps) {
               />
             </span>
           )}
-          {["home"].includes(selectedTab as string) && (
+          {["home"].includes(selectedView as string) && (
           <span>
               <h2>{t('HelloWorldItemEditor_Title')}</h2>            
               <div> 

@@ -2,7 +2,6 @@ import React from "react";
 import { Tab, TabList } from '@fluentui/react-tabs';
 import { Toolbar } from '@fluentui/react-toolbar';
 import {
-  SelectTabEvent, SelectTabData, TabValue,
   ToolbarButton, Tooltip
 } from '@fluentui/react-components';
 import {
@@ -38,7 +37,7 @@ const HelloWorldItemEditorRibbonHomeTabToolbar = (props: HelloWorldItemEditorRib
           icon={<Save24Regular />}
           onClick={onSaveAsClicked} />
       </Tooltip>
-       <Tooltip
+      <Tooltip
         content={t("ItemEditor_Ribbon_Settings_Label")}
         relationship="label">
         <ToolbarButton
@@ -52,26 +51,19 @@ const HelloWorldItemEditorRibbonHomeTabToolbar = (props: HelloWorldItemEditorRib
 };
 
 export interface HelloWorldItemEditorRibbonProps extends PageProps {
+  isRibbonDisabled?: boolean;
+  isSaveButtonEnabled?: boolean;
   saveItemCallback: () => Promise<void>;
   openSettingsCallback: () => Promise<void>;
-  isSaveButtonEnabled?: boolean;
-  onTabChange: (tabValue: TabValue) => void;
-  selectedTab: TabValue;
+
 }
 
 
 export function HelloWorldItemEditorRibbon(props: HelloWorldItemEditorRibbonProps) {
-  const { onTabChange, selectedTab } = props;
-  const onTabSelect = (_: SelectTabEvent, data: SelectTabData) => {
-    onTabChange(data.value);
-  };
-
+  const { isRibbonDisabled } = props;
   return (
     <div className="ribbon">
-      <TabList
-        disabled={selectedTab === "empty"}
-        selectedValue={selectedTab}
-        onTabSelect={onTabSelect}>
+      <TabList disabled={isRibbonDisabled}>
         <Tab value="home" data-testid="home-tab-btn">
           {t("ItemEditor_Ribbon_Home_Label")}</Tab>
       </TabList>
