@@ -5,7 +5,7 @@ param (
     [String]$WorkloadName = "Org.MyWorkloadSample",
     # The display name of the workload, used in the Fabric portal
     [String]$WorkloadDisplayName = "My Sample Workload",
-    # The Workspace Id to use for development
+    # The Workspace Id to use for development (GUID)
     # If not provided, the user will be prompted to enter it.
     [String]$DevWorkspaceId = "00000000-0000-0000-0000-000000000000",
     # The Entra Application ID for the frontend
@@ -27,10 +27,11 @@ param (
 Write-Output "Setting up the environment..."
 $setupDevGatewayScript = Join-Path $PSScriptRoot "..\Setup\SetupDevGateway.ps1"
 if (Test-Path $setupDevGatewayScript) {
-    if ([string]::IsNullOrWhiteSpace($DevWorkspaceId) -or $DevWorkspaceId -eq "00000000-0000-0000-0000-000000000000") {
+    $parsedGuid = [System.Guid]::Empty
+    if ([string]::IsNullOrWhiteSpace($DevWorkspaceId) -or $DevWorkspaceId -eq "00000000-0000-0000-0000-000000000000" -or -not [System.Guid]::TryParse($DevWorkspaceId, [ref]$parsedGuid)) {
         $DevWorkspaceId = Read-Host "Enter your Workspace Id that should be used for development"
-        if ([string]::IsNullOrWhiteSpace($DevWorkspaceId) -or $DevWorkspaceId -eq "00000000-0000-0000-0000-000000000000") {
-           Write-Error "Workspace Id is not set or is using the default placeholder value. Please provide a valid Workspace Id."
+        if ([string]::IsNullOrWhiteSpace($DevWorkspaceId) -or $DevWorkspaceId -eq "00000000-0000-0000-0000-000000000000" -or -not [System.Guid]::TryParse($DevWorkspaceId, [ref]$parsedGuid)) {
+           Write-Error "Workspace Id is not set, is empty, or is not a valid GUID. Please provide a valid Workspace Id."
            exit 1
         }
     }
