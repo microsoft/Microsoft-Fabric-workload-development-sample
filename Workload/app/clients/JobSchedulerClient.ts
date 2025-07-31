@@ -1,5 +1,6 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
+import { SCOPE_PAIRS } from "./FabricPlatformScopes";
 import {
   ItemSchedule,
   CreateScheduleRequest,
@@ -10,20 +11,19 @@ import {
   PaginatedResponse
 } from "./FabricPlatformTypes";
 
-// Define specific scopes for Job Scheduler operations
-const JOB_SCHEDULER_SCOPES = [
-  "https://api.fabric.microsoft.com/Item.Execute.All",  // Primary scope for job execution
-  "https://api.fabric.microsoft.com/Item.Read.All"     // May need to read item info for scheduling
-].join(" ");
-
 /**
  * API wrapper for Fabric Platform Job Scheduler operations
  * Provides methods for managing item schedules and job instances
+ * 
+ * Uses method-based scope selection:
+ * - GET operations use read-only scopes
+ * - POST/PUT/PATCH/DELETE operations use read-write scopes
  */
 export class JobSchedulerClient extends FabricPlatformClient {
   
   constructor(workloadClient: WorkloadClientAPI) {
-    super(workloadClient, JOB_SCHEDULER_SCOPES);
+    // Use scope pairs for method-based scope selection
+    super(workloadClient, SCOPE_PAIRS.JOB_SCHEDULER);
   }
 
   // ============================

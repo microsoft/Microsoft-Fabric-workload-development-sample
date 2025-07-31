@@ -1,5 +1,6 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
+import { SCOPE_PAIRS } from "./FabricPlatformScopes";
 import {
   Workspace,
   WorkspaceInfo,
@@ -14,20 +15,20 @@ import {
   WorkspaceIdentity
 } from "./FabricPlatformTypes";
 
-// Define specific scopes for Workspace operations
-const WORKSPACE_SCOPES = [
-  "https://api.fabric.microsoft.com/Workspace.ReadWrite.All", // Primary scope for workspace operations
-  "https://api.fabric.microsoft.com/Capacity.Read.All"       // May need to read capacity info for assignments
-].join(" ");
-
 /**
  * API wrapper for Fabric Platform Workspace operations
  * Provides methods for managing workspaces, roles, and capacity assignments
+ * 
+ * Uses method-based scope selection:
+ * - GET operations use read-only scopes
+ * - POST/PUT/PATCH/DELETE operations use read-write scopes
  */
 export class WorkspaceClient extends FabricPlatformClient {
   
   constructor(workloadClient: WorkloadClientAPI) {
-    super(workloadClient, WORKSPACE_SCOPES);
+    // Use scope pairs for method-based scope selection
+    // GET operations will use WORKSPACE_READ scopes, other operations will use WORKSPACE scopes
+    super(workloadClient, SCOPE_PAIRS.WORKSPACE);
   }
 
   // ============================

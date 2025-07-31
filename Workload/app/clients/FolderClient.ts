@@ -1,6 +1,6 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
-import { SCOPES } from "./FabricPlatformScopes";
+import { SCOPE_PAIRS } from "./FabricPlatformScopes";
 import {
   Folder,
   CreateFolderRequest,
@@ -12,11 +12,16 @@ import {
 /**
  * API wrapper for Fabric Platform Folder operations
  * Provides methods for managing folders within workspaces
+ * 
+ * Uses method-based scope selection:
+ * - GET operations use read-only scopes
+ * - POST/PUT/PATCH/DELETE operations use read-write scopes
  */
 export class FolderClient extends FabricPlatformClient {
   
   constructor(workloadClient: WorkloadClientAPI) {
-    super(workloadClient, SCOPES.FOLDER);
+    // Use scope pairs for method-based scope selection
+    super(workloadClient, SCOPE_PAIRS.FOLDER);
   }
 
   // ============================

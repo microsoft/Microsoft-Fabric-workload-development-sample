@@ -69,9 +69,25 @@ const workloadClient = new WorkloadClientAPI();
 // Create the comprehensive API client
 const fabricAPI = FabricPlatformAPIClient.create(workloadClient);
 
-// Use the APIs
-const workspaces = await fabricAPI.workspaces.getAllWorkspaces();
+// Use the APIs - GET operations automatically use read-only scopes
+const workspaces = await fabricAPI.workspaces.getAllWorkspaces(); // Uses read scopes
+const workspace = await fabricAPI.workspaces.getWorkspace(workspaceId); // Uses read scopes
+
+// POST/PUT/DELETE operations automatically use read-write scopes
+const newWorkspace = await fabricAPI.workspaces.createWorkspace({
+  displayName: 'New Workspace',
+  description: 'Created with write scopes'
+}); // Uses write scopes
 ```
+
+### Method-Based Scope Selection
+
+The API clients now automatically use appropriate scopes based on the HTTP method:
+
+- **GET and HEAD operations**: Use read-only scopes (e.g., `Item.Read.All`, `Workspace.Read.All`)
+- **POST, PUT, PATCH, DELETE operations**: Use read-write scopes (e.g., `Item.ReadWrite.All`, `Workspace.ReadWrite.All`)
+
+This provides better security by requesting minimal permissions for read-only operations.
 
 ### Service Principal Authentication
 
@@ -85,8 +101,9 @@ const fabricAPI = FabricPlatformAPIClient.createWithServicePrincipal(
   'your-tenant-id'
 );
 
-// Use the APIs (same interface as user token auth)
-const workspaces = await fabricAPI.workspaces.getAllWorkspaces();
+// Use the APIs (same interface as user token auth, with automatic scope selection)
+const workspaces = await fabricAPI.workspaces.getAllWorkspaces(); // Uses read scopes
+const newItem = await fabricAPI.items.createItem(workspaceId, itemRequest); // Uses write scopes
 ```
 
 ### Custom Token Authentication
@@ -371,12 +388,12 @@ if (controller.isServicePrincipalAuth()) {
 ### Custom OAuth Scopes
 
 ```typescript
-import { CONTROLLER_SCOPES, FABRIC_BASE_SCOPES } from './controller';
+import { SCOPE_PAIRS, FABRIC_BASE_SCOPES } from './controller';
 
-// Use predefined controller scopes
-const sparkController = new SparkLivyController(workloadClient, CONTROLLER_SCOPES.SPARK_LIVY);
+// Use predefined scope pairs for method-based selection
+const itemController = new ItemController(workloadClient, SCOPE_PAIRS.ITEM);
 
-// Create custom scope combination
+// Create custom scope combinations (traditional fixed scopes)
 const customScopes = [
   FABRIC_BASE_SCOPES.ITEM_READWRITE,
   FABRIC_BASE_SCOPES.LAKEHOUSE_EXECUTE,
@@ -384,6 +401,24 @@ const customScopes = [
 ].join(' ');
 
 const customController = new SparkLivyController(workloadClient, customScopes);
+```
+
+### Controlling Scope Selection Behavior
+
+```typescript
+import { ItemClient, SCOPE_PAIRS } from './controller';
+
+// Create client with method-based scope selection (default behavior)
+const itemClient = new ItemClient(workloadClient); // Uses SCOPE_PAIRS.ITEM
+
+// Check if method-based selection is enabled
+console.log(itemClient.isMethodBasedScopeSelectionEnabled()); // true
+
+// Disable method-based selection and use fixed scopes
+itemClient.disableMethodBasedScopeSelection(SCOPES.ITEM); // Always use write scopes
+
+// Re-enable method-based selection
+itemClient.enableMethodBasedScopeSelection(SCOPE_PAIRS.ITEM);
 ```
 
 ## Error Handling

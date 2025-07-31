@@ -1,7 +1,7 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
 import { AuthenticationConfig, PaginatedResponse } from "./FabricPlatformTypes";
-import { SCOPES } from "./FabricPlatformScopes";
+import { SCOPE_PAIRS } from "./FabricPlatformScopes";
 
 /**
  * Node family types for Spark pools
@@ -252,6 +252,10 @@ export interface LivySessions extends PaginatedResponse<LivySession> {
  * Spark Client for Microsoft Fabric
  * Provides comprehensive management of Spark settings, custom pools, and Livy sessions
  * Based on the Fabric Spark REST API specification
+ * 
+ * Uses method-based scope selection:
+ * - GET operations use read-only scopes
+ * - POST/PUT/PATCH/DELETE operations use read-write scopes
  */
 export class SparkClient extends FabricPlatformClient {
 
@@ -259,9 +263,8 @@ export class SparkClient extends FabricPlatformClient {
     workloadClientOrAuthConfig?: WorkloadClientAPI | AuthenticationConfig,
     authConfig?: AuthenticationConfig
   ) {
-    // Use Spark-specific scopes
-    const sparkScopes = SCOPES.SPARK_LIVY;
-    super(workloadClientOrAuthConfig, sparkScopes, authConfig);
+    // Use scope pairs for method-based scope selection
+    super(workloadClientOrAuthConfig, SCOPE_PAIRS.SPARK_LIVY, authConfig);
   }
 
   // ============================
