@@ -4,7 +4,7 @@ import { callAcquireFrontendAccessToken } from "../../../controller/Authenticati
 import { AccessToken, WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FileMetadata, OneLakePathContainer, TableMetadata } from "./SampleOneLakeItemExplorerModel";
 import { FABRIC_BASE_SCOPES } from "../../../clients/FabricPlatformScopes";
-import { FabricPlatformAPIClient } from "src/clients";
+import { FabricPlatformAPIClient } from "../../../clients";
 
 
 /**
