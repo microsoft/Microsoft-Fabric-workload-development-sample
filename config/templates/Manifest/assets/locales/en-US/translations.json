@@ -24,5 +24,8 @@
     "CalculatorSampleItem_Description": "A Simple Calculator Item that stores data in OneLake",
     "CognitiveSampleItem_DisplayName": "Cognitive Sample",
     "CognitiveSampleItem_DisplayName_Plural": "Cognitive Samples",
-    "CognitiveSampleItem_Description": "A Cognitive Sample Item that stores data in OneLake"
+    "CognitiveSampleItem_Description": "A Cognitive Sample Item that stores data in OneLake",
+    "UnityCatalogItem_DisplayName": "Unity Catalog",
+    "UnityCatalogItem_DisplayName_Plural": "Unity Catalogs",
+    "UnityCatalogItem_Description": "A Unity Catalog Item that creates shortcuts to Databricks Unity Catalog tables in OneLake"
 }

@@ -24,5 +24,8 @@
   "CalculatorSampleItem_Description": "Un elemento de calculadora simple que almacena datos en OneLake",
   "CognitiveSampleItem_DisplayName": "Ejemplo Cognitivo",
   "CognitiveSampleItem_DisplayName_Plural": "Ejemplos Cognitivos",
-  "CognitiveSampleItem_Description": "Un elemento cognitivo simple que utiliza IA para analizar datos"
+  "CognitiveSampleItem_Description": "Un elemento cognitivo simple que utiliza IA para analizar datos",
+  "UnityCatalogItem_DisplayName": "Catálogo de Unidad",
+  "UnityCatalogItem_DisplayName_Plural": "Catálogos de Unidad",
+  "UnityCatalogItem_Description": "Un elemento de catálogo de unidad que crea accesos directos a las tablas del catálogo de unidad de Databricks en OneLake"
 }

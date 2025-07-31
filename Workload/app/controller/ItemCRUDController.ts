@@ -15,7 +15,7 @@ export interface ItemReference {
 * Represents a fabric item with additional metadata and a payload.  
 * This interface extends GenericItem and includes a payload property.
 */
-export interface ItemWithDefinition<T> extends ItemReference{
+export interface ItemWithDefinition<T> extends ItemReference {
     type: string;
     displayName: string;
     description?: string;

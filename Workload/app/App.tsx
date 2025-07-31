@@ -12,6 +12,10 @@ import { CognitiveSampleItemEditor } from "./samples/items/CognitiveSampleItem/C
 import { HelloWorldItemEditor } from "./items/HelloWorldItem/HelloWorldItemEditor";
 import { CalculatorSampleItemEditor } from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditor";
 import { CalculatorSampleItemEditorSharedStatePage } from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorSharedStatePage";
+import CalculatorItemEditorSettingsPage from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorSettingsDialog";
+import CalculatorItemEditorAboutPage from "./samples/items/CalculatorSampleItem/CalculatorSampleItemEditorAboutDialog";
+import { UnityCatalogItemEditor } from "./items/UnityCatalogItem/UnityCatalogItemEditor";
+import { UnityCatalogItemEditorSettingsPageWrapper } from "./items/UnityCatalogItem/UnityCatalogItemEditorSettingsPage";
 
 
 /*
@@ -75,26 +79,40 @@ export function App({ history, workloadClient }: AppProps) {
                     data-testid="HelloWorldItem-about-page" />
             </Route>
 
+            {/* Routing to the Unity Catalog Item Editor */}
+            <Route path="/UnityCatalogItem-editor/:itemObjectId">
+                <UnityCatalogItemEditor
+                    workloadClient={workloadClient} data-testid="UnityCatalogItem-editor" />
+            </Route>
+            <Route path="/UnityCatalogItem-settings-page">
+                <UnityCatalogItemEditorSettingsPageWrapper
+                    workloadClient={workloadClient}
+                    data-testid="UnityCatalogItem-settings-page" />
+            </Route>
+
+            {/* Routing to the Calculator Sample Item Editor */}
             <Route path="/CalculatorSampleItem-editor/:itemObjectId">
                 <CalculatorSampleItemEditor
                     workloadClient={workloadClient} data-testid="CalculatorSampleItem-editor" />
             </Route>
             <Route path="/CalculatorSampleItem-settings-page">
-                <CustomItemSettings data-testid="CalculatorSampleItem-settings-page" />
+                <CalculatorItemEditorSettingsPage data-testid="CalculatorSampleItem-settings-page" />
             </Route>
             <Route path="/CalculatorSampleItem-about-page">
-                <CustomAbout  data-testid="CalculatorSampleItem-about-page" />
+                <CalculatorItemEditorAboutPage  data-testid="CalculatorSampleItem-about-page" />
             </Route>
             <Route path="/CalculatorSampleItem-shared-state-page">
                 <CalculatorSampleItemEditorSharedStatePage
                     workloadClient={workloadClient} />
             </Route> 
 
+            {/* Routing to the CognitiveSample Item Editor */}
             <Route path="/CognitiveSampleItem-editor/:itemObjectId">
                 <CognitiveSampleItemEditor
                     workloadClient={workloadClient} data-testid="CognitiveSampleItem-editor" />
             </Route>
 
+            {/* Routing Samples & Playground */}
             <Route path="/client-sdk-playground">
                 <Provider store={ClientSDKStore}>
                     <ClientSDKPlayground workloadClient={workloadClient} />
