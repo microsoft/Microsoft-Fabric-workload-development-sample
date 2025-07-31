@@ -8,7 +8,7 @@ import { ItemWithDefinition } from "../../controller/ItemCRUDController";
 import { useLocation, useParams } from "react-router-dom";
 import "../../styles.scss";
 import { useTranslation } from "react-i18next";
-import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
+import { HelloWorldItemDefinition, createHelloWorldDefinition } from "./HelloWorldItemModel";
 import { HelloWorldItemEmpty } from "./HelloWorldItemEditorEmpty";
 import { ItemEditorLoadingProgressBar } from "../../controls/ItemEditorLoadingProgressBar";
 import { callNotificationOpen } from "../../controller/NotificationController";
@@ -85,9 +85,7 @@ export function HelloWorldItemEditor(props: PageProps) {
         if (!item.definition) {
           item = {
             ...item,
-            definition: {
-              message: undefined,
-            }
+            definition: createHelloWorldDefinition()
           };
         }
         setEditorItem(item);        
@@ -111,8 +109,8 @@ export function HelloWorldItemEditor(props: PageProps) {
   }
 
   async function handleFinishEmpty(message: string) {
-    // Update the item definition with the new message
-    const newItemDefinition = { message: message };
+    // Update the item definition with the new message using factory function
+    const newItemDefinition = createHelloWorldDefinition();
     updateItemDefinition(newItemDefinition);
     
     // Save with the updated definition directly to avoid race condition

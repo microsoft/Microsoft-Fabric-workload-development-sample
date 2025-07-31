@@ -13,6 +13,7 @@
     <!-- Include the XML and FE files -->
     <file src="<ManifestFolder>*.xml" target="BE" />
     <file src="<ManifestFolder>*.json" target="FE" />
-    <file src="<ManifestFolder>assets\**" target="FE\assets" />
+    <file src="<ManifestFolder>assets\**" target="FE\assets" exclude="<ManifestFolder>assets\items\**" />
+    <file src="<ManifestFolder>assets\items\**" target="Assets\items" />
   </files>
 </package>

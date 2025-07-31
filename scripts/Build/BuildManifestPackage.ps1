@@ -35,7 +35,7 @@ Write-Host "Using configuration in $outputDir"
 
 if (-not (Test-Path $nugetPath)) {
     Write-Host "Nuget executable not found at $nugetPath will run npm install to get it."
-    $frontendDir = Join-Path $PSScriptRoot "..\..\Frontend"
+    $frontendDir = Join-Path $PSScriptRoot "..\..\Workload"
     try {
         Push-Location $frontendDir
         npm install
@@ -53,5 +53,4 @@ if($IsWindows){
     mono $nugetPath pack $nuspecPath -OutputDirectory $outputDir -Verbosity detailed
 }
 
-Write-Host “Created a new ManifestPackage in $outputDir." -ForegroundColor Blue
-
+Write-Host "Created a new ManifestPackage in $outputDir." -ForegroundColor Blue

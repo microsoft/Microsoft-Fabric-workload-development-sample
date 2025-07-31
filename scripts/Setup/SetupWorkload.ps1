@@ -19,7 +19,9 @@ param (
     [String]$WorkloadVersion = "1.0.0",
     # Force flag to overwrite existing configurations and don't prompt the user
     # If not provided, it will default to false.
-    [boolean]$Force = $false
+    [boolean]$Force = $false,
+    # The workload host, used for the item definition structures and schemas
+    [String]$WorkloadHost = "workload.host.com"
 )
 
 if ($HostingType -eq "FERemote" -or $HostingType -eq "Remote") {
@@ -36,6 +38,7 @@ $replacements = @{
     "BACKEND_APP_ID" = $AADBackendAppId
     "WORKLOAD_VERSION" = $WorkloadVersion
     "DEV_WORKSPACE_ID" = $DevWorkspaceId
+    "WORKLOAD_HOST" = $WorkloadHost
 }
 
 ###############################################################################
