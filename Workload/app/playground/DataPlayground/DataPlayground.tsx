@@ -31,7 +31,27 @@ export function DataPlayground(props: TabContentProps) {
 
       <Stack className="main">
         {selectedTab === 'onelakeItemExplorer' && (
-          <OneLakeItemExplorerComponent workloadClient={workloadClient} />
+          <OneLakeItemExplorerComponent 
+            workloadClient={workloadClient}
+            onFileSelected={async (fileName: string, oneLakeLink: string) => {
+              // Handle file selection in playground
+              console.log('File selected:', fileName, oneLakeLink);
+            }}
+            onTableSelected={async (tableName: string, oneLakeLink: string) => {
+              // Handle table selection in playground
+              console.log('Table selected:', tableName, oneLakeLink);
+            }}
+            onItemChanged={async (item) => {
+              // Handle item change in playground
+              console.log('Item changed:', item);
+            }}
+            config={{
+              initialItem: undefined,
+              allowedItemTypes: [], // Allow all item types
+              allowItemSelection: true,
+              refreshTrigger: Date.now()
+            }}
+          />
         )}
         {selectedTab === 'onelakeShortcutCreator' && (
           <OneLakeShortcutCreator workloadClient={workloadClient} />

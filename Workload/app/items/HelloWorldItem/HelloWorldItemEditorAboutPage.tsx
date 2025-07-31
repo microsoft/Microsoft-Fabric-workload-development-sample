@@ -1,6 +1,7 @@
 import React from 'react';
+import { PageProps } from '../../App';
 
-export function HelloWorldItemEditorAboutPage() {
+export function HelloWorldItemEditorAboutPage(props: PageProps) {
     return (
         <div>
             This is a custom about page for the HelloWorld Item Editor.

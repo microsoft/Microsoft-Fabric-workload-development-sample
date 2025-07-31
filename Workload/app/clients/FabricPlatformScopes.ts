@@ -35,6 +35,10 @@ export const FABRIC_BASE_SCOPES = {
   CODE_ACCESS_DATA_LAKE: "https://api.fabric.microsoft.com/Code.AccessAzureDataLake.All",
   CODE_ACCESS_FABRIC: "https://api.fabric.microsoft.com/Code.AccessFabric.All",
 
+  // Connection operations
+  CONNECTION_READ: "https://api.fabric.microsoft.com/Connection.Read.All",
+  CONNECTION_READWRITE: "https://api.fabric.microsoft.com/Connection.ReadWrite.All",
+
 };
 
 // Predefined scope combinations for different clients
@@ -44,7 +48,8 @@ export const SCOPES = {
     FABRIC_BASE_SCOPES.ITEM_READWRITE,
     FABRIC_BASE_SCOPES.WORKSPACE_READWRITE,
     FABRIC_BASE_SCOPES.CAPACITY_READWRITE,
-    FABRIC_BASE_SCOPES.ONELAKE_READWRITE
+    FABRIC_BASE_SCOPES.ONELAKE_READWRITE,
+    FABRIC_BASE_SCOPES.CONNECTION_READWRITE
   ].join(" "),
   
   // Item Client - focused on item management
@@ -89,6 +94,12 @@ export const SCOPES = {
     FABRIC_BASE_SCOPES.WORKSPACE_READ
   ].join(" "),
   
+  // Connection Client - focused on connection management
+  CONNECTION: [
+    FABRIC_BASE_SCOPES.CONNECTION_READ,
+    FABRIC_BASE_SCOPES.CONNECTION_READWRITE
+  ].join(" "),
+  
   // Spark Livy Client - focused on Spark batch jobs and interactive sessions
   SPARK_LIVY: [
     FABRIC_BASE_SCOPES.ITEM_EXECUTE,
@@ -108,7 +119,8 @@ export const SCOPES = {
     FABRIC_BASE_SCOPES.ITEM_READ,
     FABRIC_BASE_SCOPES.WORKSPACE_READ,
     FABRIC_BASE_SCOPES.CAPACITY_READ,
-    FABRIC_BASE_SCOPES.ONELAKE_READ
+    FABRIC_BASE_SCOPES.ONELAKE_READ,
+    FABRIC_BASE_SCOPES.CONNECTION_READ
   ].join(" "),
 };
 

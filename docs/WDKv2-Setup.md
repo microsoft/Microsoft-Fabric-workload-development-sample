@@ -21,6 +21,7 @@ To make it easy as possible we have created a [Setup.ps1](../scripts/Setup/Setup
 .\Setup.ps1 -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -AADFrontendAppId "00000000-0000-0000-0000-000000000000" -DevWorkspaceId "00000000-0000-0000-0000-000000000000"
 ```
 
+* Make sure that the Poweshell execution policy is set to Unrestricted and the files are unblocked if you are getting asked if the ps files should be started.
 * If you want to use an existing Entra application, make sure to configure the SPA redirect URIs in the application's manifest as described in this [section](./WDKv2-Setup-Manual.md#register-a-frontend-entra-application).
 * Follow the guidance the Script provides to get everyting setup
 * The WorkloadName needs to follow a specific pattern [Organization].[WorkloadName]. For Development purpose please use Org.[YourWorkloadName] as all other organization names will be rejected. You can find more information on how Workload names work for publishing in the [public documentation](https://learn.microsoft.com/en-us/fabric/workload-development-kit/publish-workload-flow).

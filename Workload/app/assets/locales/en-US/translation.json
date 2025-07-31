@@ -2,6 +2,8 @@
     "Item_ID_Label": "Item Id",
     "Item_Name_Label": "Item Name",
     "Item_Type_Label": "Item Type",
+    "Item_Settings_Label": "Item Settings",
+    "Item_About_Label": "About",
     "Item_Description_Label": "Description",
     "Workspace_ID_Label": "Workspace Id",
     "Workspace_Name_Label": "Workspace Name",    

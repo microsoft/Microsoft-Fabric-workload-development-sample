@@ -689,3 +689,83 @@ export interface StatementResponse {
     completed?: number;
 }
 
+// Connection types
+export interface Connection {
+  id: string;
+  displayName: string;
+  connectivityType: 'ShareableCloud' | 'OnPremisesGateway' | 'VirtualNetworkGateway';
+  connectionDetails: {
+    type: string;
+    path: string;
+    [key: string]: any; // Allow additional properties
+  };
+  privacyLevel: 'None' | 'Private' | 'Organizational' | 'Public';
+  credentialDetails: {
+    credentialType: string;
+    singleSignOnType: 'None' | 'OAuth2' | 'Windows';
+    connectionEncryption: 'NotEncrypted' | 'Encrypted';
+    skipTestConnection: boolean;
+    [key: string]: any; // Allow additional credential properties
+  };
+  description?: string;
+  gatewayId?: string;
+  createdDate?: string;
+  modifiedDate?: string;
+  createdBy?: {
+    id: string;
+    displayName: string;
+    userPrincipalName: string;
+  };
+  modifiedBy?: {
+    id: string;
+    displayName: string;
+    userPrincipalName: string;
+  };
+}
+
+export interface CreateConnectionRequest {
+  displayName: string;
+  connectivityType: 'ShareableCloud' | 'OnPremisesGateway' | 'VirtualNetworkGateway';
+  connectionDetails: {
+    type: string;
+    path: string;
+    [key: string]: any;
+  };
+  privacyLevel: 'None' | 'Private' | 'Organizational' | 'Public';
+  credentialDetails: {
+    credentialType: string;
+    singleSignOnType: 'None' | 'OAuth2' | 'Windows';
+    connectionEncryption: 'NotEncrypted' | 'Encrypted';
+    skipTestConnection: boolean;
+    [key: string]: any;
+  };
+  description?: string;
+  gatewayId?: string;
+}
+
+export interface UpdateConnectionRequest {
+  displayName?: string;
+  connectivityType?: 'ShareableCloud' | 'OnPremisesGateway' | 'VirtualNetworkGateway';
+  connectionDetails?: {
+    type?: string;
+    path?: string;
+    [key: string]: any;
+  };
+  privacyLevel?: 'None' | 'Private' | 'Organizational' | 'Public';
+  credentialDetails?: {
+    credentialType?: string;
+    singleSignOnType?: 'None' | 'OAuth2' | 'Windows';
+    connectionEncryption?: 'NotEncrypted' | 'Encrypted';
+    skipTestConnection?: boolean;
+    [key: string]: any;
+  };
+  description?: string;
+  gatewayId?: string;
+}
+
+export interface ListConnectionsResponse {
+  value: Connection[];
+  continuationToken?: string;
+  continuationUri?: string;
+}
+

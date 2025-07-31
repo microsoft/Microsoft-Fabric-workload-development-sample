@@ -63,10 +63,14 @@ export function HelloWorldItemEditor(props: PageProps) {
   }
 
   async function openSettings() {
-    if (editorItem) {
+    if (editorItem) {      
+      //workloadClient.state.sharedState = {
+      //  item: editorItem;
+      //}
       //TODO: this needs to be updated to use the Item instead of Itemv2
       const item = await callGetItem(workloadClient, editorItem.id);
-      await callOpenSettings(workloadClient, item, 'About');
+      const result = await callOpenSettings(workloadClient, item, 'About');
+      console.log("Settings opened result:", result.value);
     }
   }
 

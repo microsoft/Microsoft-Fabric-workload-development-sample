@@ -3,6 +3,7 @@ import { WorkspaceClient } from "./WorkspaceClient";
 import { ItemClient } from "./ItemClient";
 import { FolderClient } from "./FolderClient";
 import { CapacityClient } from "./CapacityClient";
+import { ConnectionClient } from "./ConnectionClient";
 import { JobSchedulerClient } from "./JobSchedulerClient";
 import { OneLakeShortcutClient } from "./OneLakeShortcutClient";
 import { LongRunningOperationsClient } from "./LongRunningOperationsClient";
@@ -19,6 +20,7 @@ export class FabricPlatformAPIClient {
   public readonly items: ItemClient;
   public readonly folders: FolderClient;
   public readonly capacities: CapacityClient;
+  public readonly connections: ConnectionClient;
   public readonly scheduler: JobSchedulerClient;
   public readonly shortcuts: OneLakeShortcutClient;
   public readonly operations: LongRunningOperationsClient;
@@ -30,6 +32,7 @@ export class FabricPlatformAPIClient {
     this.items = new ItemClient(workloadClient);
     this.folders = new FolderClient(workloadClient);
     this.capacities = new CapacityClient(workloadClient);
+    this.connections = new ConnectionClient(workloadClient);
     this.scheduler = new JobSchedulerClient(workloadClient);
     this.shortcuts = new OneLakeShortcutClient(workloadClient);
     this.operations = new LongRunningOperationsClient(workloadClient);
@@ -74,6 +77,7 @@ export class FabricPlatformAPIClient {
     client.items.updateAuthenticationConfig(authConfig);
     client.folders.updateAuthenticationConfig(authConfig);
     client.capacities.updateAuthenticationConfig(authConfig);
+    client.connections.updateAuthenticationConfig(authConfig);
     client.scheduler.updateAuthenticationConfig(authConfig);
     client.shortcuts.updateAuthenticationConfig(authConfig);
     client.operations.updateAuthenticationConfig(authConfig);
@@ -101,6 +105,7 @@ export class FabricPlatformAPIClient {
     client.items.updateAuthenticationConfig(authConfig);
     client.folders.updateAuthenticationConfig(authConfig);
     client.capacities.updateAuthenticationConfig(authConfig);
+    client.connections.updateAuthenticationConfig(authConfig);
     client.scheduler.updateAuthenticationConfig(authConfig);
     client.shortcuts.updateAuthenticationConfig(authConfig);
     client.operations.updateAuthenticationConfig(authConfig);
@@ -115,7 +120,7 @@ export class FabricPlatformAPIClient {
  * Usage Examples:
  * 
  * ```typescript
- * import { FabricPlatformAPIClient } from './APIC';
+ * import { FabricPlatformAPIClient } from './controller';
  * import { WorkloadClientAPI } from '@ms-fabric/workload-client';
  * 
  * // Method 1: User Token Authentication (default)
@@ -138,6 +143,16 @@ export class FabricPlatformAPIClient {
  * const items = await fabricAPI.items.getAllItems(workspaceId);
  * const capacity = await fabricAPI.capacities.getCapacity(capacityId);
  * 
+ * // Connection operations
+ * const connections = await fabricAPI.connections.getAllConnections();
+ * const connection = await fabricAPI.connections.getConnection(connectionId);
+ * const adlsConnections = await fabricAPI.connections.getConnectionsByType('AdlsGen2');
+ * const newConnection = await fabricAPI.connections.createConnection({
+ *   displayName: 'My ADLS Connection',
+ *   connectionType: 'AdlsGen2',
+ *   description: 'Connection to Azure Data Lake Storage Gen2'
+ * });
+ * 
  * // Spark operations
  * const sparkSettings = await fabricAPI.spark.getWorkspaceSparkSettings(workspaceId);
  * const customPools = await fabricAPI.spark.getAllCustomPools(workspaceId);
@@ -148,20 +163,25 @@ export class FabricPlatformAPIClient {
  * const sessions = await fabricAPI.sparkLivy.listSessions(workspaceId, lakehouseId);
  * 
  * // Or use clients directly for more specific use cases
+ * import { WorkspaceClient, SparkClient, SparkLivyClient, FabricPlatformClient } from './clients';
+ * 
+ * // User token authentication (legacy)
+ * const workspaceClient = new WorkspaceClient(workloadClient);
  * import { WorkspaceClient, SparkClient, SparkLivyClient, FabricPlatformClient } from './client';
  * 
  * // User token authentication (legacy)
  * const workspaceClient = new WorkspaceClient(workloadClient);
+>>>>>>> origin/dev/preview/wdkv2:Workload/app/clients/FabricPlatformAPIClient.ts
  * 
  * // Service principal authentication
  * const authConfig = FabricPlatformClient.createServicePrincipalAuth(
  *   'client-id', 'client-secret', 'tenant-id'
  * );
- * const sparkClient = new SparkClient(authConfig);
- * const sparkLivyClient = new SparkLivyClient(authConfig);
+ * const sparkController = new SparkController(authConfig);
+ * const sparkLivyController = new SparkLivyController(authConfig);
  * 
- * const workspace = await workspaceClient.getWorkspace(workspaceId);
- * const sparkSettings = await sparkClient.getWorkspaceSparkSettings(workspaceId);
- * const batch = await sparkLivyClient.getBatch(workspaceId, lakehouseId, batchId);
+ * const workspace = await workspaceController.getWorkspace(workspaceId);
+ * const sparkSettings = await sparkController.getWorkspaceSparkSettings(workspaceId);
+ * const batch = await sparkLivyController.getBatch(workspaceId, lakehouseId, batchId);
  * ```
  */

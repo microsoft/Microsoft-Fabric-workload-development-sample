@@ -3,6 +3,8 @@
     "Item_Name_Label": "שם פריט",
     "Item_Type_Label": "סוג פריט",
     "Item_Description_Label": "תיאור",
+    "Item_Settings_Label": "הגדרות פריט",
+    "Item_About_Label": "אודות",
     "Workspace_ID_Label": "מזהה חלל עבודה",
     "Workspace_Name_Label": "שם חלל עבודה",
     "Language_Changed_Title": "שינוי שפה",
