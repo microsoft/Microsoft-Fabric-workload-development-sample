@@ -1,25 +1,25 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
+import { SCOPE_PAIRS } from "./FabricPlatformScopes";
 import {
   OperationState,
   LongRunningOperationStatus,
   ErrorResponse
 } from "./FabricPlatformTypes";
 
-// Define specific scopes for Long Running Operations
-const OPERATIONS_SCOPES = [
-  "https://api.fabric.microsoft.com/Item.Read.All",     // May need to read item operation status
-  "https://api.fabric.microsoft.com/Workspace.Read.All" // May need to read workspace operation status
-].join(" ");
-
 /**
  * API wrapper for Long Running Operations
  * Provides methods for tracking and managing long-running operations
+ * 
+ * Uses method-based scope selection:
+ * - GET operations use read-only scopes
+ * - POST/PUT/PATCH/DELETE operations use read-write scopes
  */
 export class LongRunningOperationsClient extends FabricPlatformClient {
   
   constructor(workloadClient: WorkloadClientAPI) {
-    super(workloadClient, OPERATIONS_SCOPES);
+    // Use scope pairs for method-based scope selection
+    super(workloadClient, SCOPE_PAIRS.ITEM); // Operations are typically item-related
   }
 
   // ============================

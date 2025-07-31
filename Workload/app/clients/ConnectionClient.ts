@@ -1,6 +1,6 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
-import { SCOPES } from "./FabricPlatformScopes";
+import { SCOPE_PAIRS } from "./FabricPlatformScopes";
 import { 
   Connection, 
   CreateConnectionRequest, 
@@ -12,10 +12,16 @@ import {
 /**
  * Fabric Connections API Client
  * Provides methods to interact with Fabric connections
+ * 
+ * Uses method-based scope selection:
+ * - GET operations use read-only scopes
+ * - POST/PUT/PATCH/DELETE operations use read-write scopes
  */
 export class ConnectionClient extends FabricPlatformClient {
   constructor(workloadClientOrAuth: WorkloadClientAPI | AuthenticationConfig) {
-    super(workloadClientOrAuth, SCOPES.CONNECTION);
+    // Use scope pairs for method-based scope selection
+    // GET operations will use CONNECTION_READ scopes, other operations will use CONNECTION scopes
+    super(workloadClientOrAuth, SCOPE_PAIRS.CONNECTION);
   }
 
   /**

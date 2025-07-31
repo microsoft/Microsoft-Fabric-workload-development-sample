@@ -1,25 +1,25 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
+import { SCOPE_PAIRS } from "./FabricPlatformScopes";
 import {
   Shortcut,
   CreateShortcutRequest,
   PaginatedResponse
 } from "./FabricPlatformTypes";
 
-// Define specific scopes for OneLake Shortcut operations
-const ONELAKE_SCOPES = [
-  "https://api.fabric.microsoft.com/OneLake.ReadWrite.All", // Primary scope for OneLake operations
-  "https://api.fabric.microsoft.com/Item.Read.All"          // May need to read item info for shortcuts
-].join(" ");
-
 /**
  * API wrapper for OneLake Shortcuts operations
  * Provides methods for managing shortcuts to external data sources
+ * 
+ * Uses method-based scope selection:
+ * - GET operations use read-only scopes
+ * - POST/PUT/PATCH/DELETE operations use read-write scopes
  */
 export class OneLakeShortcutClient extends FabricPlatformClient {
   
   constructor(workloadClient: WorkloadClientAPI) {
-    super(workloadClient, ONELAKE_SCOPES);
+    // Use scope pairs for method-based scope selection
+    super(workloadClient, SCOPE_PAIRS.ONELAKE);
   }
 
   // ============================

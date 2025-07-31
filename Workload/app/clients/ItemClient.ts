@@ -1,5 +1,6 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
+import { SCOPE_PAIRS } from "./FabricPlatformScopes";
 import {
   Item,
   CreateItemRequest,
@@ -9,20 +10,20 @@ import {
   PaginatedResponse
 } from "./FabricPlatformTypes";
 
-// Define specific scopes for Item operations
-const ITEM_SCOPES = [
-  "https://api.fabric.microsoft.com/Item.ReadWrite.All", // Primary scope for item operations
-  "https://api.fabric.microsoft.com/Workspace.Read.All"  // May need to read workspace info
-].join(" ");
-
 /**
  * API wrapper for Fabric Platform Item operations
  * Provides methods for managing items (reports, datasets, notebooks, etc.)
+ * 
+ * Uses method-based scope selection:
+ * - GET operations use read-only scopes
+ * - POST/PUT/PATCH/DELETE operations use read-write scopes
  */
 export class ItemClient extends FabricPlatformClient {
   
   constructor(workloadClient: WorkloadClientAPI) {
-    super(workloadClient, ITEM_SCOPES);
+    // Use scope pairs for method-based scope selection
+    // GET operations will use ITEM_READ scopes, other operations will use ITEM scopes
+    super(workloadClient, SCOPE_PAIRS.ITEM);
   }
 
   // ============================

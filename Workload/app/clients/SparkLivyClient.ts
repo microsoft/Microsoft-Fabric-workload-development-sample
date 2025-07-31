@@ -1,6 +1,6 @@
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { FabricPlatformClient } from "./FabricPlatformClient";
-import { SCOPES } from "./FabricPlatformScopes";
+import { SCOPE_PAIRS } from "./FabricPlatformScopes";
 import { BatchRequest, BatchResponse, BatchState, SessionRequest, SessionResponse, StatementRequest, StatementResponse } from "./FabricPlatformTypes";
 
 // Livy API version
@@ -9,11 +9,16 @@ const LIVY_API_VERSION = "2024-07-30";
 /**
  * API wrapper for Spark Livy operations in Fabric
  * Provides methods for managing Spark batch jobs and interactive sessions
+ * 
+ * Uses method-based scope selection:
+ * - GET operations use read-only scopes
+ * - POST/PUT/PATCH/DELETE operations use read-write scopes
  */
 export class SparkLivyClient extends FabricPlatformClient {
   
   constructor(workloadClient: WorkloadClientAPI) {
-    super(workloadClient, SCOPES.SPARK_LIVY);
+    // Use scope pairs for method-based scope selection
+    super(workloadClient, SCOPE_PAIRS.SPARK_LIVY);
   }
 
   // ============================

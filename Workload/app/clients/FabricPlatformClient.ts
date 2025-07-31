@@ -1,6 +1,6 @@
 import { WorkloadClientAPI, AccessToken } from "@ms-fabric/workload-client";
 import { EnvironmentConstants } from "../constants";
-import { SCOPES } from "./FabricPlatformScopes";
+import { SCOPES, ScopePair, getScopeForMethod } from "./FabricPlatformScopes";
 import { FabricAuthenticationService } from "./FabricAuthenticationService";
 import { AuthenticationConfig, ErrorResponse } from "./FabricPlatformTypes";
 
@@ -75,37 +75,67 @@ export class FabricPlatformError extends Error {
 /**
  * Abstract base class for Fabric Platform API Clients
  * Provides common HTTP client functionality with authentication
+ * Supports method-based scope selection (read scopes for GET, write scopes for POST/DELETE/etc)
  */
 export abstract class FabricPlatformClient {
   protected workloadClient?: WorkloadClientAPI;
   protected baseUrl: string = EnvironmentConstants.FabricApiBaseUrl;
   protected scopes: string;
+  protected scopePair?: ScopePair;  // Optional scope pair for method-based selection
   protected authService: FabricAuthenticationService;
 
   constructor(
     workloadClientOrAuthConfig?: WorkloadClientAPI | AuthenticationConfig, 
-    customScopes?: string,
+    customScopesOrScopePair?: string | ScopePair,
     authConfig?: AuthenticationConfig
   ) {
     // Handle different constructor signatures
     if (workloadClientOrAuthConfig && 'type' in workloadClientOrAuthConfig) {
       // First parameter is AuthenticationConfig
       this.authService = new FabricAuthenticationService(undefined, workloadClientOrAuthConfig);
-      this.scopes = customScopes || SCOPES.DEFAULT;
+      this.configureScopesFromParameter(customScopesOrScopePair);
     } else {
       // First parameter is WorkloadClientAPI (legacy behavior)
       this.workloadClient = workloadClientOrAuthConfig as WorkloadClientAPI;
-      this.scopes = customScopes || SCOPES.DEFAULT;
+      this.configureScopesFromParameter(customScopesOrScopePair);
       this.authService = new FabricAuthenticationService(this.workloadClient, authConfig);
     }
   }
 
   /**
+   * Configure scopes from constructor parameter
+   * @param scopesOrScopePair Either a scope string or a ScopePair object
+   */
+  private configureScopesFromParameter(scopesOrScopePair?: string | ScopePair): void {
+    if (typeof scopesOrScopePair === 'string') {
+      // Traditional string-based scopes
+      this.scopes = scopesOrScopePair || SCOPES.DEFAULT;
+      this.scopePair = undefined;
+    } else if (scopesOrScopePair && 'read' in scopesOrScopePair && 'write' in scopesOrScopePair) {
+      // ScopePair for method-based selection
+      this.scopePair = scopesOrScopePair;
+      this.scopes = scopesOrScopePair.write; // Default to write scopes for backward compatibility
+    } else {
+      // No scopes provided, use default
+      this.scopes = SCOPES.DEFAULT;
+      this.scopePair = undefined;
+    }
+  }
+
+  /**
    * Get an authenticated access token for Fabric API calls
+   * @param method Optional HTTP method to determine which scopes to use
    * @returns Promise<AccessToken>
    */
-  protected async getAccessToken(): Promise<AccessToken> {
-    return this.authService.acquireAccessToken(this.scopes);
+  protected async getAccessToken(method?: string): Promise<AccessToken> {
+    let scopesToUse = this.scopes;
+    
+    // If we have a scope pair and a method, use method-based scope selection
+    if (this.scopePair && method) {
+      scopesToUse = getScopeForMethod(this.scopePair, method);
+    }
+    
+    return this.authService.acquireAccessToken(scopesToUse);
   }
 
   /**
@@ -116,7 +146,9 @@ export abstract class FabricPlatformClient {
    */
   protected async makeRequest<T>(url: string, options: RequestInit = {}): Promise<T> {
     try {
-      const accessToken = await this.getAccessToken();
+      // Get appropriate access token based on HTTP method
+      const method = options.method || 'GET';
+      const accessToken = await this.getAccessToken(method);
       
       // Construct full URL if relative path provided
       const fullUrl = url.startsWith('http') ? url : `${this.baseUrl}/v1${url}`;
@@ -279,6 +311,42 @@ export abstract class FabricPlatformClient {
    */
   protected getCurrentScopes(): string {
     return this.scopes;
+  }
+
+  /**
+   * Get the current scope pair if method-based selection is enabled
+   * @returns ScopePair | undefined
+   */
+  protected getCurrentScopePair(): ScopePair | undefined {
+    return this.scopePair;
+  }
+
+  /**
+   * Check if method-based scope selection is enabled
+   * @returns boolean
+   */
+  isMethodBasedScopeSelectionEnabled(): boolean {
+    return this.scopePair !== undefined;
+  }
+
+  /**
+   * Enable method-based scope selection with the provided scope pair
+   * @param scopePair ScopePair containing read and write scopes
+   */
+  enableMethodBasedScopeSelection(scopePair: ScopePair): void {
+    this.scopePair = scopePair;
+    this.scopes = scopePair.write; // Default to write scopes for backward compatibility
+  }
+
+  /**
+   * Disable method-based scope selection and use fixed scopes
+   * @param fixedScopes Optional fixed scopes to use (defaults to current scopes)
+   */
+  disableMethodBasedScopeSelection(fixedScopes?: string): void {
+    this.scopePair = undefined;
+    if (fixedScopes) {
+      this.scopes = fixedScopes;
+    }
   }
 
   /**
