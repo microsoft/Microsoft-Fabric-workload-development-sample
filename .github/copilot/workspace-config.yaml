@@ -1,0 +1,88 @@
+# GitHub Copilot Workspace Configuration
+# This file configures GitHub Copilot for the Microsoft Fabric WDK project
+
+# Fabric AI Agent Integration
+# The Fabric agent provides specialized assistance for Microsoft Fabric development
+
+# Context Files - These files provide essential project knowledge
+context_files:
+  - .ai/context/fabric.md                    # Microsoft Fabric platform overview
+  - .ai/context/fabric_workload.md           # WDK-specific development guidance
+  - .ai/agents/fabric/knowledge/wdk-development.md  # WDK patterns and best practices
+
+# Agent Configuration
+agent_config:
+  - .github/copilot/fabric-agent.json        # Fabric agent JSON configuration
+  - .github/copilot/fabric-agent.md          # Fabric agent prompt and instructions
+
+# File Patterns for Context-Aware Assistance
+relevant_patterns:
+  - "Workload/app/**/*.ts"                   # TypeScript source files
+  - "Workload/app/**/*.tsx"                  # React components
+  - "config/Manifest/**/*.xml"               # Workload manifest definitions
+  - "config/Manifest/**/*.json"              # Metadata and configuration
+  - "scripts/**/*.ps1"                       # PowerShell automation scripts
+
+# Keywords that trigger Fabric-specific assistance
+activation_keywords:
+  - fabric
+  - workload  
+  - wdk
+  - onelake
+  - powerbi
+  - entra
+  - authentication
+  - manifest
+  - item
+  - editor
+  - ribbon
+  - scope
+  - client
+
+# Expertise Areas
+expertise_domains:
+  - microsoft_fabric_platform
+  - workload_development_kit
+  - typescript_react_development
+  - azure_authentication
+  - power_bi_integration
+  - onelake_data_patterns
+  - security_and_compliance
+  - deployment_automation
+
+# Quality Standards
+response_requirements:
+  - technical_accuracy: "Verify against Microsoft documentation"
+  - security_focus: "Include authentication and compliance considerations"
+  - implementation_ready: "Provide working code examples with proper imports"
+  - project_alignment: "Follow existing project structure and conventions"
+  - best_practices: "Reference Microsoft-approved patterns"
+
+# Example Usage Patterns
+usage_examples:
+  workload_development: "@fabric How do I create a new custom item type for document processing?"
+  authentication: "@fabric Show me how to implement OAuth scope selection in my API client"
+  integration: "@fabric What's the best way to integrate my workload with OneLake?"
+  troubleshooting: "@fabric My workload authentication is failing, how do I debug this?"
+
+# Knowledge Integration Strategy
+knowledge_integration:
+  public_knowledge:
+    - Microsoft Fabric platform documentation and APIs
+    - Azure integration patterns and security best practices
+    - Power BI embedding and customization techniques
+    - OneLake data storage and access patterns
+  
+  project_context:
+    - Current WDK implementation patterns in Workload/app/
+    - Authentication client examples and scope selection patterns
+    - Manifest configuration templates and validation
+    - Build and deployment automation scripts
+
+# Agent Behavior Guidelines
+behavior_guidelines:
+  - "Always combine public Fabric knowledge with project-specific context"
+  - "Provide step-by-step implementation guidance with code examples"
+  - "Include security and compliance considerations in all recommendations"
+  - "Reference actual project files and patterns when applicable"
+  - "Validate suggestions against current project structure and conventions"

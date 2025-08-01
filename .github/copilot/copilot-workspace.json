@@ -1,0 +1,70 @@
+{
+  "version": "1.0",
+  "agents": [
+    {
+      "name": "fabric",
+      "description": "Microsoft Fabric Development Expert - Specialized assistant for Fabric platform development, WDK implementation, and workload creation",
+      "prompt_file": "fabric-agent.md",
+      "knowledge_files": [
+        "../.ai/context/fabric.md",
+        "../.ai/context/fabric_workload.md",
+        "../.ai/agents/fabric/knowledge/wdk-development.md"
+      ],
+      "capabilities": [
+        "code_generation",
+        "architecture_guidance", 
+        "security_implementation",
+        "api_integration",
+        "testing_strategies",
+        "deployment_automation"
+      ],
+      "domains": [
+        "typescript",
+        "react",
+        "azure",
+        "authentication",
+        "data_engineering",
+        "business_intelligence"
+      ],
+      "context_patterns": [
+        "Workload/app/**/*.ts",
+        "Workload/app/**/*.tsx",
+        "config/Manifest/**/*.xml",
+        "config/Manifest/**/*.json",
+        "scripts/**/*.ps1"
+      ],
+      "activation_keywords": [
+        "fabric",
+        "workload",
+        "wdk",
+        "onelake",
+        "powerbi",
+        "entra",
+        "authentication",
+        "manifest",
+        "item",
+        "editor",
+        "ribbon"
+      ]
+    }
+  ],
+  "default_context": [
+    ".ai/context/fabric.md",
+    ".ai/context/fabric_workload.md"
+  ],
+  "workspace_patterns": {
+    "include": [
+      "Workload/app/**",
+      "config/Manifest/**",
+      "scripts/**",
+      ".ai/context/**",
+      ".ai/agents/fabric/**"
+    ],
+    "exclude": [
+      "node_modules/**",
+      "release/**",
+      "tools/**",
+      "*.log"
+    ]
+  }
+}
