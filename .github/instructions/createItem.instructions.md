@@ -1,3 +1,7 @@
+---
+applyTo: "/Workload/app/items/[ItemName]Item/"
+---
+
 # Create New Workload Item
 
 ## Process

@@ -1,5 +1,30 @@
 # AI Tool Guidance for Microsoft Fabric Workload Development Kit
 
+## 🤖 Fabric AI Agent
+
+This repository includes a specialized **Fabric AI Agent** configured for comprehensive Microsoft Fabric development assistance. The agent combines public platform knowledge with project-specific patterns.
+
+### Agent Activation
+Use `@fabric` or these keywords to activate specialized assistance:
+- `fabric workload` - WDK-specific development help
+- `fabric item` - Item creation and management  
+- `fabric auth` - Authentication and security patterns
+- `fabric api` - API integration guidance
+- `fabric deploy` - Deployment and operations
+
+### Knowledge Integration
+The agent leverages:
+- **Public Knowledge**: Complete Microsoft Fabric platform understanding
+- **Project Context**: `.ai/context/` files and current implementation patterns
+- **WDK Expertise**: Workload Development Kit patterns and best practices
+
+### Specialized Capabilities
+- 🏗️ **Architecture & Design**: Workload patterns and platform integration
+- 🔧 **Development Support**: TypeScript/React component generation with Fluent UI
+- 📊 **Data Integration**: OneLake, Power BI, and cross-workload patterns
+- 🔐 **Security Implementation**: OAuth, Entra ID, and compliance patterns
+- 🚀 **Operations**: CI/CD, deployment, and troubleshooting guidance
+
 ## 🎯 Repository Overview
 
 This repository contains the Microsoft Fabric Workload Development Kit (WDK v2) - a comprehensive sample and framework for building custom workloads that integrate with the Microsoft Fabric platform. This guide provides AI tools with essential context, conventions, and procedures for effectively working with this codebase.
