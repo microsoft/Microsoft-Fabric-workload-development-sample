@@ -10,6 +10,7 @@ import { LongRunningOperationsClient } from "./LongRunningOperationsClient";
 import { SparkLivyClient } from "./SparkLivyClient";
 import { SparkClient } from "./SparkClient";
 import { FabricPlatformClient } from "./FabricPlatformClient";
+import { OneLakeClient } from "./OneLakeClient";
 
 /**
  * Comprehensive Fabric Platform API Client
@@ -26,6 +27,7 @@ export class FabricPlatformAPIClient {
   public readonly operations: LongRunningOperationsClient;
   public readonly sparkLivy: SparkLivyClient;
   public readonly spark: SparkClient;
+  public readonly oneLake: OneLakeClient;
 
   constructor(workloadClient: WorkloadClientAPI) {
     this.workspaces = new WorkspaceClient(workloadClient);
@@ -38,7 +40,7 @@ export class FabricPlatformAPIClient {
     this.operations = new LongRunningOperationsClient(workloadClient);
     this.spark = new SparkClient(workloadClient);    
     this.sparkLivy = new SparkLivyClient(workloadClient);
-
+    this.oneLake = new OneLakeClient(workloadClient);
   }  
   
   /**
