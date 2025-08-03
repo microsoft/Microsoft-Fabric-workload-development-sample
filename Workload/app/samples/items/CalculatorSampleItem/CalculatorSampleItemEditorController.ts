@@ -6,7 +6,7 @@ import { Calculation, CalculationOperator, CalculationResult, CalculatorSampleIt
 import { readOneLakeFileAsText, getOneLakeFilePath, writeToOneLakeFileAsText, checkIfFileExists } from "../../../clients/OneLakeClient";
 import { ItemWithDefinition } from "../../../controller/ItemCRUDController";
 import { OneLakeShortcutCreateRequest, OneLakeShortcutCreateResponse, OneLakeShortcutTargetOneLake } from "../../views/SampleOneLakeShortcutCreator/SampleOneLakeShortcutModel";
-import { createOneLakeShortcut } from "../../views/SampleOneLakeShortcutCreator/SampleOneLakeShortcutController";
+import { OneLakeShortcutClient } from "../../../clients/OneLakeShortcutClient";
 import { ItemAndPath } from "../../../controller/DataHubController";
 
 
@@ -32,7 +32,29 @@ export async function createCalculationShortcut(workloadClient: WorkloadClientAP
         name: "CalcResults",
         target: target
     };
-    return createOneLakeShortcut(workloadClient, source.workspaceId, source.id, shortcutRequest);
+    
+    // Convert to the format expected by the new OneLakeShortcutClient
+    const createRequest = {
+        path: shortcutRequest.path,
+        name: shortcutRequest.name,
+        target: {
+            oneLake: {
+                workspaceId: target.oneLake.workspaceId,
+                itemId: target.oneLake.itemId,
+                path: target.oneLake.path
+            }
+        }
+    };
+    
+    const shortcutClient = new OneLakeShortcutClient(workloadClient);
+    const result = await shortcutClient.createShortcut(source.workspaceId, source.id, createRequest);
+    
+    // Convert back to the expected response format
+    return {
+        path: result.path,
+        name: result.name,
+        target: target
+    };
 }
 
 /**
@@ -101,7 +123,7 @@ export async function saveCalculationToHistory(workloadClient: WorkloadClientAPI
  * @returns {Promise<CalculationResult[]>} - A promise that resolves to an array of calculation results.
  */
 export async function loadCalculationHistory(workloadClient: WorkloadClientAPI, item: ItemWithDefinition<CalculatorSampleItemDefinition>): Promise<CalculationResult[]> {
-    var retVal: CalculationResult[];
+    var retVal: CalculationResult[] = [];
     const fileName = "CalcResults/CalculationHistory.csv";
     const filePath = getOneLakeFilePath(item.workspaceId, item.id, fileName);
     const result = await readOneLakeFileAsText(workloadClient, filePath);
