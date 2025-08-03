@@ -12,8 +12,8 @@ import {
   Spinner,
   Text
 } from "@fluentui/react-components";
-import { createOneLakeShortcut } from "./SampleOneLakeShortcutController";
-import { OneLakeShortcutCreateRequest, OneLakeShortcutTargetOneLake } from "./SampleOneLakeShortcutModel";
+import { OneLakeShortcutClient } from "../../../clients/OneLakeShortcutClient";
+import { CreateShortcutRequest, CreatableShortcutTarget } from "../../../clients/FabricPlatformTypes";
 import { PageProps } from "../../../App";
 import { callDatahubOpen} from "../../../controller/DataHubController";
 import { Item } from "../../../clients/FabricPlatformTypes";
@@ -44,7 +44,7 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
     );
     
     if (result) {
-      setTargetItem(result);
+      setSourceItem(result);
       //setSourceShortcutPath(result.selectedPath || "Files");
       setResultMessage("");
     }
@@ -78,8 +78,11 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
     setResultMessage("");
 
     try {
-      // Create the shortcut request object
-      const target: OneLakeShortcutTargetOneLake = {
+      // Create the OneLakeShortcutClient
+      const shortcutClient = new OneLakeShortcutClient(workloadClient);
+      
+      // Create the shortcut request object using Fabric API types
+      const target: CreatableShortcutTarget = {
         oneLake: {
           workspaceId: targetItem.workspaceId,
           itemId: targetItem.id,
@@ -87,15 +90,14 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
         }
       };
 
-      const shortcutRequest: OneLakeShortcutCreateRequest = {
+      const shortcutRequest: CreateShortcutRequest = {
         path: sourceShortcutPath,
         name: shortcutName,
         target: target
       };
 
-      // Call the controller function to create the shortcut
-      const result = await createOneLakeShortcut(
-        workloadClient, 
+      // Call the client method to create the shortcut
+      const result = await shortcutClient.createShortcut(
         sourceItem.workspaceId, 
         sourceItem.id, 
         shortcutRequest
@@ -118,9 +120,9 @@ export function OneLakeShortcutCreator({ workloadClient }: PageProps) {
   const resetForm = () => {
     setShortcutName("");
     setSourceItem(null);
-    setSourceShortcutPath("Files/");
+    setSourceShortcutPath("Files");
     setTargetItem(null);    
-    setTargetShortcutPath("Files/");
+    setTargetShortcutPath("Files");
     setResultMessage("");
   };
 
