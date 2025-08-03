@@ -158,6 +158,7 @@ export abstract class FabricPlatformClient {
         headers: {
           'Authorization': `Bearer ${accessToken.token}`,
           'Content-Type': 'application/json',
+          'User-Agent': 'ms-fabric-wdk',
           ...options.headers,
         },
       });
