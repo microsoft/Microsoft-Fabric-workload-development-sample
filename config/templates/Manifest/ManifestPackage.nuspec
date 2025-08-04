@@ -15,6 +15,7 @@
     <file src="<ManifestFolder>*.json" target="FE" />
     <file src="<ManifestFolder>assets\**" target="FE\assets" exclude="<ManifestFolder>assets\items\**" />
     <file src="<ManifestFolder>assets\items\**" target="Assets\items" />
-    <file src="<ManifestFolder>assets\common\schemas\parts" target="Assets\common\schemas\parts" />
+    <!-- for now, we don't have common schemas -->
+    <!-- <file src="<ManifestFolder>assets\common\schemas\parts\**" target="Assets\common\schemas\parts" /> -->
   </files>
 </package>
