@@ -11,6 +11,7 @@ import { SparkLivyClient } from "./SparkLivyClient";
 import { SparkClient } from "./SparkClient";
 import { FabricPlatformClient } from "./FabricPlatformClient";
 import { OneLakeClient } from "./OneLakeClient";
+import { ExternalDataSharesProviderClient } from "./ExternalDataSharesProviderClient";
 
 /**
  * Comprehensive Fabric Platform API Client
@@ -28,6 +29,7 @@ export class FabricPlatformAPIClient {
   public readonly sparkLivy: SparkLivyClient;
   public readonly spark: SparkClient;
   public readonly oneLake: OneLakeClient;
+  public readonly externalDataShares: ExternalDataSharesProviderClient;
 
   constructor(workloadClient: WorkloadClientAPI) {
     this.workspaces = new WorkspaceClient(workloadClient);
@@ -41,6 +43,7 @@ export class FabricPlatformAPIClient {
     this.spark = new SparkClient(workloadClient);    
     this.sparkLivy = new SparkLivyClient(workloadClient);
     this.oneLake = new OneLakeClient(workloadClient);
+    this.externalDataShares = new ExternalDataSharesProviderClient(workloadClient);
   }  
   
   /**
@@ -85,6 +88,8 @@ export class FabricPlatformAPIClient {
     client.operations.updateAuthenticationConfig(authConfig);
     client.sparkLivy.updateAuthenticationConfig(authConfig);
     client.spark.updateAuthenticationConfig(authConfig);
+    client.oneLake.updateAuthenticationConfig(authConfig);
+    client.externalDataShares.updateAuthenticationConfig(authConfig);
     
     return client;
   }
@@ -113,6 +118,8 @@ export class FabricPlatformAPIClient {
     client.operations.updateAuthenticationConfig(authConfig);
     client.sparkLivy.updateAuthenticationConfig(authConfig);
     client.spark.updateAuthenticationConfig(authConfig);
+    client.oneLake.updateAuthenticationConfig(authConfig);
+    client.externalDataShares.updateAuthenticationConfig(authConfig);
     
     return client;
   }

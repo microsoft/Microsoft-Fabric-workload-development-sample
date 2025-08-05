@@ -13,6 +13,7 @@ export { JobSchedulerClient } from './JobSchedulerClient';
 export { OneLakeShortcutClient } from './OneLakeShortcutClient';
 export { LongRunningOperationsClient } from './LongRunningOperationsClient';
 export { SparkLivyClient } from './SparkLivyClient';
+export { ExternalDataSharesProviderClient } from './ExternalDataSharesProviderClient';
 
 // Re-export WorkloadClientAPI for convenience
 export { WorkloadClientAPI } from '@ms-fabric/workload-client';

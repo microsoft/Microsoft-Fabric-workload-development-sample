@@ -39,6 +39,10 @@ export const FABRIC_BASE_SCOPES = {
   CONNECTION_READ: "https://api.fabric.microsoft.com/Connection.Read.All",
   CONNECTION_READWRITE: "https://api.fabric.microsoft.com/Connection.ReadWrite.All",
 
+  // External Data Shares operations
+  EXTERNAL_DATA_SHARES_READ: "https://api.fabric.microsoft.com/Item.ExternalDataShare.All",
+  EXTERNAL_DATA_SHARES_READWRITE: "https://api.fabric.microsoft.com/Item.ExternalDataShare.All",
+
 };
 
 // Predefined scope combinations for different clients
@@ -162,6 +166,18 @@ export const SCOPES = {
     FABRIC_BASE_SCOPES.LAKEHOUSE_READ
   ].join(" "),
   
+  // External Data Shares Client - focused on external data sharing operations
+  EXTERNAL_DATA_SHARES: [
+    FABRIC_BASE_SCOPES.EXTERNAL_DATA_SHARES_READ,
+    FABRIC_BASE_SCOPES.EXTERNAL_DATA_SHARES_READWRITE,
+    FABRIC_BASE_SCOPES.WORKSPACE_READ // Need workspace access to manage shares
+  ].join(" "),
+  
+  // External Data Shares Client - read-only operations
+  EXTERNAL_DATA_SHARES_READ: [
+    FABRIC_BASE_SCOPES.EXTERNAL_DATA_SHARES_READ,
+  ].join(" "),
+  
   // Read-only scopes for monitoring/reporting
   READ_ONLY: [
     FABRIC_BASE_SCOPES.ITEM_READ,
@@ -216,6 +232,10 @@ export const SCOPE_PAIRS: Record<string, ScopePair> = {
   SPARK_LIVY: {
     read: SCOPES.SPARK_LIVY_READ,
     write: SCOPES.SPARK_LIVY
+  },
+  EXTERNAL_DATA_SHARES: {
+    read: SCOPES.EXTERNAL_DATA_SHARES_READ,
+    write: SCOPES.EXTERNAL_DATA_SHARES
   }
 };
 
