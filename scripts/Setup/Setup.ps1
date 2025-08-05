@@ -2,7 +2,7 @@ param (
     #Only the FERemote hosting type is supported for now   
     [string]$HostingType = "FERemote",
     # The name of the workload, used for the Entra App and the workload in the Fabric portal
-    [String]$WorkloadName = "Org.MyWorkloadSample",
+    [String]$WorkloadName = "",
     # The display name of the workload, used in the Fabric portal
     [String]$WorkloadDisplayName = "My Sample Workload",
     # The Workspace Id to use for development
@@ -25,6 +25,21 @@ param (
 # This script sets up the development gateway environment for the workload.
 ###############################################################################
 Write-Output "Setting up the environment..."
+ if ([string]::IsNullOrWhiteSpace($WorkloadName)) {
+    Write-Host "Enter your Workload Name that should be used."
+    Write-Host "To get started the Name should be in the form of Org.[YourProjectName] e.g. Org.MyWorkloadSample."
+    Write-Host "Please use the public documentation to better understand how Workload Names are structued and used."
+    $WorkloadName = Read-Host "WorkloadName"
+    if ([string]::IsNullOrWhiteSpace($WorkloadName)) {
+        Write-Error "Workspace Name is not set or is using the default placeholder value. Please provide a valid Workspace Name."
+        exit 1
+    } elseif (! [string]::StartsWith($WorkloadName, "Org.")) {
+        Write-Warning "Please make sure that you have registered the Workload name before you start working with it."
+    }
+}
+
+
+
 $setupDevGatewayScript = Join-Path $PSScriptRoot "..\Setup\SetupDevGateway.ps1"
 if (Test-Path $setupDevGatewayScript) {
     if ([string]::IsNullOrWhiteSpace($DevWorkspaceId) -or $DevWorkspaceId -eq "00000000-0000-0000-0000-000000000000") {
