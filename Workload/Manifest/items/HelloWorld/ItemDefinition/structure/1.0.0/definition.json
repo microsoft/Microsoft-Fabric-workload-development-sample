@@ -9,7 +9,7 @@
       "minCount": 1,
       "maxCount": 1,
       "schemaRef": {
-        "uri": "{{FRONTEND_URL}}/schemas/{{WORKLOAD_NAME}}.HelloWorld/definition/1.0.0/schema.json"
+        "uri": "{{FRONTEND_URL}}/schemas/{{WORKLOAD_NAME}}.HelloWorld/ItemDefinition/structure/1.0.0/definition.json"
       },
       "maxSize": "1MB"
     }

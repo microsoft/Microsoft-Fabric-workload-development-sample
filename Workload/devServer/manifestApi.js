@@ -55,7 +55,7 @@ router.get('/manifests_new/metadata', (req, res) => {
 router.get('/manifests_new', async (req, res) => {
   try {
     await buildManifestPackage(); // Wait for the build to complete before accessing the file
-    const filePath = path.resolve(__dirname, '../../config/Manifest/ManifestPackage.1.0.0.nupkg');
+    const filePath = path.resolve(__dirname, `../../build/Manifest/${process.env.WORKLOAD_NAME}.${process.env.WORKLOAD_VERSION}.nupkg`);
     // Check if the file exists
     await fs.access(filePath);
 

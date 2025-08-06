@@ -4,7 +4,7 @@
  */
 
 const manifestApi = require('./manifestApi');
-const schemaApi = require('./schemas')
+const schemaApi = require('./schemaApi')
 
 /**
  * Register all dev server APIs with an Express application

@@ -164,5 +164,5 @@ if($IsWindows){
     mono $nugetPath pack $nuspecPath -OutputDirectory $outputDir -Verbosity detailed
 }
 
-Write-Host “Created a new ManifestPackage in $outputDir." -ForegroundColor Blue
+Write-Host “✅ Created a new ManifestPackage in $outputDir." -ForegroundColor Blue
 
