@@ -11,6 +11,10 @@ import { SparkLivyClient } from "./SparkLivyClient";
 import { SparkClient } from "./SparkClient";
 import { FabricPlatformClient } from "./FabricPlatformClient";
 import { OneLakeClient } from "./OneLakeClient";
+import { ExternalDataSharesProviderClient } from "./ExternalDataSharesProviderClient";
+import { ExternalDataSharesRecipientClient } from "./ExternalDataSharesRecipientClient";
+import { TagsClient } from "./TagsClient";
+import { OneLakeDataAccessSecurityClient } from "./OneLakeDataAccessSecurityClient";
 
 /**
  * Comprehensive Fabric Platform API Client
@@ -28,6 +32,10 @@ export class FabricPlatformAPIClient {
   public readonly sparkLivy: SparkLivyClient;
   public readonly spark: SparkClient;
   public readonly oneLake: OneLakeClient;
+  public readonly externalDataShares: ExternalDataSharesProviderClient;
+  public readonly externalDataSharesRecipient: ExternalDataSharesRecipientClient;
+  public readonly tags: TagsClient;
+  public readonly oneLakeDataAccessSecurity: OneLakeDataAccessSecurityClient;
 
   constructor(workloadClient: WorkloadClientAPI) {
     this.workspaces = new WorkspaceClient(workloadClient);
@@ -41,6 +49,10 @@ export class FabricPlatformAPIClient {
     this.spark = new SparkClient(workloadClient);    
     this.sparkLivy = new SparkLivyClient(workloadClient);
     this.oneLake = new OneLakeClient(workloadClient);
+    this.externalDataShares = new ExternalDataSharesProviderClient(workloadClient);
+    this.externalDataSharesRecipient = new ExternalDataSharesRecipientClient(workloadClient);
+    this.tags = new TagsClient(workloadClient);
+    this.oneLakeDataAccessSecurity = new OneLakeDataAccessSecurityClient(workloadClient);
   }  
   
   /**
@@ -85,6 +97,11 @@ export class FabricPlatformAPIClient {
     client.operations.updateAuthenticationConfig(authConfig);
     client.sparkLivy.updateAuthenticationConfig(authConfig);
     client.spark.updateAuthenticationConfig(authConfig);
+    client.oneLake.updateAuthenticationConfig(authConfig);
+    client.externalDataShares.updateAuthenticationConfig(authConfig);
+    client.externalDataSharesRecipient.updateAuthenticationConfig(authConfig);
+    client.tags.updateAuthenticationConfig(authConfig);
+    client.oneLakeDataAccessSecurity.updateAuthenticationConfig(authConfig);
     
     return client;
   }
@@ -113,6 +130,11 @@ export class FabricPlatformAPIClient {
     client.operations.updateAuthenticationConfig(authConfig);
     client.sparkLivy.updateAuthenticationConfig(authConfig);
     client.spark.updateAuthenticationConfig(authConfig);
+    client.oneLake.updateAuthenticationConfig(authConfig);
+    client.externalDataShares.updateAuthenticationConfig(authConfig);
+    client.externalDataSharesRecipient.updateAuthenticationConfig(authConfig);
+    client.tags.updateAuthenticationConfig(authConfig);
+    client.oneLakeDataAccessSecurity.updateAuthenticationConfig(authConfig);
     
     return client;
   }
@@ -154,6 +176,23 @@ export class FabricPlatformAPIClient {
  *   connectionType: 'AdlsGen2',
  *   description: 'Connection to Azure Data Lake Storage Gen2'
  * });
+ * 
+ * // External Data Shares operations
+ * const providers = await fabricAPI.externalDataShares.getAllProviders(workspaceId);
+ * const shares = await fabricAPI.externalDataShares.getAllExternalDataShares(workspaceId, itemId);
+ * await fabricAPI.externalDataSharesRecipient.acceptInvitation(invitationToken, {
+ *   shortcutCreation: { name: 'MyShortcut', path: '/Files' }
+ * });
+ * 
+ * // Tags operations
+ * const allTags = await fabricAPI.tags.getAllTags();
+ * await fabricAPI.tags.applyTagsByName(workspaceId, itemId, ['Important', 'Production']);
+ * const productionTags = await fabricAPI.tags.findTagsByName('production');
+ * 
+ * // OneLake Data Access Security operations
+ * const dataAccessRoles = await fabricAPI.oneLakeDataAccessSecurity.getAllDataAccessRoles(workspaceId, itemId);
+ * const readRole = fabricAPI.oneLakeDataAccessSecurity.createReadRole('TableReaders', ['/Tables/SalesData'], members);
+ * await fabricAPI.oneLakeDataAccessSecurity.createOrUpdateDataAccessRoles(workspaceId, itemId, [readRole]);
  * 
  * // Spark operations
  * const sparkSettings = await fabricAPI.spark.getWorkspaceSparkSettings(workspaceId);

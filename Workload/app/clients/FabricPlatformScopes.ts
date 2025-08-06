@@ -39,6 +39,21 @@ export const FABRIC_BASE_SCOPES = {
   CONNECTION_READ: "https://api.fabric.microsoft.com/Connection.Read.All",
   CONNECTION_READWRITE: "https://api.fabric.microsoft.com/Connection.ReadWrite.All",
 
+  // External Data Shares operations
+  EXTERNAL_DATA_SHARES_READ: "https://api.fabric.microsoft.com/Item.ExternalDataShare.All",
+  EXTERNAL_DATA_SHARES_READWRITE: "https://api.fabric.microsoft.com/Item.ExternalDataShare.All",
+
+  // External Data Shares Recipient operations
+  EXTERNAL_DATA_SHARES_ACCEPT: "https://api.fabric.microsoft.com/ExternalDataShare.Accept.All",
+
+  // Tags operations
+  TAG_READ: "https://api.fabric.microsoft.com/Tag.Read.All",
+  TAG_READWRITE: "https://api.fabric.microsoft.com/Item.ReadWrite.All",
+
+  // OneLake Data Access Security operations
+  ONELAKE_DATA_ACCESS_SECURITY_READ: "https://api.fabric.microsoft.com/OneLake.Read.All",
+  ONELAKE_DATA_ACCESS_SECURITY_READWRITE: "https://api.fabric.microsoft.com/OneLake.ReadWrite.All",
+
 };
 
 // Predefined scope combinations for different clients
@@ -162,6 +177,51 @@ export const SCOPES = {
     FABRIC_BASE_SCOPES.LAKEHOUSE_READ
   ].join(" "),
   
+  // External Data Shares Client - focused on external data sharing operations
+  EXTERNAL_DATA_SHARES: [
+    FABRIC_BASE_SCOPES.EXTERNAL_DATA_SHARES_READ,
+    FABRIC_BASE_SCOPES.EXTERNAL_DATA_SHARES_READWRITE,
+    FABRIC_BASE_SCOPES.WORKSPACE_READ // Need workspace access to manage shares
+  ].join(" "),
+  
+  // External Data Shares Client - read-only operations
+  EXTERNAL_DATA_SHARES_READ: [
+    FABRIC_BASE_SCOPES.EXTERNAL_DATA_SHARES_READ,
+    FABRIC_BASE_SCOPES.WORKSPACE_READ
+  ].join(" "),
+  
+  // External Data Shares Recipient Client - focused on accepting invitations
+  EXTERNAL_DATA_SHARES_RECIPIENT: [
+    FABRIC_BASE_SCOPES.EXTERNAL_DATA_SHARES_ACCEPT,
+    FABRIC_BASE_SCOPES.ITEM_READWRITE // Need item write access to accept invitations
+  ].join(" "),
+  
+  // Tags Client - focused on tag management operations
+  TAGS: [
+    FABRIC_BASE_SCOPES.TAG_READ,
+    FABRIC_BASE_SCOPES.TAG_READWRITE,
+    FABRIC_BASE_SCOPES.WORKSPACE_READ // Need workspace access to manage item tags
+  ].join(" "),
+  
+  // Tags Client - read-only operations
+  TAGS_READ: [
+    FABRIC_BASE_SCOPES.TAG_READ,
+    FABRIC_BASE_SCOPES.WORKSPACE_READ
+  ].join(" "),
+  
+  // OneLake Data Access Security Client - focused on data access role management
+  ONELAKE_DATA_ACCESS_SECURITY: [
+    FABRIC_BASE_SCOPES.ONELAKE_DATA_ACCESS_SECURITY_READ,
+    FABRIC_BASE_SCOPES.ONELAKE_DATA_ACCESS_SECURITY_READWRITE,
+    FABRIC_BASE_SCOPES.WORKSPACE_READ // Need workspace access for data security operations
+  ].join(" "),
+  
+  // OneLake Data Access Security Client - read-only operations
+  ONELAKE_DATA_ACCESS_SECURITY_READ: [
+    FABRIC_BASE_SCOPES.ONELAKE_DATA_ACCESS_SECURITY_READ,
+    FABRIC_BASE_SCOPES.WORKSPACE_READ
+  ].join(" "),
+  
   // Read-only scopes for monitoring/reporting
   READ_ONLY: [
     FABRIC_BASE_SCOPES.ITEM_READ,
@@ -216,6 +276,22 @@ export const SCOPE_PAIRS: Record<string, ScopePair> = {
   SPARK_LIVY: {
     read: SCOPES.SPARK_LIVY_READ,
     write: SCOPES.SPARK_LIVY
+  },
+  EXTERNAL_DATA_SHARES: {
+    read: SCOPES.EXTERNAL_DATA_SHARES_READ,
+    write: SCOPES.EXTERNAL_DATA_SHARES
+  },
+  EXTERNAL_DATA_SHARES_RECIPIENT: {
+    read: SCOPES.EXTERNAL_DATA_SHARES_RECIPIENT,
+    write: SCOPES.EXTERNAL_DATA_SHARES_RECIPIENT
+  },
+  TAGS: {
+    read: SCOPES.TAGS_READ,
+    write: SCOPES.TAGS
+  },
+  ONELAKE_DATA_ACCESS_SECURITY: {
+    read: SCOPES.ONELAKE_DATA_ACCESS_SECURITY_READ,
+    write: SCOPES.ONELAKE_DATA_ACCESS_SECURITY
   }
 };
 
