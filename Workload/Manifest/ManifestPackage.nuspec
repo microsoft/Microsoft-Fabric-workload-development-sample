@@ -14,6 +14,7 @@
     <file src="{{MANIFEST_FOLDER}}\*.xml" target="BE" />
     <file src="{{MANIFEST_FOLDER}}\*.json" target="FE" />
     <file src="{{MANIFEST_FOLDER}}\assets\**" target="FE\assets" />
-    <file src="{{MANIFEST_FOLDER}}\items\**" target="FE\items" />
+    <!-- TODO will be added once schemas are allowed -->
+    <!-- file src="{{MANIFEST_FOLDER}}\items\**" target="items" / -->
   </files>
 </package>
