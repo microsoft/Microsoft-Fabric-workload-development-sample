@@ -118,8 +118,8 @@ $ManifestPath = Join-Path $ManifestDir "$WorkloadName.$WorkloadVersion.nupkg"
 
 $DevGatewayConfig = @{
     WorkspaceGuid = $DevWorkspaceId
-    WorkloadManifestPath = $ManifestPath
-    WorkloadEndpoint = $BackendBaseUrl
+    ManifestPackageFilePath = $ManifestPath
+    WorkloadEndpointURL = $BackendBaseUrl
 }
 
 $DevGatewayFile = Join-Path $DevGatewayDir "workload-dev-mode.json"

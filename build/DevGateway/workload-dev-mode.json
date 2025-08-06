@@ -1,5 +1,0 @@
-{
-  "WorkloadEndpoint": "http://localhost:60005/",
-  "WorkloadManifestPath": "C:\\Dev\\Fabric\\WDK\\Microsoft-Fabric-workload-development-sample\\build\\Manifest\\Org.MyFERemoteWorkloadSample.1.0.0.nupkg",
-  "WorkspaceGuid": "d93a1ddb-3f94-4a2f-9b43-0afe4cdb9f17"
-}
