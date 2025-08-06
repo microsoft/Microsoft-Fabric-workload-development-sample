@@ -876,3 +876,115 @@ export interface UpdateExternalDataShareProviderRequest {
   connectionDetails?: ExternalDataShareProviderConnection;
 }
 
+// ============================
+// External Data Shares Recipient Types
+// ============================
+
+/**
+ * External data share invitation details
+ */
+export interface ExternalDataShareInvitationDetails {
+  pathsDetails: ExternalDataSharePathDetails[];
+  providerTenantDetails: ExternalDataShareProviderTenantDetails;
+}
+
+/**
+ * Details of a path that was shared as part of external data sharing
+ */
+export interface ExternalDataSharePathDetails {
+  name: string;
+  pathId: string;
+  type: ExternalDataSharePathType;
+}
+
+/**
+ * The type of a path in an external data share
+ */
+export type ExternalDataSharePathType = 'Folder' | 'Table';
+
+/**
+ * External data share's provider tenant details
+ */
+export interface ExternalDataShareProviderTenantDetails {
+  displayName: string;
+  tenantId: string;
+  verifiedDomainName: string;
+}
+
+/**
+ * The request payload for accepting an external data share invitation
+ */
+export interface AcceptExternalDataShareInvitationRequest {
+  itemId: string;
+  payload: ShortcutCreationPayload;
+  providerTenantId: string;
+  workspaceId: string;
+}
+
+/**
+ * Request payload for shortcut creation
+ */
+export interface ShortcutCreationPayload {
+  createShortcutRequests: CreateExternalDataShareShortcutRequest[];
+  path: string;
+  payloadType: 'ShortcutCreation';
+}
+
+/**
+ * Definitions for creating an external data share shortcut
+ */
+export interface CreateExternalDataShareShortcutRequest {
+  pathId: string;
+  shortcutName: string;
+}
+
+/**
+ * The response for accepting an external data share invitation
+ */
+export interface AcceptExternalDataShareInvitationResponse {
+  value: ExternalDataShareShortcutInfo[];
+}
+
+/**
+ * Information about a shortcut that was created by accepting an external data share invitation
+ */
+export interface ExternalDataShareShortcutInfo {
+  itemId: string;
+  name: string;
+  path: string;
+  workspaceId: string;
+}
+
+// Tags Types
+export interface Tag {
+  id: string;
+  name: string;
+  description?: string;
+  color: string;
+}
+
+export interface Tags {
+  value: Tag[];
+  continuationToken?: string;
+  continuationUri?: string;
+}
+
+export interface ApplyTagsRequest {
+  tags: {
+    id: string;
+  }[];
+}
+
+export interface UnapplyTagsRequest {
+  tags: {
+    id: string;
+  }[];
+}
+
+// OneLake Data Access Security Types
+export interface DataAccessRoles {
+  value: DataAccessRole[];
+  continuationToken?: string;
+  continuationUri?: string;
+}
+
