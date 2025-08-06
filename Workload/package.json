@@ -7,8 +7,8 @@
     "start:devServer": "env-cmd -f .env.dev webpack serve --open --config ./devServer/webpack.config.js",
     "start:devGateway": "node ./devServer/start-devGateway.js",
     "start:codespace": "node --max-old-space-size=4096 ./node_modules/.bin/env-cmd -f .env.dev webpack serve --open --config ./devServer/webpack.config.js --no-hot",    
-    "build:test": "env-cmd -f .env.test webpack --config ./devServer/webpack.config.js --output-path ../release/Frontend --progress",
-    "build:prod": "env-cmd -f .env.prod webpack --config ./devServer/webpack.config.js --output-path ../release/Frontend --mode production --progress"
+    "build:test": "env-cmd -f .env.test webpack --config ./devServer/webpack.config.js --output-path ../build/Frontend --progress",
+    "build:prod": "env-cmd -f .env.prod webpack --config ./devServer/webpack.config.js --output-path ../build/Frontend --mode production --progress"
   },
   "author": "",
   "license": "ISC",

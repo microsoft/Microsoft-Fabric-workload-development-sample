@@ -3,10 +3,10 @@ param (
     [String]$WorkloadName = "Org.MyWorkloadSample",
     # The Entra Application ID for the frontend
     # If not provided, the user will be prompted to enter it or create a new one.
-    [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
+    [String]$FrontendAppId = "00000000-0000-0000-0000-000000000000",
     # Not used in the current setup, but can be used for future backend app configurations
     # If not provided, it will default to an empty string.
-    [String]$AADBackendAppId,
+    [String]$BackendAppId,
     # The version of the workload, used for the manifest package
     [String]$WorkloadVersion = "1.0.0",
     # Environment that should be build
@@ -17,8 +17,8 @@ param (
 # Define key-value dictionary for replacements
 $replacements = @{
     "WORKLOAD_NAME" = $WorkloadName
-    "FRONTEND_APP_ID" = $AADFrontendAppId
-    "BACKEND_APP_ID" = $AADBackendAppId
+    "FRONTEND_APPID" = $FrontendAppId
+    "BACKEND_APPID" = $BackendAppId
     "WORKLOAD_VERSION" = $WorkloadVersion
 }
 

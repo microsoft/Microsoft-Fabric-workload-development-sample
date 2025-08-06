@@ -1,10 +1,8 @@
 param(
     # The GUID of the workspace to use for the developer environment
-    [Parameter(Mandatory=$false)]
-    [string]$WorkspaceGuid,
-    [Parameter(Mandatory=$false)]
+    [string]$DevWorkspaceId,
     # Force flag to overwrite existing configurations and don't prompt the user
-    [boolean]$Force = $false,
+    [boolean]$Force = $false
 
 )
 
@@ -18,9 +16,10 @@ Write-Host ""
 # Paths
 $ScriptRoot = $PSScriptRoot
 $ProjectRoot = Split-Path -Parent (Split-Path -Parent $ScriptRoot)
-$DevGatewayDir = Join-Path $ProjectRoot "config\DevGateway"
-$ManifestDir = Join-Path $ProjectRoot "config\Manifest"
+$DevGatewayDir = Join-Path $ProjectRoot "build\DevGateway"
 $WorkloadDir = Join-Path $ProjectRoot "Workload"
+$ManifestDir = Join-Path $ProjectRoot "build/Manifest"
+
 
 # Check if .env files exist (should be created by SetupProject.ps1)
 $EnvDevFile = Join-Path $WorkloadDir ".env.dev"
@@ -41,7 +40,7 @@ Get-Content $EnvDevFile | Where-Object { $_ -notmatch '^#' -and $_ -notmatch '^$
 }
 
 # Validate required configuration
-$RequiredKeys = @('WORKLOAD_NAME', 'FRONTEND_BASE_URL')
+$RequiredKeys = @('WORKLOAD_NAME', 'FRONTEND_URL')
 foreach ($Key in $RequiredKeys) {
     if (-not $EnvConfig.ContainsKey($Key)) {
         Write-Error "Required configuration '$Key' not found in $EnvDevFile"
@@ -49,19 +48,19 @@ foreach ($Key in $RequiredKeys) {
     }
 }
 
-# Get workspace GUID from user or environment variable
-if (-not $WorkspaceGuid) {
-    $WorkspaceGuid = $env:DEV_WORKSPACE_GUID
+# Get workspace ID from user or environment variable
+if (-not $DevWorkspaceId) {
+    $DevWorkspaceId = $env:FABRIC_DEV_WORKSPACE_GUID
 }
 
-if (-not $WorkspaceGuid) {
+if (-not $DevWorkspaceId) {
     Write-Host "🏢 Workspace Configuration" -ForegroundColor Yellow
     Write-Host "You need to provide a Fabric workspace GUID for development."
     Write-Host "This should be a real workspace ID within your Fabric tenant."
     Write-Host ""
-    $WorkspaceGuid = Read-Host "Enter your development workspace GUID"
-    
-    if (-not $WorkspaceGuid) {
+    $DevWorkspaceId = Read-Host "Enter your development workspace GUID"
+
+    if (-not $DevWorkspaceId) {
         Write-Error "Workspace GUID is required for development setup"
         exit 1
     }
@@ -69,19 +68,34 @@ if (-not $WorkspaceGuid) {
     # Ask if user wants to save it as environment variable
     $saveEnvVar = Read-Host "Do you want to save this workspace GUID as an environment variable? (y/n)"
     if ($saveEnvVar -eq 'y' -or $saveEnvVar -eq 'Y') {
-        [Environment]::SetEnvironmentVariable("DEV_WORKSPACE_GUID", $WorkspaceGuid, "User")
-        Write-Host "✅ Workspace GUID saved as environment variable DEV_WORKSPACE_GUID" -ForegroundColor Green
+        [Environment]::SetEnvironmentVariable("FABRIC_DEV_WORKSPACE_GUID", $DevWorkspaceId, "User")
+        Write-Host "✅ Workspace GUID saved as environment variable FABRIC_DEV_WORKSPACE_GUID" -ForegroundColor Green
     }
 }
 
 # Validate GUID format
 try {
-    [System.Guid]::Parse($WorkspaceGuid) | Out-Null
+    [System.Guid]::Parse($DevWorkspaceId) | Out-Null
 } catch {
-    Write-Error "Invalid GUID format for workspace: $WorkspaceGuid"
+    Write-Error "Invalid GUID format for workspace: $DevWorkspaceId"
     exit 1
 }
 
+###############################################################################
+# Download the DevGateway
+###############################################################################
+$downloadDevGatewayScript = Join-Path $PSScriptRoot "..\Setup\DownloadDevGateway.ps1"
+if (Test-Path $downloadDevGatewayScript) {   
+    Write-Host "Running DownloadDevGateway.ps1..."
+    & $downloadDevGatewayScript -Force $Force 
+} else {
+    Write-Error "DownloadDevGateway.ps1 not found at $downloadDevGatewayScript"
+    exit 1
+}
+
+###############################################################################
+# Setup DevGateway configuration files
+###############################################################################
 # Ensure directories exist
 Write-Host "📁 Creating output directories..." -ForegroundColor Blue
 if (-not (Test-Path $DevGatewayDir)) {
@@ -98,38 +112,19 @@ if (-not (Test-Path $ManifestDir)) {
 Write-Host "🔧 Generating DevGateway configuration..." -ForegroundColor Blue
 
 $WorkloadName = $EnvConfig['WORKLOAD_NAME']
-$FrontendBaseUrl = $EnvConfig['FRONTEND_BASE_URL']
-$ManifestPath = Join-Path $ManifestDir "WorkloadManifest.xml"
+$WorkloadVersion = $EnvConfig['WORKLOAD_VERSION']
+$BackendBaseUrl = $EnvConfig['BACKEND_URL']
+$ManifestPath = Join-Path $ManifestDir "$WorkloadName.$WorkloadVersion.nupkg"
 
 $DevGatewayConfig = @{
-    WorkspaceGuid = $WorkspaceGuid
-    WorkloadName = $WorkloadName
+    WorkspaceGuid = $DevWorkspaceId
     WorkloadManifestPath = $ManifestPath
-    WorkloadEndpoint = $FrontendBaseUrl
+    WorkloadEndpoint = $BackendBaseUrl
 }
 
 $DevGatewayFile = Join-Path $DevGatewayDir "workload-dev-mode.json"
 $DevGatewayConfig | ConvertTo-Json -Depth 10 | Out-File -FilePath $DevGatewayFile -Encoding UTF8
 Write-Host "  ✅ Created: $DevGatewayFile" -ForegroundColor Green
-
-# Copy/generate basic manifest files if they don't exist
-Write-Host "📄 Setting up manifest files..." -ForegroundColor Blue
-$ManifestTemplateDir = Join-Path $ProjectRoot "config\templates\Manifest"
-
-if (Test-Path $ManifestTemplateDir) {
-    $ManifestFiles = Get-ChildItem -Path $ManifestTemplateDir -File
-    foreach ($File in $ManifestFiles) {
-        $DestPath = Join-Path $ManifestDir $File.Name
-        if (-not (Test-Path $DestPath)) {
-            Copy-Item -Path $File.FullName -Destination $DestPath -Force
-            Write-Host "  ✅ Copied: $($File.Name)" -ForegroundColor Green
-        } else {
-            Write-Host "  ℹ️ Already exists: $($File.Name)" -ForegroundColor Yellow
-        }
-    }
-} else {
-    Write-Warning "Manifest template directory not found: $ManifestTemplateDir"
-}
 
 Write-Host ""
 Write-Host "🎉 Developer environment setup completed!" -ForegroundColor Green
@@ -146,25 +141,15 @@ if (Test-Path $ManifestPath) {
 }
 
 Write-Host ""
-Write-Host "🚀 Next steps:" -ForegroundColor Yellow
-Write-Host "  1. Start the development server: .\scripts\Run\StartDevServer.ps1" -ForegroundColor Cyan
-Write-Host "  2. Start the DevGateway: .\scripts\Run\StartDevGateway.ps1" -ForegroundColor Cyan
-Write-Host "  3. Enable Fabric Developer mode in the Fabric portal" -ForegroundColor Cyan
-Write-Host "     https://app.fabric.microsoft.com/ > Settings > Developer settings" -ForegroundColor Gray
-Write-Host ""
-Write-Host "💡 Environment variables for future runs:" -ForegroundColor Yellow
-Write-Host "  DEV_WORKSPACE_GUID=$WorkspaceGuid" -ForegroundColor Gray
-
-
+Write-Host "Next steps:" -ForegroundColor Yellow
 # Promt user to start the DevServer
 $startDevServerScript = Join-Path $PSScriptRoot "..\Run\StartDevServer.ps1"
 if (Test-Path $startDevServerScript) {
     $startDevServerScriptFull = (Resolve-Path $startDevServerScript).Path
-    Write-Host ""
-    Write-Host "To launch your workload webapp, start the DevServer locally with the following script:" -ForegroundColor Blue
-    Write-Host "`"$startDevServerScriptFull`""
+    Write-Host "  💻 Launch the DevServer locally:" -ForegroundColor Green
+    Write-Host "  `"$startDevServerScriptFull`""
 } else {
-    Write-Host "StartDevServer.ps1 not found at $startDevServerScript"
+    Write-Host "StartDevServer.ps1 not found at $startDevServerScript" -ForegroundColor Red
 }
 
 # Prompt user to run StartDevGateway.ps1 with absolute path
@@ -172,16 +157,16 @@ $startDevGatewayScript = Join-Path $PSScriptRoot "..\Run\StartDevGateway.ps1"
 if (Test-Path $startDevGatewayScript) {
     $startDevGatewayScriptFull = (Resolve-Path $startDevGatewayScript).Path
     Write-Host ""
-    Write-Host “To register your workload in dev-mode on the Fabric tenant, start the DevGateway with the following script:" -ForegroundColor Blue
-    Write-Host "`"$startDevGatewayScriptFull`""
+    Write-Host "  💻 Start the DevGateway to register your dev instance with Fabric:" -ForegroundColor Green
+    Write-Host "  `"$startDevGatewayScriptFull`""
 } else {
-    Write-Host "StartDevGateway.ps1 not found at $startDevGatewayScript"
+    Write-Host "StartDevGateway.ps1 not found at $startDevGatewayScript" -ForegroundColor Red
 }
 
 Write-Host ""
-Write-Host "Make sure you have enabled the Fabric Developer mode in the Fabric portal." -ForegroundColor Blue
-Write-Host "Open https://app.fabric.microsoft.com/ and activate it under Settings > Developer settings > Fabric Developer mode."
-Write-Host "Be aware this setting will not stay on forever. Check back if you have problems if it is still active."
+Write-Host "  💻 Make sure you have enabled the Fabric Developer mode in the Fabric portal." -ForegroundColor Green
+Write-Host "  Open https://app.fabric.microsoft.com/ and activate it under Settings > Developer settings > Fabric Developer mode."
+Write-Host "  Be aware this setting will not stay on forever. Check back if you have problems if it is still active."
 Write-Host ""
 Write-Host "After following all the instructions above, you will see your workload being available in the Fabric portal."
 Write-Host "It will appear in the Workload Hub and items can be created in the workspace you have configured."

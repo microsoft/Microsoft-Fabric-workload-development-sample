@@ -1,6 +1,0 @@
-{
-  "WorkspaceGuid": "{{DEV_WORKSPACE_GUID}}",
-  "WorkloadName": "{{WORKLOAD_NAME}}",
-  "WorkloadManifestPath": "{{MANIFEST_PATH}}",
-  "WorkloadEndpoint": "{{FRONTEND_BASE_URL}}"
-}

@@ -415,5 +415,5 @@ scripts/Setup/My*
 # Fabric Workload files
 Workload/node_modules/*
 Workload/package-lock.json
-Workload/.env*
 Workload/dist/*
+Workload/build/*

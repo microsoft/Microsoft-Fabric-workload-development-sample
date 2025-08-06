@@ -22,6 +22,7 @@ import { FileTree } from "./FileTree";
 import { getOneLakeFilePath } from "../../../clients/OneLakeClient";
 import { callDatahubOpen } from "../../../controller/DataHubController";
 import { ItemReference } from "../../../controller/ItemCRUDController";
+import { env } from "process";
 
 export interface OneLakeItemExplorerItem extends ItemReference {
   displayName: string;
@@ -131,10 +132,18 @@ export function OneLakeItemExplorerComponent(props: OneLakeItemExplorerComponent
     return false;
   }
 
+  function getDefaultItemTypes() {
+    const workloadName = process.env.WORKLOAD_NAME;
+    const itemTypes = process.env.ITEM_NAMES
+      .split(",")
+      .map(item => `${workloadName}.${item.trim()}`);
+    return ["Lakehouse", ...itemTypes];
+  }
+
   async function onDatahubClicked() {
     const result = await callDatahubOpen(
       props.workloadClient,
-      [ ...props.config.allowedItemTypes || ["Lakehouse"] ],
+      [ ...props.config.allowedItemTypes || getDefaultItemTypes() ],
       "Select an item to use for Frontend Sample Workload",
       false
     );

@@ -91,8 +91,8 @@ $ProductionWorkloadName = "YourOrganization.YourWorkloadName"
 ```
 
 **Files requiring updates:**
-- `config/Manifest/WorkloadManifest.xml`
-- All `config/Manifest/*Item.xml` files
+- `build/Manifest/WorkloadManifest.xml`
+- All `build/Manifest/*Item.xml` files
 - `Workload/.env.prod`
 
 ### 1.2: Configure Production Entra Application
@@ -138,7 +138,7 @@ cd "path\to\Microsoft-Fabric-workload-development-sample"
 # Build release with production configuration
 .\scripts\Build\BuildRelease.ps1 `
   -WorkloadName "YourOrganization.YourWorkloadName" `
-  -AADFrontendAppId "your-production-aad-app-id" `
+  -FrontendAppId "your-production-aad-app-id" `
   -WorkloadVersion "1.0.0"
 ```
 
@@ -251,7 +251,7 @@ jobs:
         run: |
           pwsh ./scripts/Build/BuildRelease.ps1 `
             -WorkloadName "${{ secrets.WORKLOAD_NAME }}" `
-            -AADFrontendAppId "${{ secrets.AAD_FRONTEND_APP_ID }}" `
+            -FrontendAppId "${{ secrets.FRONTEND_APPID }}" `
             -WorkloadVersion "1.0.0"
             
       - name: Deploy to Azure Static Web Apps
@@ -465,7 +465,7 @@ az staticwebapp appsettings set `
 # Complete production build
 .\scripts\Build\BuildRelease.ps1 `
   -WorkloadName "YourOrg.YourWorkload" `
-  -AADFrontendAppId "prod-app-id" `
+  -FrontendAppId "prod-app-id" `
   -WorkloadVersion "1.0.0"
 ```
 

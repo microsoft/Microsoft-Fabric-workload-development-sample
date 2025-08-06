@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='utf-8'?>
+<WorkloadManifestConfiguration SchemaVersion="2.0.0">
+  <Workload WorkloadName="Org.MyFERemoteWorkloadSample" HostingType="FERemote">
+    <Version>1.0.0</Version>
+    <RemoteServiceConfiguration>
+      <CloudServiceConfiguration>
+        <Cloud>Public</Cloud>
+        <AADFEApp>
+          <!-- Add your entra application here that you have created for the Workload -->
+          <AppId>4ab7456a-b7f9-4c7e-8c09-448647c6363e</AppId>
+        </AADFEApp>
+        <EnableSandboxRelaxation>false</EnableSandboxRelaxation>
+        <Endpoints>
+          <ServiceEndpoint>
+            <Name>Frontend</Name>
+            <Url>http://localhost:60006/</Url>
+            <IsEndpointResolutionService>false</IsEndpointResolutionService>
+          </ServiceEndpoint>
+        </Endpoints>
+      </CloudServiceConfiguration>
+    </RemoteServiceConfiguration>
+  </Workload>
+</WorkloadManifestConfiguration>
+

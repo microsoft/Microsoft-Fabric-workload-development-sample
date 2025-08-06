@@ -279,7 +279,7 @@ When starting a workload, follow this checklist:
 **Solutions:**
 - Run `.\scripts\Build\BuildManifestPackage.ps1` manually
 - Check `config/DevGateway/workload-dev-mode.json` path is correct
-- Verify manifest files exist in `config/Manifest/`
+- Verify manifest files exist in `build/Manifest/`
 
 #### Issue: Workload Not Appearing in Fabric
 **Symptoms:** Workload not visible in Fabric workspace

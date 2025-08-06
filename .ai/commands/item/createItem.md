@@ -6,17 +6,7 @@ applyTo: "/Workload/app/items/[ItemName]Item/"
 
 ## Process
 
-This guide provides step-by-step instructions for AI tools to create a new item in the Microsoft Fabric workl#### 8.1: Add Item Icon
-
-Create an icon file: `config/templates/Manifest/assets/images/[ItemName]Item-icon.png`
-
-- **Size**: 24x24 pixels recommended
-- **Format**: PNG with transparency
-- **Style**: Follow Fabric design guidelines
-
-#### 8.2: Add Localization Entries
-
-Update `config/templates/Manifest/assets/locales/en-US/translations.json`:item requires implementation files, manifest configuration, routing setup, and asset management.
+This guide provides step-by-step instructions for AI tools to create a new item in the Microsoft Fabric Workload Development Kit (WDK) v2. Creating a new item requires implementation files, manifest configuration, routing setup, and environment variable updates.
 
 ### Step 1: Create Item Implementation Structure
 
@@ -154,13 +144,13 @@ export function [ItemName]ItemEditorRibbon(props: [ItemName]ItemEditorRibbonProp
 ```
 
 **Key Elements**:
-- **Location**: Place in `config/templates/Manifest/items/[ItemName]/[ItemName]Item.xml`
+- **Location**: Place in `Workload/Manifest/items/[ItemName]/[ItemName]Item.xml`
 - **Template Processing**: Use `{{WORKLOAD_NAME}}` placeholder for environment-specific generation
 - **Naming Convention**: Follow `[ItemName]Item.xml` pattern
 - **Category**: Fabric category (Data, Analytics, etc.)
 - **Environment Generation**: Manifest generation will replace placeholders with values from .env files
 
-#### 6.2: Create JSON Manifest (`config/templates/Manifest/items/[ItemName]/[ItemName]Item.json`)
+#### 6.2: Create JSON Manifest (`Workload/Manifest/items/[ItemName]/[ItemName]Item.json`)
 
 ```json
 {
@@ -223,14 +213,14 @@ import { [ItemName]ItemEditor } from "./items/[ItemName]Item/[ItemName]ItemEdito
 
 #### 8.1: Add Item Icon
 
-Create an icon file: `config/Manifest/assets/images/[ItemName]Item-icon.png`
+Create an icon file: `Workload/Manifest/assets/images/[ItemName]Item-icon.png`
 - **Size**: 24x24 pixels recommended
 - **Format**: PNG with transparency
 - **Style**: Follow Fabric design guidelines
 
 #### 8.2: Add Localization Strings
 
-Update `config/Manifest/assets/locales/en-US/translations.json`:
+Update `Workload/Manifest/assets/locales/en-US/translations.json`:
 
 ```json
 {
@@ -247,11 +237,40 @@ Update `config/Manifest/assets/locales/en-US/translations.json`:
 
 #### 8.3: Update Product.json (if needed)
 
-If your item requires specific workload-level configuration, update `config/templates/Manifest/Product.json` to include references to your new item type.
+If your item requires specific workload-level configuration, update `Workload/Manifest/Product.json` to include references to your new item type.
 
 **Note**: Remember that Product.json is a template and may use placeholders that get replaced during manifest generation.
 
-### Step 9: Testing and Validation
+### Step 9: 🚨 CRITICAL - Update Environment Variables
+
+**IMPORTANT**: After creating a new item, you MUST update the `ITEM_NAMES` variable in ALL environment files, or your item will not be included in the build:
+
+1. **Update Workload/.env.dev**:
+   ```bash
+   # Before
+   ITEM_NAMES=HelloWorld
+   
+   # After - add your new item
+   ITEM_NAMES=HelloWorld,[ItemName]
+   ```
+
+2. **Update Workload/.env.test**:
+   ```bash
+   ITEM_NAMES=HelloWorld,[ItemName]
+   ```
+
+3. **Update Workload/.env.prod**:
+   ```bash
+   ITEM_NAMES=HelloWorld,[ItemName]
+   ```
+
+**Why This Matters**:
+- The ITEM_NAMES variable controls which items are included when building the manifest package
+- Missing items from this list will NOT appear in the workload
+- Each environment can have different sets of items enabled
+- This is required for the BuildManifestPackage.ps1 script to include your item
+
+### Step 10: Testing and Validation
 
 1. **Build the project**:
    ```powershell
@@ -270,7 +289,7 @@ If your item requires specific workload-level configuration, update `config/temp
    - Verify editor loads correctly
    - Test save/load functionality
 
-### Step 10: Build and Deploy
+### Step 11: Build and Deploy
 
 1. **Build manifest package**:
    ```powershell
@@ -294,14 +313,16 @@ When creating a new item, ensure all these components are created:
 - [ ] `[ItemName]ItemEditorEmpty.tsx` - Empty state component
 - [ ] `[ItemName]ItemEditorRibbon.tsx` - Ribbon/toolbar component
 
-**Manifest Files** (in `config/templates/Manifest/items/[ItemName]/`):
+**Manifest Files** (in `Workload/Manifest/items/[ItemName]/`):
 - [ ] `[ItemName]Item.xml` - XML manifest template with placeholders like `{{WORKLOAD_NAME}}`
 - [ ] `[ItemName]Item.json` - JSON manifest with editor path and metadata
-- [ ] Update `config/templates/Manifest/Product.json` if workload-level configuration is needed
+
+**product Configuration File** (in `Workload/Manifest/Product.json`):
+- [ ] Update the file to include a createExperience section for the new item
 
 **Asset Files**:
-- [ ] `config/templates/Manifest/assets/images/[ItemName]Item-icon.png` - Item icon
-- [ ] Localization entries in `config/templates/Manifest/assets/locales/*/translations.json`
+- [ ] `Workload/Manifest/assets/images/[ItemName]Item-icon.png` - Item icon
+- [ ] Localization entries in `Workload/Manifest/assets/locales/*/translations.json`
 
 **Code Integration**:
 - [ ] Route added to `Workload/app/App.tsx`

@@ -1,169 +1,190 @@
-# Solution: Enhanced Configuration Management System
+# Solution: WDK v2 .env-Based Configuration System
 
 ## 🎯 **Problem Solved**
 
-You identified a critical challenge with the current project setup:
+The original Microsoft Fabric WDK had several configuration management challenges:
 
-1. **Configuration Files** needed by all users for workload operation are auto-packaged
-2. **Local Customization Files** (like nuspec) need to be updated locally
-3. **Git Version Control** issues - what to commit vs. what to keep local
-4. **Configuration Consistency** between .env files and manifest XML files
+1. **Configuration Scattered** across multiple file formats and locations
+2. **Manual Synchronization** required between .env files and manifest XML files
+3. **Git Version Control** conflicts with generated vs. source files
+4. **Environment Management** complexity for dev/test/prod deployments
+5. **Template Processing** needed for placeholder replacement
 
-## ✅ **Comprehensive Solution Implemented**
+## ✅ **WDK v2 Solution Implemented**
 
-### **1. Template-Based Configuration System**
+### **1. .env-Based Configuration System**
 
 **Structure:**
 ```text
-config/
-├── shared/                     # COMMITTED - Single source of truth
-│   ├── config.json            # All configuration settings
-│   └── config-schema.json     # JSON schema validation
-├── templates/                  # COMMITTED - Templates with tokens  
-│   ├── Manifest/              # Manifest templates
-│   │   ├── WorkloadManifest.xml           # Main workload template
-│   │   ├── Product.json                   # Product template
-│   │   ├── ManifestPackage.nuspec         # NuGet package template
-│   │   ├── HelloWorldItem.xml             # SAMPLE item template
-│   │   ├── HelloWorldItem.json            # SAMPLE item template
-│   │   └── ItemTemplate.xml               # GENERIC item template
-│   │   └── ItemTemplate.json              # GENERIC item template
-│   ├── DevGateway/            # DevGateway templates
-│   └── Workload/              # Environment templates
-├── items/                      # COMMITTED - Customer's custom items
-│   ├── HelloWorldItem.xml     # Sample item (can be modified)
-│   ├── HelloWorldItem.json    # Sample item (can be modified)
-│   ├── MyCustomItem.xml       # Customer's custom item
-│   └── MyCustomItem.json      # Customer's custom item
-├── Manifest/                   # GENERATED - Not committed
-└── DevGateway/                 # GENERATED - Not committed
+Workload/
+├── .env.dev                    # COMMITTED - Development configuration
+├── .env.test                   # COMMITTED - Test/staging configuration  
+├── .env.prod                   # COMMITTED - Production configuration
+├── .env.template              # COMMITTED - Template for new environments
+├── Manifest/                   # COMMITTED - Templates with placeholders
+│   ├── WorkloadManifest.xml   # Main workload template
+│   ├── Product.json           # Product configuration template
+│   ├── assets/                # Asset templates
+│   │   ├── images/            # Item icons
+│   │   └── locales/           # Localization files
+│   └── items/                 # Item-specific templates
+│       ├── HelloWorld/        # Sample item templates
+│       │   ├── HelloWorldItem.xml
+│       │   └── HelloWorldItem.json
+│       └── [ItemName]/        # Custom item templates
+│           ├── [ItemName]Item.xml
+│           └── [ItemName]Item.json
+├── app/                       # Application source code
+build/                         # GENERATED - Not committed
+├── Manifest/                  # Generated manifest files
+└── DevGateway/               # Generated DevGateway config
 ```
 
-**Key Principle: Hybrid Approach**
-- **Core templates** with tokens in `config/templates/`
-- **Sample items** provided as examples customers can modify
-- **Customer items** in `config/items/` (committed with their project)
-- **Generated files** still not committed
-- **Automatic discovery** of items from `config/items/`
+**Key Principles:**
+- **Source vs. Generated**: Clear separation between templates (committed) and generated files (not committed)
+- **Environment-Specific**: Separate .env files for each deployment target
+- **Template Processing**: Placeholders like `{{WORKLOAD_NAME}}` replaced during build
+- **On-Demand Generation**: All artifacts generated from templates during build process
 
-### **2. Enhanced Scripts Created**
+### **2. Enhanced Scripts for WDK v2**
 
-#### **GenerateConfiguration.ps1**
-- Reads shared configuration
-- Processes all templates with token replacement
-- Generates all instance files
-- Validates consistency
+#### **SetupWorkload.ps1**
+- Creates environment-specific .env files from templates
+- Processes all Workload/Manifest/ templates with placeholder replacement
+- Sets up complete development environment
+- Includes safety checks to prevent overwriting existing configurations
 
-#### **UpdateWorkloadName.ps1**
-- Updates workload name in shared config
-- Automatically regenerates all files
-- Ensures consistency across environments
+#### **BuildManifestPackage.ps1**
+- Builds manifest packages from templates for specific environments
+- Copies templates from Workload/Manifest/ to build/Manifest/temp/
+- Replaces all placeholders like `{{WORKLOAD_NAME}}` with environment values
+- Generates environment-specific manifest packages
+- Validates processed files for consistency
 
-#### **ValidateConfiguration.ps1**
-- Checks consistency across all files
-- Reports inconsistencies
-- Can automatically fix issues
+#### **CreateNewItem.ps1**
+- Creates new item templates in Workload/Manifest/items/[ItemName]/
+- Copies from existing item templates (e.g., HelloWorld)
+- Preserves {{WORKLOAD_NAME}} placeholders for build-time replacement
+- Provides clear guidance on updating ITEM_NAMES in .env files
 
-### **3. Updated .gitignore Strategy**
+### **3. .gitignore Strategy for WDK v2**
 
 **What's Committed:**
 ```text
-✅ config/shared/           # Configuration source
-✅ config/templates/        # Templates
-❌ config/Manifest/         # Generated files  
-❌ config/DevGateway/       # Generated files
-❌ Workload/.env*           # Generated environment files
+✅ Workload/.env.dev           # Development environment configuration
+✅ Workload/.env.test          # Test environment configuration  
+✅ Workload/.env.prod          # Production environment configuration
+✅ Workload/.env.template      # Template for new environments
+✅ Workload/Manifest/          # Template files with placeholders
+✅ Workload/app/               # Application source code
+❌ build/                      # Generated files (all contents)
+❌ Workload/.env               # Active environment file (generated)
 ```
 
 **Benefits:**
+
 - No merge conflicts on generated files
-- Templates are version controlled
-- Local customizations don't interfere
-- Clean repository structure
+- Templates are version controlled with clear separation
+- Environment-specific configurations managed cleanly
+- Build-centric approach eliminates repository clutter
 
-### **4. Configuration Relationships Solved**
+### **4. Configuration Relationships in WDK v2**
 
-**Automatic Synchronization:**
-- `.env` files ↔ Manifest XML files
-- DevGateway config ↔ Workload settings
-- Environment-specific settings managed separately
-- All generated from same source
+**Automatic Build-Time Processing:**
 
-## 🚀 **How to Use the New System**
+- `.env` files → Template processing → `build/Manifest/` files
+- Environment selection → Appropriate .env file → Generated manifests
+- ITEM_NAMES variable → Controls which items are included in builds
+- Template placeholders → Replaced with environment-specific values
+
+## 🚀 **How to Use WDK v2 System**
 
 ### **For New Users (Setup)**
+
 ```powershell
-# 1. Clone repository (only templates included)
+# 1. Clone repository (includes templates and .env files)
 git clone repo
 
-# 2. Update shared configuration with your settings
-# Edit config/shared/config.json
+# 2. Update environment configuration for your workload
+# Edit Workload/.env.dev with your settings
 
-# 3. Generate all configuration files
-.\scripts\Setup\GenerateConfiguration.ps1
+# 3. Setup development environment  
+.\scripts\Setup\SetupWorkload.ps1
 
 # 4. Start development
+.\scripts\Run\StartDevServer.ps1
 .\scripts\Run\StartDevGateway.ps1
 ```
 
 ### **For Existing Users (Migration)**
+
 ```powershell
-# 1. Update shared configuration with current values
-# Copy current settings to config/shared/config.json
+# 1. Backup current configuration values
+# Save your existing workload settings
 
-# 2. Generate new structure
-.\scripts\Setup\GenerateConfiguration.ps1 -Force
+# 2. Update .env files with your current values
+# Edit Workload/.env.dev, .env.test, .env.prod
 
-# 3. Validate everything works
-.\scripts\Setup\ValidateConfiguration.ps1
+# 3. Re-setup environment
+.\scripts\Setup\SetupWorkload.ps1 -Force
+
+# 4. Validate everything works
+npm run build:test
 ```
 
 ### **For Configuration Updates**
+
 ```powershell
-# Update workload name
-.\scripts\Setup\UpdateWorkloadName.ps1 -WorkloadName "NewOrg.NewWorkload"
+# Update environment-specific settings
+# Edit appropriate .env file (dev/test/prod)
 
-# Update any configuration
-# Edit config/shared/config.json
-.\scripts\Setup\GenerateConfiguration.ps1
+# Build with updated configuration
+.\scripts\Build\BuildManifestPackage.ps1 -Environment dev
 
-# Validate consistency
-.\scripts\Setup\ValidateConfiguration.ps1
+# Or setup workload with new configuration
+.\scripts\Setup\SetupWorkload.ps1
+
+# For new items, update ITEM_NAMES in all .env files
+# Then rebuild
 ```
 
-## 🎉 **Benefits Achieved**
+## 🎉 **WDK v2 Benefits Achieved**
 
 ### **✅ Version Control Issues Solved**
+
 - Only source files and templates committed
-- No local file conflicts
+- Generated files clearly separated in build/ directory
+- No local file conflicts with .env-based configuration
 - Clean repository history
-- Easy collaboration
 
 ### **✅ Configuration Consistency Guaranteed**
-- Single source of truth eliminates inconsistencies
-- Automatic validation catches issues
-- Impossible to have mismatched settings
-- Environment-specific configurations managed properly
+
+- Environment files as single source of truth
+- Template processing ensures consistency
+- Build-time validation prevents mismatched settings
+- Environment-specific configurations properly isolated
 
 ### **✅ Maintainability Improved**
-- Update once, applies everywhere
-- Template-based approach scales
-- JSON schema provides validation
-- Automated scripts reduce errors
+
+- Update .env files, rebuild automatically applies everywhere
+- Template-based approach scales to new items easily
+- Clear separation of concerns between templates and generated files
+- Automated scripts reduce configuration errors
 
 ### **✅ User Experience Enhanced**
-- Simple configuration process
-- Clear error messages
-- Automatic fixes available
-- Comprehensive documentation
 
-## 🔄 **Migration Path**
+- Familiar .env file format for all developers
+- Clear error messages and guidance
+- Automated item creation with proper warnings
+- Comprehensive documentation and AI tooling support
 
-1. **Backup Current State**: Save your current configuration values
-2. **Update Shared Config**: Put your settings in `config/shared/config.json`
-3. **Generate Files**: Run `GenerateConfiguration.ps1 -Force`
-4. **Validate**: Run `ValidateConfiguration.ps1`
-5. **Test**: Start development environment to confirm everything works
-6. **Commit**: Commit only the `config/shared/` and `config/templates/` changes
+## 🔄 **Migration Path to WDK v2**
 
-This solution completely resolves your configuration management challenges while maintaining clean version control and ensuring consistency across all environments!
+1. **Understand New Structure**: Review the .env-based configuration system
+2. **Update Environment Files**: Configure your settings in Workload/.env.dev, .env.test, .env.prod
+3. **Update ITEM_NAMES**: Ensure all your custom items are listed in the ITEM_NAMES variable
+4. **Test Build Process**: Run BuildManifestPackage.ps1 to verify template processing
+5. **Update Development Workflow**: Use new scripts for setup and build processes
+6. **Commit Changes**: Commit .env files and Workload/Manifest/ templates (build/ directory remains ignored)
+
+This WDK v2 solution provides a robust, scalable configuration management system that eliminates version control conflicts while ensuring consistency across all deployment environments!

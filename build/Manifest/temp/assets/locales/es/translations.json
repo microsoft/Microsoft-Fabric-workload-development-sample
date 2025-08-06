@@ -1,0 +1,23 @@
+{
+  "Workload_Display_Name": "Carga de trabajo de muestra de WDKv2",
+  "Workload_Full_Display_Name": "Carga de trabajo de muestra de WDKv2",
+  "Workload_Description": "Carga de trabajo de muestra de WDKv2 con dos tipos de elementos y áreas de juego para que comience su experiencia de desarrollo 🚀",
+  "Learning_Material_1_Title": "Documentación del kit de desarrollo de carga de trabajo",
+  "Learning_Material_1_Description": "Descripción de la documentación del kit de desarrollo de carga de trabajo",
+  "Learning_Material_1_Introduction": "Comienza con el Kit de Desarrollo de Carga de Trabajo",
+  "Frontend_playground_Title": "Área de pruebas del SDK del cliente",
+  "Frontend_playground_Description": "Descripción del área de pruebas del SDK del cliente",
+  "Frontend_playground_Introduction": "Comienza con el área de pruebas del SDK del cliente",
+  "Data_playground_Title": "Área de pruebas de datos",
+  "Data_playground_Description": "Descripción del área de pruebas de datos",
+  "Data_playground_Introduction": "Comienza con el área de pruebas de datos",
+  "Fabric_UX_System_Title": "Documentación del sistema de UX de Fabric",
+  "Fabric_UX_System_Description": "Descripción del sistema de UX de Fabric",
+  "Fabric_UX_System_Introduction": "Comienza con el sistema de UX de Fabric",
+  "Workload_Hub_Workload_Slogan": "La forma más rápida de pasar de mil millones de puntos de datos a un punto de vista.",
+  "Workload_Hub_Workload_Description": "La carga de trabajo de Contoso permite a las organizaciones interactuar con los clientes en tiempo real y automatizar las decisiones comerciales operativas a gran escala. Admite una amplia variedad de actividades orientadas al cliente, como marketing personalizado y la siguiente mejor acción, y decisiones que afectan al cliente, incluidos los servicios de crédito y la prevención del fraude.",
+  "HelloWorldItem_DisplayName": "Artículo de Hola Mundo",
+  "HelloWorldItem_DisplayName_Plural": "Artículos de Hola Mundo",
+  "HelloWorldItem_Description": "Un elemento de Hola mundo para comenzar tu experiencia de desarrollo"
+}
+  

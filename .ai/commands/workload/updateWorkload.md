@@ -8,8 +8,8 @@ This guide provides instructions for updating Microsoft Fabric workload configur
 
 ### Environment-Based Configuration
 - **Environment Files**: `Workload/.env.dev`, `.env.test`, `.env.prod` - Primary configuration source
-- **Templates**: `config/templates/` - Version-controlled templates with placeholders
-- **Generated Files**: `config/Manifest/` and `config/DevGateway/` - Auto-generated from templates and .env files
+- **Templates**: `Workload/Manifest/` - Version-controlled templates with placeholders
+- **Generated Files**: `build/Manifest/` and `build/DevGateway/` - Auto-generated from templates and .env files
 
 ### Key Benefits
 - **Simplicity**: Standard .env format familiar to all developers
@@ -26,10 +26,10 @@ Update the appropriate .env file in the `Workload/` directory:
 **For Development** (`Workload/.env.dev`):
 ```bash
 WORKLOAD_VERSION=1.0.0
-WORKLOAD_NAME=YourOrganization.YourWorkloadName
+WORKLOAD_NAME=Org.YourWorkloadName
 ITEM_NAMES=HelloWorld,CustomItem
 FRONTEND_APPID=12345678-1234-1234-1234-123456789abc
-FRONTEND_BASE_URL=http://localhost:60006/
+FRONTEND_URL=http://localhost:60006/
 LOG_LEVEL=debug
 ```
 
@@ -39,7 +39,7 @@ WORKLOAD_VERSION=1.0.0
 WORKLOAD_NAME=YourOrganization.YourWorkloadName
 ITEM_NAMES=HelloWorld,CustomItem
 FRONTEND_APPID=12345678-1234-1234-1234-123456789abc
-FRONTEND_BASE_URL=https://your-staging-url.azurestaticapps.net/
+FRONTEND_URL=https://your-staging-url.azurestaticapps.net/
 LOG_LEVEL=info
 ```
 
@@ -49,7 +49,7 @@ WORKLOAD_VERSION=1.0.0
 WORKLOAD_NAME=YourOrganization.YourWorkloadName
 ITEM_NAMES=HelloWorld,CustomItem
 FRONTEND_APPID=12345678-1234-1234-1234-123456789abc
-FRONTEND_BASE_URL=https://your-production-url.azurestaticapps.net/
+FRONTEND_URL=https://your-production-url.azurestaticapps.net/
 # Update Workload Configuration - .env-Based System
 
 ## Process Overview
@@ -62,7 +62,7 @@ This guide provides instructions for updating Microsoft Fabric workload configur
 
 - **Environment Files**: `Workload/.env.dev`, `.env.test`, `.env.prod` - Primary configuration source
 - **Templates**: `config/templates/` - Version-controlled templates with placeholders
-- **Generated Files**: `config/Manifest/` and `config/DevGateway/` - Auto-generated from templates
+- **Generated Files**: `build/Manifest/` and `build/DevGateway/` - Auto-generated from templates
 
 ### Key Benefits
 
@@ -93,7 +93,7 @@ WORKLOAD_VERSION=1.0.0
 WORKLOAD_NAME=YourOrganization.YourWorkloadName
 ITEM_NAMES=HelloWorld,CustomItem
 FRONTEND_APPID=12345678-1234-1234-1234-123456789abc
-FRONTEND_BASE_URL=http://localhost:60006/
+FRONTEND_URL=http://localhost:60006/
 LOG_LEVEL=debug
 ```
 
@@ -104,7 +104,7 @@ WORKLOAD_VERSION=1.0.0
 WORKLOAD_NAME=YourOrganization.YourWorkloadName
 ITEM_NAMES=HelloWorld,CustomItem
 FRONTEND_APPID=12345678-1234-1234-1234-123456789abc
-FRONTEND_BASE_URL=https://your-staging-url.azurestaticapps.net/
+FRONTEND_URL=https://your-staging-url.azurestaticapps.net/
 LOG_LEVEL=info
 ```
 
@@ -115,7 +115,7 @@ WORKLOAD_VERSION=1.0.0
 WORKLOAD_NAME=YourOrganization.YourWorkloadName
 ITEM_NAMES=HelloWorld,CustomItem
 FRONTEND_APPID=12345678-1234-1234-1234-123456789abc
-FRONTEND_BASE_URL=https://your-production-url.azurestaticapps.net/
+FRONTEND_URL=https://your-production-url.azurestaticapps.net/
 LOG_LEVEL=warn
 ```
 
@@ -127,7 +127,7 @@ LOG_LEVEL=warn
 | `WORKLOAD_NAME` | Unique workload identifier | `MyCompany.MyWorkload` |
 | `ITEM_NAMES` | Comma-separated list of item names | `HelloWorld,CustomItem` |
 | `FRONTEND_APPID` | Azure AD App ID for authentication | `12345678-1234-1234-1234-123456789abc` |
-| `FRONTEND_BASE_URL` | Base URL for workload frontend | `http://localhost:60006/` |
+| `FRONTEND_URL` | Base URL for workload frontend | `http://localhost:60006/` |
 | `LOG_LEVEL` | Logging level | `debug`, `info`, `warn`, `error` |
 
 ## Step 2: Apply Configuration Changes
@@ -175,7 +175,7 @@ ITEM_NAMES=HelloWorld
 ITEM_NAMES=HelloWorld,NewCustomItem
 ```
 
-Then create the item configuration in `config/templates/Manifest/items/NewCustomItem/`.
+Then create the item configuration in `Workload/Manifest/items/NewCustomItem/`.
 
 ### 3.3: Update Frontend App ID
 
@@ -192,13 +192,13 @@ For different deployment environments:
 
 ```bash
 # Development
-FRONTEND_BASE_URL=http://localhost:60006/
+FRONTEND_URL=http://localhost:60006/
 
 # Staging
-FRONTEND_BASE_URL=https://staging-workload.azurestaticapps.net/
+FRONTEND_URL=https://staging-workload.azurestaticapps.net/
 
 # Production  
-FRONTEND_BASE_URL=https://prod-workload.azurestaticapps.net/
+FRONTEND_URL=https://prod-workload.azurestaticapps.net/
 ```
 
 ## Step 4: Template Updates
@@ -207,15 +207,15 @@ FRONTEND_BASE_URL=https://prod-workload.azurestaticapps.net/
 
 When modifying item configurations, update files in:
 
-- `config/templates/Manifest/items/[ItemName]/[ItemName]Item.xml` - Use placeholders like `{{WORKLOAD_NAME}}`
-- `config/templates/Manifest/items/[ItemName]/[ItemName]Item.json` - JSON configuration
+- `Workload/Manifest/items/[ItemName]/[ItemName]Item.xml` - Use placeholders like `{{WORKLOAD_NAME}}`
+- `Workload/Manifest/items/[ItemName]/[ItemName]Item.json` - JSON configuration
 
 ### 4.2: Update General Workload Templates
 
 Modify workload-level configuration:
 
-- `config/templates/Manifest/Product.json` - Workload metadata
-- `config/templates/Manifest/WorkloadManifest.xml` - Main manifest with placeholders
+- `Workload/Manifest/Product.json` - Workload metadata
+- `Workload/Manifest/WorkloadManifest.xml` - Main manifest with placeholders
 
 ## Step 5: Validation and Testing
 
@@ -269,8 +269,8 @@ During build/deployment, the appropriate .env file is used automatically based o
 ### File Locations
 
 - **Configuration**: `Workload/.env.dev`, `Workload/.env.test`, `Workload/.env.prod`
-- **Templates**: `config/templates/Manifest/` and `config/templates/Workload/`
-- **Generated**: `config/Manifest/` and `config/DevGateway/` (not committed)
+- **Templates**: `Workload/Manifest/` and `config/templates/Workload/`
+- **Generated**: `build/Manifest/` and `build/DevGateway/` (not committed)
 
 ### Common Commands
 
@@ -531,13 +531,12 @@ Test each environment configuration:
 The new system maintains these relationships automatically:
 
 ```text
-config/shared/config.json (SINGLE SOURCE OF TRUTH)
+Workload/.env.* (ENVIRONMENT CONFIGURATION)
        ↓
-config/templates/ (TEMPLATES WITH TOKENS)
+Workload/Manifest/ (TEMPLATES WITH TOKENS)
        ↓
-config/Manifest/ (GENERATED - NOT COMMITTED)
-config/DevGateway/ (GENERATED - NOT COMMITTED)  
-Workload/.env* (GENERATED - NOT COMMITTED)
+build/Manifest/ (GENERATED - NOT COMMITTED)
+build/DevGateway/ (GENERATED - NOT COMMITTED)  
 ```
 
 ### Troubleshooting
@@ -575,7 +574,7 @@ This enhanced template system ensures consistent configuration management across
 
 When updating a workload name, the following files must be updated consistently:
 
-### 1. Manifest Configuration Files (`config/Manifest/`)
+### 1. Manifest Configuration Files (`build/Manifest/`)
 
 #### `WorkloadManifest.xml`
 ```xml
@@ -611,7 +610,7 @@ WORKLOAD_NAME=[Organization].[WorkloadId]
 WORKLOAD_NAME=[Organization].[WorkloadId]
 ```
 
-### 3. Template Files (`config/templates/Manifest/`)
+### 3. Template Files (`Workload/Manifest/`)
 
 Templates use placeholder tokens that get replaced during setup:
 
@@ -646,15 +645,15 @@ Templates use placeholder tokens that get replaced during setup:
 ### Method 2: Manual Update Process
 
 #### Step 1: Update Template Files
-Update all template files in `config/templates/Manifest/` to ensure future setup runs use correct values.
+Update all template files in `Workload/Manifest/` to ensure future setup runs use correct values.
 
 #### Step 2: Update Manifest Files
-1. **Update `config/Manifest/WorkloadManifest.xml`**:
+1. **Update `build/Manifest/WorkloadManifest.xml`**:
    ```xml
    <Workload WorkloadName="NewOrg.NewWorkloadId" HostingType="FERemote">
    ```
 
-2. **Update all Item XML files** in `config/Manifest/`:
+2. **Update all Item XML files** in `build/Manifest/`:
    - Find all `*Item.xml` files
    - Update `TypeName` and `WorkloadName` attributes:
    ```xml

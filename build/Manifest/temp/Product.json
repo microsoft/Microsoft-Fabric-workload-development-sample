@@ -1,0 +1,112 @@
+{
+    "name": "Product",
+    "version": "1.100",
+    "displayName": "Workload_Display_Name",
+    "fullDisplayName": "Workload_Full_Display_Name",
+    "description": "Workload_Description",
+    "favicon": "assets/images/Workload-icon.png",
+    "icon": {
+      "name": "assets/images/Workload-icon.png"
+    },
+    "homePage": {
+      "learningMaterials": [
+        {
+          "title": "Frontend_playground_Title",
+          "introduction": "Frontend_playground_Introduction",
+          "description": "Frontend_playground_Description",
+          "image": "assets/images/LearningMaterial-playground.jpeg",
+          "onClick": {
+                  "action": "open.ClientSDKPlaygroundPage"
+                }
+        },
+        {
+          "title": "Data_playground_Title",
+          "introduction": "Data_playground_Introduction",
+          "description": "Data_playground_Description",
+          "image": "assets/images/LearningMaterial-playground.jpeg",
+          "onClick": {
+                  "action": "open.DataApiSamplePage"
+                }
+        },
+        {
+          "title": "Learning_Material_1_Title",
+          "introduction": "Learning_Material_1_Introduction",
+          "description": "Learning_Material_1_Description",
+          "image": "assets/images/LearningMaterial-generic.png",
+          "link": "https://aka.ms/Fabricdeveloperdocumentation"
+        },
+        {
+          "title": "Fabric_UX_System_Title",
+          "introduction": "Fabric_UX_System_Introduction",
+          "description": "Fabric_UX_System_Description",
+          "image": "assets/images/LearningMaterial-FabricUX.jpg",
+          "link": "https://aka.ms/fabricux"
+        }
+      ],
+      "newSection": {
+        "customActions": [
+        ]},
+        "recommendedItemTypes": [
+          "HelloWorld"
+        ]
+    },
+    "createExperience": {
+      "description": "Workload_Description",
+      "cards": [
+                {
+          "title": "HelloWorldItem_DisplayName",
+          "description": "HelloWorldItem_Description",
+          "icon": {
+            "name": "assets/images/HelloWorldItem-icon.png"
+          },
+          "icon_small": {
+            "name": "assets/images/HelloWorldItem-icon.png"
+          },
+          "availableIn": [
+            "home",
+            "create-hub",
+            "workspace-plus-new",
+            "workspace-plus-new-teams"
+          ],
+          "itemType": "HelloWorld",
+          "createItemDialogConfig": {
+            "onCreationFailure": { "action": "item.onCreationFailure" },
+            "onCreationSuccess": { "action": "item.onCreationSuccess" }
+          }
+        }
+      ]
+    },
+    "productDetail": {
+      "publisher": "Contoso",
+      "slogan": "Workload_Hub_Workload_Slogan",
+      "description": "Workload_Hub_Workload_Description",
+      "image": {
+        "mediaType": 0,
+        "source": "assets/images/WorkloadBanner.png"
+      },
+      "slideMedia": [
+        {
+          "mediaType": 1,
+          "source": "https://youtube.com/embed/UNgpBOCvwa8?si=KwsR879MaVZd5CJi"
+        },
+        {
+          "mediaType": 0,
+          "source": "assets/images/SampleWorkload1.png"
+        },
+        {
+          "mediaType": 0,
+          "source": "assets/images/SampleWorkload2.png"
+        }
+      ],
+        "supportLink": {
+          "documentation": {"url": "https://example.com/documentation"},
+          "certification": {"url": "https://example.com/certification"},
+          "help": {"url": "https://example.com/help"},
+          "privacy": {"url": "https://example.com/privacy"},
+          "terms": {"url": "https://example.com/terms"},
+          "license": {"url": "https://example.com/license"}
+      }
+    },
+    "itemJobTypes" :["storeData", "others"],
+    "compatibleItemTypes" : ["Lakehouse"]
+}

@@ -6,15 +6,7 @@ applyTo: "/Workload/app/items/[ItemName]Item/"
 
 ## 🔗 Base Instructions
 
-**REQUIRED**: First read the complete generic instructions at `.ai/commands/item/createCreate an icon file: `config/templates/Manifest/assets/images/[ItemName]Item-icon.png`
-
-- **Size**: 24x24 pixels recommended
-- **Format**: PNG with transparency
-- **Style**: Follow Fabric design guidelines
-
-#### 8.2: Add Localization Entries
-
-Update `config/templates/Manifest/assets/locales/en-US/translations.json`:
+**REQUIRED**: First read the complete generic instructions at `.ai/commands/item/createItem.md` before proceeding.
 
 This file provides GitHub Copilot-specific enhancements for item creation beyond the base generic process.
 
@@ -160,7 +152,7 @@ export function [ItemName]ItemEditorRibbon(props: [ItemName]ItemEditorRibbonProp
 
 ### Step 6: Create Manifest Configuration
 
-#### 6.1: Create XML Manifest Template (`config/templates/Manifest/items/[ItemName]/[ItemName]Item.xml`)
+#### 6.1: Create XML Manifest Template (`Workload/Manifest/items/[ItemName]/[ItemName]Item.xml`)
 
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
@@ -176,7 +168,7 @@ export function [ItemName]ItemEditorRibbon(props: [ItemName]ItemEditorRibbonProp
 - Validates XML structure against Fabric schemas
 - Recognizes template processing patterns
 
-#### 6.2: Create JSON Manifest (`config/templates/Manifest/items/[ItemName]/[ItemName]Item.json`)
+#### 6.2: Create JSON Manifest (`Workload/Manifest/items/[ItemName]/[ItemName]Item.json`)
 
 ```json
 {
@@ -239,14 +231,14 @@ import { [ItemName]ItemEditor } from "./items/[ItemName]Item/[ItemName]ItemEdito
 
 #### 8.1: Add Item Icon
 
-Create an icon file: `config/Manifest/assets/images/[ItemName]Item-icon.png`
+Create an icon file: `Workload/Manifest/assets/images/[ItemName]Item-icon.png`
 - **Size**: 24x24 pixels recommended
 - **Format**: PNG with transparency
 - **Style**: Follow Fabric design guidelines
 
 #### 8.2: Add Localization Strings
 
-Update `config/Manifest/assets/locales/en-US/translations.json`:
+Update `Workload/Manifest/assets/locales/en-US/translations.json`:
 
 ```json
 {
@@ -263,11 +255,36 @@ Update `config/Manifest/assets/locales/en-US/translations.json`:
 
 #### 8.3: Update Product.json (if needed)
 
-If your item requires specific workload-level configuration, update `config/templates/Manifest/Product.json` to include references to your new item type.
+If your item requires specific workload-level configuration, update `Workload/Manifest/Product.json` to include references to your new item type.
 
 **GitHub Copilot Enhancement**: Recognizes when Product.json updates are needed and suggests configuration patterns.
 
-### Step 9: Testing and Validation
+### Step 9: 🚨 CRITICAL: Update Environment Variables
+
+**IMPORTANT**: After creating a new item, you MUST update the `ITEM_NAMES` variable in ALL environment files, or your item will not be included in the build:
+
+1. **Update `Workload/.env.dev`**:
+   ```bash
+   # Before
+   ITEM_NAMES=HelloWorld
+   
+   # After - add your new item
+   ITEM_NAMES=HelloWorld,[ItemName]
+   ```
+
+2. **Update `Workload/.env.test`**:
+   ```bash
+   ITEM_NAMES=HelloWorld,[ItemName]
+   ```
+
+3. **Update `Workload/.env.prod`**:
+   ```bash
+   ITEM_NAMES=HelloWorld,[ItemName]
+   ```
+
+**Why This Matters**: The `ITEM_NAMES` variable controls which items are included when building the manifest package. If you forget this step, your new item won't appear in the workload.
+
+### Step 10: Testing and Validation
 
 1. **Build the project**:
    ```powershell
@@ -286,7 +303,7 @@ If your item requires specific workload-level configuration, update `config/temp
    - Verify editor loads correctly
    - Test save/load functionality
 
-### Step 10: Build and Deploy
+### Step 11: Build and Deploy
 
 1. **Build manifest package**:
    ```powershell
@@ -310,14 +327,14 @@ When creating a new item, ensure all these components are created:
 - [ ] `[ItemName]ItemEditorEmpty.tsx` - Empty state component
 - [ ] `[ItemName]ItemEditorRibbon.tsx` - Ribbon/toolbar component
 
-**Manifest Files** (in `config/Manifest/`):
+**Manifest Files** (in `Workload/Manifest/`):
 - [ ] `[ItemName]Item.xml` - XML manifest configuration
 - [ ] `[ItemName]Item.json` - JSON manifest with editor path and metadata
 - [ ] `Product.json` - Product JSON manifest that contains the frontend configuration for all Items. Need to include a createExperience for the newly created item.
 
 **Asset Files**:
-- [ ] `config/Manifest/assets/images/[ItemName]Item-icon.png` - Item icon
-- [ ] Localization entries in `config/Manifest/assets/locales/*/translations.json`
+- [ ] `Workload/Manifest/assets/images/[ItemName]Item-icon.png` - Item icon
+- [ ] Localization entries in `Workload/Manifest/assets/locales/*/translations.json`
 
 **Code Integration**:
 - [ ] Route added to `Workload/app/App.tsx`

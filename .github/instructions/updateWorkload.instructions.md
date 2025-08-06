@@ -93,7 +93,7 @@ GitHub Copilot recognizes and expands:
 
 When updating a workload name, the following files must be updated consistently:
 
-### 1. Manifest Configuration Files (`config/Manifest/`)
+### 1. Manifest Configuration Files (`build/Manifest/`)
 
 #### `WorkloadManifest.xml`
 ```xml
@@ -129,7 +129,7 @@ WORKLOAD_NAME=[Organization].[WorkloadId]
 WORKLOAD_NAME=[Organization].[WorkloadId]
 ```
 
-### 3. Template Files (`config/templates/Manifest/`)
+### 3. Template Files (`Workload/Manifest/`)
 
 Templates use placeholder tokens that get replaced during setup:
 
@@ -164,15 +164,15 @@ Templates use placeholder tokens that get replaced during setup:
 ### Method 2: Manual Update Process
 
 #### Step 1: Update Template Files
-Update all template files in `config/templates/Manifest/` to ensure future setup runs use correct values.
+Update all template files in `Workload/Manifest/` to ensure future setup runs use correct values.
 
 #### Step 2: Update Manifest Files
-1. **Update `config/Manifest/WorkloadManifest.xml`**:
+1. **Update `build/Manifest/WorkloadManifest.xml`**:
    ```xml
    <Workload WorkloadName="NewOrg.NewWorkloadId" HostingType="FERemote">
    ```
 
-2. **Update all Item XML files** in `config/Manifest/`:
+2. **Update all Item XML files** in `build/Manifest/`:
    - Find all `*Item.xml` files
    - Update `TypeName` and `WorkloadName` attributes:
    ```xml
@@ -290,24 +290,56 @@ After updating the workload name, verify these items:
 ## Integration with CI/CD
 
 ### Environment Variables
-Configure build pipelines to use environment-specific workload names:
+Configure build pipelines with environment-specific workload names and the proper script sequence:
+
+### Automated Deployment Pipeline
+
+Use the proper script sequence in deployment pipelines:
+
+```yaml
+# Step 1: Setup workload environment
+- task: PowerShell@2
+  displayName: 'Setup Workload Environment'
+  inputs:
+    filePath: 'scripts/Setup/SetupWorkload.ps1'
+    arguments: '-WorkloadName $(WORKLOAD_NAME) -Force $true'
+
+# Step 2: Build manifest package
+- task: PowerShell@2
+  displayName: 'Build Manifest Package'
+  inputs:
+    filePath: 'scripts/Build/BuildManifestPackage.ps1'
+    arguments: '-Environment $(ENVIRONMENT_NAME)'
+
+# Step 3: Build release package
+- task: PowerShell@2
+  displayName: 'Build Release Package'
+  inputs:
+    filePath: 'scripts/Build/BuildRelease.ps1'
+    arguments: '-Environment $(ENVIRONMENT_NAME)'
+
+# Step 4: Publish workload (for production)
+- task: PowerShell@2
+  displayName: 'Publish Workload'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+  inputs:
+    filePath: 'scripts/Deploy/PublishWorkload.ps1'
+    arguments: '-Environment prod -WorkloadName $(WORKLOAD_NAME_PROD)'
+```
+
+### Pipeline Variables
+Configure environment-specific variables:
 
 ```yaml
 variables:
   - name: WORKLOAD_NAME_DEV
     value: "Org.MyWorkload"
-  - name: WORKLOAD_NAME_PROD  
+  - name: WORKLOAD_NAME_TEST
+    value: "Org.MyWorkload"  
+  - name: WORKLOAD_NAME_PROD
     value: "ContosoInc.MyWorkload"
-```
-
-### Automated Deployment
-Use setup scripts in deployment pipelines:
-
-```yaml
-- task: PowerShell@2
-  inputs:
-    filePath: 'scripts/Setup/Setup.ps1'
-    arguments: '-WorkloadName $(WORKLOAD_NAME)  -Force $true'
+  - name: ENVIRONMENT_NAME
+    value: ${{ parameters.environment }}
 ```
 
 This comprehensive approach ensures that workload name updates are applied consistently across all required files and configurations, maintaining the integrity of the Fabric workload throughout the development and deployment lifecycle.

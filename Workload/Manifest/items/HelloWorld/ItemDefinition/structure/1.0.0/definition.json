@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/extensibility/definition-structure/1.0.0/schema.json",
+  "version": "1.0.0",
+  "maxSize": "5MB",
+  "definitionParts": [
+    {
+      "path": "definition.json",
+      "type": "json",
+      "minCount": 1,
+      "maxCount": 1,
+      "schemaRef": {
+        "uri": "{{FRONTEND_URL}}/schemas/{{WORKLOAD_NAME}}.HelloWorld/definition/1.0.0/schema.json"
+      },
+      "maxSize": "1MB"
+    }
+  ]
+}

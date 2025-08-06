@@ -21,10 +21,10 @@
 .PARAMETER WorkloadDisplayName
     Display name of the workload as shown in the Fabric portal
 
-.PARAMETER AADFrontendAppId  
+.PARAMETER FrontendAppId  
     AAD Application ID for the frontend (optional - will create if not provided)
 
-.PARAMETER AADBackendAppId
+.PARAMETER BackendAppId
     AAD Application ID for the backend (reserved for future use)
 
 .PARAMETER Force
@@ -37,7 +37,7 @@
     .\SetupWorkload.ps1 -WorkloadName "Org.MyWorkload"
     
 .EXAMPLE  
-    .\SetupWorkload.ps1 -WorkloadName "Org.MyWorkload" -AADFrontendAppId "12345678-1234-1234-1234-123456789012" -Force
+    .\SetupWorkload.ps1 -WorkloadName "Org.MyWorkload" -FrontendAppId "12345678-1234-1234-1234-123456789012" -Force
 
 .NOTES
     Run this script from the scripts/Setup directory
@@ -53,10 +53,12 @@ param (
     [String]$WorkloadDisplayName = "My Sample Workload",
     # The Entra Application ID for the frontend
     # If not provided, the user will be prompted to enter it or create a new one.
-    [String]$AADFrontendAppId = "00000000-0000-0000-0000-000000000000",
+    [String]$FrontendAppId = "00000000-0000-0000-0000-000000000000",
     # Not used in the current setup, but can be used for future backend app configurations
     # If not provided, it will default to an empty string.
-    [String]$AADBackendAppId,
+    [String]$BackendAppId,
+    # The GUID of the workspace to use for the developer environment
+    [string]$DevWorkspaceId,
     # Force flag to overwrite existing configurations and don't prompt the user
     [boolean]$Force = $false,
     # The version of the workload, used for the manifest package
@@ -81,35 +83,52 @@ Write-Output "Setting up the environment..."
 }
 
 
+
+
 ###############################################################################
 # Configure AAD Frontend App
-# This section checks if the AADFrontendAppId is set and prompts the user if not.
+# This section checks if the FrontendAppId is set and prompts the user if not.
 ###############################################################################
-if ([string]::IsNullOrWhiteSpace($AADFrontendAppId) -or $AADFrontendAppId -eq "00000000-0000-0000-0000-000000000000") {
-    Write-Warning "AADFrontendAppId is not set or is using the default placeholder value."
+if ([string]::IsNullOrWhiteSpace($FrontendAppId) -or $FrontendAppId -eq "00000000-0000-0000-0000-000000000000") {
+    Write-Warning "FrontendAppId is not set or is using the default placeholder value."
     $confirmation = Read-Host "Do you have an Entra Application ID you can use? (y/n)"
     if ($confirmation -eq 'y') {
-        $AADFrontendAppId = Read-Host "Enter your Entra Frontend App Id"
+        $FrontendAppId = Read-Host "Enter your Entra Frontend App Id"
     } else {
         $confirmation = Read-Host "Do you want to create a new Entra Application? (y/n)"   
         if ($confirmation -eq 'y') {
-            $createDevAADAppScript = Join-Path $PSScriptRoot "..\Setup\CreateDevAADApp.ps1"
-            if (Test-Path $createDevAADAppScript) { 
+            $createDevAppScript = Join-Path $PSScriptRoot "..\Setup\CreateDevAADApp.ps1"
+            if (Test-Path $createDevAppScript) { 
                 $TenantId = Read-Host "Provide your Entra Tenant Id"             
-                $AADFrontendAppId = & $createDevAADAppScript -HostingType $HostingType -WorkloadName $WorkloadName -ApplicationName $WorkloadName -TenantId $TenantId
+                $FrontendAppId = & $createDevAppScript -HostingType $HostingType -WorkloadName $WorkloadName -ApplicationName $WorkloadName -TenantId $TenantId
             } else {
                 Write-Error "SetupDevGateway.ps1 not found at $setupDevGatewayScript"
                 exit 1
             } 
         } else {
-            $AADFrontendAppId = "00000000-0000-0000-0000-000000000000"
+            $FrontendAppId = "00000000-0000-0000-0000-000000000000"
         }
     }
 }
-# Validate AADFrontendAppId
-if ([string]::IsNullOrWhiteSpace($AADFrontendAppId) -or $AADFrontendAppId -eq "00000000-0000-0000-0000-000000000000") {
+# Validate FrontendAppId
+if ([string]::IsNullOrWhiteSpace($FrontendAppId) -or $FrontendAppId -eq "00000000-0000-0000-0000-000000000000") {
     Write-Error "We can't setup the workload without an Entra App. Please make sure you have one an run the script again."
     exit 1
+}
+
+###############################################################################
+# Check if setup has already been done
+# Exit if .env.dev exists and Force is not set
+###############################################################################
+$envDevFile = Join-Path $PSScriptRoot "..\..\Workload\.env.dev"
+if ((Test-Path $envDevFile) -and -not $Force) {
+    Write-Host ""
+    Write-Warning "Environment configuration files already exist (.env.dev found)."
+    Write-Host "This indicates the workload has already been set up."
+    Write-Host "Use -Force parameter to overwrite existing configuration, or run SetupDevEnvironment.ps1 for development setup."
+    Write-Host ""
+    Write-Host "To force setup: .\SetupWorkload.ps1 -WorkloadName '$WorkloadName' -Force"
+    exit 0
 }
 
 ###############################################################################
@@ -120,8 +139,8 @@ Write-Host ""
 Write-Output "Setting up environment configuration files..."
 
 # Define paths
-$templateEnvFile = Join-Path $PSScriptRoot "..\..\config\templates\Workload\.env"
 $workloadDir = Join-Path $PSScriptRoot "..\..\Workload\"
+$templateEnvFile = Join-Path $PSScriptRoot "..\..\Workload\.env.template"
 
 # Check if template exists
 if (-not (Test-Path $templateEnvFile)) {
@@ -134,25 +153,29 @@ $templateContent = Get-Content $templateEnvFile -Raw
 
 # Define placeholder replacements for different environments
 $placeholders = @{
-    "{{WORKSPACE_HOSTING_TYPE}}" = $HostingType
+    "{{WORKLOAD_HOSTING_TYPE}}" = $HostingType
     "{{WORKLOAD_VERSION}}" = $WorkloadVersion
     "{{WORKLOAD_NAME}}" = $WorkloadName
     "{{ITEM_NAMES}}" = "HelloWorld"  # Default items, can be updated later
-    "{{FRONTEND_APP_ID}}" = $AADFrontendAppId
+    "{{FRONTEND_APPID}}" = $FrontendAppId
+    "{{BACKEND_APPID}}" = $BackendAppId
 }
 
 # Environment-specific configurations
 $environments = @{
     "dev" = @{
-        "{{FRONTEND_BASE_URL}}" = "http://localhost:60006/"
+        "{{FRONTEND_URL}}" = "http://localhost:60006/"
+        "{{BACKEND_URL}}" = "http://localhost:60005/"
         "{{LOG_LEVEL}}" = "debug"
     }
     "test" = @{
-        "{{FRONTEND_BASE_URL}}" = "https://your-staging-url.azurestaticapps.net/"
+        "{{FRONTEND_URL}}" = "https://your-staging-url.azurestaticapps.net/"
+        "{{BACKEND_URL}}" = "https://your-staging-url.azurestaticapps.net/BE"
         "{{LOG_LEVEL}}" = "info"
     }
     "prod" = @{
-        "{{FRONTEND_BASE_URL}}" = "https://your-production-url.azurestaticapps.net/"
+        "{{FRONTEND_URL}}" = "https://your-production-url.azurestaticapps.net/"
+        "{{BACKEND_URL}}" = "https://your-production-url.azurestaticapps.net/BE"
         "{{LOG_LEVEL}}" = "warn"
     }
 }
@@ -227,16 +250,26 @@ if (-not (Test-Path $nugetDir)) {
 ###############################################################################
 Write-Host ""
 Write-Host "Setup workload finished successfully ..." -ForegroundColor Green
-Write-Host "Make sure the .env files are configured correctly for your environment and add them to your Repository." -ForegroundColor Green
 Write-Host ""
 Write-Host ""
 
 ###############################################################################
-# Starting the SetupDevEnviroment.ps as well
+# Starting the SetupDevEnviroment.ps1 as well
 ###############################################################################
-$startDevEnviromentScript = Join-Path $PSScriptRoot "..\Setup\SetupDevEnviroment.ps"
+$startDevEnviromentScript = Join-Path $PSScriptRoot "..\Setup\SetupDevEnvironment.ps1"
 if (Test-Path $startDevEnviromentScript) {
-     & $startDevEnviromentScript -Force $Force
+     & $startDevEnviromentScript -DevWorkspaceId $DevWorkspaceId -Force $Force
 } else {
-    Write-Host "StartDevEnviroment.ps1 not found at $startDevEnviromentScript"
+    Write-Host "SetupDevEnvironment.ps1 not found at $startDevEnviromentScript"
 }
+
+###############################################################################
+# Starting initial ManifestPackage BuildManifestPackage.ps1 as well
+###############################################################################
+$startBuildManifestPackageScript = Join-Path $PSScriptRoot "..\Build\BuildManifestPackage.ps1"
+if (Test-Path $startBuildManifestPackageScript) {
+     & $startBuildManifestPackageScript -ValidateFiles $True -Environment "dev" -Force $Force
+} else {
+    Write-Host "BuildManifestPackage.ps1 not found at $startBuildManifestPackageScript"
+}
+
