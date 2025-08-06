@@ -213,7 +213,7 @@ function New-WebApp {
 function Set-WebAppConfiguration {
     param (
         [string]$WebAppName,
-        [string]$ResourceGroup,
+        [string]$ResourceGroup
     )
     
     Write-Info "Configuring Web App settings..."

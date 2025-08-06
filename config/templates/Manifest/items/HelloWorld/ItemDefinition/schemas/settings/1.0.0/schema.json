@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "https://{{FRONTEND_BASE_URL}}/schemas/{Item_ID}/settings/1.0.0/schema.json"
+
+}

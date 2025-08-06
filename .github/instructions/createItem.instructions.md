@@ -6,7 +6,15 @@ applyTo: "/Workload/app/items/[ItemName]Item/"
 
 ## 🔗 Base Instructions
 
-**REQUIRED**: First read the complete generic instructions at `.ai/commands/item/createItem.md`
+**REQUIRED**: First read the complete generic instructions at `.ai/commands/item/createCreate an icon file: `config/templates/Manifest/assets/images/[ItemName]Item-icon.png`
+
+- **Size**: 24x24 pixels recommended
+- **Format**: PNG with transparency
+- **Style**: Follow Fabric design guidelines
+
+#### 8.2: Add Localization Entries
+
+Update `config/templates/Manifest/assets/locales/en-US/translations.json`:
 
 This file provides GitHub Copilot-specific enhancements for item creation beyond the base generic process.
 
@@ -17,10 +25,11 @@ When creating a new item, GitHub Copilot provides:
 
 #### Auto-Complete Item Structure
 Type `fabric item create [ItemName]` to trigger:
-- Automatic 4-file structure generation
+- Automatic 4-file structure generation in `Workload/app/items/[ItemName]Item/`
 - Intelligent TypeScript interface suggestions
 - Pre-configured Fluent UI component templates
 - Smart import resolution for Fabric APIs
+- Manifest template generation with placeholder support
 
 #### Pattern Recognition
 GitHub Copilot learns from existing items and suggests:
@@ -30,10 +39,11 @@ GitHub Copilot learns from existing items and suggests:
 - Proper TypeScript type definitions
 
 ### Real-time Validation
-- **Manifest Sync Detection**: Warns when implementation doesn't match manifest
+- **Manifest Sync Detection**: Warns when implementation doesn't match manifest templates
 - **Route Validation**: Suggests route additions when creating new items
 - **Import Optimization**: Auto-suggests required imports for Fabric integration
 - **Type Safety**: Provides immediate feedback on TypeScript errors
+- **Template Processing**: Validates placeholder usage in XML templates
 
 ### Context-Aware Suggestions
 
@@ -150,23 +160,23 @@ export function [ItemName]ItemEditorRibbon(props: [ItemName]ItemEditorRibbonProp
 
 ### Step 6: Create Manifest Configuration
 
-#### 6.1: Create XML Manifest (`config/Manifest/[ItemName]Item.xml`)
+#### 6.1: Create XML Manifest Template (`config/templates/Manifest/items/[ItemName]/[ItemName]Item.xml`)
 
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
 <ItemManifestConfiguration SchemaVersion="2.0.0">
-  <Item TypeName="[WorkloadName].[ItemName]" Category="Data">
-    <Workload WorkloadName="[WorkloadName]" />
+  <Item TypeName="{{WORKLOAD_NAME}}.[ItemName]" Category="Data">
+    <Workload WorkloadName="{{WORKLOAD_NAME}}" />
   </Item>
 </ItemManifestConfiguration>
 ```
 
-**Key Elements**:
-- `TypeName`: Unique identifier for the item type
-- `Category`: Fabric category (Data, Analytics, etc.)
-- `WorkloadName`: Must match your workload's name
+**GitHub Copilot Enhancement**: 
+- Auto-suggests placeholder patterns like `{{WORKLOAD_NAME}}` for environment-specific generation
+- Validates XML structure against Fabric schemas
+- Recognizes template processing patterns
 
-#### 6.2: Create JSON Manifest (`config/Manifest/[ItemName]Item.json`)
+#### 6.2: Create JSON Manifest (`config/templates/Manifest/items/[ItemName]/[ItemName]Item.json`)
 
 ```json
 {
@@ -253,7 +263,9 @@ Update `config/Manifest/assets/locales/en-US/translations.json`:
 
 #### 8.3: Update Product.json (if needed)
 
-If your item requires specific workload-level configuration, update `config/Manifest/Product.json` to include references to your new item type.
+If your item requires specific workload-level configuration, update `config/templates/Manifest/Product.json` to include references to your new item type.
+
+**GitHub Copilot Enhancement**: Recognizes when Product.json updates are needed and suggests configuration patterns.
 
 ### Step 9: Testing and Validation
 

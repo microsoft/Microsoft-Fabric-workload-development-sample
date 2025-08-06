@@ -97,7 +97,7 @@ const accessToken = await workloadClient.authentication.acquireAccessToken(scope
 ## Development Workflow
 
 ### Setup Process
-1. Run `scripts/Setup/Setup.ps1` with appropriate parameters
+1. Run `scripts/Setup/SetupWorkload.ps1` with appropriate parameters
 2. Configure environment variables in `.env.*` files
 3. Install dependencies: `npm install` in Workload directory
 4. Build manifest package: `scripts/Build/BuildManifestPackage.ps1`

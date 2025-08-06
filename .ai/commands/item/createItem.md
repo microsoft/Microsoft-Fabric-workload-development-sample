@@ -6,7 +6,17 @@ applyTo: "/Workload/app/items/[ItemName]Item/"
 
 ## Process
 
-This guide provides step-by-step instructions for AI tools to create a new item in the Microsoft Fabric workload. Each item requires implementation files, manifest configuration, routing setup, and asset management.
+This guide provides step-by-step instructions for AI tools to create a new item in the Microsoft Fabric workl#### 8.1: Add Item Icon
+
+Create an icon file: `config/templates/Manifest/assets/images/[ItemName]Item-icon.png`
+
+- **Size**: 24x24 pixels recommended
+- **Format**: PNG with transparency
+- **Style**: Follow Fabric design guidelines
+
+#### 8.2: Add Localization Entries
+
+Update `config/templates/Manifest/assets/locales/en-US/translations.json`:item requires implementation files, manifest configuration, routing setup, and asset management.
 
 ### Step 1: Create Item Implementation Structure
 
@@ -132,23 +142,25 @@ export function [ItemName]ItemEditorRibbon(props: [ItemName]ItemEditorRibbonProp
 
 ### Step 6: Create Manifest Configuration
 
-#### 6.1: Create XML Manifest (`config/Manifest/[ItemName]Item.xml`)
+#### 6.1: Create XML Manifest Template (`config/templates/Manifest/items/[ItemName]/[ItemName]Item.xml`)
 
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
 <ItemManifestConfiguration SchemaVersion="2.0.0">
-  <Item TypeName="[WorkloadName].[ItemName]" Category="Data">
-    <Workload WorkloadName="[WorkloadName]" />
+  <Item TypeName="{{WORKLOAD_NAME}}.[ItemName]" Category="Data">
+    <Workload WorkloadName="{{WORKLOAD_NAME}}" />
   </Item>
 </ItemManifestConfiguration>
 ```
 
 **Key Elements**:
-- `TypeName`: Unique identifier for the item type
-- `Category`: Fabric category (Data, Analytics, etc.)
-- `WorkloadName`: Must match your workload's name
+- **Location**: Place in `config/templates/Manifest/items/[ItemName]/[ItemName]Item.xml`
+- **Template Processing**: Use `{{WORKLOAD_NAME}}` placeholder for environment-specific generation
+- **Naming Convention**: Follow `[ItemName]Item.xml` pattern
+- **Category**: Fabric category (Data, Analytics, etc.)
+- **Environment Generation**: Manifest generation will replace placeholders with values from .env files
 
-#### 6.2: Create JSON Manifest (`config/Manifest/[ItemName]Item.json`)
+#### 6.2: Create JSON Manifest (`config/templates/Manifest/items/[ItemName]/[ItemName]Item.json`)
 
 ```json
 {
@@ -235,7 +247,9 @@ Update `config/Manifest/assets/locales/en-US/translations.json`:
 
 #### 8.3: Update Product.json (if needed)
 
-If your item requires specific workload-level configuration, update `config/Manifest/Product.json` to include references to your new item type.
+If your item requires specific workload-level configuration, update `config/templates/Manifest/Product.json` to include references to your new item type.
+
+**Note**: Remember that Product.json is a template and may use placeholders that get replaced during manifest generation.
 
 ### Step 9: Testing and Validation
 
@@ -280,14 +294,14 @@ When creating a new item, ensure all these components are created:
 - [ ] `[ItemName]ItemEditorEmpty.tsx` - Empty state component
 - [ ] `[ItemName]ItemEditorRibbon.tsx` - Ribbon/toolbar component
 
-**Manifest Files** (in `config/Manifest/`):
-- [ ] `[ItemName]Item.xml` - XML manifest configuration
+**Manifest Files** (in `config/templates/Manifest/items/[ItemName]/`):
+- [ ] `[ItemName]Item.xml` - XML manifest template with placeholders like `{{WORKLOAD_NAME}}`
 - [ ] `[ItemName]Item.json` - JSON manifest with editor path and metadata
-- [ ] `Product.json` - Product JSON manifest that containst the configuration for all Items. Need to include a createExperience for the newly created item.
+- [ ] Update `config/templates/Manifest/Product.json` if workload-level configuration is needed
 
 **Asset Files**:
-- [ ] `config/Manifest/assets/images/[ItemName]Item-icon.png` - Item icon
-- [ ] Localization entries in `config/Manifest/assets/locales/*/translations.json`
+- [ ] `config/templates/Manifest/assets/images/[ItemName]Item-icon.png` - Item icon
+- [ ] Localization entries in `config/templates/Manifest/assets/locales/*/translations.json`
 
 **Code Integration**:
 - [ ] Route added to `Workload/app/App.tsx`

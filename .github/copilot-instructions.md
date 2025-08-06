@@ -84,26 +84,28 @@ Instead of manual file creation, GitHub Copilot can generate complete structures
 GitHub Copilot understands context-aware shortcuts:
 
 ```powershell
-# Smart environment detection
-fabric dev start    # Automatically chooses correct scripts
+# Smart environment detection with .env-based configuration
+fabric dev start    # Automatically uses .env.dev configuration
 
 # Intelligent build with validation
-fabric build check  # Pre-validates before building
+fabric build check  # Pre-validates templates and manifest generation
 
 # Context-aware deployment
-fabric deploy prod   # Validates production readiness
+fabric deploy prod   # Uses .env.prod for environment-specific manifests
 ```
 
 ### Auto-completion Patterns
 GitHub Copilot recognizes Fabric patterns and suggests:
 - **API Calls**: Complete authentication and error handling
 - **Component Structure**: Fluent UI patterns with proper TypeScript
-- **Manifest Updates**: XML/JSON synchronization
+- **Manifest Updates**: Template processing with placeholder replacement
 - **Route Configuration**: Automatic route registration
+- **Environment Management**: .env-based configuration patterns
 
 ### Workspace-Aware Features
-- **File Relationships**: Understands manifest ↔ implementation dependencies
-- **Environment Detection**: Suggests appropriate configurations for dev/prod
+- **File Relationships**: Understands manifest template ↔ implementation dependencies
+- **Environment Detection**: Suggests appropriate configurations for dev/test/prod
+- **Template Processing**: Recognizes placeholder patterns like `{{WORKLOAD_NAME}}`
 - **Error Resolution**: Provides specific fixes for Fabric development issues
 - **Pattern Learning**: Adapts suggestions based on existing codebase patterns
 

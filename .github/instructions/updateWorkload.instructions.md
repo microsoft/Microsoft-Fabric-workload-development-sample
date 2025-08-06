@@ -152,12 +152,11 @@ Templates use placeholder tokens that get replaced during setup:
 1. **Prepare Parameters**:
    ```powershell
    $WorkloadName = "YourOrg.YourWorkloadId"
-   $WorkloadDisplayName = "Your Workload Display Name"
    ```
 
 2. **Run Setup Script**:
    ```powershell
-   .\scripts\Setup\Setup.ps1 -WorkloadName $WorkloadName -WorkloadDisplayName $WorkloadDisplayName -Force $true
+   .\scripts\Setup\Setup.ps1 -WorkloadName -Force $true
    ```
 
 3. **Verify Updates**: Check that all files have been updated with the new workload name
@@ -308,7 +307,7 @@ Use setup scripts in deployment pipelines:
 - task: PowerShell@2
   inputs:
     filePath: 'scripts/Setup/Setup.ps1'
-    arguments: '-WorkloadName $(WORKLOAD_NAME) -WorkloadDisplayName "$(WORKLOAD_DISPLAY_NAME)" -Force $true'
+    arguments: '-WorkloadName $(WORKLOAD_NAME)  -Force $true'
 ```
 
 This comprehensive approach ensures that workload name updates are applied consistently across all required files and configurations, maintaining the integrity of the Fabric workload throughout the development and deployment lifecycle.

@@ -396,9 +396,13 @@ FodyWeavers.xsd
 /dist/*
 /package-lock.json
 
-# Fabric Config files
-config/Manifest
-config/DevGateway
+# Fabric Config files (instance files only - templates are committed)
+config/Manifest/
+config/DevGateway/
+
+# Fabric Shared Config (keep templates and schema)
+!config/shared/
+!config/templates/
 
 # Fabric Tool files 
 tools/DevGateway

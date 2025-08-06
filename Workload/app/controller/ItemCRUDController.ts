@@ -32,7 +32,7 @@ export interface ItemWithDefinition<T> extends ItemReference{
 * The paths are used to read and write files in the item payload.
 */
 export enum ItemDefinitionPath {
-    Default = "definition.json",
+    Default = "payload.json",
     Platform = ".platform",
 }
 
