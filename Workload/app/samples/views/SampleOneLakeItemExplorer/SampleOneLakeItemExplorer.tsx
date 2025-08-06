@@ -22,7 +22,6 @@ import { FileTree } from "./FileTree";
 import { getOneLakeFilePath } from "../../../clients/OneLakeClient";
 import { callDatahubOpen } from "../../../controller/DataHubController";
 import { ItemReference } from "../../../controller/ItemCRUDController";
-import { env } from "process";
 
 export interface OneLakeItemExplorerItem extends ItemReference {
   displayName: string;
