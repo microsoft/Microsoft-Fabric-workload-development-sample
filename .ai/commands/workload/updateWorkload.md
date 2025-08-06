@@ -1,90 +1,52 @@
-# GitHub Copilot Instructions: Update Workload
+# Update Workload Name
 
-## 🔗 Base Instructions
+## Overview
 
-**REQUIRED**: First read the complete generic instructions at `.ai/commands/workload/updateWorkload.md`
+This document provides comprehensive guidance for AI tools on how to update a Microsoft Fabric workload name in the Workload Development Kit (WDK v2). Understanding the workload naming structure and the files that need to be updated is crucial for maintaining consistency across the entire workload configuration.
 
-This file provides GitHub Copilot-specific enhancements for updating workloads beyond the base generic process.
+## Workload Naming Structure
 
-## 🤖 GitHub Copilot Enhanced Features
+### Naming Convention
 
-### Smart Configuration Analysis
-GitHub Copilot automatically analyzes:
-- Configuration file dependencies and relationships
-- Impact assessment of proposed changes
-- Backward compatibility implications
-- Required manifest updates
+The workload name follows the pattern: `[Organization].[WorkloadId]`
 
-### Intelligent Update Suggestions
+**Components:**
+- **Organization**: Identifies the organization or entity that owns the workload
+- **WorkloadId**: Unique identifier for the specific workload
 
-#### Context-Aware Recommendations
-```typescript
-// Copilot detects patterns and suggests updates:
-fabric.update.workload.name     // → Comprehensive name change process
-fabric.update.item.definition   // → Item schema updates with validation  
-fabric.update.manifest.version  // → Version management with dependency tracking
+### Organization Guidelines
+
+#### Development and Internal Use
+- **Organization**: Always use `"Org"` for development and internal scenarios
+- **Example**: `Org.MyCustomWorkload`, `Org.DataProcessingSample`
+
+#### Production and Fabric Hub Publishing
+- **Organization**: Must be replaced with your actual organization name
+- **Requirements**: Organization name must be registered with Microsoft for Fabric Hub publishing
+- **Example**: `Contoso.DataAnalytics`, `Fabrikam.MLPipeline`
+
+### Complete Examples
+
+```
+Development:    Org.MyFERemoteWorkloadSample
+Production:     ContosoInc.MyFERemoteWorkloadSample
+
+Development:    Org.DataProcessingWorkload  
+Production:     Fabrikam.DataProcessingWorkload
 ```
 
-### Real-time Impact Analysis
-- **Dependency Mapping**: Shows which files require updates
-- **Breaking Change Detection**: Warns about compatibility issues
-- **Validation Pipeline**: Ensures updates maintain functionality
-- **Rollback Planning**: Suggests safe rollback procedures
+## Automated Setup Process
 
-### Advanced Configuration Management
+The setup scripts handle workload name configuration automatically, but they rely on template files for proper replacement.
 
-#### Multi-File Synchronization
-GitHub Copilot tracks relationships between:
-- `WorkloadManifest.xml` ↔ Implementation files
-- Environment configurations across dev/staging/prod
-- Item definitions and their corresponding routes
-- Asset references and actual file locations
+### Setup Script Flow
 
-#### Smart Migration Patterns
-```powershell
-# Copilot generates migration scripts:
-fabric migrate v1.x to v2.x    # → Version upgrade automation
-fabric migrate dev to staging  # → Environment promotion
-fabric migrate org name change # → Organization rebranding
-```
+1. **Template Processing**: Scripts read from `config/templates/` directory
+2. **Token Replacement**: Replace `{{WORKLOAD_NAME}}` tokens with actual values
+3. **File Generation**: Create actual configuration files in `config/Manifest/`
+4. **Environment Configuration**: Update `.env` files in `Workload/` directory
 
-### Context-Aware Validation
-
-#### Pre-Update Checks
-- Validates current system state
-- Checks for uncommitted changes
-- Verifies backup procedures
-- Ensures test environment availability
-
-#### Post-Update Verification
-- Automated testing of updated configurations
-- Build process validation
-- Runtime functionality checks
-- Performance impact assessment
-
-## 🚀 Copilot Quick Actions
-
-### One-Command Updates
-```powershell
-# Type comment to trigger intelligent updates:
-# fabric update workload name from Org.Test to ContosoInc.Production
-```
-
-### Smart Configuration Patterns
-- `fabric.config.sync` → Synchronizes all related configuration files
-- `fabric.config.validate` → Comprehensive configuration validation
-- `fabric.config.backup` → Creates safe configuration backup
-
-### Auto-Completion Intelligence
-GitHub Copilot recognizes and expands:
-- Configuration update patterns
-- File relationship mappings
-- Validation procedures
-- Environment synchronization
-
----
-
-**Reference**: For complete step-by-step instructions, always consult `.ai/commands/workload/updateWorkload.md` first, then apply these Copilot-specific enhancements.
+### Key Setup Scripts
 
 - **`scripts/Setup/Setup.ps1`**: Main setup script that orchestrates the entire process
 - **`scripts/Setup/SetupWorkload.ps1`**: Handles workload-specific configuration and template processing

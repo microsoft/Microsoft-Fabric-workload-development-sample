@@ -1,89 +1,43 @@
-# GitHub Copilot Instructions: Deploy Workload
+# Deploy Workload to Fabric - Comprehensive Guide
 
-## 🔗 Base Instructions
+## Process
 
-**REQUIRED**: First read the complete generic instructions at `.ai/commands/workload/deployWorkload.md`
+This guide provides step-by-step instructions for AI tools on how to deploy a Microsoft Fabric workload to production. The deployment process involves building a release package and publishing both the frontend application to Azure Static Web App and the workload manifest to Fabric.
 
-This file provides GitHub Copilot-specific enhancements for deploying workloads beyond the base generic process.
+### Deployment Architecture Overview
 
-## 🤖 GitHub Copilot Enhanced Features
+A Fabric workload deployment consists of two main components:
 
-### Smart Deployment Validation
-GitHub Copilot automatically validates:
-- Production readiness checklist
-- Environment configuration consistency
-- Security compliance requirements
-- Build artifact integrity
+1. **Frontend Application**: React/TypeScript app hosted on Azure Static Web App
+2. **Workload Manifest**: NuGet package registered with Microsoft Fabric
 
-### Intelligent Configuration Management
+### Prerequisites for Production Deployment
 
-#### Auto-Environment Detection
+#### Azure Requirements
+- **Azure Subscription**: Active subscription with appropriate permissions
+- **Resource Group**: Dedicated resource group for the workload
+- **Azure Static Web Apps**: Service enabled in the subscription
+- **Azure CLI**: Installed and authenticated (`az login`)
+
+#### Fabric Requirements
+- **Production Workload Name**: Registered organization name (not "Org")
+- **Production Entra App**: Azure AD application configured for production
+- **Fabric Workspace**: Production workspace for workload registration
+- **Fabric Partner Program**: Enrollment if publishing to Fabric Hub
+
+#### Development Prerequisites
+- **Completed Development**: Workload tested and validated in development environment
+- **Configuration Updated**: Production settings configured in manifest and environment files
+- **Dependencies Installed**: All npm packages installed in Workload directory
+
+## Step 1: Prepare Production Configuration
+
+### 1.1: Update Workload Name for Production
+
+Replace development organization "Org" with your registered organization name:
+
 ```powershell
-# Copilot detects context and suggests appropriate commands:
-fabric deploy staging    # → Configures for staging environment
-fabric deploy production # → Validates production requirements
-fabric deploy validate   # → Pre-deployment validation only
-```
-
-### Real-time Security Scanning
-- **Secret Detection**: Warns about exposed secrets or keys
-- **CORS Validation**: Checks Content Security Policy headers
-- **Certificate Status**: Validates SSL/TLS configuration
-- **Compliance Check**: Ensures Fabric platform requirements
-
-### Context-Aware Build Process
-
-#### Smart Parameter Injection
-GitHub Copilot suggests build parameters based on:
-- Current branch (dev/staging/main)
-- Environment variables detected
-- Previous successful deployment patterns
-- Azure resource configuration
-
-#### Deployment Pipeline Intelligence
-```yaml
-# Copilot generates optimized CI/CD patterns:
-fabric.deploy.azure      # → Full Azure Static Web App deployment
-fabric.deploy.manifest   # → Fabric manifest-only deployment  
-fabric.deploy.complete   # → End-to-end deployment with validation
-```
-
-### Advanced Troubleshooting
-
-#### Auto-Diagnostics for Deployment Issues
-- **Build Failures**: Analyzes error logs and suggests fixes
-- **Authentication Issues**: Validates Entra App configuration
-- **CORS Problems**: Suggests proper header configuration
-- **Manifest Errors**: Validates XML/JSON syntax and references
-
-#### Smart Rollback Procedures
-- Suggests rollback strategies when deployments fail
-- Provides environment restoration commands
-- Validates rollback safety before execution
-
-## 🚀 Copilot Quick Actions
-
-### One-Command Deployment
-```powershell
-# Type comment to trigger intelligent deployment:
-# fabric deploy to production with full validation
-```
-
-### Smart Environment Switching
-- `fabric.env.staging` → Switches all configs to staging
-- `fabric.env.production` → Production environment setup
-- `fabric.env.validate` → Cross-environment validation
-
-### Auto-Completion Patterns
-GitHub Copilot recognizes and expands:
-- Azure CLI commands with proper authentication
-- PowerShell scripts with parameter validation
-- Environment variable management
-- Security configuration templates
-
----
-
-**Reference**: For complete step-by-step instructions, always consult `.ai/commands/workload/deployWorkload.md` first, then apply these Copilot-specific enhancements.
+# Example transformation:
 # Development: Org.MyWorkloadSample
 # Production:  ContosoInc.MyWorkloadSample
 

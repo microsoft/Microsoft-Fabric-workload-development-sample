@@ -1,91 +1,32 @@
-# GitHub Copilot Instructions: Publish Workload
+# Publish Workload to Fabric - Comprehensive Guide
 
-## 🔗 Base Instructions
+## Overview
 
-**REQUIRED**: First read the complete generic instructions at `.ai/commands/workload/publishworkload.md`
+This guide provides step-by-step instructions for AI tools on how to publish a Microsoft Fabric workload to the Fabric Workload Hub. Publishing is a manual process that involves uploading manifest packages through the Fabric Admin Portal and follows a structured workflow from testing to general availability.
 
-This file provides GitHub Copilot-specific enhancements for publishing workloads beyond the base generic process.
+Based on the official Microsoft documentation: [Publish a workload to the Fabric Workload Hub](https://learn.microsoft.com/en-us/fabric/workload-development-kit/publish-workload-flow)
 
-## 🤖 GitHub Copilot Enhanced Features
+### Publishing Architecture
 
-### Smart Publishing Pipeline
-GitHub Copilot automatically detects:
-- Production readiness requirements
-- Compliance and security validation
-- Partner program prerequisites
-- Certification checklist completion
+The Fabric Workload Hub is where users browse, explore, and manage workloads within Fabric. Workloads are categorized into:
+- **Core Fabric workloads**: Microsoft-developed workloads
+- **Partner workloads**: Third-party developed workloads
 
-### Intelligent Quality Assurance
+### Publishing Stages
 
-#### Auto-Validation Framework
-```powershell
-# Copilot generates comprehensive validation:
-fabric publish validate    # → Full production readiness check
-fabric publish security    # → Security compliance scan
-fabric publish compliance  # → Fabric Hub requirements validation
-```
+Publishing follows a structured four-stage process:
 
-### Real-time Compliance Monitoring
-- **Security Scanning**: Validates code security patterns
-- **Performance Metrics**: Ensures performance benchmarks
-- **Accessibility Check**: Validates UI accessibility standards
-- **Documentation Review**: Ensures complete documentation
+1. **Testing** - Internal validation and testing
+2. **Preview Audience** - Limited tenant testing (up to 10 tenants)
+3. **Preview** - Public preview for all Fabric users
+4. **General Availability** - Full production release
 
-### Advanced Publishing Management
+## Prerequisites
 
-#### Multi-Environment Coordination
-GitHub Copilot coordinates:
-- Development → Staging → Production pipeline
-- Version management and release notes
-- Rollback procedures and emergency protocols
-- User communication and change management
-
-#### Smart Certification Process
-```typescript
-// Copilot automates certification steps:
-fabric.cert.security      // → Security certification automation
-fabric.cert.performance   // → Performance testing validation
-fabric.cert.accessibility // → Accessibility compliance check
-fabric.cert.documentation // → Documentation completeness review
-```
-
-### Context-Aware Publishing Workflow
-
-#### Partner Program Integration
-- Validates Partner Program enrollment status
-- Ensures all legal requirements are met
-- Checks certification prerequisites
-- Manages submission workflow
-
-#### Hub Publishing Intelligence
-- Optimizes manifest for Fabric Hub requirements
-- Validates asset quality and compliance
-- Ensures proper categorization and tagging
-- Manages version compatibility
-
-## 🚀 Copilot Quick Actions
-
-### One-Command Publishing
-```powershell
-# Type comment to trigger intelligent publishing:
-# fabric publish to production hub with full validation
-```
-
-### Smart Publishing Patterns
-- `fabric.publish.staging` → Staged publishing with validation
-- `fabric.publish.production` → Full production publishing workflow
-- `fabric.publish.rollback` → Safe rollback procedures
-
-### Auto-Completion Intelligence
-GitHub Copilot recognizes and expands:
-- Publishing workflow patterns
-- Compliance validation procedures
-- Documentation requirements
-- Certification automation
-
----
-
-**Reference**: For complete step-by-step instructions, always consult `.ai/commands/workload/publishworkload.md` first, then apply these Copilot-specific enhancements.
+### Administrative Requirements
+- **Fabric Admin Account**: Account with admin permissions in the target tenant
+- **Publishing Tenant**: Production Fabric tenant for workload lifecycle management
+- **Workload Registration**: Completed registration form with Microsoft
 
 ### Technical Requirements
 - **NuGet Package**: Built manifest package (.nupkg file)
