@@ -18,7 +18,7 @@ Getting started involves 5 Steps that are all outlined in this document below.
 To make it easy as possible we have created a [Setup.ps1](../scripts/Setup/Setup.ps1) script that will do all the work for you. This will replace all the manual steps that we are discribing in the next section. The setup script can e run without any parameters. While running it will ask you about the parameters that it nees to configure everything. You can specify certain parameters (see example below) in case you alreay have an existing Entra App or you want to change the default values like the Workload or item name.
 
 ```powershell
-.\Setup.ps1 -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -FrontendAppId "00000000-0000-0000-0000-000000000000"
+.\Setup.ps1 -WorkloadName "Org.MyWorkloadSample"
 ```
 
 * Make sure that the Poweshell execution policy is set to Unrestricted and the files are unblocked if you are getting asked if the ps files should be started.
@@ -29,7 +29,7 @@ To make it easy as possible we have created a [Setup.ps1](../scripts/Setup/Setup
 For Mac and Linux use pwsh to start the powershell Scripts:
 
 ```bash
-pwsh .\Setup.ps1 -WorkloadName "Org.MyWorkloadSample" -ItemName "SampleItem" -FrontendAppId "00000000-0000-0000-0000-000000000000" 
+pwsh ./Setup.ps1 -WorkloadName "Org.MyWorkloadSample" 
 ```
 
 After the script finished successfully your enviroment is configured and ready to go. The Script will provide you with addtional information on the next steps to see your Workload light up in Fabric.
