@@ -19,7 +19,7 @@ You have access to both public Microsoft Fabric knowledge and project-specific c
 - `.ai/context/fabric.md` - Comprehensive Fabric platform overview
 - `.ai/context/fabric_workload.md` - WDK-specific development guidance
 - `Workload/app/` - Current React/TypeScript implementation patterns
-- `config/Manifest/` - Workload configuration examples
+- `build/Manifest/` - Workload configuration examples
 - `scripts/` - Build and deployment automation patterns
 
 ## Your Expertise Areas

@@ -2,101 +2,121 @@
 applyTo: "/Workload/app/items/[ItemName]Item/"
 ---
 
-# Create New Workload Item
+# GitHub Copilot Instructions: Create New Workload Item
 
-## Process
+## 🔗 Base Instructions
 
-This guide provides step-by-step instructions for AI tools to create a new item in the Microsoft Fabric workload. Each item requires implementation files, manifest configuration, routing setup, and asset management.
+**REQUIRED**: First read the complete generic instructions at `.ai/commands/item/createItem.md` before proceeding.
 
-### Step 1: Create Item Implementation Structure
+This file provides GitHub Copilot-specific enhancements for item creation beyond the base generic process.
 
-1. **Create item directory**:
-   ```
-   Workload/app/items/[ItemName]Item/
-   ```
+## 🤖 GitHub Copilot Enhanced Features
 
-2. **Create the four required implementation files**:
-   - `[ItemName]ItemModel.ts` - Data model and interface definitions
-   - `[ItemName]ItemEditor.tsx` - Main editor component
-   - `[ItemName]ItemEditorEmpty.tsx` - Empty state component (shown when item is first created)
-   - `[ItemName]ItemEditorRibbon.tsx` - Ribbon/toolbar component
+### Smart Code Generation
+When creating a new item, GitHub Copilot provides:
 
-### Step 2: Implement the Model (`[ItemName]ItemModel.ts`)
+#### Auto-Complete Item Structure
+Type `fabric item create [ItemName]` to trigger:
+- Automatic 4-file structure generation in `Workload/app/items/[ItemName]Item/`
+- Intelligent TypeScript interface suggestions
+- Pre-configured Fluent UI component templates
+- Smart import resolution for Fabric APIs
+- Manifest template generation with placeholder support
 
-The model defines the data structure that will be stored in Fabric:
+#### Pattern Recognition
+GitHub Copilot learns from existing items and suggests:
+- Consistent naming conventions ([ItemName]Item pattern)
+- Similar state management patterns
+- Matching component structures
+- Proper TypeScript type definitions
 
+### Real-time Validation
+- **Manifest Sync Detection**: Warns when implementation doesn't match manifest templates
+- **Route Validation**: Suggests route additions when creating new items
+- **Import Optimization**: Auto-suggests required imports for Fabric integration
+- **Type Safety**: Provides immediate feedback on TypeScript errors
+- **Template Processing**: Validates placeholder usage in XML templates
+
+### Context-Aware Suggestions
+
+#### Model Creation (`[ItemName]ItemModel.ts`)
 ```typescript
-export interface [ItemName]ItemDefinition {
-  // Add your item-specific properties here
-  // Example properties:
-  // title?: string;
-  // description?: string;
-  // configuration?: any;
+// Copilot suggests based on existing patterns:
+export interface CustomItemDefinition {
+  // Learns from other item models in the workspace
+  title?: string;          // Common pattern detected
+  configuration?: any;     // Fabric standard
+  metadata?: ItemMetadata; // Auto-suggested import
 }
 ```
 
-**Key Points**:
-- Define the interface that represents your item's state
-- This data will be persisted in Fabric's storage
-- Keep it serializable (JSON-compatible types only)
+#### Component Templates
+GitHub Copilot auto-generates components with:
+- Pre-configured Fluent UI components
+- Proper error handling patterns
+- Integrated authentication flows
+- Fabric-specific hooks and utilities
 
-### Step 3: Implement the Editor (`[ItemName]ItemEditor.tsx`)
+### Intelligent File Relationships
+GitHub Copilot understands:
+- When to update `App.tsx` routing
+- Which manifest files need corresponding updates
+- Asset management for icons and translations
+- Build script implications
 
-The main editor component handles the item's primary interface:
+## 🚀 Copilot Quick Actions
 
+### One-Line Item Creation
 ```typescript
-import React, { useEffect, useState, useCallback } from "react";
-import { ContextProps, PageProps } from "../../../App";
-import { [ItemName]ItemEditorRibbon } from "./[ItemName]ItemEditorRibbon";
+// Type this comment to trigger full item generation:
+// fabric create MyCustomItem with fluent ui table editor
+```
+
+### Smart Completions
+- `fabric.save` → Expands to complete saveItemDefinition pattern
+- `fabric.load` → Expands to complete getWorkloadItem pattern  
+- `fabric.notify` → Expands to callNotificationOpen with proper typing
+- `fabric.ribbon` → Generates ribbon component template
+
+### Auto-Import Intelligence
+GitHub Copilot automatically suggests and adds:
+```typescript
+import { WorkloadClientAPI } from "@ms-fabric/workload-client";
+import { Stack, TextField, PrimaryButton } from "@fluentui/react";
 import { getWorkloadItem, saveItemDefinition } from "../../controller/ItemCRUDController";
-import { WorkloadItem } from "../../models/ItemCRUDModel";
-import { useLocation, useParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { [ItemName]ItemDefinition } from "./[ItemName]ItemModel";
-import { [ItemName]ItemEmpty } from "./[ItemName]ItemEditorEmpty";
-
-export function [ItemName]ItemEditor(props: PageProps) {
-  const pageContext = useParams<ContextProps>();
-  const { pathname } = useLocation();
-  const { t } = useTranslation();
-  const { workloadClient } = props;
-  
-  // Add your editor state management here
-  // Follow the pattern from HelloWorldItemEditor.tsx
-}
 ```
 
-**Key Features**:
-- State management for the item definition
-- Loading and saving logic using ItemCRUDController
-- Integration with the ribbon component
-- Empty state handling
+### Template Expansion
+When creating components, GitHub Copilot expands to full patterns:
+- Empty state components with proper onboarding flow
+- Editor components with complete CRUD operations
+- Ribbon components with standard action buttons
+- Model interfaces with Fabric-compatible types
 
-### Step 4: Implement the Empty State (`[ItemName]ItemEditorEmpty.tsx`)
+## 🎯 Workspace Intelligence
 
-The empty state is shown when users first create the item:
+### Context Detection
+GitHub Copilot detects:
+- Existing item patterns to maintain consistency
+- Available Fabric API clients in the workspace
+- Component libraries already in use
+- Authentication patterns from other items
 
-```typescript
-import React, { useState } from "react";
-import { [ItemName]ItemDefinition } from "./[ItemName]ItemModel";
+### Build Integration
+- Suggests manifest updates when items are created
+- Validates TypeScript compilation in real-time
+- Checks for missing dependencies
+- Ensures proper export statements
 
-interface [ItemName]ItemEmptyStateProps {
-  workloadClient: WorkloadClientAPI,
-  item: GenericItem;
-  itemDefinition: [ItemName]ItemDefinition,
-  onFinishEmpty: (data: [ItemName]ItemDefinition) => void;
-}
+### Error Prevention
+- Warns about common Fabric integration mistakes
+- Suggests proper error handling for async operations
+- Validates component prop interfaces
+- Checks for proper cleanup in useEffect hooks
 
-export const [ItemName]ItemEmpty: React.FC<[ItemName]ItemEmptyStateProps> = ({
-  workloadClient,
-  item,
-  itemDefinition,
-  onFinishEmpty
-}) => {
-  // Add initialization UI here
-  // Call onFinishEmpty when user completes setup
-};
-```
+---
+
+**Reference**: For complete step-by-step instructions, always consult `.ai/commands/item/createItem.md` first, then apply these Copilot-specific enhancements.
 
 **Purpose**:
 - Provide initial setup/configuration interface
@@ -132,23 +152,23 @@ export function [ItemName]ItemEditorRibbon(props: [ItemName]ItemEditorRibbonProp
 
 ### Step 6: Create Manifest Configuration
 
-#### 6.1: Create XML Manifest (`config/Manifest/[ItemName]Item.xml`)
+#### 6.1: Create XML Manifest Template (`Workload/Manifest/items/[ItemName]/[ItemName]Item.xml`)
 
 ```xml
 <?xml version='1.0' encoding='utf-8'?>
 <ItemManifestConfiguration SchemaVersion="2.0.0">
-  <Item TypeName="[WorkloadName].[ItemName]" Category="Data">
-    <Workload WorkloadName="[WorkloadName]" />
+  <Item TypeName="{{WORKLOAD_NAME}}.[ItemName]" Category="Data">
+    <Workload WorkloadName="{{WORKLOAD_NAME}}" />
   </Item>
 </ItemManifestConfiguration>
 ```
 
-**Key Elements**:
-- `TypeName`: Unique identifier for the item type
-- `Category`: Fabric category (Data, Analytics, etc.)
-- `WorkloadName`: Must match your workload's name
+**GitHub Copilot Enhancement**: 
+- Auto-suggests placeholder patterns like `{{WORKLOAD_NAME}}` for environment-specific generation
+- Validates XML structure against Fabric schemas
+- Recognizes template processing patterns
 
-#### 6.2: Create JSON Manifest (`config/Manifest/[ItemName]Item.json`)
+#### 6.2: Create JSON Manifest (`Workload/Manifest/items/[ItemName]/[ItemName]Item.json`)
 
 ```json
 {
@@ -211,14 +231,14 @@ import { [ItemName]ItemEditor } from "./items/[ItemName]Item/[ItemName]ItemEdito
 
 #### 8.1: Add Item Icon
 
-Create an icon file: `config/Manifest/assets/images/[ItemName]Item-icon.png`
+Create an icon file: `Workload/Manifest/assets/images/[ItemName]Item-icon.png`
 - **Size**: 24x24 pixels recommended
 - **Format**: PNG with transparency
 - **Style**: Follow Fabric design guidelines
 
 #### 8.2: Add Localization Strings
 
-Update `config/Manifest/assets/locales/en-US/translations.json`:
+Update `Workload/Manifest/assets/locales/en-US/translations.json`:
 
 ```json
 {
@@ -235,9 +255,36 @@ Update `config/Manifest/assets/locales/en-US/translations.json`:
 
 #### 8.3: Update Product.json (if needed)
 
-If your item requires specific workload-level configuration, update `config/Manifest/Product.json` to include references to your new item type.
+If your item requires specific workload-level configuration, update `Workload/Manifest/Product.json` to include references to your new item type.
 
-### Step 9: Testing and Validation
+**GitHub Copilot Enhancement**: Recognizes when Product.json updates are needed and suggests configuration patterns.
+
+### Step 9: 🚨 CRITICAL: Update Environment Variables
+
+**IMPORTANT**: After creating a new item, you MUST update the `ITEM_NAMES` variable in ALL environment files, or your item will not be included in the build:
+
+1. **Update `Workload/.env.dev`**:
+   ```bash
+   # Current repository has HelloWorld item
+   ITEM_NAMES=HelloWorld
+   
+   # After adding your new item
+   ITEM_NAMES=HelloWorld,[ItemName]
+   ```
+
+2. **Update `Workload/.env.test`**:
+   ```bash
+   ITEM_NAMES=HelloWorld,[ItemName]
+   ```
+
+3. **Update `Workload/.env.prod`**:
+   ```bash
+   ITEM_NAMES=HelloWorld,[ItemName]
+   ```
+
+**Why This Matters**: The `ITEM_NAMES` variable controls which items are included when building the manifest package. If you forget this step, your new item won't appear in the workload.
+
+### Step 10: Testing and Validation
 
 1. **Build the project**:
    ```powershell
@@ -256,7 +303,7 @@ If your item requires specific workload-level configuration, update `config/Mani
    - Verify editor loads correctly
    - Test save/load functionality
 
-### Step 10: Build and Deploy
+### Step 11: Build and Deploy
 
 1. **Build manifest package**:
    ```powershell
@@ -267,6 +314,34 @@ If your item requires specific workload-level configuration, update `config/Mani
    ```powershell
    .\scripts\Build\BuildRelease.ps1
    ```
+
+## Current Repository Structure
+
+The repository currently contains one fully implemented item:
+
+**Implemented Items**:
+- `HelloWorldItem` - A sample item to demonstrate the workload development pattern
+
+**Repository Items Folder Structure**:
+```
+Workload/app/items/
+└── HelloWorldItem/
+    ├── HelloWorldItemModel.ts
+    ├── HelloWorldItemEditor.tsx
+    ├── HelloWorldItemEditorEmpty.tsx
+    ├── HelloWorldItemEditorRibbon.tsx
+    ├── HelloWorldItemEditorAboutPage.tsx
+    └── HelloWorldItemEditorSettingsPage.tsx
+```
+
+**Manifest Structure**:
+```
+Workload/Manifest/items/
+└── HelloWorld/
+    ├── HelloWorldItem.json
+    ├── HelloWorldItem.xml
+    └── ItemDefinition/
+```
 
 ## Usage
 
@@ -280,14 +355,14 @@ When creating a new item, ensure all these components are created:
 - [ ] `[ItemName]ItemEditorEmpty.tsx` - Empty state component
 - [ ] `[ItemName]ItemEditorRibbon.tsx` - Ribbon/toolbar component
 
-**Manifest Files** (in `config/Manifest/`):
+**Manifest Files** (in `Workload/Manifest/`):
 - [ ] `[ItemName]Item.xml` - XML manifest configuration
 - [ ] `[ItemName]Item.json` - JSON manifest with editor path and metadata
-- [ ] `Product.json` - Product JSON manifest that containst the configuration for all Items. Need to include a createExperience for the newly created item.
+- [ ] `Product.json` - Product JSON manifest that contains the frontend configuration for all Items. Need to include a createExperience for the newly created item.
 
 **Asset Files**:
-- [ ] `config/Manifest/assets/images/[ItemName]Item-icon.png` - Item icon
-- [ ] Localization entries in `config/Manifest/assets/locales/*/translations.json`
+- [ ] `Workload/Manifest/assets/images/[ItemName]Item-icon.png` - Item icon
+- [ ] Localization entries in `Workload/Manifest/assets/locales/*/translations.json`
 
 **Code Integration**:
 - [ ] Route added to `Workload/app/App.tsx`

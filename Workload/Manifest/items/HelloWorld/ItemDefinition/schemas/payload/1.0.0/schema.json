@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "{{FRONTEND_URL}}/schemas/{{WORKLOAD_NAME}}.HelloWorld/ItemDefinition/schemas/payload/1.0.0/schema.json",
+  "title": "HelloWorld Item Definition",
+  "description": "Schema for HelloWorld item definition in Microsoft Fabric workload",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Reference to the JSON schema"
+    },
+    "message": {
+      "type": "string",
+      "description": "The hello world message content"
+    }
+  },
+  "additionalProperties": false
+}

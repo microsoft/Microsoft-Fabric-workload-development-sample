@@ -1,91 +1,53 @@
-# GitHub Copilot Instructions: Run Workload
+# Run Workload - Step-by-Step Guide
 
-## 🔗 Base Instructions
+## Process
 
-**REQUIRED**: First read the complete generic instructions at `.ai/commands/workload/runWorkload.md`
+This guide provides comprehensive instructions for AI tools on how to start and run a Microsoft Fabric workload using the scripts available in the `scripts/Run/` directory. The workload consists of two main components that work together: the Development Gateway and the Development Server.
 
-This file provides GitHub Copilot-specific enhancements for running workloads beyond the base generic process.
+### Prerequisites Check
 
-## 🤖 GitHub Copilot Enhanced Features
+Before starting the workload, ensure the following prerequisites are met:
 
-### Smart Environment Detection
-GitHub Copilot automatically detects and suggests:
-- Current workspace configuration status
-- Missing dependencies or setup steps
-- Optimal terminal configuration for parallel processes
-- Environment variable validation
+1. **Project Setup Complete**: The workload must be properly configured using the setup scripts
+2. **Dependencies Installed**: Node.js dependencies must be installed in the `Workload/` directory
+3. **Azure Login**: User must be authenticated with Azure CLI for Fabric API access
+4. **Development Workspace**: A valid Fabric workspace must be configured for development
 
-### Intelligent Command Suggestions
+### Architecture Overview
 
-#### Quick Start Commands
+The workload runs using two components:
+
+- **Development Gateway** (`DevGateway`): Bridges between Fabric and your workload, handles authentication
+- **Development Server** (`DevServer`): Hosts the frontend React application and serves the workload UI
+
+### Step 1: Prepare the Environment
+
+#### 1.1: Navigate to Project Root
 ```powershell
-# Copilot recognizes these patterns and auto-expands:
-fabric dev start     # → Expands to full DevGateway + DevServer startup
-fabric env check     # → Validates all prerequisites  
-fabric dev restart   # → Graceful restart of both services
+cd "c:\Dev\Fabric\WDK\Microsoft-Fabric-workload-development-sample"
 ```
 
-### Real-time Process Monitoring
-- **Service Health**: Monitors DevGateway and DevServer status
-- **Port Conflict Detection**: Warns about port usage conflicts
-- **Authentication Flow**: Validates Azure login and token freshness
-- **Build Status**: Tracks TypeScript compilation errors
-
-### Context-Aware Troubleshooting
-
-#### Auto-Diagnostics
-GitHub Copilot suggests fixes for common issues:
-- **Port 5173 in use**: Suggests alternative ports or process cleanup
-- **Azure authentication expired**: Provides `az login` reminder
-- **Node modules out of date**: Suggests `npm install` or `npm ci`
-- **Configuration missing**: Points to specific setup requirements
-
-#### Smart Terminal Management
-- Suggests optimal terminal layout (split terminals)
-- Auto-detects which terminal to use for each command
-- Provides process status indicators
-- Suggests graceful shutdown procedures
-
-### Workspace Intelligence
-
-#### Configuration Validation
-```typescript
-// Copilot validates these automatically:
-workload-dev-mode.json   // Workspace configuration
-.env.dev                 // Environment variables  
-package.json             // Dependencies
-tsconfig.json           // TypeScript settings
-```
-
-#### Development Flow Optimization
-- Suggests file watching patterns for auto-reload
-- Recommends browser DevTools setup
-- Provides debugging configuration hints
-- Suggests optimal development workflow
-
-## 🚀 Copilot Quick Actions
-
-### One-Command Startup
+#### 1.2: Install Dependencies (if not already done)
 ```powershell
-# Type comment to trigger full startup:
-# fabric start development environment with validation
+cd Workload
+npm install
+cd ..
 ```
 
-### Smart Error Recovery
-- `fabric.restart` → Intelligent restart with dependency check
-- `fabric.reset` → Clean restart with cache clearing
-- `fabric.diagnose` → Comprehensive environment diagnostics
+#### 1.3: Verify Configuration
+Check that the development configuration file exists and is properly configured:
+```powershell
+# Verify DevGateway configuration exists
+Test-Path "config\DevGateway\workload-dev-mode.json"
 
-### Auto-Completion Patterns
-GitHub Copilot recognizes and expands:
-- Environment setup commands
-- Service restart procedures  
-- Debugging configuration
-- Performance optimization hints
+# Check workspace configuration
+Get-Content "config\DevGateway\workload-dev-mode.json"
+```
 
----
-
-**Reference**: For complete step-by-step instructions, always consult `.ai/commands/workload/runWorkload.md` first, then apply these Copilot-specific enhancements.
+**Expected Configuration Structure:**
+```json
+{  
+    "WorkspaceGuid": "your-workspace-id-here",
     "ManifestPackageFilePath": "path-to-manifest-package.nupkg",
     "WorkloadEndpointURL": "http://127.0.0.1:5000/workload"
 }

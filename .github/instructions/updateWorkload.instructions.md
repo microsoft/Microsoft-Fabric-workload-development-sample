@@ -1,52 +1,90 @@
-# Update Workload Name
+# GitHub Copilot Instructions: Update Workload
 
-## Overview
+## 🔗 Base Instructions
 
-This document provides comprehensive guidance for AI tools on how to update a Microsoft Fabric workload name in the Workload Development Kit (WDK v2). Understanding the workload naming structure and the files that need to be updated is crucial for maintaining consistency across the entire workload configuration.
+**REQUIRED**: First read the complete generic instructions at `.ai/commands/workload/updateWorkload.md`
 
-## Workload Naming Structure
+This file provides GitHub Copilot-specific enhancements for updating workloads beyond the base generic process.
 
-### Naming Convention
+## 🤖 GitHub Copilot Enhanced Features
 
-The workload name follows the pattern: `[Organization].[WorkloadId]`
+### Smart Configuration Analysis
+GitHub Copilot automatically analyzes:
+- Configuration file dependencies and relationships
+- Impact assessment of proposed changes
+- Backward compatibility implications
+- Required manifest updates
 
-**Components:**
-- **Organization**: Identifies the organization or entity that owns the workload
-- **WorkloadId**: Unique identifier for the specific workload
+### Intelligent Update Suggestions
 
-### Organization Guidelines
-
-#### Development and Internal Use
-- **Organization**: Always use `"Org"` for development and internal scenarios
-- **Example**: `Org.MyCustomWorkload`, `Org.DataProcessingSample`
-
-#### Production and Fabric Hub Publishing
-- **Organization**: Must be replaced with your actual organization name
-- **Requirements**: Organization name must be registered with Microsoft for Fabric Hub publishing
-- **Example**: `Contoso.DataAnalytics`, `Fabrikam.MLPipeline`
-
-### Complete Examples
-
-```
-Development:    Org.MyFERemoteWorkloadSample
-Production:     ContosoInc.MyFERemoteWorkloadSample
-
-Development:    Org.DataProcessingWorkload  
-Production:     Fabrikam.DataProcessingWorkload
+#### Context-Aware Recommendations
+```typescript
+// Copilot detects patterns and suggests updates:
+fabric.update.workload.name     // → Comprehensive name change process
+fabric.update.item.definition   // → Item schema updates with validation  
+fabric.update.manifest.version  // → Version management with dependency tracking
 ```
 
-## Automated Setup Process
+### Real-time Impact Analysis
+- **Dependency Mapping**: Shows which files require updates
+- **Breaking Change Detection**: Warns about compatibility issues
+- **Validation Pipeline**: Ensures updates maintain functionality
+- **Rollback Planning**: Suggests safe rollback procedures
 
-The setup scripts handle workload name configuration automatically, but they rely on template files for proper replacement.
+### Advanced Configuration Management
 
-### Setup Script Flow
+#### Multi-File Synchronization
+GitHub Copilot tracks relationships between:
+- `WorkloadManifest.xml` ↔ Implementation files
+- Environment configurations across dev/staging/prod
+- Item definitions and their corresponding routes
+- Asset references and actual file locations
 
-1. **Template Processing**: Scripts read from `config/templates/` directory
-2. **Token Replacement**: Replace `{{WORKLOAD_NAME}}` tokens with actual values
-3. **File Generation**: Create actual configuration files in `config/Manifest/`
-4. **Environment Configuration**: Update `.env` files in `Workload/` directory
+#### Smart Migration Patterns
+```powershell
+# Copilot generates migration scripts:
+fabric migrate v1.x to v2.x    # → Version upgrade automation
+fabric migrate dev to staging  # → Environment promotion
+fabric migrate org name change # → Organization rebranding
+```
 
-### Key Setup Scripts
+### Context-Aware Validation
+
+#### Pre-Update Checks
+- Validates current system state
+- Checks for uncommitted changes
+- Verifies backup procedures
+- Ensures test environment availability
+
+#### Post-Update Verification
+- Automated testing of updated configurations
+- Build process validation
+- Runtime functionality checks
+- Performance impact assessment
+
+## 🚀 Copilot Quick Actions
+
+### One-Command Updates
+```powershell
+# Type comment to trigger intelligent updates:
+# fabric update workload name from Org.Test to ContosoInc.Production
+```
+
+### Smart Configuration Patterns
+- `fabric.config.sync` → Synchronizes all related configuration files
+- `fabric.config.validate` → Comprehensive configuration validation
+- `fabric.config.backup` → Creates safe configuration backup
+
+### Auto-Completion Intelligence
+GitHub Copilot recognizes and expands:
+- Configuration update patterns
+- File relationship mappings
+- Validation procedures
+- Environment synchronization
+
+---
+
+**Reference**: For complete step-by-step instructions, always consult `.ai/commands/workload/updateWorkload.md` first, then apply these Copilot-specific enhancements.
 
 - **`scripts/Setup/Setup.ps1`**: Main setup script that orchestrates the entire process
 - **`scripts/Setup/SetupWorkload.ps1`**: Handles workload-specific configuration and template processing
@@ -55,7 +93,7 @@ The setup scripts handle workload name configuration automatically, but they rel
 
 When updating a workload name, the following files must be updated consistently:
 
-### 1. Manifest Configuration Files (`config/Manifest/`)
+### 1. Manifest Configuration Files (`build/Manifest/`)
 
 #### `WorkloadManifest.xml`
 ```xml
@@ -91,7 +129,7 @@ WORKLOAD_NAME=[Organization].[WorkloadId]
 WORKLOAD_NAME=[Organization].[WorkloadId]
 ```
 
-### 3. Template Files (`config/templates/Manifest/`)
+### 3. Template Files (`Workload/Manifest/`)
 
 Templates use placeholder tokens that get replaced during setup:
 
@@ -114,12 +152,11 @@ Templates use placeholder tokens that get replaced during setup:
 1. **Prepare Parameters**:
    ```powershell
    $WorkloadName = "YourOrg.YourWorkloadId"
-   $WorkloadDisplayName = "Your Workload Display Name"
    ```
 
 2. **Run Setup Script**:
    ```powershell
-   .\scripts\Setup\Setup.ps1 -WorkloadName $WorkloadName -WorkloadDisplayName $WorkloadDisplayName -Force $true
+   .\scripts\Setup\Setup.ps1 -WorkloadName -Force $true
    ```
 
 3. **Verify Updates**: Check that all files have been updated with the new workload name
@@ -127,15 +164,15 @@ Templates use placeholder tokens that get replaced during setup:
 ### Method 2: Manual Update Process
 
 #### Step 1: Update Template Files
-Update all template files in `config/templates/Manifest/` to ensure future setup runs use correct values.
+Update all template files in `Workload/Manifest/` to ensure future setup runs use correct values.
 
 #### Step 2: Update Manifest Files
-1. **Update `config/Manifest/WorkloadManifest.xml`**:
+1. **Update `build/Manifest/WorkloadManifest.xml`**:
    ```xml
    <Workload WorkloadName="NewOrg.NewWorkloadId" HostingType="FERemote">
    ```
 
-2. **Update all Item XML files** in `config/Manifest/`:
+2. **Update all Item XML files** in `build/Manifest/`:
    - Find all `*Item.xml` files
    - Update `TypeName` and `WorkloadName` attributes:
    ```xml
@@ -253,24 +290,56 @@ After updating the workload name, verify these items:
 ## Integration with CI/CD
 
 ### Environment Variables
-Configure build pipelines to use environment-specific workload names:
+Configure build pipelines with environment-specific workload names and the proper script sequence:
+
+### Automated Deployment Pipeline
+
+Use the proper script sequence in deployment pipelines:
+
+```yaml
+# Step 1: Setup workload environment
+- task: PowerShell@2
+  displayName: 'Setup Workload Environment'
+  inputs:
+    filePath: 'scripts/Setup/SetupWorkload.ps1'
+    arguments: '-WorkloadName $(WORKLOAD_NAME) -Force $true'
+
+# Step 2: Build manifest package
+- task: PowerShell@2
+  displayName: 'Build Manifest Package'
+  inputs:
+    filePath: 'scripts/Build/BuildManifestPackage.ps1'
+    arguments: '-Environment $(ENVIRONMENT_NAME)'
+
+# Step 3: Build release package
+- task: PowerShell@2
+  displayName: 'Build Release Package'
+  inputs:
+    filePath: 'scripts/Build/BuildRelease.ps1'
+    arguments: '-Environment $(ENVIRONMENT_NAME)'
+
+# Step 4: Publish workload (for production)
+- task: PowerShell@2
+  displayName: 'Publish Workload'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+  inputs:
+    filePath: 'scripts/Deploy/PublishWorkload.ps1'
+    arguments: '-Environment prod -WorkloadName $(WORKLOAD_NAME_PROD)'
+```
+
+### Pipeline Variables
+Configure environment-specific variables:
 
 ```yaml
 variables:
   - name: WORKLOAD_NAME_DEV
     value: "Org.MyWorkload"
-  - name: WORKLOAD_NAME_PROD  
+  - name: WORKLOAD_NAME_TEST
+    value: "Org.MyWorkload"  
+  - name: WORKLOAD_NAME_PROD
     value: "ContosoInc.MyWorkload"
-```
-
-### Automated Deployment
-Use setup scripts in deployment pipelines:
-
-```yaml
-- task: PowerShell@2
-  inputs:
-    filePath: 'scripts/Setup/Setup.ps1'
-    arguments: '-WorkloadName $(WORKLOAD_NAME) -WorkloadDisplayName "$(WORKLOAD_DISPLAY_NAME)" -Force $true'
+  - name: ENVIRONMENT_NAME
+    value: ${{ parameters.environment }}
 ```
 
 This comprehensive approach ensures that workload name updates are applied consistently across all required files and configurations, maintaining the integrity of the Fabric workload throughout the development and deployment lifecycle.

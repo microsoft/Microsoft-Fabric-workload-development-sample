@@ -1,16 +1,17 @@
 param (
-    # The name of the workload, used for the Entra App and the workload in the Fabric portal
-    [String]$WorkloadName = "Org.MyWorkloadSample",
-    # The name of the item, used for the item in the Fabric portal
-    # Items will be created with the {WorkloadName}.{ItemName} format in Fabric
+    # The name of the item to create (e.g., "MyCustomItem")
+    # The item will appear as {{WORKLOAD_NAME}}.{ItemName} in Fabric
     [String]$ItemName,
+    # The source item to copy from (default: HelloWorld)
     [String]$srcItemName = "HelloWorld"
 )
 
 ###############################################################################
 # Functions used in the script
-# These functions are used to copy files and replace placeholders in the content
+# These functions copy files and replace the source item name with the new item name
+# Template placeholders like {{WORKLOAD_NAME}} are preserved for build-time replacement
 ###############################################################################
+
 function Replace-SourceItemPath {
     param (
         [String]$Path
@@ -108,46 +109,58 @@ if (Test-Path $srcFile) {
 Write-Host ""
 Write-Host "Creating manifest files..."
 # Item.xml file
-$srcFile = Join-Path $PSScriptRoot "..\..\config\templates\Manifest\${srcItemName}Item.xml"
+$srcFile = Join-Path $PSScriptRoot "..\..\Workload\Manifest\items\${srcItemName}\${srcItemName}Item.xml"
 if (Test-Path $srcFile) {
-    $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\${itemName}Item.xml"
+    $targetFile = Join-Path $PSScriptRoot "..\..\Workload\Manifest\items\${itemName}\${itemName}Item.xml"
     Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
 } else {
-    Write-Host "${srcItemName}Item.xml not found at $targetFile" -ForegroundColor Red
+    Write-Host "${srcItemName}Item.xml not found at $srcFile" -ForegroundColor Red
 }
 # Item.json file
-$srcFile = Join-Path $PSScriptRoot "..\..\config\templates\Manifest\${srcItemName}Item.json"
+$srcFile = Join-Path $PSScriptRoot "..\..\Workload\Manifest\items\${srcItemName}\${srcItemName}Item.json"
 if (Test-Path $srcFile) {
-    $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\${itemName}Item.json"
+    $targetFile = Join-Path $PSScriptRoot "..\..\Workload\Manifest\items\${itemName}\${itemName}Item.json"
     Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
     $replacements = @{
         $srcItemName = $ItemName
-        #"{{WORKLOAD_NAME}}" = $WorkloadName
     }
     Replace-Content -SourceFile $targetFile -Replacements $replacements
 } else {
     Write-Host "Couldn't find ${srcFile}" -ForegroundColor Red
 }
 # assets
-$srcFile = Join-Path $PSScriptRoot "..\..\config\templates\Manifest\assets\images\${srcItemName}Item-icon.png"
+$srcFile = Join-Path $PSScriptRoot "..\..\Workload\Manifest\assets\images\${srcItemName}Item-icon.png"
 if (Test-Path $srcFile) {
-    $targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\assets\images\${itemName}Item-icon.png"
+    $targetFile = Join-Path $PSScriptRoot "..\..\Workload\Manifest\assets\images\${itemName}Item-icon.png"
     Copy-SourceItemFile -SourceFile $srcFile -DestinationFile $targetFile
 } else {
    Write-Host "Couldn't find ${srcFile}" -ForegroundColor Red
 }
 
-
+Write-Host ""
+Write-Host "🚨 CRITICAL: Update ITEM_NAMES in ALL .env files!" -ForegroundColor Red
+Write-Host "You MUST add '$ItemName' to the ITEM_NAMES variable in these files:" -ForegroundColor Yellow
+$envFiles = @("..\..\Workload\.env.dev", "..\..\Workload\.env.test", "..\..\Workload\.env.prod")
+foreach ($envFile in $envFiles) {
+    $envPath = Join-Path $PSScriptRoot $envFile
+    if (Test-Path $envPath) {
+        $fullPath = Resolve-Path $envPath
+        Write-Host " $fullPath" -ForegroundColor Cyan
+    }
+}
+Write-Host ""
+Write-Host "Example: Change 'ITEM_NAMES=HelloWorld' to 'ITEM_NAMES=HelloWorld,$ItemName'" -ForegroundColor Green
+Write-Host "Without this change, your new item will NOT appear in the workload!" -ForegroundColor Red
 
 Write-Host ""
-$targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\Product.json"
+$targetFile = Join-Path $PSScriptRoot "..\..\Workload\Manifest\Product.json"
 $targetFile = Resolve-Path $targetFile
 Write-Host "TODO: Add the configuration Section to the Product.json file!" -ForegroundColor Blue
 Write-Host "The file you need to change is:"
 Write-Host " $targetFile"
 
 Write-Host ""
-$targetFile = Join-Path $PSScriptRoot "..\..\config\Manifest\assets\locales"
+$targetFile = Join-Path $PSScriptRoot "..\..\Workload\Manifest\assets\locales"
 $targetFile = Resolve-Path $targetFile
 Write-Host "TODO: Add the Translations to the Manifest asset files!" -ForegroundColor Blue
 Write-Host "The file you need to change are located here:"
