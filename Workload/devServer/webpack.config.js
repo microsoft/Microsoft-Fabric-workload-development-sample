@@ -7,10 +7,19 @@ const fs = require("fs").promises;
 const express = require("express");
 const { registerDevServerApis } = require('.'); // Import our manifest API
 
-console.log('******************** Build: Environment Variables *******************');
+// making sure the dev configuration is set correctly!
+// TODO: once we use the manifest for publishing we can remove this.
+process.env.DEV_AAD_CONFIG_FE_APPID = process.env.FRONTEND_APPID;
+process.env.DEV_AAD_CONFIG_BE_APPID = process.env.BACKEND_APPID;
+DEV_AAD_CONFIG_BE_AUDIENCE= ""
+DEV_AAD_CONFIG_BE_REDIRECT_URI=process.env.BACKEND_URL;
+
+console.log('********************     Environment Variables    *******************');
 console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
 console.log('process.env.ITEM_NAMES: ' + process.env.ITEM_NAMES);
+console.log('process.env.DEV_AAD_CONFIG_FE_APPID: ' + process.env.DEV_AAD_CONFIG_FE_APPID);
 console.log('*********************************************************************');
+
 
 module.exports = {
     mode: "development",
