@@ -53,7 +53,7 @@
     "createExperience": {
       "description": "Workload_Description",
       "cards": [
-                {
+        {
           "title": "HelloWorldItem_DisplayName",
           "description": "HelloWorldItem_Description",
           "icon": {
