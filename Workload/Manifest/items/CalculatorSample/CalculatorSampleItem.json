@@ -1,0 +1,40 @@
+{
+    "name": "CalculatorSample",
+    "version": "1.100",
+    "displayName": "CalculatorSampleItem_DisplayName",
+    "displayNamePlural": "CalculatorSampleItem_DisplayName_Plural",
+    "editor": {
+      "path": "/CalculatorSampleItem-editor"
+    },
+    "icon": {
+      "name": "assets/images/CalculatorSampleItem-icon.png"
+    },
+    "activeIcon": {
+      "name": "assets/images/CalculatorSampleItem-icon.png"
+    },
+    "contextMenuItems": [
+    ],
+    "quickActionItems": [
+    ],
+    "supportedInMonitoringHub": true,
+    "supportedInDatahubL1": true,
+    "itemJobActionConfig": {
+    },
+    "itemSettings": {
+      "getItemSettings": {
+            "action": "getItemSettings"
+      }
+    },
+    "editorTab": {
+      "onInit": "item.tab.onInit",
+      "onDeactivate": "item.tab.onDeactivate",
+      "canDeactivate": "item.tab.canDeactivate",
+      "canDestroy": "item.tab.canDestroy",
+      "onDestroy": "item.tab.onDestroy",
+      "onDelete": "item.tab.onDelete"
+    },
+    "createItemDialogConfig": {
+      "onCreationFailure": { "action": "item.onCreationFailure" },
+      "onCreationSuccess": { "action": "item.onCreationSuccess" }
+    }
+  }

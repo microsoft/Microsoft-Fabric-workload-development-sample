@@ -1,0 +1,28 @@
+{
+    "name": "UnityCatalog",
+    "version": "1.100",
+    "displayName": "UnityCatalogItem_DisplayName",
+    "displayNamePlural": "UnityCatalogItem_DisplayName_Plural",
+    "editor": {
+      "path": "/UnityCatalogItem-editor"
+    },
+    "icon": {
+      "name": "assets/images/UnityCatalogItem-icon.png"
+    },
+    "activeIcon": {
+      "name": "assets/images/UnityCatalogItem-icon.png"
+    },
+    "supportedInMonitoringHub": true,
+    "supportedInDatahubL1": true,
+    "editorTab": {
+      "onDeactivate": "item.tab.onDeactivate",
+      "canDeactivate": "item.tab.canDeactivate",
+      "canDestroy": "item.tab.canDestroy",
+      "onDestroy": "item.tab.onDestroy",
+      "onDelete": "item.tab.onDelete"
+    },
+    "createItemDialogConfig": {
+      "onCreationFailure": { "action": "item.onCreationFailure" },
+      "onCreationSuccess": { "action": "item.onCreationSuccess" }
+    }
+}
