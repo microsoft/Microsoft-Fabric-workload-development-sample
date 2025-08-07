@@ -116,6 +116,27 @@
             "onCreationFailure": { "action": "item.onCreationFailure" },
             "onCreationSuccess": { "action": "item.onCreationSuccess" }
           }
+        },
+        {
+          "title": "UnityCatalogItem_DisplayName",
+          "description": "UnityCatalogItem_Description",
+          "icon": {
+            "name": "assets/images/UnityCatalogItem-icon.png"
+          },
+          "icon_small": {
+            "name": "assets/images/UnityCatalogItem-icon.png"
+          },
+          "availableIn": [
+            "home",
+            "create-hub",
+            "workspace-plus-new",
+            "workspace-plus-new-teams"
+          ],
+          "itemType": "UnityCatalogItem",
+          "createItemDialogConfig": {
+            "onCreationFailure": { "action": "item.onCreationFailure" },
+            "onCreationSuccess": { "action": "item.onCreationSuccess" }
+          }
         }
       ]
     },
