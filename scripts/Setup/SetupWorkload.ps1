@@ -77,7 +77,7 @@ Write-Output "Setting up the environment..."
     if ([string]::IsNullOrWhiteSpace($WorkloadName)) {
         Write-Error "Workspace Name is not set or is using the default placeholder value. Please provide a valid Workspace Name."
         exit 1
-    } elseif (! [string]::StartsWith($WorkloadName, "Org.")) {
+    } elseif (-not $WorkloadName.StartsWith("Org.")) { 
         Write-Warning "Please make sure that you have registered the Workload name before you start working with it."
     }
 }
