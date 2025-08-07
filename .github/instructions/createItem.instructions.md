@@ -265,10 +265,10 @@ If your item requires specific workload-level configuration, update `Workload/Ma
 
 1. **Update `Workload/.env.dev`**:
    ```bash
-   # Before
+   # Current repository has HelloWorld item
    ITEM_NAMES=HelloWorld
    
-   # After - add your new item
+   # After adding your new item
    ITEM_NAMES=HelloWorld,[ItemName]
    ```
 
@@ -314,6 +314,34 @@ If your item requires specific workload-level configuration, update `Workload/Ma
    ```powershell
    .\scripts\Build\BuildRelease.ps1
    ```
+
+## Current Repository Structure
+
+The repository currently contains one fully implemented item:
+
+**Implemented Items**:
+- `HelloWorldItem` - A sample item to demonstrate the workload development pattern
+
+**Repository Items Folder Structure**:
+```
+Workload/app/items/
+└── HelloWorldItem/
+    ├── HelloWorldItemModel.ts
+    ├── HelloWorldItemEditor.tsx
+    ├── HelloWorldItemEditorEmpty.tsx
+    ├── HelloWorldItemEditorRibbon.tsx
+    ├── HelloWorldItemEditorAboutPage.tsx
+    └── HelloWorldItemEditorSettingsPage.tsx
+```
+
+**Manifest Structure**:
+```
+Workload/Manifest/items/
+└── HelloWorld/
+    ├── HelloWorldItem.json
+    ├── HelloWorldItem.xml
+    └── ItemDefinition/
+```
 
 ## Usage
 
