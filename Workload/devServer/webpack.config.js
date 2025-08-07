@@ -11,8 +11,8 @@ const { registerDevServerApis } = require('.'); // Import our manifest API
 // TODO: once we use the manifest for publishing we can remove this.
 process.env.DEV_AAD_CONFIG_FE_APPID = process.env.FRONTEND_APPID;
 process.env.DEV_AAD_CONFIG_BE_APPID = process.env.BACKEND_APPID;
-DEV_AAD_CONFIG_BE_AUDIENCE= ""
-DEV_AAD_CONFIG_BE_REDIRECT_URI=process.env.BACKEND_URL;
+process.env.DEV_AAD_CONFIG_BE_AUDIENCE= ""
+process.env.DEV_AAD_CONFIG_BE_REDIRECT_URI=process.env.BACKEND_URL;
 
 console.log('********************     Environment Variables    *******************');
 console.log('process.env.WORKLOAD_NAME: ' + process.env.WORKLOAD_NAME);
