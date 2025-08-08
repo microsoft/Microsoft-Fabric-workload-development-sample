@@ -15,6 +15,9 @@ import {
  * API wrapper for Fabric Platform Job Scheduler operations
  * Provides methods for managing item schedules and job instances
  * 
+ * Based on the official Fabric REST API:
+ * https://learn.microsoft.com/en-us/rest/api/fabric/core/job-scheduler
+ * 
  * Uses method-based scope selection:
  * - GET operations use read-only scopes
  * - POST/PUT/PATCH/DELETE operations use read-write scopes

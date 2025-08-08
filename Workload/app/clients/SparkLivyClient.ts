@@ -10,6 +10,9 @@ const LIVY_API_VERSION = "2024-07-30";
  * API wrapper for Spark Livy operations in Fabric
  * Provides methods for managing Spark batch jobs and interactive sessions
  * 
+ * Based on the official Fabric REST API:
+ * https://learn.microsoft.com/en-us/rest/api/fabric/spark/spark-livy
+ * 
  * Uses method-based scope selection:
  * - GET operations use read-only scopes
  * - POST/PUT/PATCH/DELETE operations use read-write scopes

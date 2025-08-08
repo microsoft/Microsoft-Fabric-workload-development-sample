@@ -12,6 +12,7 @@ export const TABLE_FOLDER_NAME = "Tables"
 /**
  * API wrapper for OneLake operations
  * Provides methods for reading and writing files to OneLake storage
+ * 
  */
 export class OneLakeClient extends FabricPlatformClient {
   

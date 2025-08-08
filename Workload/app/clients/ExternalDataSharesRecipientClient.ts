@@ -11,6 +11,9 @@ import {
  * API wrapper for External Data Shares Recipient operations
  * Provides methods for managing external data share invitations from the recipient perspective
  * 
+ * Based on the official Fabric REST API:
+ * https://learn.microsoft.com/en-us/rest/api/fabric/core/external-data-shares-recipient
+ * 
  * This client handles:
  * - Getting invitation details
  * - Accepting external data share invitations

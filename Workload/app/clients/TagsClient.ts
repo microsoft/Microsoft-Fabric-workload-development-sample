@@ -12,6 +12,9 @@ import {
  * Client for interacting with Fabric Tags APIs
  * Tags API is in Preview and allows listing tenant tags and applying/unapplying tags to items.
  * 
+ * Based on the official Fabric REST API:
+ * https://learn.microsoft.com/en-us/rest/api/fabric/core/tags
+ * 
  * API Features:
  * - List Tags: Get all available tags in the tenant (Tag.Read.All scope)
  * - Apply Tags: Apply tags to workspace items (ItemMetadata.ReadWrite.All scope)
