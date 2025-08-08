@@ -45,11 +45,11 @@ In case you are getting an error similar to the one below please make sure you h
 After you have completed all of the above steps, you are ready to test the workload.
 Start the workload in development mode:
 
-1.Run [StartDevServer.ps1](../scripts/Run/StartDevServer.ps1) to start the local Development enviroment which includes the Frontend and APIs
-2.Run [StartDevGateway.ps1](../scripts/Run/StartDevGateway.ps1) to register your local development instance with Fabric Backend
-3.Navigate to the Fabric portal. Head to the Admin Portal settings and enable the following tenant settings:
+1. Run [StartDevServer.ps1](../scripts/Run/StartDevServer.ps1) to start the local Development enviroment which includes the Frontend and APIs
+2. Run [StartDevGateway.ps1](../scripts/Run/StartDevGateway.ps1) to register your local development instance with Fabric Backend
+3. Navigate to the Fabric portal. Head to the Admin Portal settings and enable the following tenant settings:
   ![Setup Test](./media/Setup-Test-1.jpg)
-4.Navigate to the Fabric Developer Settings and enable the Fabric Developer Mode:
+4. Navigate to the Fabric Developer Settings and enable the Fabric Developer Mode:
    ![Setup Test](./media/Setup-Test-2.jpg)
 
 You are ready to create your first Hello World Item in Fabric.
@@ -58,10 +58,10 @@ You are ready to create your first Hello World Item in Fabric.
 
 To access your workload follow the steps below:
 
-1.Navigate to `https://app.fabric.microsoft.com/workloadhub/detail/<WORKLOAD_NAME>?experience=fabric-developer`
-2.Click the Hello World item type on the left
-3.Select the development Workspace you have configured before in the dialog to create the item
-4.The editor opens and the item is ready for use
+1. Navigate to `https://app.fabric.microsoft.com/workloadhub/detail/<WORKLOAD_NAME>?experience=fabric-developer`
+2. Click the Hello World item type on the left
+3. Select the development Workspace you have configured before in the dialog to create the item
+4. The editor opens and the item is ready for use
 
 Congratulations! You have created your first item from your development enviroment
 
