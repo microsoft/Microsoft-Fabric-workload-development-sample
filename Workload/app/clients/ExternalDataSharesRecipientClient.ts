@@ -5,8 +5,6 @@ import {
   ExternalDataShareInvitationDetails,
   AcceptExternalDataShareInvitationRequest,
   AcceptExternalDataShareInvitationResponse,
-  ShortcutCreationPayload,
-  CreateExternalDataShareShortcutRequest
 } from "./FabricPlatformTypes";
 
 /**
