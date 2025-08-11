@@ -13,9 +13,10 @@
     <!-- Include the XML and FE files -->
     <file src="<ManifestFolder>*.xml" target="BE" />
     <file src="<ManifestFolder>*.json" target="FE" />
-    <file src="<ManifestFolder>assets\**" target="FE\assets" exclude="<ManifestFolder>assets\items\**" />
-    <file src="<ManifestFolder>assets\items\**" target="Assets\items" />
+    <file src="<ManifestFolder>assets\**" target="FE\assets"/>
+    <file src="<ManifestFolder>items\*\itemDefinition\schemas\*\**\schema.json" target="items" />
+    <file src="<ManifestFolder>items\*\itemDefinition\structure\**\structure.json" target="items" />
     <!-- for now, we don't have common schemas -->
-    <!-- <file src="<ManifestFolder>assets\common\schemas\parts\**" target="Assets\common\schemas\parts" /> -->
+    <!-- <file src="<ManifestFolder>\common\schemas\parts\**" target="common\schemas\parts" /> -->
   </files>
 </package>

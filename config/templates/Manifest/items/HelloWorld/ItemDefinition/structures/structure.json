@@ -4,12 +4,12 @@
   "maxSize": "20MB",
   "definitionParts": [
     {
-      "path": "definition.json",
+      "path": "message.json",
       "type": "json",
       "minCount": 1,
       "maxCount": 1,
       "schemaRef": {
-        "uri": "https://{{WORKLOAD_HOST}}/schemas/HelloWorld/definition/__VERSION__/schema.json"
+        "uri": "https://{{WORKLOAD_HOST}}/schemas/HelloWorld/message/__VERSION__/schema.json"
       },
       "maxSize": "5MB"
     }
