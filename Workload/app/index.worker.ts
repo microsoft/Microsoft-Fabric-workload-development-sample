@@ -2,14 +2,14 @@ import {
     createWorkloadClient,
     InitParams,
     ItemLikeV2,
-    ItemSettingContext,
+    //ItemSettingContext,
     NotificationToastDuration,
     NotificationType
 } from '@ms-fabric/workload-client';
 
 import { callPageOpen } from './controller/PageController';
 import { callNotificationOpen } from './controller/NotificationController';
-import { t } from 'i18next';
+//import { t } from 'i18next';
 
 /*
 * Represents a fabric item with additional metadata and a payload.
@@ -69,32 +69,42 @@ export async function initialize(params: InitParams) {
                     NotificationToastDuration.Medium);
 
             case 'getItemSettings': {
-                const { item: { objectId } } = data as ItemSettingContext;
-                const itemTypeName = createdItem.itemType.substring(createdItem.itemType.lastIndexOf('.') + 1);
-                path = `/${itemTypeName}Item-editor`;
+                console.log("====================================================");
+                console.log(`Get item settings action received with data:`, data);
+                console.log("####################################################");
+
+                // const { item: { objectId } } = data as ItemSettingContext;
+                // const itemTypeName = createdItem.itemType.substring(createdItem.itemType.lastIndexOf('.') + 1);
+                // path = `/${itemTypeName}Item-editor`;
+                // console.log(`Item settings requested for item with ID: ${objectId}, redirecting to ${path}/${objectId}`);
+                // console.log("about route:", `/${itemTypeName}Item-about-page/${objectId}`);
+                // console.log("itemCustomSettings route:", `/${itemTypeName}Item-custom-settings-page/${objectId}`);
+                
+                
                 return [
                     {
                         name: 'about',
-                        displayName: t('Item_About_Label'),
+                        displayName: 'Custom About',
                         workloadSettingLocation: {
                             workloadName: sampleWorkloadName,
-                            route: `/${itemTypeName}Item-about-page/${objectId}`,
+                            route: `HelloWorldItem-about-page`,
                         },
                         workloadIframeHeight: '1000px'
                     },
                     {
                         name: 'itemCustomSettings',
-                        displayName: t('Item_Settings_Label'),
+                        displayName: 'Item custom settings',
                         icon: {
                             name: 'apps_20_regular',
                         },
                         workloadSettingLocation: {
                             workloadName: sampleWorkloadName,
-                            route: `/${itemTypeName}Item-settings-page/${objectId}`,
+                            route: `HelloWorldItem-settings-page`,
                         },
                         workloadIframeHeight: '1000px'
                     }
                 ];
+                
             }
             case 'open.ClientSDKPlaygroundPage':
                 return workloadClient.page.open({

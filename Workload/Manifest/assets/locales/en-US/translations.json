@@ -1,7 +1,7 @@
 {
     "Workload_Display_Name": "WDKv2 Sample Workload",
     "Workload_Full_Display_Name": "WDKv2 Sample Workload",
-    "Workload_Description": "WDKv2 Sample Workload with two item types and playgrounds to get your dev experience started 🚀",
+    "Workload_Description": "See how to build, customize, and publish your first Fabric workload in minutes.",
     "Learning_Material_1_Title": "Workload development kit documentation",
     "Learning_Material_1_Description": "Workload development kit documentation description",
     "Learning_Material_1_Introduction": "Get started with Workload Development Kit",
@@ -14,9 +14,18 @@
     "Fabric_UX_System_Title": "Fabric UX system documentation",
     "Fabric_UX_System_Description": "Fabric UX system description",
     "Fabric_UX_System_Introduction": "Get started with Fabric UX system",
-    "Workload_Hub_Workload_Slogan": "The quickest way from a billion points of data to a point of view.",
+    "Workload_Hub_Workload_Slogan": "The fastest way to build, test, and publish your first Fabric workload.",
     "Workload_Hub_Workload_Description": "Contoso workload enables organizations to conduct real-time customer interactions and automate operational business decisions at scale. It supports a wide variety of customer-facing activities such as personalized marketing and next best action, and customer-impacting decisions including credit services and fraud prevention.",
     "HelloWorldItem_DisplayName": "Hello World",
     "HelloWorldItem_DisplayName_Plural": "Hello Worlds",
-    "HelloWorldItem_Description": "A Hello World Item to start your Dev Experience"
+    "HelloWorldItem_Description": "A Hello World Item to start your Dev Experience",
+    "HelloWorld_GetStarted_1_Title": "Title1",
+    "HelloWorld_GetStarted_2_Title": "Title2",
+    "HelloWorld_GetStarted_3_Title": "Title3",
+    "HelloWorld_GetStarted_1_Sub_Title": "SubTitle1",
+    "HelloWorld_GetStarted_2_Sub_Title": "SubTitle2",
+    "HelloWorld_GetStarted_3_Sub_Title": "SubTitle3",
+    "HelloWorld_GetStarted_1_Description": "Card1 description",
+    "HelloWorld_GetStarted_2_Description": "Card2 description",
+    "HelloWorld_GetStarted_3_Description": "Card3 description"
 }

@@ -18,6 +18,15 @@
   "Workload_Hub_Workload_Description": "La carga de trabajo de Contoso permite a las organizaciones interactuar con los clientes en tiempo real y automatizar las decisiones comerciales operativas a gran escala. Admite una amplia variedad de actividades orientadas al cliente, como marketing personalizado y la siguiente mejor acción, y decisiones que afectan al cliente, incluidos los servicios de crédito y la prevención del fraude.",
   "HelloWorldItem_DisplayName": "Artículo de Hola Mundo",
   "HelloWorldItem_DisplayName_Plural": "Artículos de Hola Mundo",
-  "HelloWorldItem_Description": "Un elemento de Hola mundo para comenzar tu experiencia de desarrollo"
+  "HelloWorldItem_Description": "Un elemento de Hola mundo para comenzar tu experiencia de desarrollo",
+  "HelloWorld_GetStarted_1_Title": "Title1",
+    "HelloWorld_GetStarted_2_Title": "Title2",
+    "HelloWorld_GetStarted_3_Title": "Title3",
+    "HelloWorld_GetStarted_1_Sub_Title": "SubTitle1",
+    "HelloWorld_GetStarted_2_Sub_Title": "SubTitle2",
+    "HelloWorld_GetStarted_3_Sub_Title": "SubTitle3",
+    "HelloWorld_GetStarted_1_Description": "Card1 description",
+    "HelloWorld_GetStarted_2_Description": "Card2 description",
+    "HelloWorld_GetStarted_3_Description": "Card3 description"
 }
   

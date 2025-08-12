@@ -5,7 +5,7 @@ import { Route, Router, Switch } from "react-router-dom";
 import { History } from "history";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import CustomItemSettings from "./items/HelloWorldItem/HelloWorldItemEditorSettingsPage";
-import CustomAbout from "./items/HelloWorldItem/HelloWorldItemEditorAboutPage";
+import CustomAbout from "./items/HelloWorldItem/tmp";
 import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlayground/ClientSDKPlayground";
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
 import { HelloWorldItemEditor } from "./items/HelloWorldItem/HelloWorldItemEditor";

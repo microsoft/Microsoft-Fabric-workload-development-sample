@@ -4,17 +4,44 @@
     "displayName": "Workload_Display_Name",
     "fullDisplayName": "Workload_Full_Display_Name",
     "description": "Workload_Description",
-    "favicon": "assets/images/Workload-icon.png",
+    "favicon": "assets/images/briefcase.png",
     "icon": {
-      "name": "assets/images/Workload-icon.png"
+      "name": "assets/images/briefcase.png"
     },
     "homePage": {
       "learningMaterials": [
         {
+          "title": "HelloWorld_GetStarted_1_Title",
+          "introduction": "HelloWorld_GetStarted_1_Sub_Title",
+          "description": "HelloWorld_GetStarted_1_Description",
+          "image": "assets/images/swappable-content.png",
+          "onClick": {
+                  "action": "open.ClientSDKPlaygroundPage"
+                }
+        },
+        {
+          "title": "HelloWorld_GetStarted_2_Title",
+          "introduction": "HelloWorld_GetStarted_2_Sub_Title",
+          "description": "HelloWorld_GetStarted_2_Description",
+          "image": "assets/images/swappable-content.png",
+          "onClick": {
+                  "action": "open.ClientSDKPlaygroundPage"
+                }
+        },
+        {
+          "title": "HelloWorld_GetStarted_3_Title",
+          "introduction": "HelloWorld_GetStarted_3_Sub_Title",
+          "description": "HelloWorld_GetStarted_3_Description",
+          "image": "assets/images/empty-states.png",
+          "onClick": {
+                  "action": "open.ClientSDKPlaygroundPage"
+                }
+        },
+        {
           "title": "Frontend_playground_Title",
           "introduction": "Frontend_playground_Introduction",
           "description": "Frontend_playground_Description",
-          "image": "assets/images/LearningMaterial-playground.jpeg",
+          "image": "assets/images/swappable-content.png",
           "onClick": {
                   "action": "open.ClientSDKPlaygroundPage"
                 }
@@ -77,12 +104,12 @@
       ]
     },
     "productDetail": {
-      "publisher": "Contoso",
+      "publisher": "Name of publisher",
       "slogan": "Workload_Hub_Workload_Slogan",
       "description": "Workload_Hub_Workload_Description",
       "image": {
         "mediaType": 0,
-        "source": "assets/images/WorkloadBanner.png"
+        "source": "assets/images/L2_page_banner.png"
       },
       "slideMedia": [
         {

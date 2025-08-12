@@ -9,10 +9,13 @@ import { useLocation, useParams } from "react-router-dom";
 import "../../styles.scss";
 import { useTranslation } from "react-i18next";
 import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
-import { HelloWorldItemEmpty } from "./HelloWorldItemEditorEmpty";
+//import { HelloWorldItemEmpty } from "./HelloWorldItemEditorEmpty";
+import { HelloWorldItemEditorGettingStarted } from "./GettingStarted";
+import { HelloWorldItemEditorEmptyStateOnFirstExprience } from "./HelloWorldItemEditorEmptyStateOnFirstExprience";
 import { ItemEditorLoadingProgressBar } from "../../controls/ItemEditorLoadingProgressBar";
 import { callNotificationOpen } from "../../controller/NotificationController";
 import { callOpenSettings } from "../../controller/SettingsController";
+
 
 export function HelloWorldItemEditor(props: PageProps) {
   const pageContext = useParams<ContextProps>();
@@ -62,7 +65,20 @@ export function HelloWorldItemEditor(props: PageProps) {
         );
   }
 
+
   async function openSettings() {
+    if (editorItem) {      
+      //workloadClient.state.sharedState = {
+      //  item: editorItem;
+      //}
+      //TODO: this needs to be updated to use the Item instead of Itemv2
+      const item = await callGetItem(workloadClient, editorItem.id);
+      const result = await callOpenSettings(workloadClient, item, 'About');
+      console.log("Settings opened result:", result.value);
+    }
+  }
+
+  async function openGettingStarte() {
     if (editorItem) {      
       //workloadClient.state.sharedState = {
       //  item: editorItem;
@@ -120,8 +136,14 @@ export function HelloWorldItemEditor(props: PageProps) {
     updateItemDefinition(newItemDefinition);
     
     // Save with the updated definition directly to avoid race condition
-    await SaveItem(newItemDefinition);
+    //await SaveItem(newItemDefinition);
     
+    // Navigate to the getting started view instead of home
+    setSelectedView("home");
+  }
+
+  function handleClose() {
+    // Handle closing the getting started view and go to home
     setSelectedView("home");
   }
 
@@ -139,54 +161,61 @@ export function HelloWorldItemEditor(props: PageProps) {
             isSaveButtonEnabled={isUnsaved}
             saveItemCallback={SaveItem}
             openSettingsCallback={openSettings}
-        />
-        <Stack className="main">
-          {["empty"].includes(selectedView as string) && (
-            <span>
-              <HelloWorldItemEmpty
-                workloadClient={workloadClient}
-                item={editorItem}
-                itemDefinition={editorItem?.definition}
-                onFinishEmpty={handleFinishEmpty}
-              />
-            </span>
-          )}
-          {["home"].includes(selectedView as string) && (
-          <span>
-              <h2>{t('HelloWorldItemEditor_Title')}</h2>            
-              <div> 
-                <div className="section" data-testid='item-editor-metadata' >
-                  <Field label={t('Item_ID_Label')} orientation="horizontal" className="field">
-                    <Label>{editorItem?.id} </Label>
-                  </Field>
-                  <Field label={t('Item_Type_Label')} orientation="horizontal" className="field">
-                    <Label>{editorItem?.type} </Label>
-                  </Field>
-                  <Field label={t('Item_Name_Label')} orientation="horizontal" className="field">
-                    <Label>{editorItem?.displayName} </Label>
-                  </Field>
-                  <Field label={t('Item_Description_Label')} orientation="horizontal" className="field">
-                    <Label>{editorItem?.description} </Label>
-                  </Field>
-                  <Field label={t('Workspace_ID_Label')} orientation="horizontal" className="field">
-                    <Label>{editorItem?.workspaceId} </Label>
-                  </Field>
+            openGettingStartedCallback={openGettingStarte} />
+        
+        {/* Show empty state OR getting started OR main content */}
+        {selectedView === "empty" ? (
+          <HelloWorldItemEditorEmptyStateOnFirstExprience
+            workloadClient={workloadClient}
+            item={editorItem}
+            itemDefinition={editorItem?.definition}
+            onFinishEmpty={handleFinishEmpty}
+          />
+        ) : selectedView === "home" ? (
+          <HelloWorldItemEditorGettingStarted
+            workloadClient={workloadClient}
+            item={editorItem}
+            onClose={handleClose}
+          />
+        ) : (
+          <Stack className="main">
+            {selectedView === "gettingStarted" && (
+              <span>
+                <h2>{t('HelloWorldItemEditor_Title')}</h2>            
+                <div> 
+                  <div className="section" data-testid='item-editor-metadata' >
+                    <Field label={t('Item_ID_Label')} orientation="horizontal" className="field">
+                      <Label>{editorItem?.id} </Label>
+                    </Field>
+                    <Field label={t('Item_Type_Label')} orientation="horizontal" className="field">
+                      <Label>{editorItem?.type} </Label>
+                    </Field>
+                    <Field label={t('Item_Name_Label')} orientation="horizontal" className="field">
+                      <Label>{editorItem?.displayName} </Label>
+                    </Field>
+                    <Field label={t('Item_Description_Label')} orientation="horizontal" className="field">
+                      <Label>{editorItem?.description} </Label>
+                    </Field>
+                    <Field label={t('Workspace_ID_Label')} orientation="horizontal" className="field">
+                      <Label>{editorItem?.workspaceId} </Label>
+                    </Field>
 
-                  <Field label={t('HelloWorldItemEditor_Definition_Message_Label')} orientation="horizontal" className="field">
-                    <Input
-                      size="small"
-                      type="text"
-                      placeholder="Hello World!"
-                      value={payload}
-                      onChange={(e) => onUpdateItemDefinition(e.target.value)}              
-                      data-testid="payload-input"
-                    />
-                  </Field>
+                    <Field label={t('HelloWorldItemEditor_Definition_Message_Label')} orientation="horizontal" className="field">
+                      <Input
+                        size="small"
+                        type="text"
+                        placeholder="Hello World!"
+                        value={payload}
+                        onChange={(e) => onUpdateItemDefinition(e.target.value)}              
+                        data-testid="payload-input"
+                      />
+                    </Field>
+                  </div>
                 </div>
-              </div>
-          </span>
-          )}       
-        </Stack>
+              </span>
+            )}       
+          </Stack>
+        )}
       </Stack>
     );
   }

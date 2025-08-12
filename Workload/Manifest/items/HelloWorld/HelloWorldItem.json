@@ -7,7 +7,7 @@
       "path": "/HelloWorldItem-editor"
     },
     "icon": {
-      "name": "assets/images/HelloWorldItem-icon.png"
+      "name": "assets/images/briefcase.png"
     },
     "activeIcon": {
       "name": "assets/images/HelloWorldItem-icon.png"
