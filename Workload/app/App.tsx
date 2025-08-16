@@ -5,10 +5,11 @@ import { Route, Router, Switch } from "react-router-dom";
 import { History } from "history";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import CustomItemSettings from "./items/HelloWorldItem/HelloWorldItemEditorSettingsPage";
-import CustomAbout from "./items/HelloWorldItem/tmp";
+import CustomAbout from "./items/HelloWorldItem/HelloWorldItemEditorAboutPage";
 import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlayground/ClientSDKPlayground";
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
-import { HelloWorldItemEditor } from "./items/HelloWorldItem/HelloWorldItemEditor";
+import { HelloWorldItemEditor} from "./items/HelloWorldItem/HelloWorldItemEditor";
+
 
 /*
     Add your Item Editor in the Route section of the App function below
@@ -53,6 +54,7 @@ export function App({ history, workloadClient }: AppProps) {
                 <HelloWorldItemEditor
                     workloadClient={workloadClient} data-testid="HelloWorldItem-editor" />
             </Route>
+            
             <Route path="/HelloWorldItem-settings-page">
                 <CustomItemSettings 
                     workloadClient={workloadClient}
