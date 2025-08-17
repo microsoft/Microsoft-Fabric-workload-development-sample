@@ -11,6 +11,9 @@ import {
  * API wrapper for Long Running Operations
  * Provides methods for tracking and managing long-running operations
  * 
+ * Based on the official Fabric REST API:
+ * https://learn.microsoft.com/en-us/rest/api/fabric/core/long-running-operations
+ * 
  * Uses method-based scope selection:
  * - GET operations use read-only scopes
  * - POST/PUT/PATCH/DELETE operations use read-write scopes

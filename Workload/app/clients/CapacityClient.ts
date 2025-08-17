@@ -13,6 +13,9 @@ import {
  * API wrapper for Fabric Platform Capacity operations
  * Provides methods for managing capacities and workspace assignments
  * 
+ * Based on the official Fabric REST API:
+ * https://learn.microsoft.com/en-us/rest/api/fabric/core/capacities
+ * 
  * Uses method-based scope selection:
  * - GET operations use read-only scopes
  * - POST/PUT/PATCH/DELETE operations use read-write scopes

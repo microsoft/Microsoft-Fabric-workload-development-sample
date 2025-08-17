@@ -20,11 +20,32 @@ export interface AuthenticationConfig {
 // Common types
 export interface Principal {
   id: string;
-  type: 'User' | 'Group' | 'ServicePrincipal' | 'ManagedIdentity';
-  profile?: {
-    displayName?: string;
-    email?: string;
-  };
+  type: PrincipalType;
+  displayName?: string;
+  groupDetails?: GroupDetails;
+  servicePrincipalDetails?: ServicePrincipalDetails;
+  servicePrincipalProfileDetails?: ServicePrincipalProfileDetails;
+  userDetails?: UserDetails;
+}
+
+export type PrincipalType = 'User' | 'ServicePrincipal' | 'Group' | 'ServicePrincipalProfile';
+
+export interface GroupDetails {
+  groupType: GroupType;
+}
+
+export type GroupType = 'Unknown' | 'SecurityGroup' | 'DistributionList';
+
+export interface ServicePrincipalDetails {
+  aadAppId: string;
+}
+
+export interface ServicePrincipalProfileDetails {
+  parentPrincipal: Principal;
+}
+
+export interface UserDetails {
+  userPrincipalName: string;
 }
 
 export interface PaginatedResponse<T> {
@@ -775,110 +796,41 @@ export interface ListConnectionsResponse {
 
 /**
  * External Data Share for sharing data
+ * Based on: https://learn.microsoft.com/en-us/rest/api/fabric/core/external-data-shares-provider
  */
 export interface ExternalDataShare {
   id: string;
-  displayName: string;
-  description?: string;
-  shareKind: string;
-  recipient?: ExternalDataShareRecipient;
-  notification?: ExternalDataShareNotification;
-  paths?: ExternalDataSharePath[];
-  createdDate?: string;
-  modifiedDate?: string;
+  paths: string[];
+  creatorPrincipal: Principal;
+  recipient: ExternalDataShareRecipient;
+  status: ExternalDataShareStatus;
+  expirationTimeUtc: string;
+  workspaceId: string;
+  itemId: string;
+  invitationUrl: string;
+  acceptedByTenantId?: string;
 }
 
 /**
  * External Data Share Recipient information
  */
 export interface ExternalDataShareRecipient {
-  email?: string;
-  objectId?: string;
+  userPrincipalName: string;
   tenantId?: string;
 }
 
 /**
- * External Data Share Notification settings
+ * The status of a given external data share
  */
-export interface ExternalDataShareNotification {
-  enabled: boolean;
-  message?: string;
-}
-
-/**
- * External Data Share Path configuration
- */
-export interface ExternalDataSharePath {
-  path: string;
-  kind: string;
-}
+export type ExternalDataShareStatus = 'Pending' | 'Active' | 'Revoked' | 'InvitationExpired';
 
 /**
  * Request to create an External Data Share
  */
 export interface CreateExternalDataShareRequest {
-  displayName: string;
-  description?: string;
-  shareKind: string;
+  paths: string[];
   recipient: ExternalDataShareRecipient;
-  notification?: ExternalDataShareNotification;
-  paths: ExternalDataSharePath[];
 }
-
-/**
- * Request to update an External Data Share
- */
-export interface UpdateExternalDataShareRequest {
-  displayName?: string;
-  description?: string;
-  notification?: ExternalDataShareNotification;
-  paths?: ExternalDataSharePath[];
-}
-
-/**
- * External Data Share Provider
- */
-export interface ExternalDataShareProvider {
-  id: string;
-  displayName: string;
-  description?: string;
-  dataSourceType: string;
-  connectionDetails?: ExternalDataShareProviderConnection;
-  createdDate?: string;
-  modifiedDate?: string;
-}
-
-/**
- * External Data Share Provider connection details
- */
-export interface ExternalDataShareProviderConnection {
-  endpoint?: string;
-  authentication?: string;
-  properties?: Record<string, any>;
-}
-
-/**
- * Request to create an External Data Share Provider
- */
-export interface CreateExternalDataShareProviderRequest {
-  displayName: string;
-  description?: string;
-  dataSourceType: string;
-  connectionDetails: ExternalDataShareProviderConnection;
-}
-
-/**
- * Request to update an External Data Share Provider
- */
-export interface UpdateExternalDataShareProviderRequest {
-  displayName?: string;
-  description?: string;
-  connectionDetails?: ExternalDataShareProviderConnection;
-}
-
-// ============================
-// External Data Shares Recipient Types
-// ============================
 
 /**
  * External data share invitation details

@@ -18,6 +18,9 @@ import {
  * Client for interacting with OneLake Data Access Security APIs
  * OneLake Data Access Security API is in Preview and allows managing data access roles for OneLake items.
  * 
+ * Based on the official Fabric REST API:
+ * https://learn.microsoft.com/en-us/rest/api/fabric/core/onelake-data-access-security
+ * 
  * API Features:
  * - List Data Access Roles: Get all data access roles for an item (OneLake.Read.All scope)
  * - Create Or Update Data Access Roles: Create or update data access roles (OneLake.ReadWrite.All scope)

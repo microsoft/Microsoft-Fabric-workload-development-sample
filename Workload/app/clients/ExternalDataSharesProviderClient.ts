@@ -5,15 +5,15 @@ import {
   PaginatedResponse,
   ExternalDataShare,
   CreateExternalDataShareRequest,
-  UpdateExternalDataShareRequest,
-  ExternalDataShareProvider,
-  CreateExternalDataShareProviderRequest,
-  UpdateExternalDataShareProviderRequest
+  ExternalDataShareRecipient
 } from "./FabricPlatformTypes";
 
 /**
  * API wrapper for External Data Shares Provider operations
- * Provides methods for managing external data sharing providers and shares
+ * Provides methods for managing external data sharing
+ * 
+ * Based on the official Fabric REST API:
+ * https://learn.microsoft.com/en-us/rest/api/fabric/core/external-data-shares-provider
  * 
  * Uses method-based scope selection:
  * - GET operations use read-only scopes
@@ -23,85 +23,7 @@ export class ExternalDataSharesProviderClient extends FabricPlatformClient {
   
   constructor(workloadClient: WorkloadClientAPI) {
     // Use scope pairs for method-based scope selection
-    super(workloadClient, SCOPE_PAIRS.EXTERNAL_DATA_SHARES); // Using dedicated external data shares scopes
-  }
-
-  // ============================
-  // External Data Share Provider Management
-  // ============================
-
-  /**
-   * Returns a list of external data share providers for a workspace item
-   * @param workspaceId The workspace ID
-   * @param itemId The item ID
-   * @param continuationToken Token for pagination
-   * @returns Promise<PaginatedResponse<ExternalDataShareProvider>>
-   */
-  async listProviders(
-    workspaceId: string,
-    itemId: string,
-    continuationToken?: string
-  ): Promise<PaginatedResponse<ExternalDataShareProvider>> {
-    let endpoint = `/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers`;
-    if (continuationToken) {
-      endpoint += `?continuationToken=${encodeURIComponent(continuationToken)}`;
-    }
-    return this.get<PaginatedResponse<ExternalDataShareProvider>>(endpoint);
-  }
-
-  /**
-   * Gets all external data share providers for a workspace item (handles pagination automatically)
-   * @param workspaceId The workspace ID
-   * @param itemId The item ID
-   * @returns Promise<ExternalDataShareProvider[]>
-   */
-  async getAllProviders(workspaceId: string, itemId: string): Promise<ExternalDataShareProvider[]> {
-    return this.getAllPages<ExternalDataShareProvider>(`/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers`);
-  }
-
-  /**
-   * Creates a new external data share provider for a workspace item
-   * @param workspaceId The workspace ID
-   * @param itemId The item ID
-   * @param request CreateExternalDataShareProviderRequest
-   * @returns Promise<ExternalDataShareProvider>
-   */
-  async createProvider(workspaceId: string, itemId: string, request: CreateExternalDataShareProviderRequest): Promise<ExternalDataShareProvider> {
-    return this.post<ExternalDataShareProvider>(`/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers`, request);
-  }
-
-  /**
-   * Returns properties of the specified external data share provider
-   * @param workspaceId The workspace ID
-   * @param itemId The item ID
-   * @param providerId The provider ID
-   * @returns Promise<ExternalDataShareProvider>
-   */
-  async getProvider(workspaceId: string, itemId: string, providerId: string): Promise<ExternalDataShareProvider> {
-    return this.get<ExternalDataShareProvider>(`/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers/${providerId}`);
-  }
-
-  /**
-   * Updates the properties of the specified external data share provider
-   * @param workspaceId The workspace ID
-   * @param itemId The item ID
-   * @param providerId The provider ID
-   * @param request UpdateExternalDataShareProviderRequest
-   * @returns Promise<ExternalDataShareProvider>
-   */
-  async updateProvider(workspaceId: string, itemId: string, providerId: string, request: UpdateExternalDataShareProviderRequest): Promise<ExternalDataShareProvider> {
-    return this.patch<ExternalDataShareProvider>(`/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers/${providerId}`, request);
-  }
-
-  /**
-   * Deletes the specified external data share provider
-   * @param workspaceId The workspace ID
-   * @param itemId The item ID
-   * @param providerId The provider ID
-   * @returns Promise<void>
-   */
-  async deleteProvider(workspaceId: string, itemId: string, providerId: string): Promise<void> {
-    await this.delete<void>(`/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers/${providerId}`);
+    super(workloadClient, SCOPE_PAIRS.EXTERNAL_DATA_SHARES);
   }
 
   // ============================
@@ -109,175 +31,141 @@ export class ExternalDataSharesProviderClient extends FabricPlatformClient {
   // ============================
 
   /**
-   * Returns a list of external data shares for a provider
+   * Returns a list of external data shares that exist for the specified item
    * @param workspaceId The workspace ID
    * @param itemId The item ID
-   * @param providerId The provider ID
-   * @param continuationToken Token for pagination
-   * @returns Promise<PaginatedResponse<ExternalDataShare>>
-   */
-  async listShares(
-    workspaceId: string,
-    itemId: string,
-    providerId: string,
-    continuationToken?: string
-  ): Promise<PaginatedResponse<ExternalDataShare>> {
-    let endpoint = `/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers/${providerId}/shares`;
-    if (continuationToken) {
-      endpoint += `?continuationToken=${encodeURIComponent(continuationToken)}`;
-    }
-    return this.get<PaginatedResponse<ExternalDataShare>>(endpoint);
-  }
-
-  /**
-   * Gets all external data shares for a provider (handles pagination automatically)
-   * @param workspaceId The workspace ID
-   * @param itemId The item ID
-   * @param providerId The provider ID
+   * @param continuationToken Token for pagination (optional)
    * @returns Promise<ExternalDataShare[]>
    */
-  async getAllShares(workspaceId: string, itemId: string, providerId: string): Promise<ExternalDataShare[]> {
-    return this.getAllPages<ExternalDataShare>(`/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers/${providerId}/shares`);
+  async getAllExternalDataShares(
+    workspaceId: string, 
+    itemId: string, 
+    continuationToken?: string
+  ): Promise<ExternalDataShare[]> {
+    let url = `/workspaces/${workspaceId}/items/${itemId}/externalDataShares`;
+    
+    if (continuationToken) {
+      url += `?continuationToken=${encodeURIComponent(continuationToken)}`;
+    }
+    
+    const response = await this.get<PaginatedResponse<ExternalDataShare>>(url);
+    return response.value || [];
   }
 
   /**
-   * Creates a new external data share
+   * Creates an external data share for a specific OneLake path
    * @param workspaceId The workspace ID
    * @param itemId The item ID
-   * @param providerId The provider ID
-   * @param request CreateExternalDataShareRequest
+   * @param request The create request
    * @returns Promise<ExternalDataShare>
    */
-  async createShare(workspaceId: string, itemId: string, providerId: string, request: CreateExternalDataShareRequest): Promise<ExternalDataShare> {
-    return this.post<ExternalDataShare>(`/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers/${providerId}/shares`, request);
+  async createExternalDataShare(
+    workspaceId: string, 
+    itemId: string, 
+    request: CreateExternalDataShareRequest
+  ): Promise<ExternalDataShare> {
+    const url = `/workspaces/${workspaceId}/items/${itemId}/externalDataShares`;
+    return await this.post<ExternalDataShare>(url, request);
   }
 
   /**
-   * Returns properties of the specified external data share
+   * Gets an external data share by its unique identifier
    * @param workspaceId The workspace ID
    * @param itemId The item ID
-   * @param providerId The provider ID
-   * @param shareId The share ID
+   * @param externalDataShareId The external data share ID
    * @returns Promise<ExternalDataShare>
    */
-  async getShare(workspaceId: string, itemId: string, providerId: string, shareId: string): Promise<ExternalDataShare> {
-    return this.get<ExternalDataShare>(`/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers/${providerId}/shares/${shareId}`);
+  async getExternalDataShare(
+    workspaceId: string, 
+    itemId: string, 
+    externalDataShareId: string
+  ): Promise<ExternalDataShare> {
+    const url = `/workspaces/${workspaceId}/items/${itemId}/externalDataShares/${externalDataShareId}`;
+    return await this.get<ExternalDataShare>(url);
   }
 
   /**
-   * Updates the properties of the specified external data share
+   * Revokes an external data share
    * @param workspaceId The workspace ID
    * @param itemId The item ID
-   * @param providerId The provider ID
-   * @param shareId The share ID
-   * @param request UpdateExternalDataShareRequest
-   * @returns Promise<ExternalDataShare>
-   */
-  async updateShare(workspaceId: string, itemId: string, providerId: string, shareId: string, request: UpdateExternalDataShareRequest): Promise<ExternalDataShare> {
-    return this.patch<ExternalDataShare>(`/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers/${providerId}/shares/${shareId}`, request);
-  }
-
-  /**
-   * Deletes the specified external data share
-   * @param workspaceId The workspace ID
-   * @param itemId The item ID
-   * @param providerId The provider ID
-   * @param shareId The share ID
+   * @param externalDataShareId The external data share ID
    * @returns Promise<void>
    */
-  async deleteShare(workspaceId: string, itemId: string, providerId: string, shareId: string): Promise<void> {
-    await this.delete<void>(`/workspaces/${workspaceId}/items/${itemId}/externalDataShares/providers/${providerId}/shares/${shareId}`);
+  async revokeExternalDataShare(
+    workspaceId: string, 
+    itemId: string, 
+    externalDataShareId: string
+  ): Promise<void> {
+    const url = `/workspaces/${workspaceId}/items/${itemId}/externalDataShares/${externalDataShareId}/revoke`;
+    await this.post<void>(url, {});
   }
 
   // ============================
-  // Helper Methods
+  // Helper Methods for Filtering
   // ============================
 
   /**
-   * Gets external data shares by share kind
+   * Gets external data shares by status
    * @param workspaceId The workspace ID
    * @param itemId The item ID
-   * @param providerId The provider ID
-   * @param shareKind The share kind to filter by
+   * @param status The status to filter by (Pending, Active, Revoked, InvitationExpired)
    * @returns Promise<ExternalDataShare[]>
    */
-  async getSharesByKind(workspaceId: string, itemId: string, providerId: string, shareKind: string): Promise<ExternalDataShare[]> {
-    const allShares = await this.getAllShares(workspaceId, itemId, providerId);
-    return allShares.filter(share => share.shareKind === shareKind);
+  async getSharesByStatus(workspaceId: string, itemId: string, status: string): Promise<ExternalDataShare[]> {
+    const allShares = await this.getAllExternalDataShares(workspaceId, itemId);
+    return allShares.filter(share => share.status === status);
   }
 
   /**
    * Gets external data shares by recipient email
    * @param workspaceId The workspace ID
    * @param itemId The item ID
-   * @param providerId The provider ID
    * @param recipientEmail The recipient email to filter by
    * @returns Promise<ExternalDataShare[]>
    */
-  async getSharesByRecipient(workspaceId: string, itemId: string, providerId: string, recipientEmail: string): Promise<ExternalDataShare[]> {
-    const allShares = await this.getAllShares(workspaceId, itemId, providerId);
-    return allShares.filter(share => share.recipient?.email === recipientEmail);
+  async getSharesByRecipient(workspaceId: string, itemId: string, recipientEmail: string): Promise<ExternalDataShare[]> {
+    const allShares = await this.getAllExternalDataShares(workspaceId, itemId);
+    return allShares.filter(share => share.recipient?.userPrincipalName === recipientEmail);
   }
 
   /**
-   * Searches for external data shares by display name
+   * Gets external data shares by path
    * @param workspaceId The workspace ID
    * @param itemId The item ID
-   * @param providerId The provider ID
-   * @param searchTerm The search term to match against display names
-   * @param caseSensitive Whether the search should be case sensitive (default: false)
+   * @param path The path to filter by
    * @returns Promise<ExternalDataShare[]>
    */
-  async searchSharesByName(
-    workspaceId: string,
-    itemId: string,
-    providerId: string,
-    searchTerm: string,
-    caseSensitive: boolean = false
-  ): Promise<ExternalDataShare[]> {
-    const allShares = await this.getAllShares(workspaceId, itemId, providerId);
-    const searchPattern = caseSensitive ? searchTerm : searchTerm.toLowerCase();
-    
-    return allShares.filter(share => {
-      const shareName = caseSensitive ? share.displayName : share.displayName.toLowerCase();
-      return shareName.includes(searchPattern);
-    });
+  async getSharesByPath(workspaceId: string, itemId: string, path: string): Promise<ExternalDataShare[]> {
+    const allShares = await this.getAllExternalDataShares(workspaceId, itemId);
+    return allShares.filter(share => 
+      share.paths?.some(pathString => pathString === path)
+    );
   }
 
   /**
-   * Gets providers by data source type
+   * Gets external data shares by path pattern (partial match)
    * @param workspaceId The workspace ID
    * @param itemId The item ID
-   * @param dataSourceType The data source type to filter by
-   * @returns Promise<ExternalDataShareProvider[]>
-   */
-  async getProvidersByType(workspaceId: string, itemId: string, dataSourceType: string): Promise<ExternalDataShareProvider[]> {
-    const allProviders = await this.getAllProviders(workspaceId, itemId);
-    return allProviders.filter(provider => provider.dataSourceType === dataSourceType);
-  }
-
-  /**
-   * Creates multiple external data shares in batch
-   * @param workspaceId The workspace ID
-   * @param itemId The item ID
-   * @param providerId The provider ID
-   * @param requests Array of CreateExternalDataShareRequest
+   * @param pathPattern The path pattern to match
    * @returns Promise<ExternalDataShare[]>
    */
-  async createSharesBatch(workspaceId: string, itemId: string, providerId: string, requests: CreateExternalDataShareRequest[]): Promise<ExternalDataShare[]> {
-    const createdShares: ExternalDataShare[] = [];
-    
-    for (const request of requests) {
-      try {
-        const share = await this.createShare(workspaceId, itemId, providerId, request);
-        createdShares.push(share);
-      } catch (error) {
-        console.error(`Failed to create share ${request.displayName}:`, error);
-        // Continue with other shares even if one fails
-      }
-    }
-    
-    return createdShares;
+  async getSharesByPathPattern(workspaceId: string, itemId: string, pathPattern: string): Promise<ExternalDataShare[]> {
+    const allShares = await this.getAllExternalDataShares(workspaceId, itemId);
+    return allShares.filter(share => 
+      share.paths?.some(pathString => pathString.includes(pathPattern))
+    );
+  }
+
+  /**
+   * Gets external data shares by workspace
+   * @param workspaceId The workspace ID
+   * @param itemId The item ID
+   * @param targetWorkspaceId The target workspace ID to filter by
+   * @returns Promise<ExternalDataShare[]>
+   */
+  async getSharesByWorkspace(workspaceId: string, itemId: string, targetWorkspaceId: string): Promise<ExternalDataShare[]> {
+    const allShares = await this.getAllExternalDataShares(workspaceId, itemId);
+    return allShares.filter(share => share.workspaceId === targetWorkspaceId);
   }
 
   // ============================
@@ -285,81 +173,130 @@ export class ExternalDataSharesProviderClient extends FabricPlatformClient {
   // ============================
 
   /**
-   * Gets all external data shares across all providers for a workspace item
+   * Creates a share for a single path
    * @param workspaceId The workspace ID
    * @param itemId The item ID
-   * @returns Promise<{ provider: ExternalDataShareProvider; shares: ExternalDataShare[] }[]>
+   * @param path The OneLake path to share
+   * @param recipient The recipient information
+   * @returns Promise<ExternalDataShare>
    */
-  async getAllSharesForItem(workspaceId: string, itemId: string): Promise<{ provider: ExternalDataShareProvider; shares: ExternalDataShare[] }[]> {
-    const providers = await this.getAllProviders(workspaceId, itemId);
-    const result: { provider: ExternalDataShareProvider; shares: ExternalDataShare[] }[] = [];
-    
-    for (const provider of providers) {
-      try {
-        const shares = await this.getAllShares(workspaceId, itemId, provider.id);
-        result.push({ provider, shares });
-      } catch (error) {
-        console.error(`Failed to get shares for provider ${provider.displayName}:`, error);
-        result.push({ provider, shares: [] });
-      }
-    }
-    
-    return result;
+  async createShareForPath(
+    workspaceId: string, 
+    itemId: string, 
+    path: string, 
+    recipient: ExternalDataShareRecipient
+  ): Promise<ExternalDataShare> {
+    const request: CreateExternalDataShareRequest = {
+      paths: [path],
+      recipient
+    };
+    return await this.createExternalDataShare(workspaceId, itemId, request);
   }
 
   /**
-   * Searches for external data shares across all providers by display name
+   * Creates a share for multiple paths
    * @param workspaceId The workspace ID
    * @param itemId The item ID
-   * @param searchTerm The search term to match against display names
-   * @param caseSensitive Whether the search should be case sensitive (default: false)
-   * @returns Promise<{ provider: ExternalDataShareProvider; share: ExternalDataShare }[]>
+   * @param paths Array of OneLake paths to share
+   * @param recipient The recipient information
+   * @returns Promise<ExternalDataShare>
    */
-  async searchAllSharesByName(
-    workspaceId: string,
-    itemId: string,
-    searchTerm: string,
-    caseSensitive: boolean = false
-  ): Promise<{ provider: ExternalDataShareProvider; share: ExternalDataShare }[]> {
-    const allData = await this.getAllSharesForItem(workspaceId, itemId);
-    const results: { provider: ExternalDataShareProvider; share: ExternalDataShare }[] = [];
-    const searchPattern = caseSensitive ? searchTerm : searchTerm.toLowerCase();
-    
-    for (const { provider, shares } of allData) {
-      for (const share of shares) {
-        const shareName = caseSensitive ? share.displayName : share.displayName.toLowerCase();
-        if (shareName.includes(searchPattern)) {
-          results.push({ provider, share });
-        }
-      }
-    }
-    
-    return results;
+  async createShareForPaths(
+    workspaceId: string, 
+    itemId: string, 
+    paths: string[], 
+    recipient: ExternalDataShareRecipient
+  ): Promise<ExternalDataShare> {
+    const request: CreateExternalDataShareRequest = {
+      paths: paths,
+      recipient
+    };
+    return await this.createExternalDataShare(workspaceId, itemId, request);
   }
 
   /**
-   * Gets external data shares by recipient across all providers
+   * Gets shares that have expired
    * @param workspaceId The workspace ID
    * @param itemId The item ID
-   * @param recipientEmail The recipient email to filter by
-   * @returns Promise<{ provider: ExternalDataShareProvider; share: ExternalDataShare }[]>
+   * @returns Promise<ExternalDataShare[]>
    */
-  async getAllSharesByRecipient(
-    workspaceId: string,
-    itemId: string,
-    recipientEmail: string
-  ): Promise<{ provider: ExternalDataShareProvider; share: ExternalDataShare }[]> {
-    const allData = await this.getAllSharesForItem(workspaceId, itemId);
-    const results: { provider: ExternalDataShareProvider; share: ExternalDataShare }[] = [];
-    
-    for (const { provider, shares } of allData) {
-      for (const share of shares) {
-        if (share.recipient?.email === recipientEmail) {
-          results.push({ provider, share });
-        }
-      }
-    }
-    
-    return results;
+  async getExpiredShares(workspaceId: string, itemId: string): Promise<ExternalDataShare[]> {
+    const allShares = await this.getAllExternalDataShares(workspaceId, itemId);
+    const now = new Date();
+    return allShares.filter(share => {
+      if (!share.expirationTimeUtc) return false;
+      const expirationDate = new Date(share.expirationTimeUtc);
+      return expirationDate < now;
+    });
+  }
+
+  /**
+   * Gets active (non-expired, non-revoked) shares
+   * @param workspaceId The workspace ID
+   * @param itemId The item ID
+   * @returns Promise<ExternalDataShare[]>
+   */
+  async getActiveShares(workspaceId: string, itemId: string): Promise<ExternalDataShare[]> {
+    const allShares = await this.getAllExternalDataShares(workspaceId, itemId);
+    return allShares.filter(share => share.status === 'Active');
+  }
+
+  /**
+   * Gets pending shares (invitations not yet accepted)
+   * @param workspaceId The workspace ID
+   * @param itemId The item ID
+   * @returns Promise<ExternalDataShare[]>
+   */
+  async getPendingShares(workspaceId: string, itemId: string): Promise<ExternalDataShare[]> {
+    const allShares = await this.getAllExternalDataShares(workspaceId, itemId);
+    return allShares.filter(share => share.status === 'Pending');
+  }
+
+  /**
+   * Gets revoked shares
+   * @param workspaceId The workspace ID
+   * @param itemId The item ID
+   * @returns Promise<ExternalDataShare[]>
+   */
+  async getRevokedShares(workspaceId: string, itemId: string): Promise<ExternalDataShare[]> {
+    const allShares = await this.getAllExternalDataShares(workspaceId, itemId);
+    return allShares.filter(share => share.status === 'Revoked');
+  }
+
+  /**
+   * Checks if a specific path is already shared
+   * @param workspaceId The workspace ID
+   * @param itemId The item ID
+   * @param path The path to check
+   * @returns Promise<boolean>
+   */
+  async isPathShared(workspaceId: string, itemId: string, path: string): Promise<boolean> {
+    const shares = await this.getSharesByPath(workspaceId, itemId, path);
+    return shares.some(share => share.status === 'Active' || share.status === 'Pending');
+  }
+
+  /**
+   * Gets all shares for a specific recipient
+   * @param workspaceId The workspace ID
+   * @param itemId The item ID
+   * @param recipientEmail The recipient's email
+   * @returns Promise<ExternalDataShare[]>
+   */
+  async getSharesForRecipient(workspaceId: string, itemId: string, recipientEmail: string): Promise<ExternalDataShare[]> {
+    return await this.getSharesByRecipient(workspaceId, itemId, recipientEmail);
+  }
+
+  /**
+   * Bulk revoke multiple shares
+   * @param workspaceId The workspace ID
+   * @param itemId The item ID
+   * @param shareIds Array of share IDs to revoke
+   * @returns Promise<void>
+   */
+  async revokeMultipleShares(workspaceId: string, itemId: string, shareIds: string[]): Promise<void> {
+    const revokePromises = shareIds.map(shareId => 
+      this.revokeExternalDataShare(workspaceId, itemId, shareId)
+    );
+    await Promise.all(revokePromises);
   }
 }

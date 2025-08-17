@@ -76,7 +76,25 @@ GitHub Copilot understands:
 - `fabric.save` → Expands to complete saveItemDefinition pattern
 - `fabric.load` → Expands to complete getWorkloadItem pattern  
 - `fabric.notify` → Expands to callNotificationOpen with proper typing
-- `fabric.ribbon` → Generates ribbon component template
+- `fabric.ribbon` → Generates complete Toolbar with ToolbarButton and icons
+- `fabric.toolbar` → Creates Toolbar component with icon buttons and tooltips
+
+### Ribbon Template Expansion
+When typing `fabric.ribbon`, GitHub Copilot expands to:
+```typescript
+<Toolbar>
+  <Tooltip content="Save" relationship="label">
+    <ToolbarButton
+      icon={<Save24Regular />}
+      onClick={onSaveClicked}
+      aria-label="Save"
+      data-testid="save-btn"
+    />
+  </Tooltip>
+</Toolbar>
+```
+
+**IMPORTANT**: Always generates `Toolbar` component, never plain `div` with buttons.
 
 ### Auto-Import Intelligence
 GitHub Copilot automatically suggests and adds:
@@ -125,30 +143,123 @@ GitHub Copilot detects:
 
 ### Step 5: Implement the Ribbon (`[ItemName]ItemEditorRibbon.tsx`)
 
-The ribbon provides toolbar actions and navigation tabs:
+The ribbon provides toolbar actions and navigation tabs using Fluent UI's `Toolbar` component with `ToolbarButton` elements and icons:
 
 ```typescript
+import React from "react";
 import { Tab, TabList } from '@fluentui/react-tabs';
-import { ToolbarButton, Tooltip } from '@fluentui/react-components';
-import { Save24Regular } from "@fluentui/react-icons";
+import { Toolbar } from '@fluentui/react-toolbar';
+import {
+  ToolbarButton, Tooltip
+} from '@fluentui/react-components';
+import {
+  Save24Regular,
+  Settings24Regular,
+} from "@fluentui/react-icons";
+import { PageProps } from '../../App';
+import '../../styles.scss';
+import { t } from "i18next";
+
+const [ItemName]ItemEditorRibbonHomeTabToolbar = (props: [ItemName]ItemEditorRibbonProps) => {
+  
+  async function onSaveClicked() {
+    await props.saveItemCallback();
+    return;
+  }
+
+  async function onCustomActionClicked() {
+    // Add your custom action logic here
+    return;
+  }
+
+  return (
+    <Toolbar>
+      <Tooltip
+        content={t("[ItemName]Item_Ribbon_Save_Label")}
+        relationship="label">
+        <ToolbarButton
+          disabled={!props.isSaveButtonEnabled}
+          aria-label={t("[ItemName]Item_Ribbon_Save_Label")}
+          data-testid="[ItemName]-item-editor-save-btn"
+          icon={<Save24Regular />}
+          onClick={onSaveClicked} />
+      </Tooltip>
+      <Tooltip
+        content={t("[ItemName]Item_Ribbon_Settings_Label")}
+        relationship="label">
+        <ToolbarButton
+          aria-label={t("[ItemName]Item_Ribbon_Settings_Label")}
+          data-testid="[ItemName]-item-editor-settings-btn"
+          icon={<Settings24Regular />}
+          onClick={onCustomActionClicked} />
+      </Tooltip>
+    </Toolbar>
+  );
+};
 
 export interface [ItemName]ItemEditorRibbonProps extends PageProps {
-  saveItemCallback: () => Promise<void>;
+  isRibbonDisabled?: boolean;
   isSaveButtonEnabled?: boolean;
-  onTabChange: (tabValue: TabValue) => void;
-  selectedTab: TabValue;
+  saveItemCallback: () => Promise<void>;
+  onTabChange?: (tabValue: string) => void;
+  selectedTab?: string;
 }
 
 export function [ItemName]ItemEditorRibbon(props: [ItemName]ItemEditorRibbonProps) {
-  // Add toolbar buttons and tabs here
-  // Include Save button and any custom actions
+  const { isRibbonDisabled } = props;
+  
+  return (
+    <div className="ribbon">
+      <TabList disabled={isRibbonDisabled}>
+        <Tab value="home" data-testid="home-tab-btn">
+          {t("[ItemName]Item_Ribbon_Home_Label")}
+        </Tab>
+      </TabList>
+      <div className="toolbarContainer">
+        <[ItemName]ItemEditorRibbonHomeTabToolbar {...props} />
+      </div>
+    </div>
+  );
 }
 ```
 
-**Common Features**:
-- Save button with save callback
-- Tab navigation if item has multiple views
-- Custom action buttons specific to the item type
+**CRITICAL: Ribbon Implementation Requirements**:
+- **Must use `Toolbar` component**: Never use plain `div` with buttons
+- **Must use `ToolbarButton`**: Each action must be a `ToolbarButton` with an icon
+- **Must include icons**: All buttons require icons from `@fluentui/react-icons`
+- **Must include tooltips**: Wrap each `ToolbarButton` in a `Tooltip` component
+- **Must follow accessibility**: Include `aria-label` and `data-testid` attributes
+- **Must use localization**: All text must use `t()` function for translations
+
+**❌ WRONG - Don't Generate This**:
+```typescript
+// DON'T DO THIS - Plain div with buttons
+<div>
+  <button onClick={onSave}>Save</button>
+  <button onClick={onSettings}>Settings</button>
+</div>
+```
+
+**✅ CORRECT - Always Generate This**:
+```typescript
+// DO THIS - Proper Toolbar with ToolbarButton and icons
+<Toolbar>
+  <Tooltip content={t("Save")} relationship="label">
+    <ToolbarButton icon={<Save24Regular />} onClick={onSave} />
+  </Tooltip>
+  <Tooltip content={t("Settings")} relationship="label">
+    <ToolbarButton icon={<Settings24Regular />} onClick={onSettings} />
+  </Tooltip>
+</Toolbar>
+```
+
+**Common Ribbon Actions**:
+- Save button with `Save24Regular` icon (required)
+- Settings/Options with `Settings24Regular` icon
+- Export with `ArrowExport24Regular` icon  
+- Refresh with `ArrowClockwise24Regular` icon
+- Delete with `Delete24Regular` icon
+- Add with `Add24Regular` icon
 
 ### Step 6: Create Manifest Configuration
 
