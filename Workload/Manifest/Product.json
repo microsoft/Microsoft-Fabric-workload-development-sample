@@ -14,7 +14,7 @@
           "title": "HelloWorld_GetStarted_1_Title",
           "introduction": "HelloWorld_GetStarted_1_Sub_Title",
           "description": "HelloWorld_GetStarted_1_Description",
-          "image": "assets/images/swappable-content.png",
+          "image": "assets/images/LearningMaterialTemplateCards.png",
           "onClick": {
                   "action": "open.ClientSDKPlaygroundPage"
                 }
@@ -23,51 +23,17 @@
           "title": "HelloWorld_GetStarted_2_Title",
           "introduction": "HelloWorld_GetStarted_2_Sub_Title",
           "description": "HelloWorld_GetStarted_2_Description",
-          "image": "assets/images/swappable-content.png",
-          "onClick": {
-                  "action": "open.ClientSDKPlaygroundPage"
-                }
+          "image": "assets/images/LearningMaterialTemplateCards.png",
+          "link": "https://aka.ms/Fabricdeveloperdocumentation"
         },
         {
           "title": "HelloWorld_GetStarted_3_Title",
           "introduction": "HelloWorld_GetStarted_3_Sub_Title",
           "description": "HelloWorld_GetStarted_3_Description",
-          "image": "assets/images/empty-states.png",
+          "image": "assets/images/LearningMaterialTemplateCards.png",
           "onClick": {
                   "action": "open.ClientSDKPlaygroundPage"
                 }
-        },
-        {
-          "title": "Frontend_playground_Title",
-          "introduction": "Frontend_playground_Introduction",
-          "description": "Frontend_playground_Description",
-          "image": "assets/images/swappable-content.png",
-          "onClick": {
-                  "action": "open.ClientSDKPlaygroundPage"
-                }
-        },
-        {
-          "title": "Data_playground_Title",
-          "introduction": "Data_playground_Introduction",
-          "description": "Data_playground_Description",
-          "image": "assets/images/LearningMaterial-playground.jpeg",
-          "onClick": {
-                  "action": "open.DataApiSamplePage"
-                }
-        },
-        {
-          "title": "Learning_Material_1_Title",
-          "introduction": "Learning_Material_1_Introduction",
-          "description": "Learning_Material_1_Description",
-          "image": "assets/images/LearningMaterial-generic.png",
-          "link": "https://aka.ms/Fabricdeveloperdocumentation"
-        },
-        {
-          "title": "Fabric_UX_System_Title",
-          "introduction": "Fabric_UX_System_Introduction",
-          "description": "Fabric_UX_System_Description",
-          "image": "assets/images/LearningMaterial-FabricUX.jpg",
-          "link": "https://aka.ms/fabricux"
         }
       ],
       "newSection": {

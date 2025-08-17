@@ -71,7 +71,7 @@ export function HelloWorldItemEditorEmpty({
           </Stack>
           <Stack.Item>
             <Button appearance="primary" onClick={onNavigateToGettingStarted}>
-              {t('HelloWorldItemEditorEmpty_StartButton', 'Start here')}
+              {t('HelloWorldItemEditorEmpty_StartButton', 'Getting Started')}
             </Button>
           </Stack.Item>
         </Stack>
