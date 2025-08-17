@@ -7,7 +7,6 @@ import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 import { ItemEditorLoadingProgressBar } from "../../controls/ItemEditorLoadingProgressBar";
 import { HelloWorldItemEditorEmpty } from "./HelloWorldItemEditorEmpty";
 import { HelloWorldItemEditorGettingStarted } from "./HelloWorldItemEditorGettingStarted";
-//import { callNavigationNavigate } from "../../controller/NavigationController";
 import "../../styles.scss";
 
 /**
