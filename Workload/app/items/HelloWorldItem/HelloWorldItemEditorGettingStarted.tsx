@@ -185,7 +185,7 @@ export function HelloWorldItemEditorGettingStarted({
                     <div className="card-footer">
                       <Button
                         appearance="outline"
-                        onClick={() => handleOpenResource("https://aka.ms/Fabricdeveloperdocumentation")}
+                        onClick={() => handleOpenResource("https://aka.ms/AAxl9xw")}
                       >
                         {t('GettingStarted_OpenButton', 'Open')}
                       </Button>
@@ -213,7 +213,7 @@ export function HelloWorldItemEditorGettingStarted({
                     <div className="card-footer">
                       <Button
                         appearance="outline"
-                        onClick={() => handleOpenResource('playground')}
+                        onClick={() => handleOpenResource('https://aka.ms/AAxl9xw')}
                       >
                         {t('GettingStarted_OpenButton', 'Open')}
                       </Button>
