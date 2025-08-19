@@ -185,7 +185,7 @@ export function HelloWorldItemEditorGettingStarted({
                     <div className="card-footer">
                       <Button
                         appearance="outline"
-                        onClick={() => handleOpenResource("https://aka.ms/AAxl9xw")}
+                        onClick={() => handleOpenResource("https://aka.ms/getting-to-know-your-workload")}
                       >
                         {t('GettingStarted_OpenButton', 'Open')}
                       </Button>
@@ -213,7 +213,7 @@ export function HelloWorldItemEditorGettingStarted({
                     <div className="card-footer">
                       <Button
                         appearance="outline"
-                        onClick={() => handleOpenResource('https://aka.ms/AAxl9xw')}
+                        onClick={() => handleOpenResource('https://aka.ms/explore-samples-and-playground')}
                       >
                         {t('GettingStarted_OpenButton', 'Open')}
                       </Button>
@@ -241,7 +241,7 @@ export function HelloWorldItemEditorGettingStarted({
                     <div className="card-footer">
                       <Button
                         appearance="outline"
-                        onClick={() => handleOpenResource("https://aka.ms/fabricux")}
+                        onClick={() => handleOpenResource("https://aka.ms/use-fabric-ux-system")}
                       >
                         {t('GettingStarted_OpenButton', 'Open')}
                       </Button>
