@@ -7,7 +7,6 @@ import {
   Text,
   MessageBar,
   MessageBarBody,
-  makeStyles
 } from "@fluentui/react-components";
 import {
   ChevronDown20Regular,
@@ -29,13 +28,6 @@ interface HelloWorldItemEditorGettingStartedProps {
   onNavigateToEmpty: () => void;
 }
 
-const useStyles = makeStyles({
-  text200: {
-    fontSize: "12px",
-    lineHeight: "16px",
-  },
-});
-
 /**
  * Getting Started component - shows helpful resources
  * Demonstrates various Fabric APIs and navigation patterns
@@ -47,7 +39,6 @@ export function HelloWorldItemEditorGettingStarted({
 }: HelloWorldItemEditorGettingStartedProps) {
   const { t } = useTranslation();
   const [expandedItemDetails, setExpandedItemDetails] = useState(true);
-  const styles = useStyles();
 
   const handleOpenSettings = async () => {
     if (item) {
@@ -73,7 +64,7 @@ export function HelloWorldItemEditorGettingStarted({
 
   return (
     <Stack className="editor" data-testid="item-editor-inner">
-      {/* Back to Home Tab - Matching the second image */}
+      {/* Back to Home Tab */}
       <HelloWorldItemEditorGettingStartedRibbon
         workloadClient={workloadClient}
         openSettingsCallback={handleOpenSettings}
@@ -96,14 +87,6 @@ export function HelloWorldItemEditorGettingStarted({
           {/* Left Hero Section */}
           <div className="hero-section">
             <div className="hero-content">
-              <div className="workload-info">
-                <img src="/assets/items/HelloWorld/fabric-icon.svg" alt="Fabric" className="workload-icon" />
-                <div className="workload-details">
-                  <Text className="workload-name">{t('GettingStarted_WorkloadName', 'Sample workload')}</Text>
-                  <Text className="workload-publisher">{t('GettingStarted_Publisher', 'Microsoft')}</Text>
-                </div>
-              </div>
-
               <div className="hero-text">
                 <h1 className="hero-title">{t('GettingStarted_Title', 'Hello, Fabric!')}</h1>
                 <p className="hero-subtitle">
@@ -172,7 +155,7 @@ export function HelloWorldItemEditorGettingStarted({
                       </div>
                       <CardHeader
                         header={<Text weight="semibold">{t('GettingStarted_Card1_Title', 'Getting to know your workload')}</Text>}
-                        description={<Text className={styles.text200}>{t('GettingStarted_Card1_Description', 'See a step-by-step guide for customizing workloads.')}</Text>}
+                        description={<Text >{t('GettingStarted_Card1_Description', 'See a step-by-step guide for customizing workloads.')}</Text>}
                       />
                     </div>
                     <div className="card-body">
@@ -200,7 +183,7 @@ export function HelloWorldItemEditorGettingStarted({
                       </div>
                       <CardHeader
                         header={<Text weight="semibold">{t('GettingStarted_Card2_Title', 'Explore samples and playground')}</Text>}
-                        description={<Text className={styles.text200}>{t('GettingStarted_Card2_Description', 'Try available UI components in an interactive environment.')}</Text>}
+                        description={<Text >{t('GettingStarted_Card2_Description', 'Try available UI components in an interactive environment.')}</Text>}
                       />
                     </div>
                     <div className="card-body">
@@ -228,7 +211,7 @@ export function HelloWorldItemEditorGettingStarted({
                       </div>
                       <CardHeader
                         header={<Text weight="semibold">{t('GettingStarted_Card3_Title', 'Use the Fabric UX system')}</Text>}
-                        description={<Text className={styles.text200}>{t('GettingStarted_Card3_Description', 'Learn about design patterns and best practices.')}</Text>}
+                        description={<Text >{t('GettingStarted_Card3_Description', 'Learn about design patterns and best practices.')}</Text>}
                       />
                     </div>
                     <div className="card-body">

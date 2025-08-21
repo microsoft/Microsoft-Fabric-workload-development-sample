@@ -10,15 +10,10 @@ import { HelloWorldItemEditorGettingStarted } from "./HelloWorldItemEditorGettin
 import "../../styles.scss";
 
 /**
- * Main editor component for HelloWorld items.
- * This demonstrates:
- * - Item loading from Fabric
- * - State-based navigation between views
- * - State persistence using localStorage
- * - How to use navigation API for external navigation
+ * Main editor component for HelloWorld item.
  * 
  * Note: To remove the empty state, simply set defaultView to 'getting-started'
- * or modify the logic in line 38-43
+ * or modify the logic in line 62-73
  */
 export function HelloWorldItemEditor(props: PageProps) {
   const { workloadClient } = props;
@@ -61,13 +56,12 @@ export function HelloWorldItemEditor(props: PageProps) {
       } else {
         console.log(`non-editor context. Current Path: ${pathname}`);
       }
-      
-      // Navigation hook will automatically determine the correct page based on item content
       setIsLoading(false);
     }
+
   useEffect(() => {
     if (pageContext?.itemObjectId) {
-      const stored = localStorage.getItem(getStorageKey(pageContext.itemObjectId));
+      const stored = sessionStorage.getItem(getStorageKey(pageContext.itemObjectId));
       if (stored === 'getting-started' || stored === 'empty') {
         setCurrentView(stored);
       } else {
@@ -83,27 +77,17 @@ export function HelloWorldItemEditor(props: PageProps) {
       }, [pageContext, pathname]);
 
   /**
-   * Save current view state to localStorage
+   * Save current view state to sessionStorage
    */
   const saveViewState = (view: 'empty' | 'getting-started') => {
     if (pageContext?.itemObjectId) {
-      localStorage.setItem(getStorageKey(pageContext.itemObjectId), view);
+      sessionStorage.setItem(getStorageKey(pageContext.itemObjectId), view);
     }
   };
-
-  /**
-   * Navigate to Getting Started view
-   * This demonstrates internal view switching.
-   * 
-   * Note: For external navigation (e.g., to a different item or workspace),
-   * you would use: await callNavigationNavigate(workloadClient, 'host', '/path/to/destination')
-   */
+ 
   const navigateToGettingStarted = () => {
     setCurrentView('getting-started');
     saveViewState('getting-started');
-    
-    // Example of how to use navigation API for external navigation (commented for demo):
-    // await callNavigationNavigate(workloadClient, 'host', `/groups/${workspaceId}/items/${itemId}`);
   };
 
   /**
@@ -113,21 +97,6 @@ export function HelloWorldItemEditor(props: PageProps) {
     setCurrentView('empty');
     saveViewState('empty');
   };
-
-  /**
-   * Clear state when item is closed
-   * This should be called when the item is properly closed
-   */
-  // const clearItemState = () => {
-  //   if (pageContext?.itemObjectId) {
-  //     localStorage.removeItem(getStorageKey(pageContext.itemObjectId));
-  //   }
-  // };
-
-  // Clean up on unmount (optional - uncomment if you want to clear state on unmount)
-  // useEffect(() => {
-  //   return () => clearItemState();
-  // }, []);
 
   // Show loading state
   if (isLoading) {
@@ -154,7 +123,6 @@ export function HelloWorldItemEditor(props: PageProps) {
           onNavigateToEmpty={navigateToEmpty}
         />
       )}
-    </>
-      
+    </>     
   );
 }

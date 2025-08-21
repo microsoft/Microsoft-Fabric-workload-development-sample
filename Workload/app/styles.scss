@@ -322,8 +322,8 @@
           font-family: 'Segoe UI', sans-serif;
           font-weight: 400;
           line-height: 20px;
-          white-space: nowrap;  // Prevent text wrapping
-          max-width: none;      // Remove width constraint
+          white-space: nowrap;
+          max-width: none;
         }
       }
     }
@@ -341,72 +341,18 @@
   display: flex;
   flex-direction: column;
 
-  // // Warning bar wrapper - removed padding
-  // .warning-bar-wrapper {
-  //   background: var(--colorNeutralBackground1, white);
-    
-  //   .getting-started-warning-bar {
-  //     height: 32px;
-  //     background: var(--colorWarningBackground1, #FFF9F5) !important;
-  //     border: 1px solid var(--colorWarningBorder1, #FDCFB4) !important;
-  //     border-radius: 0; // Remove border radius for full-width appearance
-  //     padding: 0 12px;
-  //     margin: 0; // Ensure no margin
-      
-  //     // Override default MessageBar styles
-  //     &.fui-MessageBar {
-  //       min-height: 32px;
-  //       height: 32px;
-  //       padding: 0;
-  //     }
-      
-  //     // Style the icon
-  //     .fui-MessageBar__icon {
-  //       color: var(--colorWarningForeground1, #BC4B09);
-  //       display: flex;
-  //       align-items: center;
-  //       padding-right: 8px;
-        
-  //       svg {
-  //         width: 20px;
-  //         height: 20px;
-  //       }
-  //     }
-      
-  //     // Style the body
-  //     .fui-MessageBarBody {
-  //       padding: 0;
-  //       display: flex;
-  //       align-items: center;
-  //       height: 100%;
-  //       color: var(--colorNeutralForeground1, #242424);
-  //       font-size: 12px;
-  //       font-family: 'Segoe UI', sans-serif;
-  //       font-weight: 400;
-  //       line-height: 16px;
-  //     }
-      
-  //     // Hide dismiss button if present
-  //     .fui-MessageBar__dismiss {
-  //       display: none;
-  //     }
-  //   }
-  // }
-
   .content-wrapper {
     flex: 1;
     display: flex;
     overflow: hidden;
-    // Remove margin-top to eliminate space between message bar and content
   }
 
-  // ...rest of the existing getting-started styles remain the same...
   .hero-section {
     width: 600px;
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 80px 60px 40px 60px;
+    padding: 40px 60px 40px 60px;
     background: var(--colorBrandBackground2, #E3F7EF);
     border-radius: 0;
     overflow: hidden;
@@ -414,48 +360,12 @@
     .hero-content {
       display: flex;
       flex-direction: column;
-      gap: 24px; // Increased gap
+      gap: 24px; 
       width: 100%;
     }
 
-    .workload-info {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      height: auto;
-
-      .workload-icon {
-        width: 48px;
-        height: 48px;
-        object-fit: contain;
-      }
-
-      .workload-details {
-        display: flex;
-        flex-direction: column;
-        gap: 2px;
-        flex: 1;
-
-        .workload-name {
-          color: var(--colorNeutralForeground1, #242424);
-          font-size: 14px;
-          font-family: 'Segoe UI', sans-serif;
-          font-weight: 600;
-          line-height: 20px;
-        }
-
-        .workload-publisher {
-          color: var(--colorNeutralForeground1, #242424);
-          font-size: 12px;
-          font-family: 'Segoe UI', sans-serif;
-          font-weight: 400;
-          line-height: 16px;
-        }
-      }
-    }
-
     .hero-text {
-      padding-top: 40px; // More space above title
+      padding-top: 0; 
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -473,7 +383,7 @@
         color: var(--colorNeutralForegroundStatic, #242424);
         font-size: 20px;
         font-family: 'Segoe UI', sans-serif;
-        font-weight: 400; // Changed from 600 to 400
+        font-weight: 400;
         line-height: 28px;
         margin: 0;
       }
@@ -498,6 +408,9 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      align-items: flex-start;
+      justify-content: flex-start;
+      width: 100%;
 
       .section-title {
         color: var(--colorNeutralForeground1, #242424);
@@ -506,6 +419,9 @@
         font-weight: 600;
         line-height: 36px;
         margin: 0;
+        padding: 0;
+        text-align: left;
+        width: 100%;
       }
 
       .section-subtitle {
@@ -515,6 +431,9 @@
         font-weight: 400;
         line-height: 22px;
         margin: 0;
+        padding: 0;
+        text-align: left;
+        width: 100%;
       }
     }
 
@@ -770,7 +689,7 @@
     .settings-placeholder-text {
       text-align: center;
       color: var(--colorBrandForeground2, #0C695A);
-      font-size: 12px;
+      font-size: 16px;
       font-family: 'Segoe UI', sans-serif;
       font-weight: 400;
       line-height: 16px;

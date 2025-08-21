@@ -1,6 +1,5 @@
 /**
  * HelloWorldItemEditorGettingStartedRibbon.tsx
- * Updated to place toolbar on a second row and apply Figma styles.
  */
 import React from "react";
 import { Toolbar } from '@fluentui/react-toolbar';
@@ -53,7 +52,6 @@ export function HelloWorldItemEditorGettingStartedRibbon(props: HelloWorldItemEd
 
   return (
     <div className="ribbon getting-started-ribbon">
-      {/* First row: back button + divider + feature info */}
       <div className="back-to-home-header">
         <Button
           appearance="subtle"
@@ -66,7 +64,6 @@ export function HelloWorldItemEditorGettingStartedRibbon(props: HelloWorldItemEd
         </Button>
       </div>
 
-      {/* Second row: toolbar (now below, full width) */}
       <div className="toolbarContainer getting-started-toolbar">
         <GettingStartedToolbar {...props} />
       </div>

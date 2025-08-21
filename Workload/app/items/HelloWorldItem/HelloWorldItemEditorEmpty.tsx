@@ -21,7 +21,7 @@ interface HelloWorldItemEditorEmptyProps {
  * Empty state component - the first screen users see
  * This is a static page that can be easily removed or replaced by developers
  * 
- *  To skip this page, modify HelloWorldItemEditor.tsx line 38-43
+ *  To skip this page, modify HelloWorldItemEditor.tsx line 62-73
  * to always set currentView to 'getting-started'
  */
 export function HelloWorldItemEditorEmpty({
@@ -51,7 +51,7 @@ export function HelloWorldItemEditorEmpty({
               navigateToGettingStartedCallback={onNavigateToGettingStarted}
             />
 
-      {/* Empty State Content - Matching the first image */}
+      {/* Empty State Content*/}
       <Stack className="empty-state-container" horizontalAlign="center" verticalAlign="center">
         <Stack className="empty-state-content" tokens={{ childrenGap: 24 }} horizontalAlign="center">
           <Stack.Item>

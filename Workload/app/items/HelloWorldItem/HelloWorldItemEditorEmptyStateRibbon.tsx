@@ -3,7 +3,7 @@
  * 
  * Ribbon component for the Empty State of the HelloWorld item editor.
  * This ribbon displays the home tab with toolbar containing save (disabled), 
- * settings, and get started buttons as specified in the requirements.
+ * settings, and get started buttons.
  */
 
 import React from "react";
