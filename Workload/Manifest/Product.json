@@ -4,43 +4,32 @@
     "displayName": "Workload_Display_Name",
     "fullDisplayName": "Workload_Full_Display_Name",
     "description": "Workload_Description",
-    "favicon": "assets/images/Workload-icon.png",
+    "favicon": "assets/images/HelloFabricWorkloadIcon.png",
     "icon": {
-      "name": "assets/images/Workload-icon.png"
+      "name": "assets/images/HelloFabricWorkloadIcon.png"
     },
     "homePage": {
       "learningMaterials": [
         {
-          "title": "Frontend_playground_Title",
-          "introduction": "Frontend_playground_Introduction",
-          "description": "Frontend_playground_Description",
-          "image": "assets/images/LearningMaterial-playground.jpeg",
-          "onClick": {
-                  "action": "open.ClientSDKPlaygroundPage"
-                }
+          "title": "HelloWorld_GetStarted_1_Title",
+          "introduction": "HelloWorld_GetStarted_1_Sub_Title",
+          "description": "HelloWorld_GetStarted_1_Description",
+          "image": "assets/images/LearningMaterialTemplateCards.png",
+          "link": "https://aka.ms/get-started-learning-docs"
         },
         {
-          "title": "Data_playground_Title",
-          "introduction": "Data_playground_Introduction",
-          "description": "Data_playground_Description",
-          "image": "assets/images/LearningMaterial-playground.jpeg",
-          "onClick": {
-                  "action": "open.DataApiSamplePage"
-                }
+          "title": "HelloWorld_GetStarted_2_Title",
+          "introduction": "HelloWorld_GetStarted_2_Sub_Title",
+          "description": "HelloWorld_GetStarted_2_Description",
+          "image": "assets/images/LearningMaterialTemplateCards.png",
+          "link": "https://aka.ms/get-started-learning-docs"
         },
         {
-          "title": "Learning_Material_1_Title",
-          "introduction": "Learning_Material_1_Introduction",
-          "description": "Learning_Material_1_Description",
-          "image": "assets/images/LearningMaterial-generic.png",
-          "link": "https://aka.ms/Fabricdeveloperdocumentation"
-        },
-        {
-          "title": "Fabric_UX_System_Title",
-          "introduction": "Fabric_UX_System_Introduction",
-          "description": "Fabric_UX_System_Description",
-          "image": "assets/images/LearningMaterial-FabricUX.jpg",
-          "link": "https://aka.ms/fabricux"
+          "title": "HelloWorld_GetStarted_3_Title",
+          "introduction": "HelloWorld_GetStarted_3_Sub_Title",
+          "description": "HelloWorld_GetStarted_3_Description",
+          "image": "assets/images/LearningMaterialTemplateCards.png",
+          "link": "https://aka.ms/get-started-learning-docs"
         }
       ],
       "newSection": {
@@ -77,12 +66,12 @@
       ]
     },
     "productDetail": {
-      "publisher": "Contoso",
+      "publisher": "Name of publisher",
       "slogan": "Workload_Hub_Workload_Slogan",
       "description": "Workload_Hub_Workload_Description",
       "image": {
         "mediaType": 0,
-        "source": "assets/images/WorkloadBanner.png"
+        "source": "assets/images/L2_page_banner.png"
       },
       "slideMedia": [
         {
@@ -91,11 +80,7 @@
         },
         {
           "mediaType": 0,
-          "source": "assets/images/SampleWorkload1.png"
-        },
-        {
-          "mediaType": 0,
-          "source": "assets/images/SampleWorkload2.png"
+          "source": "assets/images/slidesPicturesTemplate.png"
         }
       ],
         "supportLink": {
@@ -104,7 +89,7 @@
           "help": {"url": "https://example.com/help"},
           "privacy": {"url": "https://example.com/privacy"},
           "terms": {"url": "https://example.com/terms"},
-          "license": {"url": "https://example.com/license"}
+          "license": {"url": "https://azuremarketplace.microsoft.com/sell"}
       }
     },
     "itemJobTypes" :["storeData", "others"],
