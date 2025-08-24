@@ -1,0 +1,34 @@
+name: "✨ Feature Request"
+description: "Suggest a new feature or improvement"
+title: "[Feature] <short summary>"
+labels: ["feature-request", "isv"]
+
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: "Problem to Solve"
+      description: "What problem does this feature address?"
+      placeholder: "I need a way to…"
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: "Proposed Solution"
+      placeholder: "It would be great if…"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternatives Considered"
+      placeholder: "Have you tried something else?"
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: "Additional Context"
+      placeholder: "Screenshots, links to docs, related issues…"
