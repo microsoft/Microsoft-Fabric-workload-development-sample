@@ -1,0 +1,52 @@
+name: "🐞 Bug Report"
+description: "Report a bug"
+title: "[Bug] <short summary>"
+labels: ["bug", "isv"]
+
+body:
+  - type: input
+    id: version
+    attributes:
+      label: "Workload Manifest Schema Version"
+      placeholder: "e.g., v1.2.3"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: "Describe the bug in full sentences."
+      placeholder: "What happened? What are you trying to do?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Steps to Reproduce"
+      description: "List the exact steps to reproduce the problem."
+      placeholder: "1. Go to …\n2. Click …\n3. Observe …"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected vs Actual Behavior"
+      placeholder: "Expected: …\nActual: …"
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Relevant Logs / Error Codes"
+      render: shell
+      placeholder: "Paste logs or errors here"
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: "Additional Context"
+      placeholder: "Screenshots, links to docs, related issues…"

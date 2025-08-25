@@ -1,0 +1,32 @@
+name: "❓ Question"
+description: "Ask a question or request clarification"
+title: "[Question] <short summary>"
+labels: ["question", "isv"]
+
+body:
+  - type: input
+    id: version
+    attributes:
+      label: "Workload Manifest Schema Version (if relevant)"
+      placeholder: "e.g., v1.2.3"
+
+  - type: textarea
+    id: question
+    attributes:
+      label: "Your Question"
+      description: "What do you need help with?"
+      placeholder: "How do I…?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: "Context / Background"
+      placeholder: "Explain what you tried, what you expected, and what happened."
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: "Additional References"
+      placeholder: "Links to docs, screenshots, related issues…"
