@@ -7,7 +7,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: "Product Version"
+      label: "Workload Manifest Schema Version"
       placeholder: "e.g., v1.2.3"
     validations:
       required: true

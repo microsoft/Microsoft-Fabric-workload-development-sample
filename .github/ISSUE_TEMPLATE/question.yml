@@ -7,7 +7,7 @@ body:
   - type: input
     id: version
     attributes:
-      label: "Product Version (if relevant)"
+      label: "Workload Manifest Schema Version (if relevant)"
       placeholder: "e.g., v1.2.3"
 
   - type: textarea
