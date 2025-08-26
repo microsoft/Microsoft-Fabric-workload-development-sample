@@ -15,13 +15,13 @@ import { PageProps } from '../../App';
 import { useTranslation } from "react-i18next";
 import '../../styles.scss';
 
-export interface HelloWorldItemEditorGettingStartedRibbonProps extends PageProps {
+export interface GettingStartedRibbonProps extends PageProps {
   openSettingsCallback: () => Promise<void>;
   navigateToEmptyStateCallback: () => void;
   featureName?: string;
 }
 
-const GettingStartedToolbar: React.FC<HelloWorldItemEditorGettingStartedRibbonProps> = (props) => {
+const GettingStartedToolbar: React.FC<GettingStartedRibbonProps> = (props) => {
   const { t } = useTranslation();
   return (
     <Toolbar>
@@ -45,7 +45,7 @@ const GettingStartedToolbar: React.FC<HelloWorldItemEditorGettingStartedRibbonPr
   );
 };
 
-export function HelloWorldItemEditorGettingStartedRibbon(props: HelloWorldItemEditorGettingStartedRibbonProps) {
+export function HelloWorldItemEditorGettingStartedRibbon(props: GettingStartedRibbonProps) {
   const { t } = useTranslation();
 
   const handleBack = () => props.navigateToEmptyStateCallback();

@@ -24,7 +24,7 @@ import '../../styles.scss';
 /**
  * Props interface for the Empty State Ribbon component
  */
-export interface HelloWorldItemEditorEmptyStateRibbonProps extends PageProps {
+export interface EmptyStateRibbonProps extends PageProps {
   /** Callback to open settings */
   openSettingsCallback: () => Promise<void>;
   /** Callback to navigate to getting started */
@@ -34,7 +34,7 @@ export interface HelloWorldItemEditorEmptyStateRibbonProps extends PageProps {
 /**
  * Toolbar component for the Empty State home tab
  */
-const EmptyStateHomeTabToolbar: React.FC<HelloWorldItemEditorEmptyStateRibbonProps> = (props) => {
+const EmptyStateHomeTabToolbar: React.FC<EmptyStateRibbonProps> = (props) => {
   const { t } = useTranslation();
 
 
@@ -91,7 +91,7 @@ const EmptyStateHomeTabToolbar: React.FC<HelloWorldItemEditorEmptyStateRibbonPro
  * Main Empty State Ribbon component
  * Displays the home tab with appropriate toolbar for empty state
  */
-export function HelloWorldItemEditorEmptyStateRibbon(props: HelloWorldItemEditorEmptyStateRibbonProps) {
+export function HelloWorldItemEditorEmptyStateRibbon(props: EmptyStateRibbonProps) {
   const { t } = useTranslation();
 
   return (

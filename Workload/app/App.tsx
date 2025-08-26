@@ -10,7 +10,6 @@ import { SamplePage, ClientSDKPlayground } from "./playground/ClientSDKPlaygroun
 import { DataPlayground } from "./playground/DataPlayground/DataPlayground";
 import { HelloWorldItemEditor} from "./items/HelloWorldItem/HelloWorldItemEditor";
 
-
 /*
     Add your Item Editor in the Route section of the App function below
 */
@@ -78,7 +77,6 @@ export function App({ history, workloadClient }: AppProps) {
             <Route path="/sample-page">
                 <SamplePage workloadClient={workloadClient} />
             </Route>
-
         </Switch>
     </Router>;
 }

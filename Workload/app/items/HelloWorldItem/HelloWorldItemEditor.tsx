@@ -3,15 +3,15 @@ import { useParams, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { PageProps, ContextProps } from "../../App";
 import { ItemWithDefinition, getWorkloadItem } from "../../controller/ItemCRUDController";
-import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 import { ItemEditorLoadingProgressBar } from "../../controls/ItemEditorLoadingProgressBar";
+import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 import { HelloWorldItemEditorEmpty } from "./HelloWorldItemEditorEmpty";
 import { HelloWorldItemEditorGettingStarted } from "./HelloWorldItemEditorGettingStarted";
 import "../../styles.scss";
 
 /**
  * Main editor component for HelloWorld item.
- * 
+ *
  * Note: To remove the empty state, simply set defaultView to 'getting-started'
  * or modify the logic in line 62-73
  */
@@ -31,15 +31,15 @@ export function HelloWorldItemEditor(props: PageProps) {
 
   async function loadDataFromUrl(pageContext: ContextProps, pathname: string): Promise<void> {
       setIsLoading(true);
-      var item: ItemWithDefinition<HelloWorldItemDefinition> = undefined;    
+      var item: ItemWithDefinition<HelloWorldItemDefinition> = undefined;
       if (pageContext.itemObjectId) {
         // for Edit scenario we get the itemObjectId and then load the item via the workloadClient SDK
         try {
           item = await getWorkloadItem<HelloWorldItemDefinition>(
             workloadClient,
-            pageContext.itemObjectId,          
+            pageContext.itemObjectId,
           );
-          
+
           // Ensure item definition is properly initialized without mutation
           if (!item.definition) {
             item = {
@@ -49,10 +49,10 @@ export function HelloWorldItemEditor(props: PageProps) {
               }
             };
           }
-          setItem(item);        
+          setItem(item);
         } catch (error) {
-          setItem(undefined);        
-        } 
+          setItem(undefined);
+        }
       } else {
         console.log(`non-editor context. Current Path: ${pathname}`);
       }
@@ -84,7 +84,7 @@ export function HelloWorldItemEditor(props: PageProps) {
       sessionStorage.setItem(getStorageKey(pageContext.itemObjectId), view);
     }
   };
- 
+
   const navigateToGettingStarted = () => {
     setCurrentView('getting-started');
     saveViewState('getting-started');
@@ -101,8 +101,8 @@ export function HelloWorldItemEditor(props: PageProps) {
   // Show loading state
   if (isLoading) {
     return (
-      <ItemEditorLoadingProgressBar 
-        message={t("HelloWorldItemEditor_Loading", "Loading item...")} 
+      <ItemEditorLoadingProgressBar
+        message={t("HelloWorldItemEditor_Loading", "Loading item...")}
       />
     );
   }
@@ -123,6 +123,6 @@ export function HelloWorldItemEditor(props: PageProps) {
           onNavigateToEmpty={navigateToEmpty}
         />
       )}
-    </>     
+    </>
   );
 }

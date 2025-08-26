@@ -15,11 +15,11 @@ import {
 import { useTranslation } from "react-i18next";
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { ItemWithDefinition } from "../../controller/ItemCRUDController";
-import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 import { callOpenSettings } from "../../controller/SettingsController";
+import { callGetItem } from "../../controller/ItemCRUDController";
 import { callNavigationOpenInNewBrowserTab } from "../../controller/NavigationController";
 import { HelloWorldItemEditorGettingStartedRibbon } from "./HelloWorldItemEditorGettingStartedRibbon";
-import { callGetItem } from "../../controller/ItemCRUDController";
+import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 import "../../styles.scss";
 
 interface HelloWorldItemEditorGettingStartedProps {
