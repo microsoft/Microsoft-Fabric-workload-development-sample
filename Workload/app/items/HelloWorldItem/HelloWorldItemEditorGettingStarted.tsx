@@ -18,7 +18,7 @@ import { ItemWithDefinition } from "../../controller/ItemCRUDController";
 import { callOpenSettings } from "../../controller/SettingsController";
 import { callGetItem } from "../../controller/ItemCRUDController";
 import { callNavigationOpenInNewBrowserTab } from "../../controller/NavigationController";
-import { HelloWorldItemEditorGettingStartedRibbon } from "./HelloWorldItemEditorGettingStartedRibbon";
+import { GettingStartedRibbon } from "./GettingStartedRibbon";
 import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 import "../../styles.scss";
 
@@ -65,7 +65,7 @@ export function HelloWorldItemEditorGettingStarted({
   return (
     <Stack className="editor" data-testid="item-editor-inner">
       {/* Back to Home Tab */}
-      <HelloWorldItemEditorGettingStartedRibbon
+      <GettingStartedRibbon
         workloadClient={workloadClient}
         openSettingsCallback={handleOpenSettings}
         navigateToEmptyStateCallback={onNavigateToEmpty}

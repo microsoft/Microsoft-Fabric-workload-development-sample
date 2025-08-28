@@ -7,7 +7,7 @@ import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { ItemWithDefinition } from "../../controller/ItemCRUDController";
 import { callOpenSettings } from "../../controller/SettingsController";
 import { callGetItem } from "../../controller/ItemCRUDController";
-import { HelloWorldItemEditorEmptyStateRibbon } from "./HelloWorldItemEditorEmptyStateRibbon";
+import { EmptyStateRibbon } from "./EmptyStateRibbon";
 import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
 import "../../styles.scss";
 
@@ -45,7 +45,7 @@ export function HelloWorldItemEditorEmpty({
   return (
     <Stack className="editor" data-testid="item-editor-inner">
       {/* Ribbon with Home Tab */}
-      <HelloWorldItemEditorEmptyStateRibbon
+      <EmptyStateRibbon
               workloadClient={workloadClient}
               openSettingsCallback={handleOpenSettings}
               navigateToGettingStartedCallback={onNavigateToGettingStarted}
