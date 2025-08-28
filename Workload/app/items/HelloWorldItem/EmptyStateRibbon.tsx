@@ -1,11 +1,3 @@
-/**
- * HelloWorldItemEditorEmptyStateRibbon.tsx
- * 
- * Ribbon component for the Empty State of the HelloWorld item editor.
- * This ribbon displays the home tab with toolbar containing save (disabled), 
- * settings, and get started buttons.
- */
-
 import React from "react";
 import { Tab, TabList } from '@fluentui/react-tabs';
 import { Toolbar } from '@fluentui/react-toolbar';
@@ -91,7 +83,7 @@ const EmptyStateHomeTabToolbar: React.FC<EmptyStateRibbonProps> = (props) => {
  * Main Empty State Ribbon component
  * Displays the home tab with appropriate toolbar for empty state
  */
-export function HelloWorldItemEditorEmptyStateRibbon(props: EmptyStateRibbonProps) {
+export function EmptyStateRibbon(props: EmptyStateRibbonProps) {
   const { t } = useTranslation();
 
   return (

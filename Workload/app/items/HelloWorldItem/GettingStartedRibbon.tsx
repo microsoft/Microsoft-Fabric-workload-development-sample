@@ -1,6 +1,3 @@
-/**
- * HelloWorldItemEditorGettingStartedRibbon.tsx
- */
 import React from "react";
 import { Toolbar } from '@fluentui/react-toolbar';
 import {
@@ -45,7 +42,7 @@ const GettingStartedToolbar: React.FC<GettingStartedRibbonProps> = (props) => {
   );
 };
 
-export function HelloWorldItemEditorGettingStartedRibbon(props: GettingStartedRibbonProps) {
+export function GettingStartedRibbon(props: GettingStartedRibbonProps) {
   const { t } = useTranslation();
 
   const handleBack = () => props.navigateToEmptyStateCallback();
