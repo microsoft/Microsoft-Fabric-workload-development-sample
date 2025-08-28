@@ -1,64 +1,81 @@
-import React, { useState } from "react";
-import { Stack } from "@fluentui/react";
-import { Text, Button, Input } from "@fluentui/react-components";
-import "../../styles.scss";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { Stack } from "@fluentui/react";
+import { Button, Text} from "@fluentui/react-components";
+
 import { WorkloadClientAPI } from "@ms-fabric/workload-client";
 import { ItemWithDefinition } from "../../controller/ItemCRUDController";
+import { callOpenSettings } from "../../controller/SettingsController";
+import { callGetItem } from "../../controller/ItemCRUDController";
+import { EmptyStateRibbon } from "./EmptyStateRibbon";
 import { HelloWorldItemDefinition } from "./HelloWorldItemModel";
+import "../../styles.scss";
 
-
-interface HelloWorldItemEmptyStateProps {
-  workloadClient: WorkloadClientAPI,
-  item: ItemWithDefinition<HelloWorldItemDefinition>;
-  itemDefinition: HelloWorldItemDefinition,
-  onFinishEmpty: (message: string) => void;
+interface HelloWorldItemEditorEmptyProps {
+  workloadClient: WorkloadClientAPI;
+  item?: ItemWithDefinition<HelloWorldItemDefinition>;
+  onNavigateToGettingStarted: () => void;
 }
 
-export const HelloWorldItemEmpty: React.FC<HelloWorldItemEmptyStateProps> = ({
+/**
+ * Empty state component - the first screen users see
+ * This is a static page that can be easily removed or replaced by developers
+ * 
+ *  To skip this page, modify HelloWorldItemEditor.tsx line 62-73
+ * to always set currentView to 'getting-started'
+ */
+export function HelloWorldItemEditorEmpty({
   workloadClient,
   item,
-  itemDefinition: definition,
-  onFinishEmpty: onFinishEmpty
-}) => {
-  const [message, setMessage] = useState<string>(`Hello ${item.displayName}!`);
+  onNavigateToGettingStarted
+}: HelloWorldItemEditorEmptyProps) {
   const { t } = useTranslation();
-  
-  const saveItem = () => {
-    onFinishEmpty(message);
+
+  const handleOpenSettings = async () => {
+    if (item) {
+      try {
+        const item_res = await callGetItem(workloadClient, item.id);
+        await callOpenSettings(workloadClient, item_res, 'About');
+      } catch (error) {
+        console.error('Failed to open settings:', error);
+      }
+    }
   };
-  
+
   return (
-    <Stack className="empty-item-container" horizontalAlign="center" tokens={{ childrenGap: 16 }}>
-      <Stack.Item>
-        <img
-          src="/assets/items/HelloWorld/EditorEmpty.jpg"
-          alt="Empty item illustration"
-          className="empty-item-image"
-        />
-      </Stack.Item>
-      <Stack.Item>
-        <Text as="h2" size={800} weight="semibold">
-          Your item has been created!
-        </Text>
-      </Stack.Item>
-      <Stack.Item style={{ marginTop: '16px', marginBottom: '24px' }}>
-        <Text>
-          {t('HelloWorldItemEditorEmpty_Message', {itemName: item.displayName})}
-        </Text>
-      </Stack.Item>
-      <Stack.Item style={{ width: '300px', marginTop: '16px' }}>
-        <Input
-          placeholder="Enter your message"
-          value={message}
-          onChange={(e, data) => setMessage(data.value)}
-        />
-      </Stack.Item>
-      <Stack.Item style={{ marginTop: '16px' }}>
-        <Button appearance="primary" onClick={saveItem}>
-          {t('HelloWorldItemEditorEmpty_Button')}
-        </Button>
-      </Stack.Item>
+    <Stack className="editor" data-testid="item-editor-inner">
+      {/* Ribbon with Home Tab */}
+      <EmptyStateRibbon
+              workloadClient={workloadClient}
+              openSettingsCallback={handleOpenSettings}
+              navigateToGettingStartedCallback={onNavigateToGettingStarted}
+            />
+
+      {/* Empty State Content*/}
+      <Stack className="empty-state-container" horizontalAlign="center" verticalAlign="center">
+        <Stack className="empty-state-content" tokens={{ childrenGap: 24 }} horizontalAlign="center">
+          <Stack.Item>
+            <img
+              src="/assets/items/HelloWorld/empty-states.svg"
+              alt="Empty state illustration"
+              className="empty-state-image"
+            />
+          </Stack.Item>
+          <Stack className="empty-state-text-container" tokens={{ childrenGap: 8 }} horizontalAlign="center">
+            <div className="empty-state-header">
+              <h2>{t('HelloWorldItemEditorEmpty_Title', 'Welcome to HelloWorld!')}</h2>
+              <Text className="empty-state-description">
+                {t('HelloWorldItemEditorEmpty_Description', 'This is the first screen people will see after adding your workload. Include some basic information to help them continue.')}
+              </Text>
+            </div>
+          </Stack>
+          <Stack.Item>
+            <Button appearance="primary" onClick={onNavigateToGettingStarted}>
+              {t('HelloWorldItemEditorEmpty_StartButton', 'Getting Started')}
+            </Button>
+          </Stack.Item>
+        </Stack>
+      </Stack>
     </Stack>
   );
-};
+}

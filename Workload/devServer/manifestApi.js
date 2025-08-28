@@ -45,7 +45,7 @@ router.get('/manifests_new/metadata', (req, res) => {
   };
 
   res.end(JSON.stringify({ extension: devParameters }));
-  console.log("Deliverd manifest metainformation successfully.");
+  console.log("Delivered manifest metainformation successfully.");
 });
 
 /**
@@ -68,7 +68,7 @@ router.get('/manifests_new', async (req, res) => {
     });
 
     res.sendFile(filePath);
-    console.log("Deliverd manifest package successfully.");
+    console.log("Delivered manifest package successfully.");
   } catch (err) {
     console.error(`❌ Error: ${err.message}`);
     res.status(500).json({

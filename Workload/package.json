@@ -19,7 +19,7 @@
     "@ms-fabric/workload-client": "^2.3.0",
     "@reduxjs/toolkit": "^2.6.0",
     "history": "^4.9.0",
-    "i18next": "^23.12.3",
+    "i18next": "^25.4.1",
     "i18next-http-backend": "^2.4.2",
     "jwt-decode": "^3.1.2",
     "react": "^18.0.0",
