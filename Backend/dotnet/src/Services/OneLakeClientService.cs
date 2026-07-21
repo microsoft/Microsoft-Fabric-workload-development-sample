@@ -38,7 +38,7 @@ namespace Boilerplate.Services
 
         public async Task<bool> CheckIfFileExists(string token, string filePath)
         {
-            var url = $"{EnvironmentConstants.OneLakeDFSBaseUrl}/{filePath}?resource=file";
+            var url = $"{EnvironmentConstants.OneLakeDFSBaseUrl}/{filePath}";
 
             try
             {

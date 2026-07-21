@@ -30,7 +30,7 @@ class OneLakeClientService:
         """
         Checks if a file exists in OneLake storage.
         """
-        url = f"{EnvironmentConstants.ONELAKE_DFS_BASE_URL}/{file_path}?resource=file"
+        url = f"{EnvironmentConstants.ONELAKE_DFS_BASE_URL}/{file_path}"
         
         try:
             response = await self.http_client_service.head(url, token)
